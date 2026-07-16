@@ -1,0 +1,33 @@
+{
+  "name": "missionweave-website",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "docs:dev": "astro dev",
+    "docs:build": "astro build",
+    "docs:preview": "astro preview",
+    "typecheck": "astro check",
+    "check:policy": "node scripts/check-repository-policy.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run check:policy && npm run format:check && npm run typecheck && npm run docs:build"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "3.7.3",
+    "@astrojs/starlight": "0.41.3",
+    "astro": "7.0.9"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.9",
+    "prettier": "3.9.5",
+    "prettier-plugin-astro": "0.14.1",
+    "typescript": "6.0.3"
+  },
+  "overrides": {
+    "js-yaml@^4.0.0": "4.2.0"
+  }
+}
