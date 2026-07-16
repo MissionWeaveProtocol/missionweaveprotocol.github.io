@@ -23,6 +23,48 @@ export default defineConfig({
       },
       favicon: "/favicon.svg",
       customCss: ["./src/styles/custom.css"],
+      lastUpdated: true,
+      sidebar: [
+        {
+          label: "Learn",
+          items: [
+            {
+              label: "MissionWeave 0.1",
+              slug: "docs/0.1",
+              badge: { text: "Draft", variant: "caution" },
+            },
+            { label: "Core model", slug: "docs/0.1/core-model" },
+            { label: "Work lifecycle", slug: "docs/0.1/work-lifecycle" },
+            { label: "Multi-Group scheduling", slug: "docs/0.1/scheduling" },
+            {
+              label: "Trust and authority",
+              slug: "docs/0.1/trust-and-authority",
+            },
+            { label: "Child Missions", slug: "docs/0.1/child-missions" },
+          ],
+        },
+        {
+          label: "Build",
+          items: [{ label: "Python SDK", slug: "sdk/python" }],
+        },
+        {
+          label: "Reference",
+          items: [
+            {
+              label: "Specification",
+              slug: "reference/specification",
+              badge: { text: "0.1", variant: "caution" },
+            },
+            { label: "Terminology", slug: "reference/terminology" },
+            { label: "JSON Schemas", slug: "reference/schemas" },
+            { label: "Conformance", slug: "reference/conformance" },
+          ],
+        },
+        {
+          label: "Community",
+          items: [{ label: "Contribute and report", slug: "community" }],
+        },
+      ],
       social: [
         {
           icon: "github",

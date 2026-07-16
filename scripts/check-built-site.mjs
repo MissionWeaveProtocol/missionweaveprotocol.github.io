@@ -1,0 +1,133 @@
+import assert from "node:assert/strict";
+import { access, readdir, readFile } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const dist = fileURLToPath(new URL("../dist/", import.meta.url));
+const configuredBase =
+  process.env.SITE_BASE ?? "/missionweaveprotocol.github.io";
+const base = `/${configuredBase.split("/").filter(Boolean).join("/")}`;
+const origin = "https://missionweaveproject.github.io";
+
+const requiredOutputs = [
+  "index.html",
+  "404.html",
+  "docs/0.1/index.html",
+  "reference/specification/index.html",
+  "reference/schemas/index.html",
+  "reference/conformance/index.html",
+  "sdk/python/index.html",
+  "sitemap-index.xml",
+  "llms.txt",
+  "robots.txt",
+];
+
+for (const output of requiredOutputs) {
+  await access(path.join(dist, output));
+}
+
+async function collectHtmlFiles(directory) {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const files = [];
+
+  for (const entry of entries) {
+    const candidate = path.join(directory, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...(await collectHtmlFiles(candidate)));
+    } else if (entry.name.endsWith(".html")) {
+      files.push(candidate);
+    }
+  }
+
+  return files;
+}
+
+async function targetExists(pathname) {
+  if (pathname === `${base}/404/`) {
+    try {
+      await access(path.join(dist, "404.html"));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  const relativePath = decodeURIComponent(pathname.slice(base.length)).replace(
+    /^\//u,
+    "",
+  );
+  const candidates = pathname.endsWith("/")
+    ? [path.join(dist, relativePath, "index.html")]
+    : [
+        path.join(dist, relativePath),
+        path.join(dist, relativePath, "index.html"),
+      ];
+
+  for (const candidate of candidates) {
+    try {
+      await access(candidate);
+      return true;
+    } catch {
+      // Try the next static output shape.
+    }
+  }
+
+  return false;
+}
+
+const htmlFiles = await collectHtmlFiles(dist);
+const failures = [];
+let checkedReferences = 0;
+
+for (const file of htmlFiles) {
+  const html = await readFile(file, "utf8");
+  const route = path
+    .relative(dist, file)
+    .replace(/\\/gu, "/")
+    .replace(/index\.html$/u, "");
+  const pageUrl = new URL(`${base}/${route}`, origin);
+  const references = html.matchAll(
+    /<(?:a|img|link|script|source)\b[^>]*?\b(?:href|src)="([^"]+)"/giu,
+  );
+
+  for (const [, reference] of references) {
+    if (
+      reference.startsWith("#") ||
+      reference.startsWith("data:") ||
+      reference.startsWith("mailto:") ||
+      reference.startsWith("tel:") ||
+      reference.startsWith("javascript:")
+    ) {
+      continue;
+    }
+
+    const target = new URL(reference, pageUrl);
+    if (target.origin !== origin) {
+      continue;
+    }
+
+    checkedReferences += 1;
+    if (target.pathname !== base && !target.pathname.startsWith(`${base}/`)) {
+      failures.push(
+        `${path.relative(dist, file)} escapes the Pages base: ${reference}`,
+      );
+      continue;
+    }
+
+    if (!(await targetExists(target.pathname))) {
+      failures.push(
+        `${path.relative(dist, file)} has a missing target: ${reference}`,
+      );
+    }
+  }
+}
+
+assert.equal(
+  failures.length,
+  0,
+  `Built-site validation failed:\n${failures.map((failure) => `  ${failure}`).join("\n")}`,
+);
+
+console.log(
+  `Built site passed ${requiredOutputs.length} output checks and ${checkedReferences} internal reference checks across ${htmlFiles.length} pages.`,
+);

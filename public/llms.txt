@@ -1,0 +1,23 @@
+# MissionWeave
+
+> Official documentation for MissionWeave, a group-oriented protocol for
+> coordinated and accountable collaboration among autonomous agents inside an
+> organization.
+
+Canonical site:
+https://missionweaveproject.github.io/missionweaveprotocol.github.io/
+
+## Official resources
+
+- Protocol repository:
+  https://github.com/MissionWeaveProject/missionweaveprotocol
+- Protocol specification:
+  https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md
+- Python SDK: https://github.com/MissionWeaveProject/python-sdk
+- GitHub organization: https://github.com/MissionWeaveProject
+
+## Version status
+
+MissionWeave is evolving. Any 0.1 material is a draft rather than a final
+standard. Consult the protocol repository for current releases, compatibility
+information, and normative artifacts.
