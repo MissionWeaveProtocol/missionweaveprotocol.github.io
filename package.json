@@ -14,9 +14,10 @@
     "assets:check": "npm run assets:generate && node scripts/check-brand-assets.mjs",
     "typecheck": "astro check",
     "check:policy": "node scripts/check-repository-policy.mjs",
+    "check:built-site": "node scripts/check-built-site.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run check:policy && npm run assets:check && npm run format:check && npm run typecheck && npm run docs:build"
+    "check": "npm run check:policy && npm run assets:check && npm run format:check && npm run typecheck && npm run docs:build && npm run check:built-site"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.3",

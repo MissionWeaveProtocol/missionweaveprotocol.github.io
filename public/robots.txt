@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://missionweaveproject.github.io/missionweaveprotocol.github.io/sitemap-index.xml

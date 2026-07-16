@@ -1,0 +1,95 @@
+---
+title: MissionWeave Protocol 0.1
+description:
+  A non-normative introduction to MissionWeave Protocol 0.1, a group-oriented
+  cooperation protocol for autonomous Agents inside one Organization.
+sidebar:
+  label: Overview
+  order: 1
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+:::caution[Draft Standard 0.1]
+
+This is a non-normative learning guide. The
+[canonical MissionWeave Protocol repository](https://github.com/MissionWeaveProject/missionweaveprotocol)
+is the source of truth for the specification, glossary, schemas, and conformance
+vectors.
+
+:::
+
+MissionWeave is a group-oriented cooperation protocol for autonomous Agents
+working inside one trusted Organization. An Agent can participate in many
+Mission Groups, exchange durable Messages with peers, accept explicit WorkItems
+into per-Group queues, and schedule work across Groups under its own local
+policy.
+
+## The short version
+
+1. A human MissionOwner creates a bounded Mission with a definition of done,
+   deadline, budget, and approval policy.
+2. The Mission receives exactly one Group, one durable Event history, and a
+   replaceable Coordinator.
+3. Group members discuss context and may propose work, but Messages never
+   authorize execution by themselves.
+4. A Coordinator or explicitly scoped delegate turns a proposal into a WorkItem
+   with a machine-readable Work Contract.
+5. A Worker performs admission control, accepts an offer into its per-Group
+   queue, and decides when to execute it through its global Scheduler.
+6. Work produces content-addressed Artifacts and Evidence mapped to acceptance
+   criteria.
+7. The Coordinator verifies Worker results before the human MissionOwner
+   approves an exact Mission revision and Artifact set.
+
+## Learn the model
+
+<CardGrid>
+  <LinkCard
+    title="Core model"
+    description="Understand Missions, Groups, roles, durable state, and local projections."
+    href="./core-model/"
+  />
+  <LinkCard
+    title="Work lifecycle"
+    description="Follow work from conversation and proposal through Evidence and approval."
+    href="./work-lifecycle/"
+  />
+  <LinkCard
+    title="Scheduling"
+    description="See how per-Group queues feed one Worker-owned global Scheduler."
+    href="./scheduling/"
+  />
+  <LinkCard
+    title="Trust and authority"
+    description="Separate identity, conversation, assignment, execution, and approval authority."
+    href="./trust-and-authority/"
+  />
+  <LinkCard
+    title="Child Missions"
+    description="Decompose complex work without losing scope, budget, or accountability."
+    href="./child-missions/"
+  />
+</CardGrid>
+
+## Protocol boundaries
+
+MissionWeave does not define Agent-to-Agent RPC, cross-organization federation,
+physical peer-to-peer routing, distributed consensus, model prompts, or private
+model reasoning. One Organization supplies identity, policy, authorization,
+durable Group ordering, and human accountability.
+
+:::note[Conversation is context, not authority]
+
+A Message, mention, summary, Context Package, or model output cannot by itself
+authorize a tool call, business action, WorkItem assignment, budget expense, or
+permission grant. Consequential actions require explicit structured state.
+
+:::
+
+## Normative sources
+
+- [MissionWeave Protocol 0.1 specification](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
+- [Protocol glossary](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/CONTEXT.md)
+- [JSON Schemas](https://github.com/MissionWeaveProject/missionweaveprotocol/tree/main/schemas)
+- [Conformance vectors](https://github.com/MissionWeaveProject/missionweaveprotocol/tree/main/conformance)
