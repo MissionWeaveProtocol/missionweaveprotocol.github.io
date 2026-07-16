@@ -4,17 +4,19 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.12"
   },
   "scripts": {
     "docs:dev": "astro dev",
     "docs:build": "astro build",
     "docs:preview": "astro preview",
+    "assets:generate": "node scripts/generate-brand-assets.mjs",
+    "assets:check": "npm run assets:generate && git diff --exit-code -- public",
     "typecheck": "astro check",
     "check:policy": "node scripts/check-repository-policy.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run check:policy && npm run format:check && npm run typecheck && npm run docs:build"
+    "check": "npm run check:policy && npm run assets:check && npm run format:check && npm run typecheck && npm run docs:build"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.3",
@@ -25,6 +27,7 @@
     "@astrojs/check": "0.9.9",
     "prettier": "3.9.5",
     "prettier-plugin-astro": "0.14.1",
+    "sharp": "0.35.3",
     "typescript": "6.0.3"
   },
   "overrides": {
