@@ -11,7 +11,7 @@
     "docs:build": "astro build",
     "docs:preview": "astro preview",
     "assets:generate": "node scripts/generate-brand-assets.mjs",
-    "assets:check": "npm run assets:generate && git diff --exit-code -- public",
+    "assets:check": "npm run assets:generate && node scripts/check-brand-assets.mjs",
     "typecheck": "astro check",
     "check:policy": "node scripts/check-repository-policy.mjs",
     "format": "prettier --write .",
