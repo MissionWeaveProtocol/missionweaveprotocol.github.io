@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 const contentRoot = fileURLToPath(
   new URL("../src/content/docs/", import.meta.url),
 );
-const locales = ["zh-cn", "zh-tw", "ja", "es", "de"];
+const locales = ["zh-cn", "zh-tw", "ja", "es", "fr", "de"];
 const contentExtensions = new Set([".md", ".mdx"]);
 
 async function collectContentFiles(directory, prefix = "") {

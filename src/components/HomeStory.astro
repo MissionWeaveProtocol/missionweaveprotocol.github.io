@@ -1,5 +1,5 @@
 ---
-type Locale = "en" | "zh-CN" | "zh-TW" | "ja" | "es" | "de";
+type Locale = "en" | "zh-CN" | "zh-TW" | "ja" | "es" | "fr" | "de";
 
 interface Props {
   locale?: Locale;
@@ -43,6 +43,7 @@ const localePrefix = {
   "zh-TW": "zh-tw/",
   ja: "ja/",
   es: "es/",
+  fr: "fr/",
   de: "de/",
 }[locale];
 const docsUrl = `${import.meta.env.BASE_URL}${localePrefix}docs/0.1/`;
@@ -463,6 +464,91 @@ const copies: Record<Locale, HomeCopy> = {
       title:
         "Construir la cooperación alrededor del trabajo, no solo de los Message.",
       link: "Empezar con MissionWeaveProtocol 0.1",
+    },
+  },
+  fr: {
+    intro: {
+      eyebrow: "Pourquoi MissionWeaveProtocol",
+      title: "Une Mission est bien plus qu’une chaîne d’appels.",
+      body: "Les Agent ont besoin d’un espace commun pour raisonner ensemble, d’un moyen précis de s’engager sur un travail et d’un chemin responsable entre l’intention et le résultat approuvé. MissionWeaveProtocol rend ces responsabilités visibles sans transformer la Conversation en autorité exécutable.",
+    },
+    principles: [
+      [
+        "Échanger entre pairs",
+        "Chaque membre d’un Group peut envoyer des Message durables et demander à ses pairs le contexte dont il a besoin.",
+      ],
+      [
+        "S’engager explicitement",
+        "Les WorkItem et Work Contract séparent l’exécution responsable de l’intention exprimée dans la Conversation.",
+      ],
+      [
+        "Planifier localement",
+        "Les Worker acceptent le travail dans des files par Group et gardent le contrôle final de l’ordre entre les Group.",
+      ],
+      [
+        "Achever de manière responsable",
+        "Les Coordinator vérifient les Evidence et les Artifact avant qu’un humain n’approuve la Mission achevée.",
+      ],
+    ],
+    panel: {
+      eyebrow: "Une Mission, un Group",
+      title: "De l’objectif au résultat approuvé",
+      badge: "Brouillon 0.1",
+      aria: "Cycle de vie d’une Mission",
+      steps: [
+        [
+          "MissionOwner",
+          "Définit la réussite",
+          "Objectif, limites, budget, échéance et Approval finale.",
+        ],
+        [
+          "Coordinator",
+          "Planifie et assigne",
+          "Les WorkItem sont confiés aux Agent éligibles au moyen d’offres et d’acceptations explicites.",
+        ],
+        [
+          "Worker",
+          "Coopèrent et exécutent",
+          "Les pairs échangent du contexte, détiennent des Execution Lease et publient des Artifact immuables.",
+        ],
+        [
+          "Revue",
+          "Vérifier, puis approuver",
+          "Le Coordinator contrôle les Evidence ; l’humain accepte le résultat exact.",
+        ],
+      ],
+    },
+    scheduler: {
+      eyebrow: "Plusieurs Group, un Worker",
+      title:
+        "La coordination s’arrête à la frontière du Group. Pas la planification.",
+      body: "Un Coordinator pilote la progression dans sa Mission. Un Worker peut appartenir à plusieurs Mission ; son propre Scheduler décide donc du prochain travail à exécuter en tenant compte des files par Group, des Capacity Slot, des échéances, des dépendances et de la politique locale.",
+      aria: "Files par Group alimentant un Worker Scheduler et des Capacity Slot isolés",
+      queues: "Files par Group",
+      owned: "Contrôlé par le Worker",
+      scheduler: "Scheduler",
+      policy: "priorité · disponibilité · politique",
+      slots: "Capacity Slot",
+      running: "en cours",
+      ready: "prêt",
+    },
+    boundaries: [
+      [
+        "Conçu pour les organisations",
+        "Confiance partagée, autorité explicite.",
+        "L’Organization contrôle l’identité des Agent, la politique, l’autorisation et l’ordre durable des Group. Les Agent restent des pairs dans la Conversation, tandis que les changements d’état conséquents demeurent structurés, signés, délimités et auditables.",
+      ],
+      [
+        "Délibérément hors périmètre",
+        "Pas un nouvel RPC entre Agent.",
+        "MissionWeaveProtocol ne définit ni les instructions de modèle, ni le routage physique pair à pair, ni la fédération entre Organization, ni le consensus distribué. Il définit comment une Organization mène à bien un travail complexe d’Agent en toute sécurité.",
+      ],
+    ],
+    closing: {
+      eyebrow: "Commencer par le brouillon",
+      title:
+        "Construire la coopération autour du travail, pas seulement des Message.",
+      link: "Découvrir MissionWeaveProtocol 0.1",
     },
   },
   de: {
