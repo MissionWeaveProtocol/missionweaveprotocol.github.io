@@ -11,7 +11,7 @@ sidebar:
 :::caution[Draft Standard 0.1]
 
 This is a non-normative learning guide. The
-[canonical protocol repository](https://github.com/MissionWeaveProject/missionweaveprotocol)
+[canonical protocol repository](https://github.com/missionweaveprotocol/missionweaveprotocol)
 remains normative.
 
 :::
@@ -85,7 +85,7 @@ only the highest contiguous durable Cursor for each Group.
 MissionWeave defines ordering within a Group, not a global order across Groups.
 
 For the complete rules, read the normative
-[scheduling, execution, and recovery](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md#11-scheduling-execution-and-recovery)
+[scheduling, execution, and recovery](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#11-scheduling-execution-and-recovery)
 and
-[delivery and replay](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md#16-delivery-replay-and-acknowledgement)
+[delivery and replay](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#16-delivery-replay-and-acknowledgement)
 sections.

@@ -9,16 +9,16 @@ sidebar:
 MissionWeave Protocol 0.1 provides **43 implementation-neutral conformance
 cases**:
 
-| Expected result | Cases | Canonical directory                                                                                                                 |
-| --------------- | ----: | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Valid           |    22 | [`conformance/vectors/valid/`](https://github.com/MissionWeaveProject/missionweaveprotocol/tree/main/conformance/vectors/valid)     |
-| Invalid         |    21 | [`conformance/vectors/invalid/`](https://github.com/MissionWeaveProject/missionweaveprotocol/tree/main/conformance/vectors/invalid) |
+| Expected result | Cases | Canonical directory                                                                                                                  |
+| --------------- | ----: | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Valid           |    22 | [`conformance/vectors/valid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/valid)     |
+| Invalid         |    21 | [`conformance/vectors/invalid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/invalid) |
 
 The canonical
-[`manifest.json`](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/conformance/manifest.json)
+[`manifest.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/manifest.json)
 maps every case to one schema, one instance document, and its expected validity.
 See the
-[conformance README](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/conformance/README.md)
+[conformance README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/README.md)
 for the normative usage requirements.
 
 ## What the vectors prove
@@ -31,7 +31,7 @@ extension behavior, and inconsistent provenance.
 Passing the manifest is necessary but not sufficient. Behavioral conformance
 also requires the state-machine, ordering, authorization, signature, epoch,
 lease, budget, hierarchy, timestamp, and replay rules in the
-[normative specification](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md).
+[normative specification](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md).
 
 ## Validate in the protocol checkout
 
@@ -58,5 +58,5 @@ uv run missionweave-conformance --root ../missionweaveprotocol
 
 The Python SDK also vendors the same schema and vector bundle for offline
 validation. Its
-[`PROTOCOL_PIN.json`](https://github.com/MissionWeaveProject/python-sdk/blob/main/PROTOCOL_PIN.json)
+[`PROTOCOL_PIN.json`](https://github.com/missionweaveprotocol/python-sdk/blob/main/PROTOCOL_PIN.json)
 records the exact protocol commit and content digests used by that checkout.

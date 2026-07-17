@@ -10,7 +10,7 @@ sidebar:
 :::caution[Draft Standard 0.1]
 
 This is a non-normative learning guide. The
-[canonical protocol repository](https://github.com/MissionWeaveProject/missionweaveprotocol)
+[canonical protocol repository](https://github.com/missionweaveprotocol/missionweaveprotocol)
 remains normative.
 
 :::
@@ -99,6 +99,6 @@ Events. Losing a local database must not change authoritative Mission state.
   for audit, not private chain-of-thought.
 
 For the complete rules, read the normative
-[core invariants](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md#4-core-invariants)
+[core invariants](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#4-core-invariants)
 and
-[system architecture](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md#5-system-architecture).
+[system architecture](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#5-system-architecture).

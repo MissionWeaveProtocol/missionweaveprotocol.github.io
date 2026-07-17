@@ -5,16 +5,16 @@
 > organization.
 
 Canonical site:
-https://missionweaveproject.github.io/missionweaveprotocol.github.io/
+https://missionweaveprotocol.github.io/
 
 ## Official resources
 
 - Protocol repository:
-  https://github.com/MissionWeaveProject/missionweaveprotocol
+  https://github.com/missionweaveprotocol/missionweaveprotocol
 - Protocol specification:
-  https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md
-- Python SDK: https://github.com/MissionWeaveProject/python-sdk
-- GitHub organization: https://github.com/MissionWeaveProject
+  https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md
+- Python SDK: https://github.com/missionweaveprotocol/python-sdk
+- GitHub organization: https://github.com/missionweaveprotocol
 
 ## Version status
 
