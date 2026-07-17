@@ -27,6 +27,8 @@ const requiredOutputs = [
   "ja/docs/0.1/index.html",
   "es/index.html",
   "es/docs/0.1/index.html",
+  "de/index.html",
+  "de/docs/0.1/index.html",
   "sitemap-index.xml",
   "llms.txt",
   "robots.txt",
@@ -57,7 +59,7 @@ async function targetExists(pathname) {
     base === "/" ? pathname.slice(1) : pathname.slice(base.length),
   ).replace(/^\//u, "");
 
-  if (/^(?:(?:zh-cn|ja|es)\/)?404\/$/u.test(relativePath)) {
+  if (/^(?:(?:zh-cn|ja|es|de)\/)?404\/$/u.test(relativePath)) {
     try {
       await access(path.join(dist, "404.html"));
       return true;

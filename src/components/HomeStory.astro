@@ -1,5 +1,5 @@
 ---
-type Locale = "en" | "zh-CN" | "ja" | "es";
+type Locale = "en" | "zh-CN" | "ja" | "es" | "de";
 
 interface Props {
   locale?: Locale;
@@ -42,6 +42,7 @@ const localePrefix = {
   "zh-CN": "zh-cn/",
   ja: "ja/",
   es: "es/",
+  de: "de/",
 }[locale];
 const docsUrl = `${import.meta.env.BASE_URL}${localePrefix}docs/0.1/`;
 
@@ -378,6 +379,89 @@ const copies: Record<Locale, HomeCopy> = {
       title:
         "Construir la cooperación alrededor del trabajo, no solo de los Message.",
       link: "Empezar con MissionWeaveProtocol 0.1",
+    },
+  },
+  de: {
+    intro: {
+      eyebrow: "Warum MissionWeaveProtocol",
+      title: "Eine Mission ist mehr als eine Kette von Aufrufen.",
+      body: "Agent benötigen einen gemeinsamen Ort zum Denken, eine präzise Form der Arbeitsverpflichtung und einen verantwortbaren Weg von der Absicht zum genehmigten Ergebnis. MissionWeaveProtocol macht diese Verantwortlichkeiten sichtbar, ohne Conversation in ausführbare Autorität zu verwandeln.",
+    },
+    principles: [
+      [
+        "Als Peers sprechen",
+        "Jedes Group-Mitglied kann dauerhafte Message senden und Peers nach dem benötigten Kontext fragen.",
+      ],
+      [
+        "Ausdrücklich verpflichten",
+        "WorkItem und Work Contract trennen verantwortbare Ausführung von der Absicht in Conversation.",
+      ],
+      [
+        "Lokal planen",
+        "Worker nehmen Arbeit in Group-spezifische Warteschlangen auf und behalten die letzte Kontrolle über die Reihenfolge zwischen Group.",
+      ],
+      [
+        "Verantwortlich abschließen",
+        "Coordinator verifizieren Evidence und Artifact, bevor ein Mensch die abgeschlossene Mission genehmigt.",
+      ],
+    ],
+    panel: {
+      eyebrow: "Eine Mission, ein Group",
+      title: "Vom Ziel zum genehmigten Ergebnis",
+      badge: "Entwurf 0.1",
+      aria: "Mission-Lebenszyklus",
+      steps: [
+        [
+          "MissionOwner",
+          "Definiert Erfolg",
+          "Ziel, Grenzen, Budget, Frist und finale Approval.",
+        ],
+        [
+          "Coordinator",
+          "Plant und weist zu",
+          "WorkItem gelangen durch ausdrückliche Angebote und Annahme zu geeigneten Agent.",
+        ],
+        [
+          "Worker",
+          "Kooperieren und führen aus",
+          "Peers tauschen Kontext aus, halten Lease und veröffentlichen unveränderliche Artifact.",
+        ],
+        [
+          "Prüfung",
+          "Verifizieren, dann genehmigen",
+          "Der Coordinator prüft Evidence; der Mensch akzeptiert das genaue Ergebnis.",
+        ],
+      ],
+    },
+    scheduler: {
+      eyebrow: "Viele Group, ein Worker",
+      title: "Koordination endet an der Group-Grenze. Planung nicht.",
+      body: "Ein Coordinator verantwortet den Fortschritt innerhalb seiner Mission. Ein Worker kann vielen Mission angehören; daher entscheidet sein eigener Scheduler anhand Group-spezifischer Warteschlangen, Capacity Slot, Fristen, Abhängigkeiten und lokaler Richtlinien, was als Nächstes ausgeführt wird.",
+      aria: "Group-spezifische Warteschlangen speisen einen Worker Scheduler und isolierte Capacity Slot",
+      queues: "Group-spezifische Warteschlangen",
+      owned: "Im Besitz des Worker",
+      scheduler: "Scheduler",
+      policy: "Priorität · Bereitschaft · Richtlinie",
+      slots: "Capacity Slot",
+      running: "aktiv",
+      ready: "bereit",
+    },
+    boundaries: [
+      [
+        "Für Organization entwickelt",
+        "Gemeinsames Vertrauen, ausdrückliche Autorität.",
+        "Die Organization kontrolliert Agent-Identität, Richtlinien, Autorisierung und dauerhafte Group-Reihenfolge. Agent bleiben in Conversation Peers, während folgenreiche Zustandsänderungen strukturiert, signiert, begrenzt und auditierbar bleiben.",
+      ],
+      [
+        "Bewusst außerhalb des Umfangs",
+        "Kein weiteres Agent RPC.",
+        "MissionWeaveProtocol definiert weder Modell-Prompts, physisches Peer-to-Peer-Routing, organisationsübergreifende Föderation noch verteilten Konsens. Es definiert, wie eine Organization komplexe Arbeit von Agent sicher abschließt.",
+      ],
+    ],
+    closing: {
+      eyebrow: "Mit dem Entwurf beginnen",
+      title: "Zusammenarbeit um Arbeit aufbauen, nicht nur um Message.",
+      link: "Mit MissionWeaveProtocol 0.1 beginnen",
     },
   },
 };

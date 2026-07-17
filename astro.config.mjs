@@ -20,6 +20,7 @@ export default defineConfig({
         "zh-CN": "MissionWeaveProtocol",
         ja: "MissionWeaveProtocol",
         es: "MissionWeaveProtocol",
+        de: "MissionWeaveProtocol",
       },
       description:
         "Group-oriented cooperation for autonomous agents inside one organization.",
@@ -36,12 +37,18 @@ export default defineConfig({
         "zh-cn": { label: "简体中文", lang: "zh-CN" },
         ja: { label: "日本語", lang: "ja" },
         es: { label: "Español", lang: "es" },
+        de: { label: "Deutsch", lang: "de" },
       },
       defaultLocale: "root",
       sidebar: [
         {
           label: "Learn",
-          translations: { "zh-CN": "学习", ja: "学ぶ", es: "Aprender" },
+          translations: {
+            "zh-CN": "学习",
+            ja: "学ぶ",
+            es: "Aprender",
+            de: "Lernen",
+          },
           items: [
             {
               label: "MissionWeaveProtocol 0.1",
@@ -52,6 +59,7 @@ export default defineConfig({
                   "zh-CN": "草案",
                   ja: "ドラフト",
                   es: "Borrador",
+                  de: "Entwurf",
                 },
                 variant: "caution",
               },
@@ -62,6 +70,7 @@ export default defineConfig({
                 "zh-CN": "核心模型",
                 ja: "コアモデル",
                 es: "Modelo central",
+                de: "Kernmodell",
               },
               slug: "docs/0.1/core-model",
             },
@@ -71,6 +80,7 @@ export default defineConfig({
                 "zh-CN": "工作生命周期",
                 ja: "作業ライフサイクル",
                 es: "Ciclo de trabajo",
+                de: "Arbeitslebenszyklus",
               },
               slug: "docs/0.1/work-lifecycle",
             },
@@ -80,6 +90,7 @@ export default defineConfig({
                 "zh-CN": "多 Group 调度",
                 ja: "複数 Group のスケジューリング",
                 es: "Planificación entre múltiples Group",
+                de: "Planung über mehrere Group",
               },
               slug: "docs/0.1/scheduling",
             },
@@ -89,6 +100,7 @@ export default defineConfig({
                 "zh-CN": "信任与权限",
                 ja: "信頼と権限",
                 es: "Confianza y autoridad",
+                de: "Vertrauen und Autorität",
               },
               slug: "docs/0.1/trust-and-authority",
             },
@@ -98,6 +110,7 @@ export default defineConfig({
                 "zh-CN": "子 Mission",
                 ja: "子 Mission",
                 es: "Mission secundarias",
+                de: "Child Mission",
               },
               slug: "docs/0.1/child-missions",
             },
@@ -105,7 +118,12 @@ export default defineConfig({
         },
         {
           label: "Build",
-          translations: { "zh-CN": "构建", ja: "構築", es: "Desarrollo" },
+          translations: {
+            "zh-CN": "构建",
+            ja: "構築",
+            es: "Desarrollo",
+            de: "Entwickeln",
+          },
           items: [{ label: "Python SDK", slug: "sdk/python" }],
         },
         {
@@ -114,6 +132,7 @@ export default defineConfig({
             "zh-CN": "参考",
             ja: "リファレンス",
             es: "Referencia",
+            de: "Referenz",
           },
           items: [
             {
@@ -122,6 +141,7 @@ export default defineConfig({
                 "zh-CN": "规范",
                 ja: "仕様",
                 es: "Especificación",
+                de: "Spezifikation",
               },
               slug: "reference/specification",
               badge: { text: "0.1", variant: "caution" },
@@ -132,6 +152,7 @@ export default defineConfig({
                 "zh-CN": "术语",
                 ja: "用語",
                 es: "Terminología",
+                de: "Terminologie",
               },
               slug: "reference/terminology",
             },
@@ -142,6 +163,7 @@ export default defineConfig({
                 "zh-CN": "一致性",
                 ja: "適合性",
                 es: "Conformidad",
+                de: "Konformität",
               },
               slug: "reference/conformance",
             },
@@ -153,6 +175,7 @@ export default defineConfig({
             "zh-CN": "社区",
             ja: "コミュニティ",
             es: "Comunidad",
+            de: "Community",
           },
           items: [
             {
@@ -161,6 +184,7 @@ export default defineConfig({
                 "zh-CN": "贡献与报告",
                 ja: "貢献と報告",
                 es: "Contribuir e informar",
+                de: "Mitwirken und melden",
               },
               slug: "community",
             },
