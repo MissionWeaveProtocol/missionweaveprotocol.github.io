@@ -144,7 +144,21 @@ export default defineConfig({
             fr: "Construire",
             de: "Entwickeln",
           },
-          items: [{ label: "Python SDK", slug: "sdk/python" }],
+          items: [
+            {
+              label: "SDKs",
+              translations: {
+                "zh-CN": "SDK",
+                "zh-TW": "SDK",
+                ja: "SDK",
+                es: "SDK",
+                fr: "SDK",
+                de: "SDK",
+              },
+              slug: "sdk",
+            },
+            { label: "Python SDK", slug: "sdk/python" },
+          ],
         },
         {
           label: "Reference",
