@@ -1,0 +1,93 @@
+---
+title: MissionWeaveProtocol 0.1
+description:
+  1 つの Organization 内で自律 Agent が協働するための Group 指向プロトコル、
+  MissionWeaveProtocol 0.1 の非規範的な入門ガイド。
+sidebar:
+  label: 概要
+  order: 1
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+:::caution[ドラフト標準 0.1]
+
+これは非規範的な学習ガイドです。仕様、用語集、schema、適合性 vector については、
+[正式な MissionWeaveProtocol リポジトリ](https://github.com/missionweaveprotocol/missionweaveprotocol)
+が正本です。
+
+:::
+
+MissionWeaveProtocol は、1 つの信頼された Organization 内で働く自律 Agent のための Group 指向協働プロトコルです。Agent は複数の Mission
+Group に参加し、他の Agent と durable な Message を交換し、明示的な WorkItem を Group ごとの queue に受け入れ、自身の local
+policy に従って Group を横断する作業を schedule できます。
+
+## 要点
+
+1. 人間の MissionOwner が、完了条件、deadline、budget、approval
+   policy を備えた、範囲の定められた Mission を作成します。
+2. Mission には、正確に 1 つの Group、1 つの durable
+   Event 履歴、交換可能な Coordinator が割り当てられます。
+3. Group
+   member は context を話し合い、作業を提案できますが、Message だけで execution が authorize されることはありません。
+4. Coordinator または明示的に scope を与えられた delegate が、proposal を機械可読の Work
+   Contract を持つ WorkItem に変換します。
+5. Worker は受入判定を行い、offer を Group ごとの queue に受け入れ、global
+   Scheduler を通じていつ実行するかを決定します。
+6. 作業の結果として content-addressed な Artifact と、acceptance
+   criteria に対応付けられた Evidence が生成されます。
+7. Coordinator が Worker の結果を検証した後、人間の MissionOwner が正確な Mission
+   revision と Artifact set を承認します。
+
+## モデルを学ぶ
+
+<CardGrid>
+  <LinkCard
+    title="コアモデル"
+    description="Mission、Group、role、durable state、local projection を理解します。"
+    href="./core-model/"
+  />
+  <LinkCard
+    title="作業ライフサイクル"
+    description="Conversation と proposal から Evidence と Approval までの流れを追います。"
+    href="./work-lifecycle/"
+  />
+  <LinkCard
+    title="スケジューリング"
+    description="Group ごとの queue を 1 つの Worker-owned global Scheduler へ送る仕組みを確認します。"
+    href="./scheduling/"
+  />
+  <LinkCard
+    title="信頼と権限"
+    description="identity、Conversation、assignment、execution、Approval の authority を分離します。"
+    href="./trust-and-authority/"
+  />
+  <LinkCard
+    title="子 Mission"
+    description="scope、budget、説明責任を失わずに複雑な作業を分解します。"
+    href="./child-missions/"
+  />
+</CardGrid>
+
+## プロトコルの境界
+
+MissionWeaveProtocol は、Agent 間 RPC、Organization をまたぐ federation、物理的な peer-to-peer
+routing、distributed consensus、model prompt、private model
+reasoning を定義しません。1 つの Organization が identity、policy、authorization、durable な Group
+ordering、人間による説明責任を提供します。
+
+:::note[Conversation は context であり、authority ではありません]
+
+Message、mention、summary、Context Package、model output だけで、tool
+call、business action、WorkItem assignment、budget expense、permission
+grant を authorize することはできません。結果を伴う action には、明示的な structured
+state が必要です。
+
+:::
+
+## 規範となるソース
+
+- [MissionWeaveProtocol 0.1 仕様](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
+- [プロトコル用語集](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
+- [JSON Schema](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
+- [適合性 vector](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
