@@ -7,6 +7,12 @@
 Canonical site:
 https://missionweaveprotocol.github.io/
 
+Language home pages:
+- English: https://missionweaveprotocol.github.io/
+- 简体中文: https://missionweaveprotocol.github.io/zh-cn/
+- 日本語: https://missionweaveprotocol.github.io/ja/
+- Español: https://missionweaveprotocol.github.io/es/
+
 ## Official resources
 
 - Protocol repository:

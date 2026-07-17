@@ -21,6 +21,12 @@ const requiredOutputs = [
   "reference/schemas/index.html",
   "reference/conformance/index.html",
   "sdk/python/index.html",
+  "zh-cn/index.html",
+  "zh-cn/docs/0.1/index.html",
+  "ja/index.html",
+  "ja/docs/0.1/index.html",
+  "es/index.html",
+  "es/docs/0.1/index.html",
   "sitemap-index.xml",
   "llms.txt",
   "robots.txt",
@@ -47,7 +53,11 @@ async function collectHtmlFiles(directory) {
 }
 
 async function targetExists(pathname) {
-  if (pathname === withBase("404/")) {
+  const relativePath = decodeURIComponent(
+    base === "/" ? pathname.slice(1) : pathname.slice(base.length),
+  ).replace(/^\//u, "");
+
+  if (/^(?:(?:zh-cn|ja|es)\/)?404\/$/u.test(relativePath)) {
     try {
       await access(path.join(dist, "404.html"));
       return true;
@@ -56,9 +66,6 @@ async function targetExists(pathname) {
     }
   }
 
-  const relativePath = decodeURIComponent(
-    base === "/" ? pathname.slice(1) : pathname.slice(base.length),
-  ).replace(/^\//u, "");
   const candidates = pathname.endsWith("/")
     ? [path.join(dist, relativePath, "index.html")]
     : [
@@ -84,6 +91,9 @@ let checkedReferences = 0;
 
 for (const file of htmlFiles) {
   const html = await readFile(file, "utf8");
+  if (html.includes("/edit/main/")) {
+    failures.push(`${path.relative(dist, file)} exposes an edit-page link`);
+  }
   const route = path
     .relative(dist, file)
     .replace(/\\/gu, "/")
