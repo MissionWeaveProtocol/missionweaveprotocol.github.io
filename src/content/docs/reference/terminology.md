@@ -10,7 +10,7 @@ sidebar:
 ---
 
 This page is a compact learning reference. The
-[canonical protocol glossary](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/CONTEXT.md)
+[canonical protocol glossary](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
 defines the normative vocabulary for MissionWeave 0.1.
 
 ## Organization and identity

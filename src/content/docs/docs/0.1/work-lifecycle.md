@@ -10,7 +10,7 @@ sidebar:
 :::caution[Draft Standard 0.1]
 
 This is a non-normative learning guide. The
-[canonical protocol repository](https://github.com/MissionWeaveProject/missionweaveprotocol)
+[canonical protocol repository](https://github.com/missionweaveprotocol/missionweaveprotocol)
 remains normative.
 
 :::
@@ -94,6 +94,6 @@ or requests changes. A change request reopens the same Mission without erasing
 earlier submissions.
 
 For the complete transitions and authority rules, read the normative
-[WorkItem state machine](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md#102-workitem-state-machine)
+[WorkItem state machine](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#102-workitem-state-machine)
 and
-[Evidence-based review](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md#132-evidence-based-review).
+[Evidence-based review](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#132-evidence-based-review).

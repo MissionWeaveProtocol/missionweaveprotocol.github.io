@@ -10,7 +10,7 @@ sidebar:
 :::caution[Draft Standard 0.1]
 
 This is a non-normative learning guide. The
-[canonical protocol repository](https://github.com/MissionWeaveProject/missionweaveprotocol)
+[canonical protocol repository](https://github.com/missionweaveprotocol/missionweaveprotocol)
 remains normative.
 
 :::
@@ -93,8 +93,8 @@ Coordinator verifies the results. Execution Approval permits a bounded risky
 operation; final Approval accepts a completed Mission revision and Artifact set.
 
 For the complete rules, read the normative
-[identity and sessions](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md#6-identity-agent-registry-and-sessions),
-[Membership and visibility](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md#8-membership-visibility-and-attention),
+[identity and sessions](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#6-identity-agent-registry-and-sessions),
+[Membership and visibility](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#8-membership-visibility-and-attention),
 and
-[authorization and budgets](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md#12-authorization-budgets-and-side-effects)
+[authorization and budgets](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#12-authorization-budgets-and-side-effects)
 sections.

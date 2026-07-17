@@ -10,7 +10,7 @@ sidebar:
 :::caution[Draft Standard 0.1]
 
 This is a non-normative learning guide. The
-[canonical protocol repository](https://github.com/MissionWeaveProject/missionweaveprotocol)
+[canonical protocol repository](https://github.com/missionweaveprotocol/missionweaveprotocol)
 remains normative.
 
 :::
@@ -77,7 +77,7 @@ child indispensable and provides no alternative.
   after an approved Mission has become immutable.
 
 For the complete rules, read the normative
-[parent and child Missions](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md#14-parent-and-child-missions)
+[parent and child Missions](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#14-parent-and-child-missions)
 and
-[Mission lifecycle](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md#7-mission-and-group-lifecycle)
+[Mission lifecycle](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#7-mission-and-group-lifecycle)
 sections.

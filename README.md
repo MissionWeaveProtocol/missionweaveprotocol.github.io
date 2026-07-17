@@ -2,10 +2,9 @@
 
 This repository contains the official MissionWeave website and documentation.
 
-- Website:
-  <https://missionweaveproject.github.io/missionweaveprotocol.github.io/>
-- Protocol: <https://github.com/MissionWeaveProject/missionweaveprotocol>
-- Python SDK: <https://github.com/MissionWeaveProject/python-sdk>
+- Website: <https://missionweaveprotocol.github.io/>
+- Protocol: <https://github.com/missionweaveprotocol/missionweaveprotocol>
+- Python SDK: <https://github.com/missionweaveprotocol/python-sdk>
 
 ## Local development
 

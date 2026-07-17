@@ -20,13 +20,13 @@ replay, verification, and human approval.
 
 This website explains and links to MissionWeave, but it is not the normative
 protocol source. The
-[`missionweaveprotocol` repository](https://github.com/MissionWeaveProject/missionweaveprotocol)
+[`missionweaveprotocol` repository](https://github.com/missionweaveprotocol/missionweaveprotocol)
 owns the authoritative artifacts:
 
-- [MissionWeave Protocol 0.1 specification](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
-- [Protocol glossary](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/CONTEXT.md)
-- [Normative JSON Schemas](https://github.com/MissionWeaveProject/missionweaveprotocol/tree/main/schemas)
-- [Conformance manifest and vectors](https://github.com/MissionWeaveProject/missionweaveprotocol/tree/main/conformance)
+- [MissionWeave Protocol 0.1 specification](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
+- [Protocol glossary](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
+- [Normative JSON Schemas](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
+- [Conformance manifest and vectors](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
 
 When this guide and a normative artifact differ, the artifact in the protocol
 repository controls.
@@ -46,10 +46,10 @@ or exact commit rather than infer compatibility from matching version numbers.
 ## Reading path
 
 1. Start with the
-   [protocol glossary](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/CONTEXT.md)
+   [protocol glossary](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
    for the shared vocabulary.
 2. Read the
-   [normative specification](https://github.com/MissionWeaveProject/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
+   [normative specification](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
    for requirements and lifecycle rules.
 3. Use the [schema reference](../schemas/) for document structure.
 4. Run the [conformance vectors](../conformance/) against an implementation.

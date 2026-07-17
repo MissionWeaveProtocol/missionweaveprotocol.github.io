@@ -2,8 +2,10 @@ import sitemap from "@astrojs/sitemap";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
 
-const base = process.env.SITE_BASE ?? "/missionweaveprotocol.github.io";
-const site = process.env.SITE_URL ?? "https://missionweaveproject.github.io";
+const configuredBase = process.env.SITE_BASE;
+const base =
+  configuredBase === undefined || configuredBase === "" ? "/" : configuredBase;
+const site = process.env.SITE_URL ?? "https://missionweaveprotocol.github.io";
 const withBase = (path) => `${base === "/" ? "" : base}${path}`;
 const absoluteAsset = (path) => new URL(withBase(path), site).href;
 
@@ -69,12 +71,12 @@ export default defineConfig({
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/MissionWeaveProject",
+          href: "https://github.com/missionweaveprotocol",
         },
       ],
       editLink: {
         baseUrl:
-          "https://github.com/MissionWeaveProject/missionweaveprotocol.github.io/edit/main/",
+          "https://github.com/missionweaveprotocol/missionweaveprotocol.github.io/edit/main/",
       },
       head: [
         {

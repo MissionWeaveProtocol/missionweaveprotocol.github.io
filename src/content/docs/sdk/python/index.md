@@ -7,8 +7,9 @@ sidebar:
   order: 1
 ---
 
-The [MissionWeave Python SDK](https://github.com/MissionWeaveProject/python-sdk)
-is the official Python reference implementation of MissionWeave Protocol 0.1. It
+The
+[MissionWeave Python SDK](https://github.com/missionweaveprotocol/python-sdk) is
+the official Python reference implementation of MissionWeave Protocol 0.1. It
 includes the authoritative Core, Agent runtime, Worker Scheduler, Group gateway,
 storage adapters, conformance runner, and executable proof of concept.
 
@@ -23,15 +24,15 @@ These instructions use a source checkout of the SDK repository.
 ## Check out and prepare the SDK
 
 ```bash
-git clone https://github.com/MissionWeaveProject/python-sdk.git
+git clone https://github.com/missionweaveprotocol/python-sdk.git
 cd python-sdk
 uv sync --extra dev
 ```
 
 The source package is
-[`src/missionweave/`](https://github.com/MissionWeaveProject/python-sdk/tree/main/src/missionweave).
+[`src/missionweave/`](https://github.com/missionweaveprotocol/python-sdk/tree/main/src/missionweave).
 The project metadata and command entry points are defined in
-[`pyproject.toml`](https://github.com/MissionWeaveProject/python-sdk/blob/main/pyproject.toml).
+[`pyproject.toml`](https://github.com/missionweaveprotocol/python-sdk/blob/main/pyproject.toml).
 
 ## Verify the source checkout
 
@@ -45,13 +46,13 @@ uv run missionweave-conformance --root .
 
 The conformance command checks all 43 vendored vectors against the 21 vendored
 Draft 2020-12 schemas. The protocol repository remains normative;
-[`PROTOCOL_PIN.json`](https://github.com/MissionWeaveProject/python-sdk/blob/main/PROTOCOL_PIN.json)
+[`PROTOCOL_PIN.json`](https://github.com/missionweaveprotocol/python-sdk/blob/main/PROTOCOL_PIN.json)
 records the exact protocol commit and artifact digests used by the SDK.
 
 To validate a sibling checkout of the canonical protocol repository instead:
 
 ```bash
-git clone https://github.com/MissionWeaveProject/missionweaveprotocol.git ../missionweaveprotocol
+git clone https://github.com/missionweaveprotocol/missionweaveprotocol.git ../missionweaveprotocol
 uv run missionweave-conformance --root ../missionweaveprotocol
 ```
 
@@ -115,4 +116,4 @@ runtime document validation.
 
 For implementation details, tests, and current compatibility information, use
 the canonical
-[SDK README](https://github.com/MissionWeaveProject/python-sdk/blob/main/README.md).
+[SDK README](https://github.com/missionweaveprotocol/python-sdk/blob/main/README.md).

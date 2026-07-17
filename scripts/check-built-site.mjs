@@ -4,10 +4,14 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const dist = fileURLToPath(new URL("../dist/", import.meta.url));
-const configuredBase =
-  process.env.SITE_BASE ?? "/missionweaveprotocol.github.io";
-const base = `/${configuredBase.split("/").filter(Boolean).join("/")}`;
-const origin = "https://missionweaveproject.github.io";
+const configuredBase = process.env.SITE_BASE;
+const baseSegments = configuredBase?.split("/").filter(Boolean) ?? [];
+const base = baseSegments.length === 0 ? "/" : `/${baseSegments.join("/")}`;
+const origin = process.env.SITE_URL ?? "https://missionweaveprotocol.github.io";
+const withBase = (route) => {
+  const normalizedRoute = route.replace(/^\//u, "");
+  return base === "/" ? `/${normalizedRoute}` : `${base}/${normalizedRoute}`;
+};
 
 const requiredOutputs = [
   "index.html",
@@ -43,7 +47,7 @@ async function collectHtmlFiles(directory) {
 }
 
 async function targetExists(pathname) {
-  if (pathname === `${base}/404/`) {
+  if (pathname === withBase("404/")) {
     try {
       await access(path.join(dist, "404.html"));
       return true;
@@ -52,10 +56,9 @@ async function targetExists(pathname) {
     }
   }
 
-  const relativePath = decodeURIComponent(pathname.slice(base.length)).replace(
-    /^\//u,
-    "",
-  );
+  const relativePath = decodeURIComponent(
+    base === "/" ? pathname.slice(1) : pathname.slice(base.length),
+  ).replace(/^\//u, "");
   const candidates = pathname.endsWith("/")
     ? [path.join(dist, relativePath, "index.html")]
     : [
@@ -85,7 +88,7 @@ for (const file of htmlFiles) {
     .relative(dist, file)
     .replace(/\\/gu, "/")
     .replace(/index\.html$/u, "");
-  const pageUrl = new URL(`${base}/${route}`, origin);
+  const pageUrl = new URL(withBase(route), origin);
   const references = html.matchAll(
     /<(?:a|img|link|script|source)\b[^>]*?\b(?:href|src)="([^"]+)"/giu,
   );
@@ -107,7 +110,11 @@ for (const file of htmlFiles) {
     }
 
     checkedReferences += 1;
-    if (target.pathname !== base && !target.pathname.startsWith(`${base}/`)) {
+    const isWithinBase =
+      base === "/"
+        ? target.pathname.startsWith("/")
+        : target.pathname === base || target.pathname.startsWith(`${base}/`);
+    if (!isWithinBase) {
       failures.push(
         `${path.relative(dist, file)} escapes the Pages base: ${reference}`,
       );
