@@ -1,7 +1,7 @@
 # MissionWeaveProtocol 官网
 
-[English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) |
-[日本語](README.ja.md) | [Español](README.es.md) | [Français](README.fr.md) |
+[English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md)
+| [日本語](README.ja.md) | [Español](README.es.md) | [Français](README.fr.md) |
 [Deutsch](README.de.md)
 
 本仓库包含 MissionWeaveProtocol 的官方网站与文档。

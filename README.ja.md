@@ -1,7 +1,7 @@
 # MissionWeaveProtocol 公式ウェブサイト
 
-[English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) |
-[日本語](README.ja.md) | [Español](README.es.md) | [Français](README.fr.md) |
+[English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md)
+| [日本語](README.ja.md) | [Español](README.es.md) | [Français](README.fr.md) |
 [Deutsch](README.de.md)
 
 このリポジトリには、MissionWeaveProtocol の公式ウェブサイトとドキュメントが含まれます。

@@ -1,7 +1,7 @@
 # Site web de MissionWeaveProtocol
 
-[English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) |
-[日本語](README.ja.md) | [Español](README.es.md) | [Français](README.fr.md) |
+[English](README.md) | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md)
+| [日本語](README.ja.md) | [Español](README.es.md) | [Français](README.fr.md) |
 [Deutsch](README.de.md)
 
 Ce dépôt contient le site web officiel et la documentation de
