@@ -1,0 +1,98 @@
+---
+title: MissionWeaveProtocol 0.1
+description:
+  Introducción no normativa a MissionWeaveProtocol 0.1, un protocolo de
+  cooperación orientado a Group para Agent autónomos dentro de una Organization.
+sidebar:
+  label: Visión general
+  order: 1
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+:::caution[Draft Standard 0.1]
+
+Esta es una guía de aprendizaje no normativa. El
+[repositorio canónico de MissionWeaveProtocol](https://github.com/missionweaveprotocol/missionweaveprotocol)
+es la fuente de referencia para la especificación, el glosario, los schemas y
+los vectores de conformidad.
+
+:::
+
+MissionWeaveProtocol es un protocolo de cooperación orientado a Group para Agent
+autónomos que trabajan dentro de una Organization de confianza. Un Agent puede
+participar en muchos Mission Group, intercambiar Message duraderos con sus
+pares, aceptar WorkItem explícitos en colas por Group y planificar el trabajo
+entre distintos Group según su propia política local.
+
+## Resumen
+
+1. Un MissionOwner humano crea una Mission acotada con una definición de
+   finalización, un plazo, un presupuesto y una política de Approval.
+2. La Mission recibe exactamente un Group, un historial duradero de Event y un
+   Coordinator reemplazable.
+3. Los miembros del Group debaten el contexto y pueden proponer trabajo, pero
+   los Message nunca autorizan por sí solos la ejecución.
+4. Un Coordinator o un delegado con alcance explícito convierte una propuesta en
+   un WorkItem con un Work Contract legible por máquina.
+5. Un Worker realiza el Admission Control, acepta una oferta en su cola por
+   Group y decide cuándo ejecutarla mediante su Scheduler global.
+6. El trabajo produce Artifact direccionados por contenido y Evidence vinculada
+   a los criterios de aceptación.
+7. El Coordinator verifica los resultados del Worker antes de que el
+   MissionOwner humano apruebe una revisión exacta de la Mission y un conjunto
+   exacto de Artifact.
+
+## Aprender el modelo
+
+<CardGrid>
+  <LinkCard
+    title="Modelo central"
+    description="Comprende Mission, Group, roles, estado duradero y proyecciones locales."
+    href="./core-model/"
+  />
+  <LinkCard
+    title="Ciclo de trabajo"
+    description="Sigue el trabajo desde la Conversation y la propuesta hasta la Evidence y la Approval."
+    href="./work-lifecycle/"
+  />
+  <LinkCard
+    title="Planificación"
+    description="Descubre cómo las colas por Group alimentan un Scheduler global propiedad del Worker."
+    href="./scheduling/"
+  />
+  <LinkCard
+    title="Confianza y autoridad"
+    description="Separa la autoridad de identidad, Conversation, asignación, ejecución y Approval."
+    href="./trust-and-authority/"
+  />
+  <LinkCard
+    title="Child Mission"
+    description="Descompón trabajo complejo sin perder alcance, presupuesto ni responsabilidad."
+    href="./child-missions/"
+  />
+</CardGrid>
+
+## Límites del protocolo
+
+MissionWeaveProtocol no define RPC entre Agent, federación entre Organization,
+enrutamiento físico entre pares, consenso distribuido, prompts de modelos ni
+razonamiento privado de modelos. Una Organization aporta identidad, política,
+autorización, orden duradero por Group y responsabilidad humana.
+
+:::note[Conversation aporta contexto, no autoridad]
+
+Un Message, una mención, un resumen, un Context Package o la salida de un modelo
+no puede autorizar por sí solo una llamada a una herramienta, una acción de
+negocio, la asignación de un WorkItem, un gasto presupuestario ni la concesión
+de un permiso. Las acciones con consecuencias requieren estado estructurado
+explícito.
+
+:::
+
+## Fuentes normativas
+
+- [Especificación MissionWeaveProtocol 0.1](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
+- [Glosario del protocolo](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
+- [JSON Schemas](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
+- [Vectores de conformidad](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
