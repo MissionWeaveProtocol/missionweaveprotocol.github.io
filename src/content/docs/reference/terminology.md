@@ -1,8 +1,8 @@
 ---
-title: MissionWeave terminology
+title: MissionWeaveProtocol terminology
 description:
-  Essential MissionWeave terms for identity, collaboration, work, scheduling,
-  and approval.
+  Essential MissionWeaveProtocol terms for identity, collaboration, work,
+  scheduling, and approval.
 sidebar:
   badge:
     text: Draft 0.1
@@ -11,7 +11,7 @@ sidebar:
 
 This page is a compact learning reference. The
 [canonical protocol glossary](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
-defines the normative vocabulary for MissionWeave 0.1.
+defines the normative vocabulary for MissionWeaveProtocol 0.1.
 
 ## Organization and identity
 
@@ -118,4 +118,4 @@ parent Mission, with budgets and authority narrowed from its parent.
 when later correction or additional work is required.
 
 **Extension Profile** : An Organization-approved, versioned schema and semantics
-package that cannot override core MissionWeave invariants.
+package that cannot override core MissionWeaveProtocol invariants.

@@ -9,9 +9,11 @@ const outputPath = (name) => fileURLToPath(new URL(name, publicDirectory));
 
 await mkdir(publicDirectory, { recursive: true });
 
-const blueIcon = await readFile(new URL("missionweave-icon.svg", assets));
+const blueIcon = await readFile(
+  new URL("missionweaveprotocol-icon.svg", assets),
+);
 const whiteIcon = await readFile(
-  new URL("missionweave-icon-white.svg", assets),
+  new URL("missionweaveprotocol-icon-white.svg", assets),
 );
 
 await writeFile(new URL("favicon.svg", publicDirectory), blueIcon);
@@ -33,7 +35,7 @@ const socialCard = `
   <path d="M925 0C971 115 992 227 987 336C983 449 953 547 898 630" fill="none" stroke="#C9D8F5" stroke-width="2"/>
   <rect x="80" y="78" width="148" height="148" rx="36" fill="#2F6FDB"/>
   <image x="80" y="78" width="148" height="148" href="data:image/svg+xml;base64,${embeddedIcon}"/>
-  <text x="80" y="350" fill="#121826" font-family="Arial, Helvetica, sans-serif" font-size="82" font-weight="700" letter-spacing="-2">MissionWeave</text>
+  <text x="80" y="350" fill="#121826" font-family="Arial, Helvetica, sans-serif" font-size="82" font-weight="700" letter-spacing="-2">MissionWeaveProtocol</text>
   <text x="84" y="418" fill="#465269" font-family="Arial, Helvetica, sans-serif" font-size="34">Accountable cooperation for autonomous agents.</text>
   <line x1="84" y1="494" x2="1116" y2="494" stroke="#D8DEE9" stroke-width="2"/>
   <text x="84" y="554" fill="#2F6FDB" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" letter-spacing="1.5">MISSION GROUPS  ·  EXPLICIT WORK  ·  HUMAN APPROVAL</text>
@@ -43,8 +45,8 @@ await writeFile(new URL("og-image.svg", publicDirectory), `${socialCard}\n`);
 await sharp(Buffer.from(socialCard)).png().toFile(outputPath("og-image.png"));
 
 const manifest = {
-  name: "MissionWeave",
-  short_name: "MissionWeave",
+  name: "MissionWeaveProtocol",
+  short_name: "MissionWeaveProtocol",
   description:
     "Group-oriented cooperation for autonomous agents inside one organization.",
   start_url: ".",

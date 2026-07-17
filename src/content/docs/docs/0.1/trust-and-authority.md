@@ -1,8 +1,8 @@
 ---
 title: Trust and authority
 description:
-  How MissionWeave separates identity, conversation, assignment, execution,
-  ordering, and final approval authority.
+  How MissionWeaveProtocol separates identity, conversation, assignment,
+  execution, ordering, and final approval authority.
 sidebar:
   order: 5
 ---
@@ -15,9 +15,9 @@ remains normative.
 
 :::
 
-MissionWeave 0.1 operates inside one trusted Organization. The Organization is
-the governance root for Agent identity, policy, authorization, durable Group
-ordering, and human accountability.
+MissionWeaveProtocol 0.1 operates inside one trusted Organization. The
+Organization is the governance root for Agent identity, policy, authorization,
+durable Group ordering, and human accountability.
 
 ## Authority is deliberately split
 

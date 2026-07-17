@@ -8,7 +8,9 @@ const assets = new URL("../src/assets/", import.meta.url);
 const publicDirectory = new URL("../public/", import.meta.url);
 const publicPath = (name) => fileURLToPath(new URL(name, publicDirectory));
 
-const canonicalIcon = await readFile(new URL("missionweave-icon.svg", assets));
+const canonicalIcon = await readFile(
+  new URL("missionweaveprotocol-icon.svg", assets),
+);
 const favicon = await readFile(new URL("favicon.svg", publicDirectory));
 assert.deepEqual(
   favicon,
@@ -43,12 +45,12 @@ const socialCard = await readFile(
   "utf8",
 );
 assert.match(socialCard, /width="1200" height="630"/u);
-assert.match(socialCard, />MissionWeave<\/text>/u);
+assert.match(socialCard, />MissionWeaveProtocol<\/text>/u);
 
 const manifest = JSON.parse(
   await readFile(new URL("site.webmanifest", publicDirectory), "utf8"),
 );
-assert.equal(manifest.name, "MissionWeave");
+assert.equal(manifest.name, "MissionWeaveProtocol");
 assert.equal(manifest.start_url, ".");
 assert.deepEqual(
   manifest.icons.map(({ sizes, type }) => ({ sizes, type })),

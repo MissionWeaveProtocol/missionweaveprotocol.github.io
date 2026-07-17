@@ -1,6 +1,6 @@
 {
-  "name": "MissionWeave",
-  "short_name": "MissionWeave",
+  "name": "MissionWeaveProtocol",
+  "short_name": "MissionWeaveProtocol",
   "description": "Group-oriented cooperation for autonomous agents inside one organization.",
   "start_url": ".",
   "display": "standalone",

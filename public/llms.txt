@@ -1,6 +1,6 @@
-# MissionWeave
+# MissionWeaveProtocol
 
-> Official documentation for MissionWeave, a group-oriented protocol for
+> Official documentation for MissionWeaveProtocol, a group-oriented protocol for
 > coordinated and accountable collaboration among autonomous agents inside an
 > organization.
 
@@ -18,6 +18,6 @@ https://missionweaveprotocol.github.io/
 
 ## Version status
 
-MissionWeave is evolving. Any 0.1 material is a draft rather than a final
+MissionWeaveProtocol is evolving. Any 0.1 material is a draft rather than a final
 standard. Consult the protocol repository for current releases, compatibility
 information, and normative artifacts.

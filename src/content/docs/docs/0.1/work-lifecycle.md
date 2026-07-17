@@ -1,8 +1,8 @@
 ---
 title: Work lifecycle
 description:
-  How MissionWeave moves from conversation and work proposals to accepted,
-  verified, and human-approved results.
+  How MissionWeaveProtocol moves from conversation and work proposals to
+  accepted, verified, and human-approved results.
 sidebar:
   order: 3
 ---
@@ -15,10 +15,10 @@ remains normative.
 
 :::
 
-MissionWeave keeps conversational cooperation fluid while making executable
-responsibility explicit. Any Group member may discuss context, request help, or
-propose work. A proposal becomes an obligation only through an authorized
-WorkItem transition.
+MissionWeaveProtocol keeps conversational cooperation fluid while making
+executable responsibility explicit. Any Group member may discuss context,
+request help, or propose work. A proposal becomes an obligation only through an
+authorized WorkItem transition.
 
 ## From discussion to commitment
 

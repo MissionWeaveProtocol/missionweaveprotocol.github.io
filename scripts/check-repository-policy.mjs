@@ -1,8 +1,8 @@
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 
-const retiredRepositoryName = ["MissionWeave", "Protocol"].join("");
-const retiredPythonRepositoryName = ["MissionWeave", "Python"].join("");
+const shortDisplayName = ["Mission", "Weave"].join("");
+const shortMachineName = ["mission", "weave"].join("");
 
 const vocabularyRules = [
   {
@@ -17,12 +17,12 @@ const vocabularyRules = [
     ),
   },
   {
-    label: "retired protocol repository casing",
-    pattern: new RegExp(retiredRepositoryName, "u"),
+    label: "incomplete product name",
+    pattern: new RegExp(`${shortDisplayName}(?!Protocol)`, "u"),
   },
   {
-    label: "retired Python repository name",
-    pattern: new RegExp(retiredPythonRepositoryName, "u"),
+    label: "incomplete machine identifier",
+    pattern: new RegExp(`${shortMachineName}(?!protocol)`, "u"),
   },
   {
     label: "retired decision-record shorthand",

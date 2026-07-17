@@ -1,6 +1,7 @@
-# MissionWeave website
+# MissionWeaveProtocol website
 
-This repository contains the official MissionWeave website and documentation.
+This repository contains the official MissionWeaveProtocol website and
+documentation.
 
 - Website: <https://missionweaveprotocol.github.io/>
 - Protocol: <https://github.com/missionweaveprotocol/missionweaveprotocol>

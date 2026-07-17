@@ -1,29 +1,29 @@
 ---
-title: MissionWeave Protocol 0.1
+title: MissionWeaveProtocol 0.1
 description:
-  Read the normative MissionWeave specification and protocol glossary.
+  Read the normative MissionWeaveProtocol specification and protocol glossary.
 sidebar:
   label: Specification
   order: 1
 banner:
   content:
-    MissionWeave Protocol 0.1 is a <strong>Draft Standard</strong>. Use the
+    MissionWeaveProtocol 0.1 is a <strong>Draft Standard</strong>. Use the
     canonical repository for normative requirements.
 ---
 
-MissionWeave Protocol 0.1 defines group-oriented cooperation for autonomous
+MissionWeaveProtocol 0.1 defines group-oriented cooperation for autonomous
 Agents working inside one Organization. It covers identity, Mission Groups,
 explicit WorkItems, peer Messages, scheduling, authority, durable ordering,
 replay, verification, and human approval.
 
 ## Normative source
 
-This website explains and links to MissionWeave, but it is not the normative
-protocol source. The
+This website explains and links to MissionWeaveProtocol, but it is not the
+normative protocol source. The
 [`missionweaveprotocol` repository](https://github.com/missionweaveprotocol/missionweaveprotocol)
 owns the authoritative artifacts:
 
-- [MissionWeave Protocol 0.1 specification](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
+- [MissionWeaveProtocol 0.1 specification](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
 - [Protocol glossary](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
 - [Normative JSON Schemas](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
 - [Conformance manifest and vectors](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
@@ -33,11 +33,12 @@ repository controls.
 
 ## Version and identifiers
 
-The current protocol version is `0.1`. Its wire namespace is `missionweave`:
+The current protocol version is `0.1`. Its wire namespace is
+`missionweaveprotocol`:
 
-- protocol identifiers use `urn:missionweave:*`;
-- built-in extension kinds use `ext.missionweave.*`;
-- schema identifiers use `https://missionweave.dev/schemas/0.1/`.
+- protocol identifiers use `urn:missionweaveprotocol:*`;
+- built-in extension kinds use `ext.missionweaveprotocol.*`;
+- schema identifiers use `https://missionweaveprotocol.dev/schemas/0.1/`.
 
 Protocol releases and SDK releases are versioned independently. An
 implementation should declare compatibility and pin a released protocol version

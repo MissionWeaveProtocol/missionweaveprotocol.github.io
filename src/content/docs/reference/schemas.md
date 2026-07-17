@@ -1,12 +1,12 @@
 ---
 title: JSON Schemas
-description: Browse the 21 normative MissionWeave Protocol 0.1 JSON Schemas.
+description: Browse the 21 normative MissionWeaveProtocol 0.1 JSON Schemas.
 sidebar:
   label: JSON Schemas
   order: 2
 ---
 
-MissionWeave Protocol 0.1 defines **21 normative JSON Schema Draft 2020-12
+MissionWeaveProtocol 0.1 defines **21 normative JSON Schema Draft 2020-12
 files**. The canonical files live in the
 [`schemas/` directory](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
 of the protocol repository.

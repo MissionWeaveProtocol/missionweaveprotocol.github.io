@@ -1,12 +1,13 @@
 ---
 title: Conformance
-description: Run the 43 implementation-neutral MissionWeave conformance vectors.
+description:
+  Run the 43 implementation-neutral MissionWeaveProtocol conformance vectors.
 sidebar:
   label: Conformance
   order: 3
 ---
 
-MissionWeave Protocol 0.1 provides **43 implementation-neutral conformance
+MissionWeaveProtocol 0.1 provides **43 implementation-neutral conformance
 cases**:
 
 | Expected result | Cases | Canonical directory                                                                                                                  |
@@ -47,13 +48,13 @@ With sibling source checkouts named `missionweaveprotocol` and `python-sdk`, run
 this from the protocol checkout:
 
 ```bash
-uv run --project ../python-sdk missionweave-conformance --root .
+uv run --project ../python-sdk missionweaveprotocol-conformance --root .
 ```
 
 Or run this from the Python SDK checkout:
 
 ```bash
-uv run missionweave-conformance --root ../missionweaveprotocol
+uv run missionweaveprotocol-conformance --root ../missionweaveprotocol
 ```
 
 The Python SDK also vendors the same schema and vector bundle for offline

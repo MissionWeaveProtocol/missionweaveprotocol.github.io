@@ -2,7 +2,7 @@
 title: Scheduling across Groups
 description:
   Per-Group Worker queues, global scheduling, isolated execution slots,
-  checkpoint-safe preemption, and replay in MissionWeave Protocol 0.1.
+  checkpoint-safe preemption, and replay in MissionWeaveProtocol 0.1.
 sidebar:
   label: Scheduling
   order: 4
@@ -82,7 +82,8 @@ Worker restores its Cursors and queues from a snapshot and ordered replay. Event
 delivery is at least once, so the Worker deduplicates by Event ID and advances
 only the highest contiguous durable Cursor for each Group.
 
-MissionWeave defines ordering within a Group, not a global order across Groups.
+MissionWeaveProtocol defines ordering within a Group, not a global order across
+Groups.
 
 For the complete rules, read the normative
 [scheduling, execution, and recovery](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#11-scheduling-execution-and-recovery)

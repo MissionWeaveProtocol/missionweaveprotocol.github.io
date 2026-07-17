@@ -2,7 +2,7 @@
 title: Core model
 description:
   The Missions, Groups, roles, durable records, and local projections that make
-  up MissionWeave Protocol 0.1.
+  up MissionWeaveProtocol 0.1.
 sidebar:
   order: 2
 ---
@@ -15,7 +15,7 @@ remains normative.
 
 :::
 
-MissionWeave organizes cooperation around a bounded **Mission** and its
+MissionWeaveProtocol organizes cooperation around a bounded **Mission** and its
 temporary **Group**. Each Mission owns exactly one primary Group, and each
 primary Group belongs to exactly one Mission.
 
@@ -74,7 +74,7 @@ only after an authorized WorkItem transition and Worker acceptance.
 
 ## Authoritative state and local projections
 
-MissionWeave separates shared truth from rebuildable Worker state.
+MissionWeaveProtocol separates shared truth from rebuildable Worker state.
 
 **Authoritative state** includes Missions, Memberships, WorkItems, ownership and
 lease epochs, deduplication receipts, Approvals, and Group Events. The Group

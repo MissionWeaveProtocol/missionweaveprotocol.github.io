@@ -15,13 +15,13 @@ export default defineConfig({
   trailingSlash: "always",
   integrations: [
     starlight({
-      title: "MissionWeave",
+      title: "MissionWeaveProtocol",
       description:
         "Group-oriented cooperation for autonomous agents inside one organization.",
       logo: {
-        light: "./src/assets/missionweave-icon.svg",
-        dark: "./src/assets/missionweave-icon-white.svg",
-        alt: "MissionWeave",
+        light: "./src/assets/missionweaveprotocol-icon.svg",
+        dark: "./src/assets/missionweaveprotocol-icon-white.svg",
+        alt: "MissionWeaveProtocol",
       },
       favicon: "/favicon.svg",
       customCss: ["./src/styles/custom.css"],
@@ -31,7 +31,7 @@ export default defineConfig({
           label: "Learn",
           items: [
             {
-              label: "MissionWeave 0.1",
+              label: "MissionWeaveProtocol 0.1",
               slug: "docs/0.1",
               badge: { text: "Draft", variant: "caution" },
             },
