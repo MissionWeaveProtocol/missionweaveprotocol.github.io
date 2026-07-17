@@ -1,0 +1,82 @@
+---
+title: MissionWeaveProtocol 0.1
+description:
+  MissionWeaveProtocol 0.1 的非规范性介绍：一种面向单一 Organization 内自主
+  Agent 的 Group 协作协议。
+sidebar:
+  label: 概览
+  order: 1
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+:::caution[0.1 草案标准]
+
+这是一份非规范性学习指南。
+[MissionWeaveProtocol 权威仓库](https://github.com/missionweaveprotocol/missionweaveprotocol)
+是协议说明、术语表、schema 和符合性测试向量的唯一权威来源。
+
+:::
+
+MissionWeaveProtocol 是一种面向 Group 的协作协议，适用于在同一个受信任 Organization 内工作的自主 Agent。Agent 可以参与多个 Mission
+Group，与对等方交换持久 Message，将明确的 WorkItem 接收到各 Group 的队列中，并依据自身的本地策略跨 Group 调度工作。
+
+## 简要说明
+
+1. 人类 MissionOwner 创建一个边界明确的 Mission，并设定完成定义、截止时间、预算和批准策略。
+2. 该 Mission 恰好获得一个 Group、一份持久 Event 历史和一个可替换的 Coordinator。
+3. Group 成员可以讨论上下文并提出工作，但 Message 本身绝不会授权执行。
+4. Coordinator 或获得明确范围授权的受委托者将提议转化为带有机器可读 Work
+   Contract 的 WorkItem。
+5. Worker 执行准入控制，将邀约接收到自身的 Group 队列中，并由其全局 Scheduler 决定何时执行。
+6. 工作产出按内容寻址的 Artifact，以及映射到验收标准的 Evidence。
+7. Coordinator 先验证 Worker 结果，再由人类 MissionOwner 批准准确的 Mission 修订版本和 Artifact 集合。
+
+## 学习核心模型
+
+<CardGrid>
+  <LinkCard
+    title="核心模型"
+    description="了解 Mission、Group、角色、持久状态和本地投影。"
+    href="./core-model/"
+  />
+  <LinkCard
+    title="工作生命周期"
+    description="跟踪工作从对话和提议到 Evidence 与批准的完整过程。"
+    href="./work-lifecycle/"
+  />
+  <LinkCard
+    title="调度"
+    description="了解各 Group 队列如何汇入一个由 Worker 控制的全局 Scheduler。"
+    href="./scheduling/"
+  />
+  <LinkCard
+    title="信任与权限"
+    description="区分身份、对话、分派、执行和批准权限。"
+    href="./trust-and-authority/"
+  />
+  <LinkCard
+    title="子 Mission"
+    description="在不丢失范围、预算或问责关系的情况下拆解复杂工作。"
+    href="./child-missions/"
+  />
+</CardGrid>
+
+## 协议边界
+
+MissionWeaveProtocol 不定义 Agent-to-Agent
+RPC、跨 Organization 联邦、物理点对点路由、分布式共识、模型提示词或模型私有推理。一个 Organization 负责提供身份、策略、授权、持久 Group 排序和人类问责机制。
+
+:::note[对话提供上下文，不提供权限]
+
+Message、提及、摘要、Context
+Package 或模型输出本身不能授权工具调用、业务操作、WorkItem 分派、预算支出或权限授予。会产生后果的操作必须依赖明确的结构化状态。
+
+:::
+
+## 规范性来源
+
+- [MissionWeaveProtocol 0.1 协议说明](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
+- [协议术语表](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
+- [JSON Schema](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
+- [符合性测试向量](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
