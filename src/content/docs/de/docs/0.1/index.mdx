@@ -1,0 +1,101 @@
+---
+title: MissionWeaveProtocol 0.1
+description:
+  Eine nicht normative Einführung in MissionWeaveProtocol 0.1, ein
+  Group-orientiertes Kooperationsprotokoll für autonome Agent innerhalb einer
+  Organization.
+sidebar:
+  label: Überblick
+  order: 1
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+:::caution[Draft Standard 0.1]
+
+Dies ist ein nicht normativer Lernleitfaden. Das
+[kanonische MissionWeaveProtocol-Repository](https://github.com/missionweaveprotocol/missionweaveprotocol)
+ist die maßgebliche Quelle für Spezifikation, Glossar, Schemas und
+Konformitätsvektoren.
+
+:::
+
+MissionWeaveProtocol ist ein Group-orientiertes Kooperationsprotokoll für
+autonome Agent innerhalb einer vertrauenswürdigen Organization. Ein Agent kann
+an vielen Mission Group teilnehmen, dauerhafte Message mit Peers austauschen,
+ausdrückliche WorkItem in Group-spezifische Warteschlangen aufnehmen und die
+Arbeit über mehrere Group nach seiner eigenen lokalen Richtlinie planen.
+
+## Kurzfassung
+
+1. Ein menschlicher MissionOwner erstellt eine begrenzte Mission mit
+   Abschlussdefinition, Frist, Budget und Approval-Richtlinie.
+2. Die Mission erhält genau einen Group, eine dauerhafte Event-Historie und
+   einen austauschbaren Coordinator.
+3. Mitglieder des Group besprechen den Kontext und können Arbeit vorschlagen,
+   doch Message autorisieren niemals eigenständig eine Ausführung.
+4. Ein Coordinator oder ein ausdrücklich begrenzter Delegierter wandelt einen
+   Vorschlag in ein WorkItem mit einem maschinenlesbaren Work Contract um.
+5. Ein Worker führt Admission Control durch, nimmt ein Angebot in seine
+   Group-spezifische Warteschlange auf und entscheidet mit seinem globalen
+   Scheduler, wann es ausgeführt wird.
+6. Die Arbeit erzeugt inhaltsadressierte Artifact und den Akzeptanzkriterien
+   zugeordnete Evidence.
+7. Der Coordinator verifiziert die Ergebnisse des Worker, bevor der menschliche
+   MissionOwner eine genaue Mission-Revision und einen genauen Satz von Artifact
+   genehmigt.
+
+## Das Modell kennenlernen
+
+<CardGrid>
+  <LinkCard
+    title="Kernmodell"
+    description="Mission, Group, Rollen, dauerhaften Zustand und lokale Projektionen verstehen."
+    href="./core-model/"
+  />
+  <LinkCard
+    title="Arbeitslebenszyklus"
+    description="Arbeit von Conversation und Vorschlag bis zu Evidence und Approval verfolgen."
+    href="./work-lifecycle/"
+  />
+  <LinkCard
+    title="Planung"
+    description="Erfahren, wie Group-spezifische Warteschlangen einen globalen Scheduler des Worker speisen."
+    href="./scheduling/"
+  />
+  <LinkCard
+    title="Vertrauen und Autorität"
+    description="Autorität für Identität, Conversation, Zuweisung, Ausführung und Approval trennen."
+    href="./trust-and-authority/"
+  />
+  <LinkCard
+    title="Child Mission"
+    description="Komplexe Arbeit zerlegen, ohne Umfang, Budget oder Verantwortlichkeit zu verlieren."
+    href="./child-missions/"
+  />
+</CardGrid>
+
+## Protokollgrenzen
+
+MissionWeaveProtocol definiert weder Agent-to-Agent RPC noch
+organisationsübergreifende Föderation, physisches Peer-to-Peer-Routing,
+verteilten Konsens, Modell-Prompts oder private Modellüberlegungen. Eine
+Organization stellt Identität, Richtlinien, Autorisierung, dauerhafte
+Group-Reihenfolge und menschliche Verantwortlichkeit bereit.
+
+:::note[Conversation liefert Kontext, keine Autorität]
+
+Ein Message, eine Erwähnung, eine Zusammenfassung, ein Context Package oder eine
+Modellausgabe kann allein weder einen Tool-Aufruf, eine geschäftliche Aktion,
+die Zuweisung eines WorkItem, eine Budgetausgabe noch die Vergabe einer
+Berechtigung autorisieren. Folgenschwere Aktionen erfordern ausdrücklichen
+strukturierten Zustand.
+
+:::
+
+## Normative Quellen
+
+- [MissionWeaveProtocol 0.1-Spezifikation](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
+- [Protokollglossar](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
+- [JSON Schemas](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
+- [Konformitätsvektoren](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
