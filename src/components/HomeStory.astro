@@ -1,119 +1,443 @@
 ---
-const docsUrl = `${import.meta.env.BASE_URL}docs/0.1/`;
+type Locale = "en" | "zh-CN" | "ja" | "es";
+
+interface Props {
+  locale?: Locale;
+}
+
+type Principle = [title: string, body: string];
+type Step = [role: string, title: string, body: string];
+type Boundary = [eyebrow: string, title: string, body: string];
+
+interface HomeCopy {
+  intro: { eyebrow: string; title: string; body: string };
+  principles: Principle[];
+  panel: {
+    eyebrow: string;
+    title: string;
+    badge: string;
+    aria: string;
+    steps: Step[];
+  };
+  scheduler: {
+    eyebrow: string;
+    title: string;
+    body: string;
+    aria: string;
+    queues: string;
+    owned: string;
+    scheduler: string;
+    policy: string;
+    slots: string;
+    running: string;
+    ready: string;
+  };
+  boundaries: Boundary[];
+  closing: { eyebrow: string; title: string; link: string };
+}
+
+const { locale = "en" } = Astro.props as Props;
+const localePrefix = {
+  en: "",
+  "zh-CN": "zh-cn/",
+  ja: "ja/",
+  es: "es/",
+}[locale];
+const docsUrl = `${import.meta.env.BASE_URL}${localePrefix}docs/0.1/`;
+
+const copies: Record<Locale, HomeCopy> = {
+  en: {
+    intro: {
+      eyebrow: "Why MissionWeaveProtocol",
+      title: "A Mission is more than a chain of calls.",
+      body: "Agents need a shared place to reason together, a precise way to commit to work, and an accountable path from intent to approved result. MissionWeaveProtocol makes those responsibilities visible without turning conversation into executable authority.",
+    },
+    principles: [
+      [
+        "Talk as peers",
+        "Every Group member can send durable Messages and ask peers for the context they need.",
+      ],
+      [
+        "Commit explicitly",
+        "WorkItems and Work Contracts separate accountable execution from conversational intent.",
+      ],
+      [
+        "Schedule locally",
+        "Workers accept work into per-Group queues and keep final control of cross-Group ordering.",
+      ],
+      [
+        "Finish accountably",
+        "Coordinators verify Evidence and Artifacts before a human approves the completed Mission.",
+      ],
+    ],
+    panel: {
+      eyebrow: "One Mission, one Group",
+      title: "From objective to approved result",
+      badge: "Draft 0.1",
+      aria: "Mission lifecycle",
+      steps: [
+        [
+          "MissionOwner",
+          "Defines success",
+          "Objective, boundaries, budget, deadline, and final approval.",
+        ],
+        [
+          "Coordinator",
+          "Plans and assigns",
+          "WorkItems go to eligible Agents through explicit offers and acceptance.",
+        ],
+        [
+          "Workers",
+          "Cooperate and execute",
+          "Peers exchange context, hold leases, and publish immutable Artifacts.",
+        ],
+        [
+          "Review",
+          "Verify, then approve",
+          "The Coordinator checks Evidence; the human accepts the exact result.",
+        ],
+      ],
+    },
+    scheduler: {
+      eyebrow: "Many Groups, one Worker",
+      title: "Coordination stops at the Group boundary. Scheduling does not.",
+      body: "A Coordinator owns progress inside its Mission. A Worker may belong to many Missions, so its own Scheduler decides what runs next across per-Group queues, capacity slots, deadlines, dependencies, and local policy.",
+      aria: "Per-Group queues feeding a Worker Scheduler and isolated capacity slots",
+      queues: "Per-Group queues",
+      owned: "Worker-owned",
+      scheduler: "Scheduler",
+      policy: "priority · readiness · policy",
+      slots: "Capacity slots",
+      running: "running",
+      ready: "ready",
+    },
+    boundaries: [
+      [
+        "Designed for organizations",
+        "Shared trust, explicit authority.",
+        "The Organization controls Agent identity, policy, authorization, and durable Group order. Agents remain peers in conversation, while consequential state changes stay structured, signed, scoped, and auditable.",
+      ],
+      [
+        "Intentionally out of scope",
+        "Not another Agent RPC.",
+        "MissionWeaveProtocol does not define model prompts, physical peer-to-peer routing, cross-organization federation, or distributed consensus. It defines how one organization gets complex Agent work completed safely.",
+      ],
+    ],
+    closing: {
+      eyebrow: "Start with the draft",
+      title: "Build cooperation around work, not just messages.",
+      link: "Start with MissionWeaveProtocol 0.1",
+    },
+  },
+  "zh-CN": {
+    intro: {
+      eyebrow: "为什么选择 MissionWeaveProtocol",
+      title: "Mission 不只是调用链。",
+      body: "Agent 需要一个共同推理的空间、一种精确承诺工作的方式，以及一条从意图到获批结果的可问责路径。MissionWeaveProtocol 让这些责任清晰可见，同时不会把对话本身变成可执行权限。",
+    },
+    principles: [
+      [
+        "作为对等方交流",
+        "每位 Group 成员都能发送持久化 Message，并向其他成员请求所需上下文。",
+      ],
+      [
+        "明确承诺",
+        "WorkItem 与 Work Contract 将可问责执行和对话意图清晰分开。",
+      ],
+      [
+        "本地调度",
+        "Worker 将工作接收到各自的 per-Group queue，并保留跨 Group 排序的最终控制权。",
+      ],
+      [
+        "可问责地完成",
+        "Coordinator 在人类批准已完成的 Mission 前验证 Evidence 与 Artifact。",
+      ],
+    ],
+    panel: {
+      eyebrow: "一个 Mission，一个 Group",
+      title: "从目标到获批结果",
+      badge: "0.1 草案",
+      aria: "Mission 生命周期",
+      steps: [
+        [
+          "MissionOwner",
+          "定义成功标准",
+          "明确目标、边界、预算、期限和最终批准。",
+        ],
+        [
+          "Coordinator",
+          "规划并分派",
+          "通过明确的 offer 与 acceptance，将 WorkItem 交给符合条件的 Agent。",
+        ],
+        [
+          "Worker",
+          "协作并执行",
+          "对等方交换上下文、持有 lease，并发布不可变 Artifact。",
+        ],
+        [
+          "复核",
+          "先验证，再批准",
+          "Coordinator 检查 Evidence；人类接受精确的最终结果。",
+        ],
+      ],
+    },
+    scheduler: {
+      eyebrow: "多个 Group，一个 Worker",
+      title: "协调止于 Group 边界，调度不会。",
+      body: "Coordinator 负责其 Mission 内部的进展。一个 Worker 可以属于多个 Mission，因此由它自己的 Scheduler 根据 per-Group queue、capacity slot、期限、依赖和本地策略决定下一项运行的工作。",
+      aria: "per-Group queue 进入 Worker Scheduler 与隔离 capacity slot 的示意图",
+      queues: "per-Group queue",
+      owned: "Worker 自主管理",
+      scheduler: "Scheduler",
+      policy: "优先级 · 就绪状态 · 策略",
+      slots: "capacity slot",
+      running: "运行中",
+      ready: "就绪",
+    },
+    boundaries: [
+      [
+        "为组织而设计",
+        "共享信任，明确权限。",
+        "Organization 控制 Agent 身份、策略、授权和持久化 Group 顺序。Agent 在对话中保持对等，而有后果的状态变更始终结构化、已签名、有范围且可审计。",
+      ],
+      [
+        "有意排除",
+        "不是另一种 Agent RPC。",
+        "MissionWeaveProtocol 不定义模型 prompt、物理 peer-to-peer 路由、跨组织 federation 或 distributed consensus。它定义一个组织如何安全地完成复杂 Agent 工作。",
+      ],
+    ],
+    closing: {
+      eyebrow: "从草案开始",
+      title: "围绕工作构建协作，而不只是传递消息。",
+      link: "从 MissionWeaveProtocol 0.1 开始",
+    },
+  },
+  ja: {
+    intro: {
+      eyebrow: "MissionWeaveProtocol を選ぶ理由",
+      title: "Mission は単なる呼び出しチェーンではありません。",
+      body: "Agent には、共に推論する場所、仕事を明示的に引き受ける方法、そして意図から承認済みの結果までを追跡できる経路が必要です。MissionWeaveProtocol は、会話そのものを実行権限に変えることなく、責任を可視化します。",
+    },
+    principles: [
+      [
+        "対等に話す",
+        "すべての Group メンバーが永続的な Message を送り、必要なコンテキストを仲間に求められます。",
+      ],
+      [
+        "明示的に引き受ける",
+        "WorkItem と Work Contract が、説明責任のある実行を会話上の意図から分離します。",
+      ],
+      [
+        "ローカルにスケジュールする",
+        "Worker は仕事を per-Group queue に受け入れ、Group 間の順序を最終的に制御します。",
+      ],
+      [
+        "責任を持って完了する",
+        "Coordinator は、人間が完了した Mission を承認する前に Evidence と Artifact を検証します。",
+      ],
+    ],
+    panel: {
+      eyebrow: "1 つの Mission、1 つの Group",
+      title: "目的から承認済みの結果まで",
+      badge: "ドラフト 0.1",
+      aria: "Mission のライフサイクル",
+      steps: [
+        [
+          "MissionOwner",
+          "成功条件を定義",
+          "目的、境界、予算、期限、最終承認を定めます。",
+        ],
+        [
+          "Coordinator",
+          "計画して割り当てる",
+          "明示的な offer と acceptance により、適格な Agent へ WorkItem を渡します。",
+        ],
+        [
+          "Worker",
+          "協働して実行する",
+          "仲間がコンテキストを交換し、lease を保持し、不変の Artifact を公開します。",
+        ],
+        [
+          "レビュー",
+          "検証してから承認",
+          "Coordinator が Evidence を確認し、人間が正確な結果を受け入れます。",
+        ],
+      ],
+    },
+    scheduler: {
+      eyebrow: "複数の Group、1 つの Worker",
+      title: "調整は Group 境界で止まります。スケジューリングは止まりません。",
+      body: "Coordinator は Mission 内の進捗を担います。Worker は複数の Mission に所属できるため、自身の Scheduler が per-Group queue、capacity slot、期限、依存関係、ローカルポリシーを基に次の仕事を決めます。",
+      aria: "per-Group queue から Worker Scheduler と分離された capacity slot へ流れる図",
+      queues: "per-Group queue",
+      owned: "Worker が所有",
+      scheduler: "Scheduler",
+      policy: "優先度 · 準備状態 · ポリシー",
+      slots: "capacity slot",
+      running: "実行中",
+      ready: "準備完了",
+    },
+    boundaries: [
+      [
+        "組織向けの設計",
+        "共有された信頼、明示的な権限。",
+        "Organization が Agent のアイデンティティ、ポリシー、認可、永続的な Group 順序を管理します。Agent は会話では対等であり、重要な状態変更は構造化、署名、スコープ制限、監査可能性を維持します。",
+      ],
+      [
+        "意図的に対象外",
+        "別の Agent RPC ではありません。",
+        "MissionWeaveProtocol は、モデル prompt、物理 peer-to-peer ルーティング、組織間 federation、distributed consensus を定義しません。1 つの組織が複雑な Agent の仕事を安全に完了する方法を定義します。",
+      ],
+    ],
+    closing: {
+      eyebrow: "ドラフトから始める",
+      title: "Message だけでなく、仕事を中心に協働を構築する。",
+      link: "MissionWeaveProtocol 0.1 を始める",
+    },
+  },
+  es: {
+    intro: {
+      eyebrow: "Por qué MissionWeaveProtocol",
+      title: "Una Mission es más que una cadena de llamadas.",
+      body: "Los Agent necesitan un lugar compartido para razonar, una forma precisa de comprometerse con el trabajo y un camino responsable desde la intención hasta el resultado aprobado. MissionWeaveProtocol hace visibles esas responsabilidades sin convertir la conversación en autoridad ejecutable.",
+    },
+    principles: [
+      [
+        "Hablar como pares",
+        "Cada miembro de un Group puede enviar Message duraderos y pedir a sus pares el contexto que necesita.",
+      ],
+      [
+        "Comprometerse explícitamente",
+        "Los WorkItem y Work Contract separan la ejecución responsable de la intención conversacional.",
+      ],
+      [
+        "Planificar localmente",
+        "Los Worker aceptan trabajo en colas per-Group y conservan el control final del orden entre Group.",
+      ],
+      [
+        "Finalizar con responsabilidad",
+        "Los Coordinator verifican Evidence y Artifact antes de que una persona apruebe la Mission completada.",
+      ],
+    ],
+    panel: {
+      eyebrow: "Una Mission, un Group",
+      title: "Del objetivo al resultado aprobado",
+      badge: "Borrador 0.1",
+      aria: "Ciclo de vida de una Mission",
+      steps: [
+        [
+          "MissionOwner",
+          "Define el éxito",
+          "Objetivo, límites, presupuesto, fecha límite y aprobación final.",
+        ],
+        [
+          "Coordinator",
+          "Planifica y asigna",
+          "Los WorkItem llegan a Agent elegibles mediante offer y acceptance explícitos.",
+        ],
+        [
+          "Worker",
+          "Cooperan y ejecutan",
+          "Los pares intercambian contexto, mantienen lease y publican Artifact inmutables.",
+        ],
+        [
+          "Revisión",
+          "Verificar y después aprobar",
+          "El Coordinator revisa la Evidence; la persona acepta el resultado exacto.",
+        ],
+      ],
+    },
+    scheduler: {
+      eyebrow: "Muchos Group, un Worker",
+      title:
+        "La coordinación termina en el límite del Group. La planificación no.",
+      body: "Un Coordinator dirige el progreso dentro de su Mission. Un Worker puede pertenecer a muchas Mission, por lo que su propio Scheduler decide qué se ejecuta después según las colas per-Group, los capacity slot, las fechas límite, las dependencias y la política local.",
+      aria: "Colas per-Group que alimentan un Worker Scheduler y capacity slot aislados",
+      queues: "Colas per-Group",
+      owned: "Propiedad del Worker",
+      scheduler: "Scheduler",
+      policy: "prioridad · preparación · política",
+      slots: "capacity slot",
+      running: "en ejecución",
+      ready: "listo",
+    },
+    boundaries: [
+      [
+        "Diseñado para organizaciones",
+        "Confianza compartida, autoridad explícita.",
+        "La Organization controla la identidad de los Agent, la política, la autorización y el orden duradero del Group. Los Agent siguen siendo pares en la conversación, mientras que los cambios de estado importantes permanecen estructurados, firmados, limitados y auditables.",
+      ],
+      [
+        "Fuera de alcance de forma intencionada",
+        "No es otro Agent RPC.",
+        "MissionWeaveProtocol no define prompt de modelos, enrutamiento físico peer-to-peer, federation entre organizaciones ni distributed consensus. Define cómo una organización completa de forma segura trabajo complejo de Agent.",
+      ],
+    ],
+    closing: {
+      eyebrow: "Empezar con el borrador",
+      title:
+        "Construir la cooperación alrededor del trabajo, no solo de los Message.",
+      link: "Empezar con MissionWeaveProtocol 0.1",
+    },
+  },
+};
+const copy = copies[locale];
 ---
 
 <section class="home-story" aria-labelledby="missionweaveprotocol-story">
   <div class="intro-block">
-    <p class="eyebrow">Why MissionWeaveProtocol</p>
-    <h2 id="missionweaveprotocol-story">
-      A mission is more than a chain of calls.
-    </h2>
-    <p class="section-lede">
-      Agents need a shared place to reason together, a precise way to commit to
-      work, and an accountable path from intent to approved result.
-      MissionWeaveProtocol makes those responsibilities visible without turning
-      conversation into executable authority.
-    </p>
+    <p class="eyebrow">{copy.intro.eyebrow}</p>
+    <h2 id="missionweaveprotocol-story">{copy.intro.title}</h2>
+    <p class="section-lede">{copy.intro.body}</p>
   </div>
 
   <div class="principle-grid">
-    <article>
-      <span class="principle-number">01</span>
-      <h3>Talk as peers</h3>
-      <p>
-        Every Group member can send durable Messages and ask peers for the
-        context they need.
-      </p>
-    </article>
-    <article>
-      <span class="principle-number">02</span>
-      <h3>Commit explicitly</h3>
-      <p>
-        WorkItems and Work Contracts separate accountable execution from
-        conversational intent.
-      </p>
-    </article>
-    <article>
-      <span class="principle-number">03</span>
-      <h3>Schedule locally</h3>
-      <p>
-        Workers accept work into per-Group queues and keep final control of
-        cross-Group ordering.
-      </p>
-    </article>
-    <article>
-      <span class="principle-number">04</span>
-      <h3>Finish accountably</h3>
-      <p>
-        Coordinators verify Evidence and Artifacts before a human approves the
-        completed Mission.
-      </p>
-    </article>
+    {
+      copy.principles.map(([title, body], index) => (
+        <article>
+          <span class="principle-number">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          <h3>{title}</h3>
+          <p>{body}</p>
+        </article>
+      ))
+    }
   </div>
 
   <div class="story-panel">
     <div class="panel-heading">
       <div>
-        <p class="eyebrow">One Mission, one Group</p>
-        <h2>From objective to approved result</h2>
+        <p class="eyebrow">{copy.panel.eyebrow}</p>
+        <h2>{copy.panel.title}</h2>
       </div>
-      <span class="draft-badge">Draft 0.1</span>
+      <span class="draft-badge">{copy.panel.badge}</span>
     </div>
 
-    <ol class="mission-flow" aria-label="Mission lifecycle">
-      <li>
-        <span class="step-number">1</span>
-        <small>MissionOwner</small>
-        <strong>Defines success</strong>
-        <p>Objective, boundaries, budget, deadline, and final approval.</p>
-      </li>
-      <li>
-        <span class="step-number">2</span>
-        <small>Coordinator</small>
-        <strong>Plans and assigns</strong>
-        <p>
-          WorkItems go to eligible Agents through explicit offers and
-          acceptance.
-        </p>
-      </li>
-      <li>
-        <span class="step-number">3</span>
-        <small>Workers</small>
-        <strong>Cooperate and execute</strong>
-        <p>
-          Peers exchange context, hold leases, and publish immutable Artifacts.
-        </p>
-      </li>
-      <li>
-        <span class="step-number">4</span>
-        <small>Review</small>
-        <strong>Verify, then approve</strong>
-        <p>
-          The Coordinator checks Evidence; the human accepts the exact result.
-        </p>
-      </li>
+    <ol class="mission-flow" aria-label={copy.panel.aria}>
+      {
+        copy.panel.steps.map(([role, title, body], index) => (
+          <li>
+            <span class="step-number">{index + 1}</span>
+            <small>{role}</small>
+            <strong>{title}</strong>
+            <p>{body}</p>
+          </li>
+        ))
+      }
     </ol>
   </div>
 
   <div class="scheduler-section">
     <div class="scheduler-copy">
-      <p class="eyebrow">Many Groups, one Worker</p>
-      <h2>Coordination stops at the Group boundary. Scheduling does not.</h2>
-      <p>
-        A Coordinator owns progress inside its Mission. A Worker may belong to
-        many Missions, so its own Scheduler decides what runs next across
-        per-Group queues, capacity slots, deadlines, dependencies, and local
-        policy.
-      </p>
+      <p class="eyebrow">{copy.scheduler.eyebrow}</p>
+      <h2>{copy.scheduler.title}</h2>
+      <p>{copy.scheduler.body}</p>
     </div>
 
-    <div
-      class="scheduler-diagram"
-      role="img"
-      aria-label="Per-Group queues feeding a Worker Scheduler and isolated capacity slots"
-    >
+    <div class="scheduler-diagram" role="img" aria-label={copy.scheduler.aria}>
       <div class="queue-column">
-        <span class="diagram-label">Per-Group queues</span>
+        <span class="diagram-label">{copy.scheduler.queues}</span>
         <div class="queue-row">
           <span>Group Atlas</span><i></i><i></i><i class="muted"></i>
         </div>
@@ -128,52 +452,41 @@ const docsUrl = `${import.meta.env.BASE_URL}docs/0.1/`;
       <div class="diagram-arrow" aria-hidden="true">→</div>
 
       <div class="scheduler-core">
-        <span class="core-mark">MW</span>
-        <small>Worker-owned</small>
-        <strong>Scheduler</strong>
-        <p>priority · readiness · policy</p>
+        <small>{copy.scheduler.owned}</small>
+        <strong>{copy.scheduler.scheduler}</strong>
+        <p>{copy.scheduler.policy}</p>
       </div>
 
       <div class="diagram-arrow" aria-hidden="true">→</div>
 
       <div class="slot-column">
-        <span class="diagram-label">Capacity slots</span>
-        <div class="slot">01 <span>running</span></div>
-        <div class="slot">02 <span>ready</span></div>
+        <span class="diagram-label">{copy.scheduler.slots}</span>
+        <div class="slot">01 <span>{copy.scheduler.running}</span></div>
+        <div class="slot">02 <span>{copy.scheduler.ready}</span></div>
       </div>
     </div>
   </div>
 
   <div class="boundary-grid">
-    <article class="boundary-card emphasis">
-      <p class="eyebrow">Designed for organizations</p>
-      <h2>Shared trust, explicit authority.</h2>
-      <p>
-        The Organization controls Agent identity, policy, authorization, and
-        durable Group order. Agents remain peers in conversation, while
-        consequential state changes stay structured, signed, scoped, and
-        auditable.
-      </p>
-    </article>
-    <article class="boundary-card">
-      <p class="eyebrow">Intentionally out of scope</p>
-      <h2>Not another agent RPC.</h2>
-      <p>
-        MissionWeaveProtocol does not define model prompts, physical
-        peer-to-peer routing, cross-organization federation, or distributed
-        consensus. It defines how one organization gets complex agent work
-        completed safely.
-      </p>
-    </article>
+    {
+      copy.boundaries.map(([eyebrow, title, body], index) => (
+        <article class:list={["boundary-card", { emphasis: index === 0 }]}>
+          <p class="eyebrow">{eyebrow}</p>
+          <h2>{title}</h2>
+          <p>{body}</p>
+        </article>
+      ))
+    }
   </div>
 
   <div class="closing-callout">
     <div>
-      <p class="eyebrow">Start with the draft</p>
-      <h2>Build cooperation around work, not just messages.</h2>
+      <p class="eyebrow">{copy.closing.eyebrow}</p>
+      <h2>{copy.closing.title}</h2>
     </div>
     <a href={docsUrl}>
-      Start with MissionWeaveProtocol 0.1 <span aria-hidden="true">→</span>
+      {copy.closing.link}
+      <span aria-hidden="true">→</span>
     </a>
   </div>
 </section>
@@ -423,18 +736,6 @@ const docsUrl = `${import.meta.env.BASE_URL}docs/0.1/`;
     color: #fff;
     text-align: center;
     box-shadow: 0 18px 36px rgba(18, 24, 38, 0.15);
-  }
-
-  .core-mark {
-    display: grid;
-    width: 2.35rem;
-    height: 2.35rem;
-    margin: 0 auto 1rem;
-    place-items: center;
-    border-radius: 50%;
-    background: #2f6fdb;
-    font-size: 0.7rem;
-    font-weight: 800;
   }
 
   .scheduler-core small,

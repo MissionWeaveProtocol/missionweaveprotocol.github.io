@@ -15,7 +15,12 @@ export default defineConfig({
   trailingSlash: "always",
   integrations: [
     starlight({
-      title: "MissionWeaveProtocol",
+      title: {
+        en: "MissionWeaveProtocol",
+        "zh-CN": "MissionWeaveProtocol",
+        ja: "MissionWeaveProtocol",
+        es: "MissionWeaveProtocol",
+      },
       description:
         "Group-oriented cooperation for autonomous agents inside one organization.",
       logo: {
@@ -26,45 +31,140 @@ export default defineConfig({
       favicon: "/favicon.svg",
       customCss: ["./src/styles/custom.css"],
       lastUpdated: true,
+      locales: {
+        root: { label: "English", lang: "en" },
+        "zh-cn": { label: "简体中文", lang: "zh-CN" },
+        ja: { label: "日本語", lang: "ja" },
+        es: { label: "Español", lang: "es" },
+      },
+      defaultLocale: "root",
       sidebar: [
         {
           label: "Learn",
+          translations: { "zh-CN": "学习", ja: "学ぶ", es: "Aprender" },
           items: [
             {
               label: "MissionWeaveProtocol 0.1",
               slug: "docs/0.1",
-              badge: { text: "Draft", variant: "caution" },
+              badge: {
+                text: {
+                  en: "Draft",
+                  "zh-CN": "草案",
+                  ja: "ドラフト",
+                  es: "Borrador",
+                },
+                variant: "caution",
+              },
             },
-            { label: "Core model", slug: "docs/0.1/core-model" },
-            { label: "Work lifecycle", slug: "docs/0.1/work-lifecycle" },
-            { label: "Multi-Group scheduling", slug: "docs/0.1/scheduling" },
+            {
+              label: "Core model",
+              translations: {
+                "zh-CN": "核心模型",
+                ja: "コアモデル",
+                es: "Modelo central",
+              },
+              slug: "docs/0.1/core-model",
+            },
+            {
+              label: "Work lifecycle",
+              translations: {
+                "zh-CN": "工作生命周期",
+                ja: "作業ライフサイクル",
+                es: "Ciclo de trabajo",
+              },
+              slug: "docs/0.1/work-lifecycle",
+            },
+            {
+              label: "Multi-Group scheduling",
+              translations: {
+                "zh-CN": "多 Group 调度",
+                ja: "複数 Group のスケジューリング",
+                es: "Planificación entre múltiples Group",
+              },
+              slug: "docs/0.1/scheduling",
+            },
             {
               label: "Trust and authority",
+              translations: {
+                "zh-CN": "信任与权限",
+                ja: "信頼と権限",
+                es: "Confianza y autoridad",
+              },
               slug: "docs/0.1/trust-and-authority",
             },
-            { label: "Child Missions", slug: "docs/0.1/child-missions" },
+            {
+              label: "Child Missions",
+              translations: {
+                "zh-CN": "子 Mission",
+                ja: "子 Mission",
+                es: "Mission secundarias",
+              },
+              slug: "docs/0.1/child-missions",
+            },
           ],
         },
         {
           label: "Build",
+          translations: { "zh-CN": "构建", ja: "構築", es: "Desarrollo" },
           items: [{ label: "Python SDK", slug: "sdk/python" }],
         },
         {
           label: "Reference",
+          translations: {
+            "zh-CN": "参考",
+            ja: "リファレンス",
+            es: "Referencia",
+          },
           items: [
             {
               label: "Specification",
+              translations: {
+                "zh-CN": "规范",
+                ja: "仕様",
+                es: "Especificación",
+              },
               slug: "reference/specification",
               badge: { text: "0.1", variant: "caution" },
             },
-            { label: "Terminology", slug: "reference/terminology" },
+            {
+              label: "Terminology",
+              translations: {
+                "zh-CN": "术语",
+                ja: "用語",
+                es: "Terminología",
+              },
+              slug: "reference/terminology",
+            },
             { label: "JSON Schemas", slug: "reference/schemas" },
-            { label: "Conformance", slug: "reference/conformance" },
+            {
+              label: "Conformance",
+              translations: {
+                "zh-CN": "一致性",
+                ja: "適合性",
+                es: "Conformidad",
+              },
+              slug: "reference/conformance",
+            },
           ],
         },
         {
           label: "Community",
-          items: [{ label: "Contribute and report", slug: "community" }],
+          translations: {
+            "zh-CN": "社区",
+            ja: "コミュニティ",
+            es: "Comunidad",
+          },
+          items: [
+            {
+              label: "Contribute and report",
+              translations: {
+                "zh-CN": "贡献与报告",
+                ja: "貢献と報告",
+                es: "Contribuir e informar",
+              },
+              slug: "community",
+            },
+          ],
         },
       ],
       social: [
@@ -74,10 +174,6 @@ export default defineConfig({
           href: "https://github.com/missionweaveprotocol",
         },
       ],
-      editLink: {
-        baseUrl:
-          "https://github.com/missionweaveprotocol/missionweaveprotocol.github.io/edit/main/",
-      },
       head: [
         {
           tag: "link",
