@@ -1,9 +1,9 @@
 ---
-title: JSON Schemas
+title: JSON-Schemata
 description:
-  Durchsuche die 21 normativen JSON Schemas von MissionWeaveProtocol 0.1.
+  Durchsuche die 21 normativen JSON-Schemata von MissionWeaveProtocol 0.1.
 sidebar:
-  label: JSON Schemas
+  label: JSON-Schemata
   order: 2
 ---
 
@@ -24,10 +24,10 @@ Properties ab, und genehmigte Erweiterungsdaten werden nur in ausdrücklichen
 | [`agent-card.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/agent-card.schema.json)               | Stabile, von der Organization signierte Agent-Identität und verifizierte Capability                |
 | [`presence-record.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/presence-record.schema.json)     | Vorübergehende Verfügbarkeit und Kapazität eines Agent                                             |
 | [`mission.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/mission.schema.json)                     | Ziel, Ownership, Budget und Approval-Lebenszyklus einer Mission                                    |
-| [`group.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/group.schema.json)                         | Temporärer Kollaborations-Group, der zu einer Mission gehört                                       |
+| [`group.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/group.schema.json)                         | Temporäre Kollaborations-Group, die zu einer Mission gehört                                        |
 | [`group-snapshot.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/group-snapshot.schema.json)       | Signierter Archiv-Snapshot einer Group-Historie                                                    |
-| [`membership.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/membership.schema.json)               | Begrenzte Autorisierung, die einen Principal mit einem Group verbindet                             |
-| [`conversation.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/conversation.schema.json)           | Auditierbarer Conversation-Thread eines Group oder WorkItem                                        |
+| [`membership.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/membership.schema.json)               | Begrenzte Autorisierung, die einen Principal mit einer Group verbindet                             |
+| [`conversation.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/conversation.schema.json)           | Auditierbarer Conversation-Thread einer Group oder eines WorkItem                                  |
 | [`message.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/message.schema.json)                     | Bestätigter Conversation-Kontext, der keine Ausführungsautorität erteilt                           |
 | [`work-contract.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/work-contract.schema.json)         | Arbeitsziel, Liefergegenstände, Kriterien, Eingaben, Berechtigungen, Frist und Wiederholungsbudget |
 | [`work-item.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/work-item.schema.json)                 | Ausdrückliche Arbeitseinheit einer Mission einschließlich Lebenszyklus und Ownership               |
@@ -36,7 +36,7 @@ Properties ab, und genehmigte Erweiterungsdaten werden nur in ausdrücklichen
 | [`approval.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/approval.schema.json)                   | Signierte Approval eines genauen Mission-Ergebnisses                                               |
 | [`context-package.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/context-package.schema.json)     | Signierter, begrenzter Mission-Kontext mit Provenienz                                              |
 | [`command.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/command.schema.json)                     | Signierte Anforderung eines strukturierten Zustandsübergangs                                       |
-| [`event.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/event.schema.json)                         | Unveränderliche akzeptierte Tatsache in der geordneten Historie eines Group                        |
+| [`event.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/event.schema.json)                         | Unveränderliche akzeptierte Tatsache in der geordneten Historie einer Group                        |
 | [`error.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/error.schema.json)                         | Strukturiertes Protokoll-Fehlerdokument                                                            |
 | [`lease.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/lease.schema.json)                         | Erneuerbare, durch Epoch geschützte Execution Lease                                                |
 | [`extension-profile.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/extension-profile.schema.json) | Kontrollierte Extension Profile-Definition und Kompatibilitätsmetadaten                            |

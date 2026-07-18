@@ -47,7 +47,7 @@ uv run mypy
 uv run missionweaveprotocol-conformance --root .
 ```
 
-Der Konformitäts-Command prüft alle 43 eingebetteten Vektoren gegen die 21
+Der Konformitäts-Command prüft alle 52 eingebetteten Vektoren gegen die 21
 eingebetteten Schemas nach Draft 2020-12. Das Protokoll-Repository bleibt
 normativ;
 [`PROTOCOL_PIN.json`](https://github.com/missionweaveprotocol/python-sdk/blob/main/PROTOCOL_PIN.json)
@@ -71,7 +71,7 @@ uv run missionweaveprotocol-demo --workdir .missionweaveprotocol/poc
 Der Command erzeugt einen kanonischen JSON-Bericht und beendet sich mit einem
 Status ungleich null, wenn ein erforderliches Verhalten fehlt. Das
 deterministische Szenario umfasst zwei nebenläufige Missionen, gemeinsam
-genutzte Worker, eine untergeordnete Mission, Klärung zwischen Peers, Planung,
+genutzte Worker, eine Unteraufgabe, Klärung zwischen Peers, Planung,
 ausschließlich Checkpoint-basierte Preemption, Wiederherstellung, Verifizierung
 durch den Coordinator und genaue menschliche Approval.
 

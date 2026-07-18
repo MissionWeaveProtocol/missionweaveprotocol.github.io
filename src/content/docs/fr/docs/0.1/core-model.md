@@ -22,16 +22,16 @@ principal et chaque Group principal appartient à exactement une Mission.
 ```text
 Organization
 ├── Agent Registry
-├── Group Authority and durable Event store
+├── Group Authority et stockage durable des Event
 ├── Authorization Service
 └── Mission
     └── Group
         ├── MissionOwner
         ├── Coordinator
-        ├── Worker Memberships
-        ├── Conversations and Messages
-        ├── WorkItems and Work Contracts
-        └── ordered Events, Artifacts, Evidence, and Approvals
+        ├── Membership des Worker
+        ├── Conversation et Message
+        ├── WorkItem et Work Contract
+        └── Event ordonnés, Artifact, Evidence et Approval
 ```
 
 ## Rôles et responsabilités
@@ -96,8 +96,8 @@ doit jamais modifier l’état autoritatif d’une Mission.
 - Le travail exclusif est délimité par les epochs d’ownership et de lease.
 - Les Event acceptés et les Message commit sont append-only.
 - Le contexte et les identifiants d’accès d’une Mission sont isolés par défaut.
-- Les budgets et permissions d’un WorkItem ou d’une Mission enfant ne peuvent
-  pas dépasser ceux de leur parent.
+- Les budgets et permissions d’un WorkItem ou d’une sous-tâche ne peuvent pas
+  dépasser ceux de leur parent.
 - L’achèvement d’une Mission racine exige l’Approval humaine d’une révision
   précise et d’un ensemble exact d’Artifact.
 - Les Agent publient les décisions, entrées, Evidence, motifs de blocage et

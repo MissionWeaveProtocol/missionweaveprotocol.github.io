@@ -46,7 +46,7 @@ uv run mypy
 uv run missionweaveprotocol-conformance --root .
 ```
 
-La commande de conformité vérifie les 43 vecteurs embarqués par rapport aux 21
+La commande de conformité vérifie les 52 vecteurs embarqués par rapport aux 21
 schémas Draft 2020-12 embarqués. Le dépôt du protocole reste normatif ;
 [`PROTOCOL_PIN.json`](https://github.com/missionweaveprotocol/python-sdk/blob/main/PROTOCOL_PIN.json)
 enregistre le commit exact du protocole et les empreintes d’artefact utilisées
@@ -67,7 +67,7 @@ uv run missionweaveprotocol-demo --workdir .missionweaveprotocol/poc
 
 La commande produit un rapport JSON canonique et se termine avec un statut non
 nul si un comportement requis manque. Le scénario déterministe couvre deux
-Mission concurrentes, des Worker partagés, une Mission enfant, la clarification
+Missions concurrentes, des Workers partagés, une sous-tâche, la clarification
 entre pairs, la planification, la préemption uniquement aux Checkpoint, la
 récupération, la vérification du Coordinator et une Approval humaine exacte.
 

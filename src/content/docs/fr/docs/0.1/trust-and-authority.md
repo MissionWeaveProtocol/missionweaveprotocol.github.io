@@ -37,6 +37,12 @@ implémentation peut la répliquer en interne, mais le consensus, l’élection 
 leader et la topologie des réplicas ne sont pas exposés comme sémantique du
 protocole.
 
+Les Command et Event d’amorçage de Registry et de Session ont une portée
+Organization et ne portent aucun contexte d’ordre de Group. Les Command visant
+un Group existant portent les epochs d’autorité applicables à leur acteur ; les
+Command réservées au Coordinator portent aussi `coordinatorEpoch` au niveau
+supérieur, jamais dans le payload.
+
 ## L’identité n’est pas la présence
 
 Une Agent Card est une identité stable, versionnée et signée par l’Organization.
@@ -79,15 +85,15 @@ sur du JSON canonique. Les Event acceptés sont signés par la Group Authority.
 ## Du contexte à l’effet de bord autorisé
 
 ```text
-Message or Work Proposal
-        ↓ explicit authorization
-WorkItem and Work Contract
-        ↓ Worker acceptance
+Message ou Work Proposal
+        ↓ autorisation explicite
+WorkItem et Work Contract
+        ↓ acceptation du Worker
 Ownership Epoch
-        ↓ current session, policy, budget, and approval checks
-Execution Lease and scoped capability token
+        ↓ vérification de la session, de la politique, du budget et des Approval
+Execution Lease et jeton de capacité à portée limitée
         ↓
-Permitted operation
+Opération autorisée
 ```
 
 Les Message, Agent Card, Context Package, Artifact et Group Event ne doivent pas

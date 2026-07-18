@@ -5,7 +5,7 @@ description:
   Arbeit, Planung und Approval.
 sidebar:
   badge:
-    text: Draft 0.1
+    text: Entwurf 0.1
     variant: caution
 ---
 
@@ -55,7 +55,7 @@ verantwortlich ist.
 Scheduler annimmt und ausführt. Ein Worker kann vielen Group angehören.
 
 **Membership**: Die begrenzte Autorisierung, die einen Agent oder MissionOwner
-mit einem Group verbindet.
+mit einer Group verbindet.
 
 ## Conversation und Arbeit
 
@@ -92,7 +92,7 @@ Provenienz, die einem Agent begrenzten Mission-Kontext bereitstellt.
 strukturierten Zustandsübergang.
 
 **Event**: Eine unveränderliche, akzeptierte Tatsache in der monotonen Historie
-eines Group.
+einer Group.
 
 **Cursor**: Die höchste zusammenhängende Position eines Group Event, die ein
 Agent dauerhaft verarbeitet hat.
@@ -117,9 +117,10 @@ wird erst nach menschlicher Approval abgeschlossen.
 
 ## Hierarchie und Erweiterung
 
-**Untergeordnete Mission (Child Mission)**: Eine Mission, die zur Erledigung
-eines komplexen WorkItem einer übergeordneten Mission erstellt wird und deren
-Budgets und Autorität enger als bei der übergeordneten Mission begrenzt sind.
+**Unteraufgabe (Child Mission)**: Eine eigenständige Mission, die zur Erledigung
+eines komplexen WorkItem einer übergeordneten Mission erstellt wird. Sie ist
+kein WorkItem; ihre Budgets und Autorität sind enger als bei der übergeordneten
+Mission begrenzt.
 
 **Follow-up Mission**: Eine neue Mission, die mit einer unveränderlichen,
 genehmigten Mission verknüpft wird, wenn später Korrektur oder zusätzliche

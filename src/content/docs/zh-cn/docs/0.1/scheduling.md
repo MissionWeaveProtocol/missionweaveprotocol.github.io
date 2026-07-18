@@ -20,9 +20,9 @@ Worker 可以属于多个 Mission
 Group，而无需合并其上下文。它为每个 Group 维护独立的 Event 收件箱、Cursor 和工作队列，再由一个 Worker 自有的 Scheduler 从这些队列中选择符合条件的 WorkItem。
 
 ```text
-Group A Events → Group A queue ┐
-Group B Events → Group B queue ├→ Worker Scheduler → isolated execution slots
-Group C Events → Group C queue ┘
+Group A 的 Event → Group A 队列 ┐
+Group B 的 Event → Group B 队列 ├→ Worker Scheduler → 隔离的执行槽位
+Group C 的 Event → Group C 队列 ┘
 ```
 
 ## 谁控制优先级

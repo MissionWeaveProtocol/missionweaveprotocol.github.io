@@ -1,20 +1,20 @@
 ---
 title: Conformidad
 description:
-  Ejecuta los 43 vectores de conformidad de MissionWeaveProtocol independientes
+  Ejecuta los 52 vectores de conformidad de MissionWeaveProtocol independientes
   de la implementación.
 sidebar:
   label: Conformidad
   order: 3
 ---
 
-MissionWeaveProtocol 0.1 proporciona **43 casos de conformidad independientes de
+MissionWeaveProtocol 0.1 proporciona **52 casos de conformidad independientes de
 la implementación**:
 
 | Resultado esperado | Casos | Directorio canónico                                                                                                                  |
 | ------------------ | ----: | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Válido             |    22 | [`conformance/vectors/valid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/valid)     |
-| No válido          |    21 | [`conformance/vectors/invalid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/invalid) |
+| Válido             |    25 | [`conformance/vectors/valid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/valid)     |
+| No válido          |    27 | [`conformance/vectors/invalid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/invalid) |
 
 El
 [`manifest.json` canónico](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/manifest.json)
@@ -25,7 +25,7 @@ para conocer los requisitos normativos de uso.
 
 ## Qué demuestran los vectores
 
-Ejecutar los 43 casos comprueba que una implementación coincide con las reglas
+Ejecutar los 52 casos comprueba que una implementación coincide con las reglas
 estructurales de documentos del protocolo. Los casos no válidos abarcan formas
 rechazadas deliberadamente, como firmas ausentes, estados de ciclo de vida no
 válidos, ausencia de Ownership, comportamiento inseguro de extensiones y

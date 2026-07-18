@@ -8,7 +8,7 @@ sidebar:
   order: 1
 banner:
   content:
-    MissionWeaveProtocol 0.1 es un <strong>Draft Standard</strong>. Usa el
+    MissionWeaveProtocol 0.1 es un <strong>estándar en borrador</strong>. Usa el
     repositorio canónico para consultar los requisitos normativos.
 ---
 
@@ -26,7 +26,7 @@ contiene los artefactos autoritativos:
 
 - [Especificación MissionWeaveProtocol 0.1](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
 - [Glosario del protocolo](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
-- [JSON Schemas normativos](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
+- [Esquemas JSON normativos](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
 - [Manifiesto y vectores de conformidad](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
 
 Cuando esta guía y un artefacto normativo difieren, prevalece el artefacto del

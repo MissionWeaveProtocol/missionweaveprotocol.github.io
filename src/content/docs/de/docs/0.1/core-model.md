@@ -7,7 +7,7 @@ sidebar:
   order: 2
 ---
 
-:::caution[Draft Standard 0.1]
+:::caution[Standardentwurf 0.1]
 
 Dies ist ein nicht normativer Lernleitfaden. Das
 [kanonische Protokoll-Repository](https://github.com/missionweaveprotocol/missionweaveprotocol)
@@ -17,21 +17,21 @@ bleibt normativ.
 
 MissionWeaveProtocol organisiert die Zusammenarbeit um eine begrenzte
 **Mission** und ihren temporären **Group**. Jede Mission besitzt genau einen
-primären Group, und jeder primäre Group gehört genau zu einer Mission.
+primären Group, und jede primäre Group gehört genau zu einer Mission.
 
 ```text
 Organization
 ├── Agent Registry
-├── Group Authority and durable Event store
+├── Group Authority und dauerhafter Event-Speicher
 ├── Authorization Service
 └── Mission
     └── Group
         ├── MissionOwner
         ├── Coordinator
-        ├── Worker Memberships
-        ├── Conversations and Messages
-        ├── WorkItems and Work Contracts
-        └── ordered Events, Artifacts, Evidence, and Approvals
+        ├── Worker-Membership
+        ├── Conversation und Message
+        ├── WorkItem und Work Contract
+        └── geordnete Event, Artifact, Evidence und Approval
 ```
 
 ## Rollen und Verantwortlichkeiten
@@ -53,10 +53,10 @@ darf.
 
 ## Datensätze, die Zusammenarbeit verbinden
 
-- Eine **Membership** verbindet einen Principal mit einem Group, einer
+- Eine **Membership** verbindet einen Principal mit einer Group, einer
   Rollenmenge, einem Sichtbarkeitsbereich und einem Membership Epoch.
-- Eine **Conversation** enthält dauerhafte Message für die Planung im Group oder
-  zu einem WorkItem.
+- Eine **Conversation** enthält dauerhafte Message für die Planung in der Group
+  oder zu einem WorkItem.
 - Ein **WorkItem** ist eine ausführbare Arbeitseinheit einer Mission. Sein
   **Work Contract** definiert Ziel, Liefergegenstände, Evidence, Berechtigungen,
   Frist und Budget.
@@ -65,7 +65,7 @@ darf.
 - **Evidence** dokumentiert, wie ein Artifact oder WorkItem seine
   Akzeptanzkriterien erfüllt.
 - Ein **Event** ist eine unveränderliche, akzeptierte Tatsache in der monotonen
-  Historie eines Group.
+  Historie einer Group.
 - Ein **Cursor** zeichnet die höchste zusammenhängende Position eines Group
   Event auf, die ein Agent dauerhaft verarbeitet hat.
 
@@ -93,13 +93,13 @@ Datenbank darf den autoritativen Mission-Zustand nicht verändern.
 
 ## Wichtige Invarianten
 
-- Eine Mission hat einen primären Group und eine Event-Reihenfolge pro Group.
+- Eine Mission hat eine primäre Group und eine Event-Reihenfolge pro Group.
 - Conversation ist niemals Ausführungsautorität.
 - Exklusive Arbeit wird durch Ownership Epoch und Execution Lease geschützt.
 - Akzeptierte Event und bestätigte Message sind append-only.
 - Mission-Kontext und Anmeldedaten sind standardmäßig isoliert.
-- Eine untergeordnete Mission darf mit ihren Budgets und Berechtigungen die
-  übergeordnete Mission nicht überschreiten; dasselbe gilt für WorkItem.
+- Eine Unteraufgabe darf mit ihren Budgets und Berechtigungen die übergeordnete
+  Mission nicht überschreiten; dasselbe gilt für WorkItem.
 - Der Abschluss einer Root Mission erfordert die menschliche Approval einer
   genauen Revision und eines genauen Artifact-Satzes.
 - Agent veröffentlichen die für Audits erforderlichen Entscheidungen, Eingaben,

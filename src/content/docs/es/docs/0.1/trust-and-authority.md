@@ -7,7 +7,7 @@ sidebar:
   order: 5
 ---
 
-:::caution[Draft Standard 0.1]
+:::caution[Estándar en borrador 0.1]
 
 Esta es una guía de aprendizaje no normativa. El
 [repositorio canónico del protocolo](https://github.com/missionweaveprotocol/missionweaveprotocol)
@@ -33,6 +33,12 @@ autorización, el orden duradero por Group y la responsabilidad humana.
 La Group Authority es una autoridad lógica para cada Group. Una implementación
 puede replicarla internamente, pero el consenso, la elección de líder y la
 topología de réplicas no se exponen como semántica del protocolo.
+
+Los Command y Event de arranque de Registry y Session tienen alcance de
+Organization y no llevan contexto de orden del Group. Los Command para un Group
+existente llevan los epochs de autoridad aplicables a su actor; los Command
+exclusivos del Coordinator también llevan `coordinatorEpoch` en el nivel
+superior, nunca dentro del payload.
 
 ## La identidad no es un Presence Record
 
@@ -75,15 +81,15 @@ sobre JSON canónico. Los Event aceptados los firma la Group Authority.
 ## Del contexto al efecto secundario permitido
 
 ```text
-Message or Work Proposal
-        ↓ explicit authorization
-WorkItem and Work Contract
-        ↓ Worker acceptance
+Message o Work Proposal
+        ↓ autorización explícita
+WorkItem y Work Contract
+        ↓ aceptación del Worker
 Ownership Epoch
-        ↓ current session, policy, budget, and approval checks
-Execution Lease and scoped capability token
+        ↓ comprobaciones vigentes de session, política, presupuesto y Approval
+Execution Lease y Capability Token de alcance limitado
         ↓
-Permitted operation
+Operación permitida
 ```
 
 Los Message, Agent Card, Context Package, Artifact y Event del Group no deben

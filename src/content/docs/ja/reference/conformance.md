@@ -1,19 +1,19 @@
 ---
 title: 適合性
 description:
-  実装に依存しない 43 個の MissionWeaveProtocol 適合性 vector を実行します。
+  実装に依存しない 52 個の MissionWeaveProtocol 適合性 vector を実行します。
 sidebar:
   label: 適合性
   order: 3
 ---
 
-MissionWeaveProtocol 0.1 は、**実装に依存しない 43 個の適合性 test
+MissionWeaveProtocol 0.1 は、**実装に依存しない 52 個の適合性 test
 case**を提供します。
 
 | 期待される結果 | case 数 | 正本ディレクトリ                                                                                                                     |
 | -------------- | ------: | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Valid          |      22 | [`conformance/vectors/valid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/valid)     |
-| Invalid        |      21 | [`conformance/vectors/invalid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/invalid) |
+| Valid          |      25 | [`conformance/vectors/valid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/valid)     |
+| Invalid        |      27 | [`conformance/vectors/invalid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/invalid) |
 
 正本となる
 [`manifest.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/manifest.json)
@@ -24,7 +24,7 @@ document、期待される妥当性に対応付けます。規範となる使用
 
 ## vector が証明すること
 
-43
+52
 case をすべて実行すると、実装がプロトコルの文書構造ルールと一致することを確認できます。invalid
 case には、signature の欠落、無効な lifecycle
 state、ownership の欠落、安全でない extension の動作、一貫しない provenance など、意図的に拒否される形式が含まれます。

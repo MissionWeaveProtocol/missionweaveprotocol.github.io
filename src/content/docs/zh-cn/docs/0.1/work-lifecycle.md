@@ -55,17 +55,17 @@ Scheduler 对跨 Group 顺序拥有最终控制权，并在容量、依赖项、
 
 ```text
 Work Proposal
-    ↓ authorize
-open WorkItem
-    ↓ offer
+    ↓ 授权
+open 状态的 WorkItem
+    ↓ 发出邀约
 offered
-    ↓ Worker accepts
+    ↓ Worker 接收
 queued
-    ↓ valid ownership, approval gates, and Execution Lease
+    ↓ 有效 ownership、approval gate 和 Execution Lease
 active
-    ↓ Worker submits Artifacts and Evidence
+    ↓ Worker 提交 Artifact 和 Evidence
 submitted
-    ↓ Coordinator accepts the result
+    ↓ Coordinator 接收结果
 verified
 ```
 
@@ -74,12 +74,12 @@ verified
 
 ## 先提供 Evidence，再批准
 
-Worker 的声明不足以证明完成。提交内容必须包含映射到验收标准的 Artifact 和 Evidence。Coordinator 评审应验证 Artifact 完整性，在可用时运行确定性检查，为定性标准请求 reviewer
-Agent 提供 Evidence，并保留结果。
+Worker 的声明不足以证明完成。提交内容必须包含映射到验收标准的 Artifact 和 Evidence。Coordinator 审查应验证 Artifact 完整性，在可用时运行确定性检查，针对定性标准请求 reviewer
+Agent 出具 Evidence，并保留结果。
 
 所有必需的 WorkItem 均验证完成后，Coordinator 提交特定 Mission 修订版本和 Artifact 集合。MissionOwner 随后签署最终 Approval 或请求变更。变更请求会重新打开同一个 Mission，而不会删除之前的提交。
 
 完整状态转换和权限规则请阅读规范性
 [WorkItem 状态机](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#102-workitem-state-machine)
 和
-[基于 Evidence 的评审](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#132-evidence-based-review)。
+[基于 Evidence 的审查](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#132-evidence-based-review)。

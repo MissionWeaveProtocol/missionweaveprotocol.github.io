@@ -8,7 +8,7 @@ sidebar:
   order: 1
 banner:
   content:
-    MissionWeaveProtocol 0.1 ist ein <strong>Draft Standard</strong>. Verwende
+    MissionWeaveProtocol 0.1 ist ein <strong>Standardentwurf</strong>. Verwende
     das kanonische Repository für normative Anforderungen.
 ---
 

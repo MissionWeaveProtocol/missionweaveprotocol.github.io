@@ -5,7 +5,7 @@ description:
   le travail, la planification et l’approbation.
 sidebar:
   badge:
-    text: Draft 0.1
+    text: Brouillon 0.1
     variant: caution
 ---
 
@@ -114,9 +114,9 @@ qu’après une Approval humaine.
 
 ## Hiérarchie et extension
 
-**Mission enfant (Child Mission)** : Mission créée pour achever un WorkItem
-complexe d’une Mission parente, avec des budgets et une autorité plus restreints
-que ceux de la Mission parente.
+**sous-tâche (Child Mission)** : Mission autonome créée pour achever un WorkItem
+complexe d’une Mission parente. Ce n’est pas un WorkItem ; ses budgets et son
+autorité sont plus restreints que ceux de la Mission parente.
 
 **Follow-up Mission** : nouvelle Mission liée à une Mission approuvée et
 immuable lorsqu’une correction ou un travail supplémentaire devient nécessaire.

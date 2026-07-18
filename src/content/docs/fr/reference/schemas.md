@@ -1,9 +1,9 @@
 ---
-title: JSON Schemas
+title: Schémas JSON
 description:
-  Parcourir les 21 JSON Schemas normatifs de MissionWeaveProtocol 0.1.
+  Parcourir les 21 Schémas JSON normatifs de MissionWeaveProtocol 0.1.
 sidebar:
-  label: JSON Schemas
+  label: Schémas JSON
   order: 2
 ---
 

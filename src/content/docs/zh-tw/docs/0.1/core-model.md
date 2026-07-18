@@ -20,16 +20,16 @@ MissionWeaveProtocol 圍繞邊界明確的 **Mission** 及其臨時 **Group**
 ```text
 Organization
 ├── Agent Registry
-├── Group Authority and durable Event store
+├── Group Authority 與持久 Event 儲存區
 ├── Authorization Service
 └── Mission
     └── Group
         ├── MissionOwner
         ├── Coordinator
-        ├── Worker Memberships
-        ├── Conversations and Messages
-        ├── WorkItems and Work Contracts
-        └── ordered Events, Artifacts, Evidence, and Approvals
+        ├── Worker Membership
+        ├── Conversation 與 Message
+        ├── WorkItem 與 Work Contract
+        └── 有序 Event、Artifact、Evidence 和 Approval
 ```
 
 ## 角色與職責

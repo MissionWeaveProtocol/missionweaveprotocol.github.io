@@ -22,9 +22,9 @@ distincts pour chaque Group, puis utilise un Scheduler contrôlé par le Worker
 pour sélectionner les WorkItem éligibles entre ces files.
 
 ```text
-Group A Events → Group A queue ┐
-Group B Events → Group B queue ├→ Worker Scheduler → isolated execution slots
-Group C Events → Group C queue ┘
+Event du Group A → file du Group A ┐
+Event du Group B → file du Group B ├→ Worker Scheduler → slots d’exécution isolés
+Event du Group C → file du Group C ┘
 ```
 
 ## Qui contrôle la priorité

@@ -47,7 +47,7 @@ uv run mypy
 uv run missionweaveprotocol-conformance --root .
 ```
 
-El comando de conformidad comprueba los 43 vectores incluidos frente a los 21
+El comando de conformidad comprueba los 52 vectores incluidos frente a los 21
 schemas Draft 2020-12 incluidos. El repositorio del protocolo sigue siendo
 normativo;
 [`PROTOCOL_PIN.json`](https://github.com/missionweaveprotocol/python-sdk/blob/main/PROTOCOL_PIN.json)
@@ -70,9 +70,9 @@ uv run missionweaveprotocol-demo --workdir .missionweaveprotocol/poc
 
 El comando genera un informe JSON canónico y termina con un estado distinto de
 cero si falta un comportamiento requerido. El escenario determinista abarca dos
-Mission simultáneas, Worker compartidos, Mission hija, aclaraciones entre pares,
-planificación, preemption solo mediante Checkpoint, recuperación, verificación
-del Coordinator y Approval humana de un resultado exacto.
+Missions simultáneas, Workers compartidos, una subtarea, aclaraciones entre
+pares, planificación, preemption solo mediante Checkpoint, recuperación,
+verificación del Coordinator y Approval humana de un resultado exacto.
 
 ## Ejecutar las pruebas de integración con PostgreSQL
 

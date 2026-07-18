@@ -34,6 +34,11 @@ The Group Authority is one logical authority for each Group. An implementation
 may replicate it internally, but consensus, leader election, and replica
 topology are not exposed as protocol semantics.
 
+Registry and Session bootstrap Commands and Events are Organization-scoped and
+carry no Group ordering context. Commands for an existing Group carry the
+authority epochs applicable to their actor; Coordinator-only Commands also carry
+top-level `coordinatorEpoch`, never a payload field.
+
 ## Identity is not presence
 
 An Agent Card is stable, versioned, Organization-signed identity. It includes

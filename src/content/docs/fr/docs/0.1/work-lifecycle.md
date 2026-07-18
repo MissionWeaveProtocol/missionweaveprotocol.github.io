@@ -67,17 +67,17 @@ importante du contrat exige une nouvelle acceptation du Worker.
 
 ```text
 Work Proposal
-    ↓ authorize
-open WorkItem
-    ↓ offer
+    ↓ autoriser
+WorkItem à l’état open
+    ↓ proposer
 offered
-    ↓ Worker accepts
+    ↓ le Worker accepte
 queued
-    ↓ valid ownership, approval gates, and Execution Lease
+    ↓ ownership valide, barrières d’Approval et Execution Lease
 active
-    ↓ Worker submits Artifacts and Evidence
+    ↓ le Worker soumet Artifact et Evidence
 submitted
-    ↓ Coordinator accepts the result
+    ↓ le Coordinator accepte le résultat
 verified
 ```
 

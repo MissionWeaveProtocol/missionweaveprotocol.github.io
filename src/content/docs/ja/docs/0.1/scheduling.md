@@ -22,9 +22,9 @@ queue を保持し、そのうえで 1 つの Worker-owned
 Scheduler を使い、これらの queue を横断して適格な WorkItem を選択します。
 
 ```text
-Group A Events → Group A queue ┐
-Group B Events → Group B queue ├→ Worker Scheduler → isolated execution slots
-Group C Events → Group C queue ┘
+Group A の Event → Group A のキュー ┐
+Group B の Event → Group B のキュー ├→ Worker Scheduler → 分離された実行スロット
+Group C の Event → Group C のキュー ┘
 ```
 
 ## priority を決める主体

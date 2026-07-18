@@ -1,19 +1,19 @@
 ---
 title: Conformance
 description:
-  Run the 43 implementation-neutral MissionWeaveProtocol conformance vectors.
+  Run the 52 implementation-neutral MissionWeaveProtocol conformance vectors.
 sidebar:
   label: Conformance
   order: 3
 ---
 
-MissionWeaveProtocol 0.1 provides **43 implementation-neutral conformance
+MissionWeaveProtocol 0.1 provides **52 implementation-neutral conformance
 cases**:
 
 | Expected result | Cases | Canonical directory                                                                                                                  |
 | --------------- | ----: | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Valid           |    22 | [`conformance/vectors/valid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/valid)     |
-| Invalid         |    21 | [`conformance/vectors/invalid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/invalid) |
+| Valid           |    25 | [`conformance/vectors/valid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/valid)     |
+| Invalid         |    27 | [`conformance/vectors/invalid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/invalid) |
 
 The canonical
 [`manifest.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/manifest.json)
@@ -24,7 +24,7 @@ for the normative usage requirements.
 
 ## What the vectors prove
 
-Running all 43 cases checks that an implementation agrees with the protocol's
+Running all 52 cases checks that an implementation agrees with the protocol's
 structural document rules. The invalid cases cover deliberately rejected shapes,
 such as missing signatures, invalid lifecycle states, absent ownership, unsafe
 extension behavior, and inconsistent provenance.

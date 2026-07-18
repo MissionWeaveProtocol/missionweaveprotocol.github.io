@@ -43,7 +43,7 @@ uv run missionweaveprotocol-conformance --root .
 ```
 
 符合性命令针对内置的 21 个 Draft 2020-12
-schema 检查全部 43 个内置测试向量。协议仓库仍是规范性来源；
+schema 检查全部 52 个内置测试向量。协议仓库仍是规范性来源；
 [`PROTOCOL_PIN.json`](https://github.com/missionweaveprotocol/python-sdk/blob/main/PROTOCOL_PIN.json)
 记录 SDK 使用的准确协议 commit 和 Artifact 内容摘要。
 

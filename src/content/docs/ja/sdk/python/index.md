@@ -46,7 +46,7 @@ uv run mypy
 uv run missionweaveprotocol-conformance --root .
 ```
 
-適合性 command は、同梱された 43 個の vector すべてを、同梱された 21 個の Draft
+適合性 command は、同梱された 52 個の vector すべてを、同梱された 21 個の Draft
 2020-12 schema に対して検証します。プロトコルリポジトリが引き続き規範となり、
 [`PROTOCOL_PIN.json`](https://github.com/missionweaveprotocol/python-sdk/blob/main/PROTOCOL_PIN.json)
 には SDK が使用する正確な protocol commit と artifact
@@ -68,7 +68,7 @@ uv run missionweaveprotocol-demo --workdir .missionweaveprotocol/poc
 この command は canonical JSON
 report を 1 件生成し、必要な動作が欠けている場合は nonzero
 status で終了します。deterministic scenario は、2 つの concurrent
-Mission、共有 Worker、子ミッション、Agent 間の clarification、scheduling、checkpoint-only
+Mission、共有 Worker、サブタスク、Agent 間の clarification、scheduling、checkpoint-only
 preemption、recovery、Coordinator verification、正確な human
 Approval を対象とします。
 

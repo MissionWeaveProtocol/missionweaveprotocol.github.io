@@ -31,6 +31,9 @@ MissionWeaveProtocol
 每個 Group 都有一個邏輯 Group
 Authority。實作可以在內部複製它，但共識、領導者選舉和副本拓撲不會作為協定語義暴露。
 
+Registry 與 Session 啟動階段的 Command 和 Event 以 Organization 為作用域，不攜帶 Group 排序上下文。針對既有 Group 的 Command 必須攜帶適用於其 actor 的權限 epoch；僅 Coordinator 可發出的 Command 還必須在頂層攜帶
+`coordinatorEpoch`，不得放在 payload 中。
+
 ## 身份不等於線上狀態
 
 Agent
@@ -65,15 +68,15 @@ manifest 分別對規範化 JSON 簽名。已接受的 Event 由 Group Authority
 ## 從上下文到獲准的 side effect
 
 ```text
-Message or Work Proposal
-        ↓ explicit authorization
-WorkItem and Work Contract
-        ↓ Worker acceptance
+Message 或 Work Proposal
+        ↓ 明確授權
+WorkItem 與 Work Contract
+        ↓ Worker 接收
 Ownership Epoch
-        ↓ current session, policy, budget, and approval checks
-Execution Lease and scoped capability token
+        ↓ 目前 session、policy、budget 和 approval 檢查
+Execution Lease 與範圍受限的 capability token
         ↓
-Permitted operation
+允許的操作
 ```
 
 Message、Agent Card、Context Package、Artifact 和 Group

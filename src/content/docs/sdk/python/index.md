@@ -45,7 +45,7 @@ uv run mypy
 uv run missionweaveprotocol-conformance --root .
 ```
 
-The conformance command checks all 43 vendored vectors against the 21 vendored
+The conformance command checks all 52 vendored vectors against the 21 vendored
 Draft 2020-12 schemas. The protocol repository remains normative;
 [`PROTOCOL_PIN.json`](https://github.com/missionweaveprotocol/python-sdk/blob/main/PROTOCOL_PIN.json)
 records the exact protocol commit and artifact digests used by the SDK.

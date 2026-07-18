@@ -55,17 +55,17 @@ Scheduler 對跨 Group 順序擁有最終控制權，並在容量、相依項目
 
 ```text
 Work Proposal
-    ↓ authorize
-open WorkItem
-    ↓ offer
+    ↓ 授權
+open 狀態的 WorkItem
+    ↓ 發出邀約
 offered
-    ↓ Worker accepts
+    ↓ Worker 接收
 queued
-    ↓ valid ownership, approval gates, and Execution Lease
+    ↓ 有效 ownership、approval gate 和 Execution Lease
 active
-    ↓ Worker submits Artifacts and Evidence
+    ↓ Worker 提交 Artifact 和 Evidence
 submitted
-    ↓ Coordinator accepts the result
+    ↓ Coordinator 接收結果
 verified
 ```
 
@@ -74,7 +74,7 @@ verified
 
 ## 先提供 Evidence，再核准
 
-Worker 的宣告不足以證明完成。提交內容必須包含對應到驗收標準的 Artifact 和 Evidence。Coordinator 審查應驗證 Artifact 完整性，在可用時執行確定性檢查，為定性標準請求 reviewer
+Worker 的宣告不足以證明完成。提交內容必須包含對應到驗收標準的 Artifact 和 Evidence。Coordinator 審查應驗證 Artifact 完整性，在可用時執行確定性檢查，針對定性標準要求 reviewer
 Agent 提供 Evidence，並保留結果。
 
 所有必需的 WorkItem 均驗證完成後，Coordinator 提交特定 Mission 修訂版本和 Artifact 集合。MissionOwner 隨後簽署最終 Approval 或請求變更。變更請求會重新開啟同一個 Mission，而不會刪除之前的提交。

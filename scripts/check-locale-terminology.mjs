@@ -44,41 +44,38 @@ const localeRules = [
   {
     locale: "ja",
     directory: "ja",
-    term: "子ミッション",
-    firstForms: ["子ミッション（Child Mission）"],
-    navigation: 'ja: "子ミッション"',
-    forbidden: [/子\s+Mission/gu],
-    childRequirements: ["子ミッション内の WorkItem"],
+    term: "サブタスク",
+    firstForms: ["サブタスク（Child Mission）"],
+    navigation: 'ja: "サブタスク"',
+    forbidden: [/子\s+Mission/gu, /子ミッション/gu],
+    childRequirements: ["サブタスク内の WorkItem", "WorkItem ではありません"],
   },
   {
     locale: "es",
     directory: "es",
-    term: "Mission hija",
-    firstForms: ["Mission hija (Child Mission)"],
-    navigation: 'es: "Mission hija"',
-    forbidden: [/Mission secundaria(?:s)?/giu],
-    childRequirements: ["WorkItem de la Mission hija"],
+    term: "subtarea",
+    firstForms: ["subtarea (Child Mission)"],
+    navigation: 'es: "Subtarea"',
+    forbidden: [/Mission secundaria(?:s)?/giu, /Mission hija(?:s)?/giu],
+    childRequirements: ["WorkItem de la subtarea", "no es un WorkItem"],
   },
   {
     locale: "fr",
     directory: "fr",
-    term: "Mission enfant",
-    firstForms: ["Mission enfant (Child Mission)"],
-    navigation: 'fr: "Mission enfant"',
-    forbidden: [],
-    childRequirements: ["WorkItem de la Mission enfant"],
+    term: "sous-tâche",
+    firstForms: ["sous-tâche (Child Mission)"],
+    navigation: 'fr: "Sous-tâche"',
+    forbidden: [/Mission(?:s)? enfant(?:s)?/giu],
+    childRequirements: ["WorkItem de la sous-tâche", "pas un WorkItem"],
   },
   {
     locale: "de",
     directory: "de",
-    term: "untergeordnete Mission",
-    firstForms: [
-      "untergeordnete Mission (Child Mission)",
-      "Untergeordnete Mission (Child Mission)",
-    ],
-    navigation: 'de: "Untergeordnete Mission"',
-    forbidden: [],
-    childRequirements: ["WorkItem der untergeordneten Mission"],
+    term: "Unteraufgabe",
+    firstForms: ["Unteraufgabe (Child Mission)"],
+    navigation: 'de: "Unteraufgabe"',
+    forbidden: [/untergeordnet\p{L}*\s+Mission\p{L}*/giu],
+    childRequirements: ["WorkItem der Unteraufgabe", "kein WorkItem"],
   },
 ];
 
@@ -155,9 +152,11 @@ for (const rule of localeRules) {
     }
   }
 
-  const childPage = localizedBodies.find(({ file }) =>
-    file.endsWith("docs/0.1/child-missions.md"),
-  )?.contents;
+  const childPage = normalizeWhitespace(
+    localizedBodies.find(({ file }) =>
+      file.endsWith("docs/0.1/child-missions.md"),
+    )?.contents ?? "",
+  );
   for (const phrase of sharedDiagramEnglish) {
     if (childPage?.includes(phrase)) {
       failures.push(

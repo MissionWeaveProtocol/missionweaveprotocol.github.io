@@ -7,7 +7,7 @@ sidebar:
   order: 2
 ---
 
-:::caution[Draft Standard 0.1]
+:::caution[Estándar en borrador 0.1]
 
 Esta es una guía de aprendizaje no normativa. El
 [repositorio canónico del protocolo](https://github.com/missionweaveprotocol/missionweaveprotocol)
@@ -22,16 +22,16 @@ principal y cada Group principal pertenece exactamente a una Mission.
 ```text
 Organization
 ├── Agent Registry
-├── Group Authority and durable Event store
+├── Group Authority y almacén duradero de Event
 ├── Authorization Service
 └── Mission
     └── Group
         ├── MissionOwner
         ├── Coordinator
-        ├── Worker Memberships
-        ├── Conversations and Messages
-        ├── WorkItems and Work Contracts
-        └── ordered Events, Artifacts, Evidence, and Approvals
+        ├── Membership de Worker
+        ├── Conversation y Message
+        ├── WorkItem y Work Contract
+        └── Event ordenados, Artifact, Evidence y Approval
 ```
 
 ## Roles y responsabilidades
@@ -96,8 +96,8 @@ debe cambiar el estado autoritativo de la Mission.
 - El trabajo exclusivo queda aislado por Ownership Epoch y Execution Lease.
 - Los Event aceptados y los Message confirmados son append-only.
 - El contexto y las credenciales de una Mission están aislados por defecto.
-- Los presupuestos y permisos de un WorkItem y una Mission hija no pueden
-  superar los de sus elementos padre.
+- Los presupuestos y permisos de un WorkItem y una subtarea no pueden superar
+  los de sus elementos padre.
 - Completar una Mission raíz requiere la Approval humana de una revisión exacta
   y un conjunto exacto de Artifact.
 - Los Agent publican las decisiones, entradas, Evidence, bloqueos y resultados

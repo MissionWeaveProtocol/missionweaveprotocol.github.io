@@ -7,7 +7,7 @@ sidebar:
   order: 3
 ---
 
-:::caution[Draft Standard 0.1]
+:::caution[Estándar en borrador 0.1]
 
 Esta es una guía de aprendizaje no normativa. El
 [repositorio canónico del protocolo](https://github.com/missionweaveprotocol/missionweaveprotocol)
@@ -67,17 +67,17 @@ material del contrato requiere que el Worker vuelva a aceptarlo.
 
 ```text
 Work Proposal
-    ↓ authorize
-open WorkItem
-    ↓ offer
+    ↓ autorizar
+WorkItem en estado open
+    ↓ ofrecer
 offered
-    ↓ Worker accepts
+    ↓ el Worker acepta
 queued
-    ↓ valid ownership, approval gates, and Execution Lease
+    ↓ ownership válido, barreras de Approval y Execution Lease
 active
-    ↓ Worker submits Artifacts and Evidence
+    ↓ el Worker presenta Artifact y Evidence
 submitted
-    ↓ Coordinator accepts the result
+    ↓ el Coordinator acepta el resultado
 verified
 ```
 

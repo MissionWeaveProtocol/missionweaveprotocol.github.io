@@ -1,20 +1,20 @@
 ---
 title: Konformität
 description:
-  Führe die 43 implementierungsneutralen Konformitätsvektoren von
+  Führe die 52 implementierungsneutralen Konformitätsvektoren von
   MissionWeaveProtocol aus.
 sidebar:
   label: Konformität
   order: 3
 ---
 
-MissionWeaveProtocol 0.1 stellt **43 implementierungsneutrale
+MissionWeaveProtocol 0.1 stellt **52 implementierungsneutrale
 Konformitätsfälle** bereit:
 
 | Erwartetes Ergebnis | Fälle | Kanonisches Verzeichnis                                                                                                              |
 | ------------------- | ----: | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Gültig              |    22 | [`conformance/vectors/valid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/valid)     |
-| Ungültig            |    21 | [`conformance/vectors/invalid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/invalid) |
+| Gültig              |    25 | [`conformance/vectors/valid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/valid)     |
+| Ungültig            |    27 | [`conformance/vectors/invalid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/invalid) |
 
 Die kanonische Datei
 [`manifest.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/manifest.json)
@@ -24,7 +24,7 @@ Gültigkeit zu. Die normativen Nutzungsanforderungen stehen in der
 
 ## Was die Vektoren belegen
 
-Die Ausführung aller 43 Fälle prüft, ob eine Implementierung mit den
+Die Ausführung aller 52 Fälle prüft, ob eine Implementierung mit den
 strukturellen Dokumentregeln des Protokolls übereinstimmt. Die ungültigen Fälle
 decken bewusst abgelehnte Formen ab, darunter fehlende Signaturen, ungültige
 Lebenszykluszustände, fehlendes Ownership, unsicheres Erweiterungsverhalten und

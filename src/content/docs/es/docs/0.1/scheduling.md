@@ -8,7 +8,7 @@ sidebar:
   order: 4
 ---
 
-:::caution[Draft Standard 0.1]
+:::caution[Estándar en borrador 0.1]
 
 Esta es una guía de aprendizaje no normativa. El
 [repositorio canónico del protocolo](https://github.com/missionweaveprotocol/missionweaveprotocol)
@@ -22,9 +22,9 @@ distintos para cada Group, y después usa un Scheduler propiedad del Worker para
 elegir WorkItem elegibles entre esas colas.
 
 ```text
-Group A Events → Group A queue ┐
-Group B Events → Group B queue ├→ Worker Scheduler → isolated execution slots
-Group C Events → Group C queue ┘
+Event del Group A → cola del Group A ┐
+Event del Group B → cola del Group B ├→ Worker Scheduler → slots de ejecución aislados
+Event del Group C → cola del Group C ┘
 ```
 
 ## Quién controla la prioridad

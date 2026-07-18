@@ -62,17 +62,17 @@ revision には、Worker による再度の acceptance が必要です。
 
 ```text
 Work Proposal
-    ↓ authorize
-open WorkItem
+    ↓ 認可
+open 状態の WorkItem
     ↓ offer
 offered
-    ↓ Worker accepts
+    ↓ Worker が受諾
 queued
-    ↓ valid ownership, approval gates, and Execution Lease
+    ↓ 有効な ownership、approval gate、Execution Lease
 active
-    ↓ Worker submits Artifacts and Evidence
+    ↓ Worker が Artifact と Evidence を提出
 submitted
-    ↓ Coordinator accepts the result
+    ↓ Coordinator が結果を受諾
 verified
 ```
 

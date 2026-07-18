@@ -1,17 +1,17 @@
 ---
 title: 符合性
-description: 运行 43 个与实现无关的 MissionWeaveProtocol 符合性测试向量。
+description: 运行 52 个与实现无关的 MissionWeaveProtocol 符合性测试向量。
 sidebar:
   label: 符合性
   order: 3
 ---
 
-MissionWeaveProtocol 0.1 提供 **43 个与实现无关的符合性用例**：
+MissionWeaveProtocol 0.1 提供 **52 个与实现无关的符合性用例**：
 
 | 预期结果 | 用例 | 权威目录                                                                                                                             |
 | -------- | ---: | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 有效     |   22 | [`conformance/vectors/valid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/valid)     |
-| 无效     |   21 | [`conformance/vectors/invalid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/invalid) |
+| 有效     |   25 | [`conformance/vectors/valid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/valid)     |
+| 无效     |   27 | [`conformance/vectors/invalid/`](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance/vectors/invalid) |
 
 权威
 [`manifest.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/manifest.json)
@@ -20,7 +20,7 @@ MissionWeaveProtocol 0.1 提供 **43 个与实现无关的符合性用例**：
 
 ## 测试向量证明什么
 
-运行全部 43 个用例，可以检查实现是否遵循协议的结构化文档规则。无效用例涵盖刻意拒绝的结构，例如缺少签名、无效生命周期状态、缺少 ownership、不安全的扩展行为和不一致的溯源信息。
+运行全部 52 个用例，可以检查实现是否遵循协议的结构化文档规则。无效用例涵盖刻意拒绝的结构，例如缺少签名、无效生命周期状态、缺少 ownership、不安全的扩展行为和不一致的溯源信息。
 
 通过 manifest 是必要条件，但并不充分。行为符合性还要求满足
 [规范性协议说明](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)

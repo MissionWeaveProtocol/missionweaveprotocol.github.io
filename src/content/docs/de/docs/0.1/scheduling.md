@@ -9,7 +9,7 @@ sidebar:
   order: 4
 ---
 
-:::caution[Draft Standard 0.1]
+:::caution[Standardentwurf 0.1]
 
 Dies ist ein nicht normativer Lernleitfaden. Das
 [kanonische Protokoll-Repository](https://github.com/missionweaveprotocol/missionweaveprotocol)
@@ -18,14 +18,14 @@ bleibt normativ.
 :::
 
 Ein Worker kann vielen Mission Group angehören, ohne deren Kontexte zu
-vermischen. Er verwaltet für jeden Group einen eigenen Event-Posteingang, Cursor
+vermischen. Er verwaltet für jede Group einen eigenen Event-Posteingang, Cursor
 und eine eigene Arbeitswarteschlange. Anschließend wählt ein Scheduler des
 Worker geeignete WorkItem aus diesen Warteschlangen aus.
 
 ```text
-Group A Events → Group A queue ┐
-Group B Events → Group B queue ├→ Worker Scheduler → isolated execution slots
-Group C Events → Group C queue ┘
+Event von Group A → Warteschlange von Group A ┐
+Event von Group B → Warteschlange von Group B ├→ Worker Scheduler → isolierte Ausführungsplätze
+Event von Group C → Warteschlange von Group C ┘
 ```
 
 ## Wer die Priorität bestimmt
@@ -86,9 +86,9 @@ Group-spezifische Warteschlangen sind lokale Projektionen dauerhafter Group
 Event. Ein neu gestarteter Worker stellt Cursor und Warteschlangen aus einem
 Snapshot und geordnetem Replay wieder her. Event werden mindestens einmal
 zugestellt, daher dedupliziert der Worker anhand der Event ID und setzt nur den
-höchsten zusammenhängenden dauerhaften Cursor jedes Group fort.
+höchsten zusammenhängenden dauerhaften Cursor jeder Group fort.
 
-MissionWeaveProtocol definiert eine Reihenfolge innerhalb eines Group, aber
+MissionWeaveProtocol definiert eine Reihenfolge innerhalb einer Group, aber
 keine globale Reihenfolge über mehrere Group.
 
 Die vollständigen Regeln stehen in den normativen Abschnitten zu

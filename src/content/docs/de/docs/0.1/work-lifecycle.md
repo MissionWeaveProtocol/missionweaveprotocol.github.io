@@ -7,7 +7,7 @@ sidebar:
   order: 3
 ---
 
-:::caution[Draft Standard 0.1]
+:::caution[Standardentwurf 0.1]
 
 Dies ist ein nicht normativer Lernleitfaden. Das
 [kanonische Protokoll-Repository](https://github.com/missionweaveprotocol/missionweaveprotocol)
@@ -16,7 +16,7 @@ bleibt normativ.
 :::
 
 MissionWeaveProtocol hält die Zusammenarbeit in Conversation flexibel und macht
-ausführbare Verantwortung zugleich ausdrücklich. Jedes Mitglied eines Group kann
+ausführbare Verantwortung zugleich ausdrücklich. Jedes Mitglied einer Group kann
 Kontext besprechen, um Hilfe bitten oder Arbeit vorschlagen. Ein Vorschlag wird
 erst durch einen autorisierten WorkItem-Übergang zu einer Verpflichtung.
 
@@ -66,17 +66,17 @@ Vertragsänderung erfordert eine erneute Annahme durch den Worker.
 
 ```text
 Work Proposal
-    ↓ authorize
-open WorkItem
-    ↓ offer
+    ↓ autorisieren
+WorkItem im Status open
+    ↓ anbieten
 offered
-    ↓ Worker accepts
+    ↓ Worker nimmt an
 queued
-    ↓ valid ownership, approval gates, and Execution Lease
+    ↓ gültige Ownership, Approval-Gates und Execution Lease
 active
-    ↓ Worker submits Artifacts and Evidence
+    ↓ Worker reicht Artifact und Evidence ein
 submitted
-    ↓ Coordinator accepts the result
+    ↓ Coordinator nimmt das Ergebnis an
 verified
 ```
 
