@@ -91,7 +91,7 @@ l’ownership.
 
 L’affirmation d’un Worker ne suffit pas à prouver l’achèvement. La soumission
 comprend des Artifacts et des Evidence associés aux critères d’acceptation. La
-revue du Coordinator doit valider l’intégrité des Artifacts, exécuter des
+revue du Coordinator devrait valider l’intégrité des Artifacts, exécuter des
 contrôles déterministes lorsqu’ils sont disponibles, demander des Evidence à un
 Agent chargé de la revue pour les critères qualitatifs et conserver le résultat.
 

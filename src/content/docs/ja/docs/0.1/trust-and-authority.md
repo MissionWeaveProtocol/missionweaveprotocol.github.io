@@ -1,9 +1,9 @@
 ---
 title: 信頼と権限
 description:
-  MissionWeaveProtocol が
-  identity、Conversation、assignment、execution、ordering、 final Approval の
-  authority を分離する仕組み。
+  MissionWeaveProtocol
+  がアイデンティティ、Conversation、割り当て、実行、順序付け、 最終 Approval
+  の権限を分離する仕組み。
 sidebar:
   order: 5
 ---
@@ -17,71 +17,59 @@ sidebar:
 :::
 
 MissionWeaveProtocol
-0.1 は、1 つの信頼された Organization 内で動作します。Organization は、Agent
-identity、policy、authorization、durable な Group
-ordering、人間による accountability のガバナンスルートです。
+0.1 は、1 つの信頼された Organization 内で動作します。Organization は、Agent のアイデンティティ、ポリシー、認可、永続的な Group の順序付け、人間による説明責任を担うガバナンスの根幹です。
 
-## authority を意図的に分割する
+## 権限を意図的に分割する
 
-| 対象                                         | authority                                    |
-| -------------------------------------------- | -------------------------------------------- |
-| 安定した identity と検証済み capability      | Organization-controlled Agent Registry       |
-| Mission の方向性と final Approval            | MissionOwner                                 |
-| 計画、assignment、統合、提出                 | 現在の Coordinator Epoch                     |
-| Group を横断する execution order             | Worker-owned Scheduler                       |
-| transition の検証と Group ごとの Event order | Group Authority                              |
-| tool、data、resource、side effect の権限     | Authorization Service と Organization policy |
+| 対象                                   | 権限主体                                     |
+| -------------------------------------- | -------------------------------------------- |
+| 安定したアイデンティティと検証済み能力 | Organization 管理の Agent Registry           |
+| Mission の方向性と最終 Approval        | MissionOwner                                 |
+| 計画、割り当て、統合、提出             | 現在の Coordinator Epoch                     |
+| Group を横断する実行順序               | Worker 管理の Scheduler                      |
+| 遷移の検証と Group ごとの Event 順序   | Group Authority                              |
+| ツール、データ、リソース、副作用の権限 | Authorization Service と Organization policy |
 
 Group
-Authority は、各 Group に対する 1 つの論理 authority です。実装は内部で複製できますが、consensus、leader
-election、replica
-topology がプロトコル semantics として公開されることはありません。
+Authority は、各 Group に対する 1 つの論理的な権限主体です。実装は内部で複製できますが、合意形成、リーダー選出、レプリカ構成がプロトコルのセマンティクスとして公開されることはありません。
 
-Registry と Session の bootstrap
-Command および Event は Organization をスコープとし、Group の順序付けコンテキストを持ちません。既存 Group に対する Command は actor に適用される authority
+Registry と Session の初期化用 Command および Event は Organization をスコープとし、Group の順序付けコンテキストを持ちません。既存 Group に対する Command は actor に適用される authority
 epoch を持ち、Coordinator 専用 Command はさらに payload ではなくトップレベルに
 `coordinatorEpoch` を持ちます。
 
-## identity と presence は異なる
+## アイデンティティと Presence は異なる
 
 Agent
-Card は、安定し、バージョン管理され、Organization によって署名された identity です。public
-key、endpoint、対応プロトコルバージョン、検証済み capability、最大 concurrency を含みます。再利用可能な credential や tool の権限は含みません。
+Card は、安定し、バージョン管理され、Organization によって署名されたアイデンティティです。公開鍵、エンドポイント、対応プロトコルバージョン、検証済み Capability、最大同時実行数を含みます。再利用可能な認証情報やツールの権限は含みません。
 
-Presence Record は一時的です。可用性、空いている execution
-slot、capability の可用性、推定 response latency、heartbeat
-time を報告できます。stale な Presence Record が assignment acceptance や lease
-renewal になることはありません。
+Presence
+Record は一時的です。可用性、空いている実行スロット、Capability の可用性、推定応答遅延、ハートビート時刻を報告できます。古い Presence
+Record が割り当ての受諾やリース更新になることはありません。
 
-:::note[capability は authorization ではありません]
+:::note[Capability は認可ではありません]
 
-capability は、Agent が何を実行できると検証されているかを示します。authorization は、現在の Mission
-policy、ownership、lease、approval、budget の制約下で、その Agent が特定の resource に対して特定の operation を実行できるかを決定します。
+Capability は、Agent が何を実行できると検証されているかを示します。認可は、現在の Mission のポリシー、所有権、リース、Approval、予算の制約下で、その Agent が特定のリソースに対して特定の操作を実行できるかを決定します。
 
 :::
 
-## session と fencing
+## Session とフェンシング
 
-WebSocket handshake では、Organization に登録された Ed25519
-key と新しい challenge を使用します。handshake に成功すると、短命な session
-token と新しい Session Epoch が発行されます。epoch `n + 1`
-の発行により、その Agent identity について epoch `n`
-以下で動作するすべての runtime が fenced されます。
+WebSocket ハンドシェイクでは、Organization に登録された Ed25519 鍵と新しいチャレンジを使用します。ハンドシェイクに成功すると、短命な Session
+Token と新しい Session Epoch が発行されます。Epoch `n + 1`
+の発行により、その Agent アイデンティティについて Epoch `n`
+以下で動作するすべてのランタイムが無効化されます。
 
-追加の epoch によって authority はさらに限定されます。
+追加の Epoch によって権限はさらに限定されます。
 
-- Membership Epoch は、1 つの Group Membership の古い version を fence します。
-- Coordinator
-  Epoch は、置き換えられた Coordinator とその grant を fence します。
-- Ownership Epoch は、exclusive work の以前の owner を fence します。
-- Execution Lease ID は、expired または revoked になった execution
-  period を fence します。
+- Membership Epoch は、1 つの Group Membership の古いバージョンを無効化します。
+- Coordinator Epoch は、置き換えられた Coordinator とその Grant を無効化します。
+- Ownership Epoch は、排他作業の以前の所有者を無効化します。
+- Execution Lease ID は、期限切れまたは取り消された実行期間を無効化します。
 
-durable Command と Artifact manifest は、canonical
-JSON に対して個別に署名されます。accepted Event は Group
+永続的な Command と Artifact マニフェストは、正規 JSON に対して個別に署名されます。受理済み Event は Group
 Authority によって署名されます。
 
-## context から許可された side effect まで
+## コンテキストから許可された副作用まで
 
 ```text
 Message または Work Proposal
@@ -89,22 +77,19 @@ Message または Work Proposal
 WorkItem と Work Contract
         ↓ Worker の受諾
 Ownership Epoch
-        ↓ 現在の session、policy、budget、approval の確認
-Execution Lease とスコープ付き capability token
+        ↓ 現在の Session、ポリシー、予算、Approval の確認
+Execution Lease と範囲の限定された Capability Token
         ↓
 許可された操作
 ```
 
 Message、Agent Card、Context Package、Artifact、Group
-Event に、secret や再利用可能な credential を含めてはなりません。high-risk
-operation では、Authorization Service が capability
-token を発行する前に、署名済みの人間による Execution
+Event に、秘密情報や再利用可能な認証情報を含めてはなりません。高リスク操作では、Authorization
+Service が Capability Token を発行する前に、署名済みの人間による Execution
 Approval が必要になる場合があります。
 
-Coordinator が result を検証した後も、ルート Mission には別の final human
-Approval が必要です。Execution Approval は範囲の限定された risky
-operation を許可し、final Approval は完了した Mission revision と Artifact
-set を受諾します。
+Coordinator が結果を検証した後も、ルート Mission には別の最終的な人間の Approval が必要です。Execution
+Approval は範囲の限定された高リスク操作を許可し、最終 Approval は完了した Mission リビジョンと Artifact セットを受諾します。
 
 完全なルールについては、規範となる
 [identity と session](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#6-identity-agent-registry-and-sessions)、

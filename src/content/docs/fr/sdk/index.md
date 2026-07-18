@@ -10,8 +10,8 @@ sidebar:
 
 MissionWeaveProtocol fournit une implémentation de référence Python complète et
 cinq SDK de protocole officiels. Chaque SDK est versionné indépendamment et fixe
-le commit exact du protocole ainsi que les condensats des Artifact qu’il
-implémente. Les chiffres ci-dessous correspondent au commit du protocole
+le commit exact du protocole ainsi que les condensats des artefacts du protocole
+qu’il implémente. Les chiffres ci-dessous correspondent au commit du protocole
 [`6f10987`](https://github.com/missionweaveprotocol/missionweaveprotocol/commit/6f10987627d62fb296e3490ceceb5539b1e94b70).
 
 ## Matrice des capacités et de l’état
@@ -43,4 +43,4 @@ Utilisez le dépôt Go, TypeScript, Java, Rust ou C++ si vous avez besoin de
 bindings de protocole natifs, de validation, de canonicalisation, de signatures
 et de Frame Codec. Les commandes d’installation et de vérification sont
 maintenues dans le README de chaque dépôt. La spécification du protocole et les
-Artifact de conformité restent normatifs.
+artefacts de conformité restent normatifs.

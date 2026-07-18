@@ -73,7 +73,7 @@ Status ungleich null, wenn ein erforderliches Verhalten fehlt. Das
 deterministische Szenario umfasst zwei nebenläufige Missionen, gemeinsam
 genutzte Worker, eine Unteraufgabe, Klärung zwischen Peers, Planung,
 ausschließlich Checkpoint-basierte Preemption, Wiederherstellung, Verifizierung
-durch den Coordinator und genaue menschliche Approval.
+durch den Coordinator und menschliche Approval des genauen Ergebnisses.
 
 ## PostgreSQL-Integrationstests ausführen
 

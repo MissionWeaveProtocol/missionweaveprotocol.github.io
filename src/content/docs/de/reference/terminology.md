@@ -100,9 +100,9 @@ Agent dauerhaft verarbeitet hat.
 **Ownership Lease**: Eine begrenzte Reservierung, die einen Worker einem
 exklusiven WorkItem zugewiesen hält.
 
-**Execution Lease**: Eine erneuerbare, geschützte Gewährung, die einer Worker
-Session und einem Ownership Epoch die Ausführung eines exklusiven WorkItem
-erlaubt.
+**Execution Lease**: Eine erneuerbare Gewährung, die veraltete
+Ausführungsberechtigungen ausschließt und einer Worker Session unter einem
+Ownership Epoch erlaubt, ein exklusives WorkItem auszuführen.
 
 **Scheduler**: Eine Richtlinie im Besitz des Worker, die geeignete WorkItem über
 Group-spezifische Warteschlangen und Capacity Slot hinweg auswählt.

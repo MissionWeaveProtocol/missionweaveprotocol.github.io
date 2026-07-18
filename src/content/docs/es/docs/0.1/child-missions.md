@@ -60,8 +60,8 @@ MissionOwner raíz puede inspeccionar el árbol completo de Mission.
 El grafo padre-hijo debe permanecer acíclico. El presupuesto, el plazo, las
 Capability, el acceso a datos y los permisos de una subtarea deben ser
 subconjuntos de los de la Mission padre. Cada Organization configura una
-profundidad máxima predeterminada y exige la Approval explícita del MissionOwner
-o del actor de política cuando se supera ese umbral.
+profundidad máxima predeterminada y exige una Approval explícita del
+MissionOwner o conforme a la política cuando se supera ese umbral.
 
 El límite de profundidad es una protección, no un techo fijo. El trabajo
 complejo legítimo puede continuar después de que una Approval explícita conceda

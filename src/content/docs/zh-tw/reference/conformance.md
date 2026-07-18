@@ -26,6 +26,12 @@ MissionWeaveProtocol 0.1 提供 **52 個與實作無關的符合性案例**：
 [規範性協定規格](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
 中的狀態機、排序、授權、簽名、epoch、lease、預算、層級、時間戳記和 replay 規則。
 
+Signed Document 密碼學是獨立的符合性測試範圍。其
+[密碼學清單](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/manifest.json)
+包含 22 個案例和 58 個評估項，涵蓋全部 9 種需要簽章的 Schema 驗證設定。
+[密碼學 README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/README.md)
+定義了依序執行的六階段驗證要求。通過其中一份清單並不代表也通過另一份清單。
+
 ## 在協定工作副本中驗證
 
 ```bash

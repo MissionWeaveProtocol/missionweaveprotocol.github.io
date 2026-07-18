@@ -14,8 +14,9 @@ die organisationsweiten Richtlinien:
 
 Arbeiten an Protokollsemantik, Schemas und Konformität gehören in das
 [Protokoll-Repository](https://github.com/missionweaveprotocol/missionweaveprotocol).
-Arbeiten an der Python-Implementierung gehören in das
-[Python-SDK-Repository](https://github.com/missionweaveprotocol/python-sdk).
+Implementierungsarbeiten gehören in das jeweilige offizielle SDK-Repository. Die
+[SDK-Übersicht](../sdk/) hilft bei der Auswahl zwischen Python, Go, TypeScript,
+Java, Rust und C++.
 
 ## Eine Schwachstelle melden
 

@@ -15,8 +15,9 @@ import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 
 Ceci est un guide d’apprentissage non normatif. Le
 [dépôt canonique de MissionWeaveProtocol](https://github.com/missionweaveprotocol/missionweaveprotocol)
-est la source de vérité pour la spécification, le glossaire, les schémas et les
-vecteurs de conformité.
+est la source de vérité pour la spécification, le glossaire, les schémas, les
+vecteurs de conformité et le paquet cryptographique indépendant de documents
+signés.
 
 :::
 
@@ -40,9 +41,9 @@ planifier le travail entre les Group selon sa propre politique locale.
    par Group et décide du moment de son exécution au moyen de son Scheduler
    global.
 6. Le travail produit des Artifact adressés par leur contenu et des Evidence
-   associées aux acceptance criteria.
+   associées aux critères d’acceptation.
 7. Le Coordinator vérifie les résultats du Worker avant que le MissionOwner
-   humain n’approuve une revision précise de la Mission et un ensemble exact
+   humain n’approuve une révision précise de la Mission et un ensemble exact
    d’Artifact.
 
 ## Comprendre le modèle
@@ -54,7 +55,7 @@ planifier le travail entre les Group selon sa propre politique locale.
     href="./core-model/"
   />
   <LinkCard
-    title="Lifecycle du travail"
+    title="Cycle de vie du travail"
     description="Suivre le travail depuis la Conversation et la proposition jusqu’aux Evidence et à l’Approval."
     href="./work-lifecycle/"
   />
@@ -98,3 +99,4 @@ conséquente exige un état structuré explicite.
 - [Glossaire du protocole](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
 - [Schémas JSON](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
 - [Vecteurs de conformité](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
+- [Vecteurs cryptographiques de documents signés](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/cryptography)

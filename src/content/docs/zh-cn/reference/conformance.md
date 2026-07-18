@@ -26,6 +26,12 @@ MissionWeaveProtocol 0.1 提供 **52 个与实现无关的符合性用例**：
 [规范性协议说明](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
 中的状态机、排序、授权、签名、epoch、lease、预算、层级、时间戳和 replay 规则。
 
+Signed Document 密码学是独立的符合性测试范围。其
+[密码学清单](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/manifest.json)
+包含 22 个用例和 58 个评估项，覆盖全部 9 种需要签名的 Schema 验证配置。
+[密码学 README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/README.md)
+定义了有序的六阶段验证要求。通过其中一份清单并不代表也通过另一份清单。
+
 ## 在协议检出目录中验证
 
 ```bash

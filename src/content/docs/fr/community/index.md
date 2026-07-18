@@ -15,8 +15,9 @@ modification, consultez les règles qui s’appliquent à toute l’Organization
 Les travaux sur la sémantique du protocole, les schémas et la conformité doivent
 être réalisés dans le
 [dépôt du protocole](https://github.com/missionweaveprotocol/missionweaveprotocol).
-Les travaux sur l’implémentation Python doivent être réalisés dans le
-[dépôt du Python SDK](https://github.com/missionweaveprotocol/python-sdk).
+Les travaux d’implémentation relèvent du dépôt du SDK officiel correspondant ;
+consultez la [vue d’ensemble des SDK](../sdk/) pour choisir Python, Go,
+TypeScript, Java, Rust ou C++.
 
 ## Signaler une vulnérabilité
 

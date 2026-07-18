@@ -29,6 +29,7 @@ contient les artefacts faisant autorité :
 - [Glossaire du protocole](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
 - [JSON Schemas normatifs](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
 - [Manifeste et vecteurs de conformité](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
+- [Manifeste et vecteurs cryptographiques de documents signés](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/cryptography)
 
 En cas de divergence entre ce guide et un artefact normatif, l’artefact du dépôt
 du protocole prévaut.
@@ -39,12 +40,12 @@ La version actuelle du protocole est `0.1`. Son wire namespace est
 `missionweaveprotocol` :
 
 - les identifiants du protocole utilisent `urn:missionweaveprotocol:*` ;
-- les kind d’extension intégrés utilisent `ext.missionweaveprotocol.*` ;
+- les types d’extension intégrés utilisent `ext.missionweaveprotocol.*` ;
 - les identifiants de schéma utilisent
   `https://missionweaveprotocol.dev/schemas/0.1/`.
 
 Les versions du protocole et du SDK sont gérées indépendamment. Une
-implémentation doit déclarer sa compatibilité et fixer une version publiée du
+implémentation devrait déclarer sa compatibilité et fixer une version publiée du
 protocole ou un commit exact, plutôt que de déduire la compatibilité de numéros
 de version identiques.
 
@@ -64,7 +65,7 @@ de version identiques.
    l’implémentation de référence.
 
 La validation des schémas ne prouve que la structure des documents. La
-conformité comportementale exige également le respect des règles de state
-machine, d’ordonnancement, d’epoch, d’Execution Lease, de budget, de hiérarchie,
-de timestamp, de signature, d’autorisation et de replay définies dans la
+conformité comportementale exige également le respect des règles de machine à
+états, d’ordonnancement, d’epoch, d’Execution Lease, de budget, de hiérarchie,
+d’horodatage, de signature, d’autorisation et de replay définies dans la
 spécification.

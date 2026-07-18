@@ -90,7 +90,7 @@ ofrece de nuevo cuando caduca su Ownership Lease.
 
 La afirmación de un Worker no basta como prueba de finalización. El envío
 incluye Artifact y Evidence vinculada a los criterios de aceptación. La revisión
-del Coordinator debe validar la integridad de los Artifact, ejecutar
+del Coordinator debería validar la integridad de los Artifact, ejecutar
 comprobaciones deterministas cuando estén disponibles, solicitar Evidence de un
 Agent revisor para los criterios cualitativos y conservar el resultado.
 

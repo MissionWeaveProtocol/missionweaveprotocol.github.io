@@ -28,6 +28,7 @@ enthält die autoritativen Artefakte:
 - [Protokollglossar](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
 - [Normative JSON-Schemata](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
 - [Konformitätsmanifest und -vektoren](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
+- [Kryptografiemanifest und -vektoren für signierte Dokumente](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/cryptography)
 
 Wenn dieser Leitfaden und ein normatives Artefakt voneinander abweichen, ist das
 Artefakt im Protokoll-Repository maßgeblich.

@@ -69,7 +69,8 @@ La commande produit un rapport JSON canonique et se termine avec un statut non
 nul si un comportement requis manque. Le scénario déterministe couvre deux
 Missions concurrentes, des Workers partagés, une sous-tâche, la clarification
 entre pairs, la planification, la préemption uniquement aux Checkpoint, la
-récupération, la vérification du Coordinator et une Approval humaine exacte.
+récupération, la vérification du Coordinator et l’Approval humaine du résultat
+exact.
 
 ## Exécuter les tests d’intégration PostgreSQL
 

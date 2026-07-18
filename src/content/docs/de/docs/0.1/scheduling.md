@@ -59,7 +59,7 @@ Group noch dessen genaue Position in der globalen Warteschlange offenlegen.
 Jeder Capacity Slot isoliert Mission-Kontext, Anmeldedaten, Checkpoint,
 Tool-Budgets und Seiteneffekt-Schlüssel von jedem anderen Capacity Slot.
 
-## Ownership, Lease und sichere Preemption
+## Ownership, Execution Lease und sichere Preemption
 
 Die Annahme startet einen Ownership Epoch und eine Startfrist. Für den
 Arbeitsbeginn ist außerdem eine Execution Lease erforderlich, die an Agent,
@@ -78,7 +78,7 @@ dauerhaften Abfolge:
 
 Beim Blockieren gilt dasselbe Sicherheitsprinzip: Checkpoint erstellen,
 Blockierungsgrund ausgeben, Kapazität freigeben und dann gemäß den aktuellen
-Ownership- und Lease-Regeln fortsetzen oder neu zuweisen.
+Ownership- und Execution-Lease-Regeln fortsetzen oder neu zuweisen.
 
 ## Wiederherstellung durch Replay
 

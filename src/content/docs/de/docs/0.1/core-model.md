@@ -36,14 +36,14 @@ Organization
 
 ## Rollen und Verantwortlichkeiten
 
-| Rolle                 | Verantwortung                                                                             | Wichtige Grenze                                                    |
-| --------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| Organization          | Regelt Identität, Richtlinien, Autorisierung und Infrastruktur                            | Sie ist die einzige Vertrauensgrenze in 0.1                        |
-| MissionOwner          | Gibt die Richtung vor, prüft Fortschritt, greift ein und erteilt die finale Approval      | Ein MissionOwner der Root Mission ist ein Mensch                   |
-| Coordinator           | Plant, weist zu, überwacht, integriert und reicht die Mission ein                         | Er ist austauschbar und durch einen Coordinator Epoch geschützt    |
-| Worker                | Nimmt WorkItem an und führt sie über eigene Warteschlangen und Scheduler aus              | Derselbe Agent kann in vielen Group arbeiten                       |
-| Group Authority       | Authentifiziert Akteure, validiert Richtlinien, serialisiert Übergänge und hängt Event an | Sie ordnet Zustand, verwaltet aber nicht die Bedeutung der Mission |
-| Authorization Service | Stellt nach den erforderlichen Prüfungen kurzlebige, begrenzte Capability Token aus       | Capability ist keine Autorisierung                                 |
+| Rolle                 | Verantwortung                                                                             | Wichtige Grenze                                                            |
+| --------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Organization          | Regelt Identität, Richtlinien, Autorisierung und Infrastruktur                            | Sie ist die einzige Vertrauensgrenze in 0.1                                |
+| MissionOwner          | Gibt die Richtung vor, prüft Fortschritt, greift ein und erteilt die finale Approval      | Ein MissionOwner der Root Mission ist ein Mensch                           |
+| Coordinator           | Plant, weist zu, überwacht, integriert und reicht die Mission ein                         | Er ist austauschbar; ein Coordinator Epoch setzt den Vorgänger außer Kraft |
+| Worker                | Nimmt WorkItem an und führt sie über eigene Warteschlangen und Scheduler aus              | Derselbe Agent kann in vielen Group arbeiten                               |
+| Group Authority       | Authentifiziert Akteure, validiert Richtlinien, serialisiert Übergänge und hängt Event an | Sie ordnet Zustand, verwaltet aber nicht die Bedeutung der Mission         |
+| Authorization Service | Stellt nach den erforderlichen Prüfungen kurzlebige, begrenzte Capability Token aus       | Capability ist keine Autorisierung                                         |
 
 Eine **Agent Card** enthält eine stabile, von der Organization signierte
 Identität und verifizierte Capability. Ein **Presence Record** enthält
@@ -95,7 +95,8 @@ Datenbank darf den autoritativen Mission-Zustand nicht verändern.
 
 - Eine Mission hat eine primäre Group und eine Event-Reihenfolge pro Group.
 - Conversation ist niemals Ausführungsautorität.
-- Exklusive Arbeit wird durch Ownership Epoch und Execution Lease geschützt.
+- Ownership Epoch und Execution Lease setzen frühere Eigentümer beziehungsweise
+  abgelaufene Ausführungszeiträume außer Kraft.
 - Akzeptierte Event und bestätigte Message sind append-only.
 - Mission-Kontext und Anmeldedaten sind standardmäßig isoliert.
 - Eine Unteraufgabe darf mit ihren Budgets und Berechtigungen die übergeordnete

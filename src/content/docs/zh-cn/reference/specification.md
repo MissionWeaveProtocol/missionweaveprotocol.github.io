@@ -24,6 +24,7 @@ Group、明确的 WorkItem、对等 Message、调度、权限、持久排序、r
 - [协议术语表](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
 - [规范性 JSON Schema](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
 - [符合性清单和测试向量](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
+- [Signed Document 密码学清单和测试向量](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/cryptography)
 
 本指南与规范性产物存在差异时，以协议仓库中的产物为准。
 

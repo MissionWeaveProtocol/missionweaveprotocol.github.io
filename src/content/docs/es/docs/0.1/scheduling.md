@@ -36,7 +36,7 @@ relacionados; un cambio de prioridad a escala de la Organization se tramita
 mediante la política o el MissionOwner.
 
 El Scheduler debe proporcionar equidad ponderada y evitar la inanición. Su orden
-efectivo debe tener en cuenta:
+efectivo debería tener en cuenta:
 
 - la clase de prioridad de la Organization;
 - los plazos y la antigüedad en cola;
@@ -50,8 +50,8 @@ los demás Group.
 
 ## Divulgación que preserva la privacidad
 
-Cuando un Worker acepta una oferta o cambia materialmente su planificación, debe
-publicar un intervalo estimado de inicio, una finalización estimada, la
+Cuando un Worker acepta una oferta o cambia materialmente su planificación,
+debería publicar un intervalo estimado de inicio, una finalización estimada, la
 confianza, el estado de capacidad y la hora del cálculo. No debe revelar la
 identidad, el contenido, las asignaciones ni la posición exacta en la cola
 global de otro Group.

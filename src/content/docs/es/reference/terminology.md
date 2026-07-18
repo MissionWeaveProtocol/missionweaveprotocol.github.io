@@ -97,8 +97,9 @@ procesado de forma duradera.
 **Ownership Lease**: Reserva acotada que mantiene un Worker asignado a un
 WorkItem exclusivo.
 
-**Execution Lease**: Concesión renovable y aislada que permite que una Session
-de Worker y un Ownership Epoch ejecuten un WorkItem exclusivo.
+**Execution Lease**: Concesión renovable que invalida concesiones obsoletas y
+permite que una Session de Worker, bajo un Ownership Epoch, ejecute un WorkItem
+exclusivo.
 
 **Scheduler**: Política propiedad del Worker que elige WorkItem elegibles entre
 colas por Group y Capacity Slot.

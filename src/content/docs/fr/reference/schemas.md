@@ -38,7 +38,7 @@ approuvées ne sont transportées que dans des membres `extensions` explicites.
 | [`command.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/command.schema.json)                     | Demande signée pour une transition d’état structurée                                             |
 | [`event.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/event.schema.json)                         | Fait accepté immuable dans l’historique ordonné d’un Group                                       |
 | [`error.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/error.schema.json)                         | Document d’erreur structuré du protocole                                                         |
-| [`lease.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/lease.schema.json)                         | Execution Lease renouvelable et protégée par epoch                                               |
+| [`lease.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/lease.schema.json)                         | Execution Lease avec fencing par epoch, invalidant les exécutions obsolètes                      |
 | [`extension-profile.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/extension-profile.schema.json) | Définition d’extension gouvernée et métadonnées de compatibilité                                 |
 | [`websocket-frame.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/websocket-frame.schema.json)     | Union canonique des trames WebSocket                                                             |
 
@@ -61,5 +61,5 @@ les références. Réussir la validation des schémas démontre la conformité
 structurelle, mais pas les exigences comportementales de la
 [spécification](../specification/).
 
-Le [manifest de conformité](../conformance/) fournit des instances
-expected-valid et expected-invalid pour ces schémas.
+Le [manifeste de conformité](../conformance/) fournit, pour ces schémas, des
+instances censées être valides ou invalides.

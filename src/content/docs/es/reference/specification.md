@@ -28,6 +28,7 @@ contiene los artefactos autoritativos:
 - [Glosario del protocolo](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
 - [Esquemas JSON normativos](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
 - [Manifiesto y vectores de conformidad](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
+- [Manifiesto y vectores criptográficos de documentos firmados](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/cryptography)
 
 Cuando esta guía y un artefacto normativo difieren, prevalece el artefacto del
 repositorio del protocolo.
@@ -43,8 +44,8 @@ La versión actual del protocolo es `0.1`. Su espacio de nombres del wire es
   `https://missionweaveprotocol.dev/schemas/0.1/`.
 
 Las versiones del protocolo y del SDK se publican de forma independiente. Una
-implementación debe declarar la compatibilidad y fijar una versión publicada del
-protocolo o un commit exacto, en lugar de inferir compatibilidad por la
+implementación debería declarar la compatibilidad y fijar una versión publicada
+del protocolo o un commit exacto, en lugar de inferir compatibilidad por la
 coincidencia de números de versión.
 
 ## Ruta de lectura

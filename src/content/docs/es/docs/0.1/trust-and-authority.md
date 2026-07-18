@@ -47,10 +47,10 @@ Incluye claves públicas, endpoints, versiones de protocolo compatibles,
 Capability verificadas y concurrencia máxima. No contiene credenciales
 reutilizables ni permisos para herramientas.
 
-Un Presence Record es efímero. Puede informar de Capacity Slot disponibles,
-disponibilidad de Capability, latencia de respuesta estimada y hora del latido.
-Un Presence Record obsoleto nunca supone aceptar una asignación ni renovar una
-Execution Lease.
+Un Presence Record es efímero. Puede informar de disponibilidad general,
+Capacity Slot disponibles, disponibilidad de Capability, latencia de respuesta
+estimada y hora del latido. Un Presence Record obsoleto nunca supone aceptar una
+asignación ni renovar una Execution Lease.
 
 :::note[Capability no equivale a autorización]
 
@@ -65,15 +65,16 @@ Execution Lease, Approval y presupuesto de la Mission.
 
 El handshake de WebSocket usa una clave Ed25519 registrada por la Organization y
 un challenge nuevo. Un handshake correcto emite un session token de corta
-duración y un nuevo Session Epoch. Emitir el epoch `n + 1` aísla todos los
+duración y un nuevo Session Epoch. Emitir el epoch `n + 1` invalida todos los
 runtime con epoch `n` o inferior para esa identidad de Agent.
 
 Otros epochs restringen aún más la autoridad:
 
-- un Membership Epoch aísla una versión anterior de una Membership de Group;
-- un Coordinator Epoch aísla a un Coordinator reemplazado y sus concesiones;
-- un Ownership Epoch aísla a los propietarios anteriores de trabajo exclusivo; y
-- un Execution Lease ID aísla un periodo de ejecución caducado o revocado.
+- un Membership Epoch invalida una versión anterior de una Membership de Group;
+- un Coordinator Epoch invalida a un Coordinator reemplazado y sus concesiones;
+- un Ownership Epoch invalida a los propietarios anteriores de trabajo
+  exclusivo; y
+- un Execution Lease ID invalida un periodo de ejecución caducado o revocado.
 
 Los Command duraderos y los manifiestos de Artifact se firman individualmente
 sobre JSON canónico. Los Event aceptados los firma la Group Authority.

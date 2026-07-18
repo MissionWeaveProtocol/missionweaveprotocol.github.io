@@ -37,6 +37,15 @@ autorización, firma, epoch, lease, presupuesto, jerarquía, timestamp y Replay 
 la
 [especificación normativa](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md).
 
+La criptografía de documentos firmados constituye una superficie de conformidad
+independiente. Su
+[manifiesto criptográfico](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/manifest.json)
+contiene 22 casos y 58 evaluaciones para los nueve perfiles de esquema que
+requieren firma. El
+[README criptográfico](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/README.md)
+define los requisitos ordenados de verificación en seis etapas. Superar uno de
+los manifiestos no implica superar el otro.
+
 ## Validar en el checkout del protocolo
 
 ```bash

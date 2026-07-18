@@ -15,8 +15,9 @@ cambio, lee las directrices para toda la Organization:
 El trabajo sobre la semántica del protocolo, los schemas y la conformidad
 corresponde al
 [repositorio del protocolo](https://github.com/missionweaveprotocol/missionweaveprotocol).
-El trabajo sobre la implementación en Python corresponde al
-[repositorio de Python SDK](https://github.com/missionweaveprotocol/python-sdk).
+El trabajo de implementación corresponde al repositorio del SDK oficial
+adecuado; consulta la [vista general de los SDK](../sdk/) para elegir Python,
+Go, TypeScript, Java, Rust o C++.
 
 ## Informar de una vulnerabilidad
 

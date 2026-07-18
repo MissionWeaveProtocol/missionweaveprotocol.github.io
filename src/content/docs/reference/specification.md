@@ -27,6 +27,7 @@ owns the authoritative artifacts:
 - [Protocol glossary](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
 - [Normative JSON Schemas](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
 - [Conformance manifest and vectors](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
+- [Signed-document cryptography manifest and vectors](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/cryptography)
 
 When this guide and a normative artifact differ, the artifact in the protocol
 repository controls.

@@ -36,6 +36,15 @@ Verhaltenskonformität erfordert außerdem die Regeln der
 zu Zustandsmaschine, Reihenfolge, Autorisierung, Signatur, Epoch, Lease, Budget,
 Hierarchie, Zeitstempel und Replay.
 
+Die Kryptografie signierter Dokumente ist ein eigenständiger
+Konformitätsbereich. Ihr
+[Kryptografiemanifest](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/manifest.json)
+enthält 22 Fälle und 58 Auswertungen für alle neun signaturpflichtigen
+Schemaprofile. Die
+[Kryptografie-README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/README.md)
+definiert die geordneten Anforderungen der sechsstufigen Verifikation. Das
+Bestehen eines Manifests bedeutet nicht, dass auch das andere bestanden wurde.
+
 ## Im Protokoll-Checkout validieren
 
 ```bash

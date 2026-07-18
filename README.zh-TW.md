@@ -9,6 +9,11 @@
 - 官方網站：<https://missionweaveprotocol.github.io/>
 - 協定：<https://github.com/missionweaveprotocol/missionweaveprotocol>
 - Python SDK：<https://github.com/missionweaveprotocol/python-sdk>
+- Go SDK：<https://github.com/missionweaveprotocol/go-sdk>
+- TypeScript SDK：<https://github.com/missionweaveprotocol/typescript-sdk>
+- Java SDK：<https://github.com/missionweaveprotocol/java-sdk>
+- Rust SDK：<https://github.com/missionweaveprotocol/rust-sdk>
+- C++ SDK：<https://github.com/missionweaveprotocol/cpp-sdk>
 
 ## 本機開發
 

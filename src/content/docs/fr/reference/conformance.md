@@ -37,6 +37,15 @@ d’autorisation, de signature, d’epoch, de lease, de budget, de hiérarchie, 
 timestamp et de Replay définies dans la
 [spécification normative](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md).
 
+La cryptographie des documents signés constitue un domaine de conformité
+indépendant. Son
+[manifeste cryptographique](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/manifest.json)
+contient 22 cas et 58 évaluations couvrant les neuf profils de schéma exigeant
+une signature. Le
+[README cryptographique](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/README.md)
+définit les exigences ordonnées de la vérification en six étapes. La réussite de
+l’un des manifestes n’implique pas celle de l’autre.
+
 ## Valider depuis le checkout du protocole
 
 ```bash
@@ -63,5 +72,5 @@ uv run missionweaveprotocol-conformance --root ../missionweaveprotocol
 Le Python SDK embarque également le même ensemble de schémas et de vecteurs pour
 la validation hors ligne. Son fichier
 [`PROTOCOL_PIN.json`](https://github.com/missionweaveprotocol/python-sdk/blob/main/PROTOCOL_PIN.json)
-enregistre le commit exact du protocole et les empreintes de contenu utilisés
+enregistre le commit exact du protocole et les empreintes de contenu utilisées
 par cette copie de travail.

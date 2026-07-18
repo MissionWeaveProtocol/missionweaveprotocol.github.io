@@ -29,7 +29,7 @@ la responsabilité humaine.
 | Direction de la Mission et Approval finale                     | MissionOwner                                         |
 | Planification, assignation, intégration, soumission            | Coordinator Epoch actuel                             |
 | Ordre d’exécution entre Group                                  | Scheduler contrôlé par le Worker                     |
-| Validation des transitions et ordre des Event                  | Group Authority                                      |
+| Validation des transitions et ordre des Event par Group        | Group Authority                                      |
 | Permission d’outil, de donnée, de ressource et d’effet de bord | Authorization Service et politique de l’Organization |
 
 La Group Authority constitue une autorité logique unique pour chaque Group. Une

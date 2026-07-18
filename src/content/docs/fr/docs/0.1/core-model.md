@@ -36,14 +36,14 @@ Organization
 
 ## Rôles et responsabilités
 
-| Role                  | Responsabilité                                                                              | Limite importante                                  |
-| --------------------- | ------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| Organization          | Gouverne l’identité, la politique, l’autorisation et l’infrastructure                       | Seul périmètre de confiance de la version 0.1      |
-| MissionOwner          | Donne la direction, inspecte la progression, intervient et accorde l’Approval finale        | Un MissionOwner racine est humain                  |
-| Coordinator           | Planifie, assigne, surveille, intègre et soumet la Mission                                  | Remplaçable et délimité par un Coordinator Epoch   |
-| Worker                | Accepte et exécute les WorkItem avec ses propres files et son Scheduler                     | Un même Agent peut travailler dans plusieurs Group |
-| Group Authority       | Authentifie les acteurs, valide la politique, sérialise les transitions et ajoute les Event | Ordonne l’état sans gérer le sens de la Mission    |
-| Authorization Service | Émet des jetons de capacité courts et limités après les vérifications requises              | Une capacité n’est pas une autorisation            |
+| Role                  | Responsabilité                                                                              | Limite importante                                            |
+| --------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Organization          | Gouverne l’identité, la politique, l’autorisation et l’infrastructure                       | Seul périmètre de confiance de la version 0.1                |
+| MissionOwner          | Donne la direction, inspecte la progression, intervient et accorde l’Approval finale        | Un MissionOwner racine est humain                            |
+| Coordinator           | Planifie, assigne, surveille, intègre et soumet la Mission                                  | Remplaçable ; un Coordinator Epoch invalide son prédécesseur |
+| Worker                | Accepte et exécute les WorkItem avec ses propres files et son Scheduler                     | Un même Agent peut travailler dans plusieurs Group           |
+| Group Authority       | Authentifie les acteurs, valide la politique, sérialise les transitions et ajoute les Event | Ordonne l’état sans gérer le sens de la Mission              |
+| Authorization Service | Émet des jetons de capacité courts et limités après les vérifications requises              | Une capacité n’est pas une autorisation                      |
 
 Une **Agent Card** porte une identité stable, signée par l’Organization, ainsi
 que des capacités vérifiées. Un **Presence Record** porte une disponibilité et
@@ -53,15 +53,15 @@ doit pas réécrire une identité de confiance.
 ## Les enregistrements qui relient la coopération
 
 - Une **Membership** relie un Principal à un Group, un ensemble de rôles, une
-  plage de visibility et un Membership Epoch.
+  plage de visibilité et un Membership Epoch.
 - Une **Conversation** contient des Message durables pour la planification du
   Group ou pour un WorkItem.
 - Un **WorkItem** est une unité exécutable du travail de la Mission. Son **Work
   Contract** définit l’objectif, les livrables, les Evidence, les permissions,
-  la deadline et le budget.
+  l’échéance et le budget.
 - Un **Artifact** est un livrable immuable, adressé par son contenu.
 - Une **Evidence** consigne comment un Artifact ou un WorkItem satisfait les
-  acceptance criteria.
+  critères d’acceptation.
 - Un **Event** est un fait accepté immuable dans l’historique monotone d’un
   Group.
 - Un **Cursor** consigne la position contiguë la plus élevée des Group Event
@@ -94,7 +94,8 @@ doit jamais modifier l’état autoritatif d’une Mission.
 - Une Mission possède un Group principal et un ordre d’Event par Group.
 - Une Conversation n’est jamais une autorité d’exécution.
 - Le travail exclusif est délimité par les epochs d’ownership et de lease.
-- Les Event acceptés et les Message commit sont append-only.
+- Les Event acceptés et les Message consignés ne peuvent être qu’ajoutés en fin
+  de journal.
 - Le contexte et les identifiants d’accès d’une Mission sont isolés par défaut.
 - Les budgets et permissions d’un WorkItem ou d’une sous-tâche ne peuvent pas
   dépasser ceux de leur parent.

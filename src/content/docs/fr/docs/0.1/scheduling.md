@@ -17,9 +17,9 @@ reste normatif.
 :::
 
 Un Worker peut appartenir à plusieurs Mission Group sans fusionner leurs
-contextes. Il maintient une inbox d’Event, un Cursor et une file de travail
-distincts pour chaque Group, puis utilise un Scheduler contrôlé par le Worker
-pour sélectionner les WorkItem éligibles entre ces files.
+contextes. Il maintient une boîte de réception d’Event, un Cursor et une file de
+travail distincts pour chaque Group, puis utilise un Scheduler contrôlé par le
+Worker pour sélectionner les WorkItem éligibles entre ces files.
 
 ```text
 Event du Group A → file du Group A ┐
@@ -36,7 +36,7 @@ sans rapport ; une modification de priorité à l’échelle de l’Organization
 par la politique ou le MissionOwner.
 
 Le Scheduler doit fournir une équité pondérée et éviter la famine. Son ordre
-effectif doit prendre en compte :
+effectif devrait prendre en compte :
 
 - la classe de priorité de l’Organization ;
 - les échéances et le vieillissement des files ;
@@ -50,9 +50,9 @@ Group.
 
 ## Divulgation respectueuse de la confidentialité
 
-Lorsqu’un Worker accepte une offre ou modifie sensiblement son planning, il doit
-publier une fenêtre estimée de début, une estimation de fin, son niveau de
-confiance, l’état de sa capacité et l’heure du calcul. Il ne doit pas révéler
+Lorsqu’un Worker accepte une offre ou modifie sensiblement son planning, il
+devrait publier une fenêtre estimée de début, une estimation de fin, son niveau
+de confiance, l’état de sa capacité et l’heure du calcul. Il ne doit pas révéler
 l’identité, le contenu, les assignations ni la position globale exacte dans la
 file d’un autre Group.
 

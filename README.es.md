@@ -10,6 +10,11 @@ MissionWeaveProtocol.
 - Sitio web: <https://missionweaveprotocol.github.io/>
 - Protocolo: <https://github.com/missionweaveprotocol/missionweaveprotocol>
 - Python SDK: <https://github.com/missionweaveprotocol/python-sdk>
+- SDK de Go: <https://github.com/missionweaveprotocol/go-sdk>
+- SDK de TypeScript: <https://github.com/missionweaveprotocol/typescript-sdk>
+- SDK de Java: <https://github.com/missionweaveprotocol/java-sdk>
+- SDK de Rust: <https://github.com/missionweaveprotocol/rust-sdk>
+- SDK de C++: <https://github.com/missionweaveprotocol/cpp-sdk>
 
 ## Desarrollo local
 

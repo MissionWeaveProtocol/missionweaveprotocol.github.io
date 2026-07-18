@@ -98,8 +98,9 @@ durable par un Agent.
 **Ownership Lease** : réservation bornée qui maintient un Worker assigné à un
 WorkItem exclusif.
 
-**Execution Lease** : autorisation renouvelable et délimitée qui permet à une
-session de Worker et à un Ownership Epoch d’exécuter un WorkItem exclusif.
+**Execution Lease** : autorisation renouvelable avec fencing, qui invalide les
+autorisations obsolètes et permet à une session de Worker sous un Ownership
+Epoch d’exécuter un WorkItem exclusif.
 
 **Scheduler** : politique contrôlée par le Worker qui sélectionne les WorkItem
 éligibles parmi les files par Group et les Capacity Slot.

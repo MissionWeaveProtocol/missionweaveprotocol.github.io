@@ -13,8 +13,9 @@ the organization-wide guidance:
 
 Protocol semantics, schemas, and conformance work belong in the
 [protocol repository](https://github.com/missionweaveprotocol/missionweaveprotocol).
-Python implementation work belongs in the
-[Python SDK repository](https://github.com/missionweaveprotocol/python-sdk).
+Implementation work belongs in the corresponding official SDK repository; use
+the [SDK overview](../sdk/) to choose Python, Go, TypeScript, Java, Rust, or
+C++.
 
 ## Report a vulnerability
 

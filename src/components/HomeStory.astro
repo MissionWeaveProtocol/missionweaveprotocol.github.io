@@ -170,12 +170,12 @@ const copies: Record<Locale, HomeCopy> = {
         [
           "Coordinator",
           "规划并分派",
-          "通过明确的 offer 与 acceptance，将 WorkItem 交给符合条件的 Agent。",
+          "通过明确发出邀请并由其接受，将工作项交给符合条件的 Agent。",
         ],
         [
           "Worker",
           "协作并执行",
-          "对等方交换上下文、持有 lease，并发布不可变 Artifact。",
+          "对等方交换上下文、持有 Execution Lease，并发布不可变 Artifact。",
         ],
         [
           "复核",
@@ -206,7 +206,7 @@ const copies: Record<Locale, HomeCopy> = {
       [
         "有意排除",
         "不是另一种 Agent RPC。",
-        "MissionWeaveProtocol 不定义模型 prompt、物理 peer-to-peer 路由、跨组织 federation 或 distributed consensus。它定义一个组织如何安全地完成复杂 Agent 工作。",
+        "MissionWeaveProtocol 不定义模型提示词、物理点对点路由、跨组织联邦或分布式共识。它定义一个组织如何安全地完成复杂 Agent 工作。",
       ],
     ],
     closing: {
@@ -253,12 +253,12 @@ const copies: Record<Locale, HomeCopy> = {
         [
           "Coordinator",
           "規劃並分派",
-          "透過明確的 offer 與 acceptance，將 WorkItem 交給符合條件的 Agent。",
+          "透過明確發出邀請並由其接受，將工作項交給符合條件的 Agent。",
         ],
         [
           "Worker",
           "協作並執行",
-          "對等方交換脈絡、持有 lease，並發布不可變 Artifact。",
+          "對等方交換脈絡、持有 Execution Lease，並發布不可變 Artifact。",
         ],
         [
           "審查",
@@ -289,7 +289,7 @@ const copies: Record<Locale, HomeCopy> = {
       [
         "刻意排除",
         "不是另一種 Agent RPC。",
-        "MissionWeaveProtocol 不定義模型 prompt、物理 peer-to-peer 路由、跨組織 federation 或 distributed consensus。它定義一個組織如何安全完成複雜的 Agent 工作。",
+        "MissionWeaveProtocol 不定義模型提示詞、物理點對點路由、跨組織聯邦或分散式共識。它定義一個組織如何安全完成複雜的 Agent 工作。",
       ],
     ],
     closing: {
@@ -336,12 +336,12 @@ const copies: Record<Locale, HomeCopy> = {
         [
           "Coordinator",
           "計画して割り当てる",
-          "明示的な offer と acceptance により、適格な Agent へ WorkItem を渡します。",
+          "明示的な提示と受諾により、適格な Agent へ WorkItem を渡します。",
         ],
         [
           "Worker",
           "協働して実行する",
-          "仲間がコンテキストを交換し、lease を保持し、不変の Artifact を公開します。",
+          "仲間がコンテキストを交換し、Execution Lease を保持し、不変の Artifact を公開します。",
         ],
         [
           "レビュー",
@@ -372,7 +372,7 @@ const copies: Record<Locale, HomeCopy> = {
       [
         "意図的に対象外",
         "別の Agent RPC ではありません。",
-        "MissionWeaveProtocol は、モデル prompt、物理 peer-to-peer ルーティング、組織間 federation、distributed consensus を定義しません。1 つの組織が複雑な Agent の仕事を安全に完了する方法を定義します。",
+        "MissionWeaveProtocol は、モデルプロンプト、物理的なピアツーピアルーティング、組織間フェデレーション、分散合意を定義しません。1 つの組織が複雑な Agent の仕事を安全に完了する方法を定義します。",
       ],
     ],
     closing: {
@@ -527,7 +527,7 @@ const copies: Record<Locale, HomeCopy> = {
       queues: "Files par Group",
       owned: "Contrôlé par le Worker",
       scheduler: "Scheduler",
-      policy: "priorité · disponibilité · politique",
+      policy: "priorité · état de préparation · politique",
       slots: "Slots de capacité",
       running: "en cours",
       ready: "prêt",
@@ -613,7 +613,7 @@ const copies: Record<Locale, HomeCopy> = {
       scheduler: "Scheduler",
       policy: "Priorität · Bereitschaft · Richtlinie",
       slots: "Capacity Slots",
-      running: "aktiv",
+      running: "in Ausführung",
       ready: "bereit",
     },
     boundaries: [

@@ -51,14 +51,14 @@ enthält keine wiederverwendbaren Anmeldedaten oder Tool-Berechtigungen.
 Ein Presence Record ist vorübergehend. Er kann Verfügbarkeit, freie Capacity
 Slot, Verfügbarkeit von Capability, geschätzte Antwortlatenz und Heartbeat-Zeit
 melden. Ein veralteter Presence Record bedeutet niemals die Annahme einer
-Zuweisung oder die Verlängerung einer Lease.
+Zuweisung oder die Verlängerung einer Execution Lease.
 
 :::note[Capability ist keine Autorisierung]
 
 Eine Capability beschreibt, wozu ein Agent nachweislich fähig ist. Autorisierung
 bestimmt, ob dieser Agent einen bestimmten Vorgang an bestimmten Ressourcen
-unter den aktuellen Einschränkungen für Mission-Richtlinie, Ownership, Lease,
-Approval und Budget ausführen darf.
+unter den aktuellen Einschränkungen für Mission-Richtlinie, Ownership, Execution
+Lease, Approval und Budget ausführen darf.
 
 :::
 
@@ -67,17 +67,18 @@ Approval und Budget ausführen darf.
 Der WebSocket-Handshake verwendet einen bei der Organization registrierten
 Ed25519-Schlüssel und eine neue Challenge. Ein erfolgreicher Handshake stellt
 ein kurzlebiges Session Token und einen neuen Session Epoch aus. Die Ausgabe von
-Epoch `n + 1` schützt die Agent-Identität vor jedem Runtime mit Epoch `n` oder
-niedriger.
+Epoch `n + 1` setzt für diese Agent-Identität jede Runtime mit Epoch `n` oder
+niedriger außer Kraft.
 
 Weitere Epoch begrenzen die Autorität zusätzlich:
 
-- Ein Membership Epoch schützt vor einer älteren Version einer Group Membership.
-- Ein Coordinator Epoch schützt vor einem ersetzten Coordinator und dessen
-  Grants.
-- Ein Ownership Epoch schützt vor früheren Eigentümern exklusiver Arbeit.
-- Eine Execution Lease ID schützt vor einem abgelaufenen oder widerrufenen
-  Ausführungszeitraum.
+- Ein Membership Epoch setzt eine ältere Version einer Group Membership außer
+  Kraft.
+- Ein Coordinator Epoch setzt einen ersetzten Coordinator und dessen Grants
+  außer Kraft.
+- Ein Ownership Epoch setzt frühere Eigentümer exklusiver Arbeit außer Kraft.
+- Eine Execution Lease ID setzt einen abgelaufenen oder widerrufenen
+  Ausführungszeitraum außer Kraft.
 
 Dauerhafte Command und Artifact-Manifeste werden einzeln über kanonischem JSON
 signiert. Akzeptierte Event werden von der Group Authority signiert.
