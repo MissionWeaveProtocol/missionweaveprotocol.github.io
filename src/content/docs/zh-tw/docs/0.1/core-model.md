@@ -81,7 +81,7 @@ Authority 對該狀態的變更進行序列化。
 - 排他工作透過 ownership epoch 和 lease epoch 的 fencing 防止舊擁有者繼續生效。
 - 已接受的 Event 和已提交的 Message 僅可追加。
 - Mission 上下文和憑證預設相互隔離。
-- WorkItem 和子任務的預算與權限不得超過其上層。
+- WorkItem 和子任务的預算與權限不得超過其上層。
 - 根 Mission 只有在人類核准精確的修訂版本和 Artifact 集合後才能完成。
 - Agent 發布稽核所需的決策、輸入、Evidence、阻礙因素和結果，而不是私有 chain-of-thought。
 

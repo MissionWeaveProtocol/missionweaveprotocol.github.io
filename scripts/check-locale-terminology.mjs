@@ -64,11 +64,11 @@ const localeRules = [
   {
     locale: "zh-TW",
     directory: "zh-tw",
-    term: "子任務",
-    firstForms: ["子任務（Child Mission）"],
-    navigation: '"zh-TW": "子任務"',
-    forbidden: [/子\s*Mission/gu, /子使命/gu, /子任务/gu],
-    childRequirements: ["子任務內的工作項", "不是 WorkItem"],
+    term: "子任务",
+    firstForms: ["子任务（Child Mission）"],
+    navigation: '"zh-TW": "子任务"',
+    forbidden: [/子\s*Mission/gu, /子使命/gu, /子任務/gu],
+    childRequirements: ["子任务內的工作項", "不是 WorkItem"],
   },
   {
     locale: "ja",

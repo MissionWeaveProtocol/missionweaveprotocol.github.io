@@ -60,7 +60,7 @@ uv run missionweaveprotocol-conformance --root ../missionweaveprotocol
 uv run missionweaveprotocol-demo --workdir .missionweaveprotocol/poc
 ```
 
-該命令產生一份規範化 JSON 報告；如果缺少任何必要行為，則以非零狀態退出。確定性場景涵蓋兩個同時進行的 Mission、共享 Worker、子任務、對等澄清、排程、僅限 checkpoint 的搶佔、復原、Coordinator 驗證和精確的人類核准。
+該命令產生一份規範化 JSON 報告；如果缺少任何必要行為，則以非零狀態退出。確定性場景涵蓋兩個同時進行的 Mission、共享 Worker、子任务、對等澄清、排程、僅限 checkpoint 的搶佔、復原、Coordinator 驗證和精確的人類核准。
 
 ## 執行 PostgreSQL 整合測試
 

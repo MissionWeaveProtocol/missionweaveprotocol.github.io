@@ -124,7 +124,7 @@ export default defineConfig({
               label: "Child Missions",
               translations: {
                 "zh-CN": "子任务",
-                "zh-TW": "子任務",
+                "zh-TW": "子任务",
                 ja: "サブタスク",
                 es: "Subtarea",
                 fr: "Sous-tâche",
