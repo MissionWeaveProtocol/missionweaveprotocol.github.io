@@ -1,0 +1,102 @@
+---
+title: "Build a MissionWeaveProtocol 0.1 runtime"
+description:
+  "The normative shared implementation path for parsing, trust, Admission,
+  persistence, transport, diagnostics, conformance, and upgrades."
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+# Build a MissionWeaveProtocol 0.1 runtime
+
+:::caution[Draft Standard 0.1]
+
+This versioned Build path is part of the normative website publication. It
+organizes the local Reference clauses into implementation order without
+redefining them. When a summary and a linked clause differ, the linked clause is
+the controlling requirement.
+
+:::
+
+The BCP 14 requirement language used by the local specification is defined in
+[MWP-FND-001](../reference/specification/foundations/#mwp-fnd-001). The shared
+path describes semantics that every language implementation must preserve.
+SDK-specific pages may add installation commands, language types, and public API
+syntax, but they must not weaken or replace these rules.
+
+:::note[Implementation note]
+
+## Recommended implementation sequence
+
+1. Bootstrap an exact release, trust boundary, validators, stores, and runtime
+   identity.
+2. Preserve protocol JSON, identifiers, timestamps, hashes, and envelope types
+   without host-language normalization.
+3. Implement strict parsing, Schema validation, canonicalization, signing,
+   Registry-backed key resolution, and the six-stage verification pipeline.
+4. Layer First Admission and Historical Trust above cryptographic verification.
+5. Separate authoritative state from rebuildable projections, then implement
+   replay, idempotency, fencing, and side-effect recovery.
+6. Authenticate and multiplex Groups over the normative WebSocket framing.
+7. Expose stable wire errors while retaining protected diagnostics and useful
+   operational signals.
+8. Verify exact release artifacts, report the proven conformance subset, and
+   upgrade without silently changing wire semantics.
+
+This order is implementation guidance. The linked Reference clauses define the
+requirements and their acceptance boundaries.
+
+:::
+
+## Shared runtime reference
+
+<CardGrid>
+  <LinkCard
+    title="Architecture and bootstrap"
+    description="Trust boundaries, runtime responsibilities, release loading, identity, recovery, and startup order."
+    href="./runtime/architecture-and-bootstrap/"
+  />
+  <LinkCard
+    title="Protocol types"
+    description="Wire JSON, scalar profiles, durable objects, envelopes, generated types, and semantic state."
+    href="./runtime/protocol-types/"
+  />
+  <LinkCard
+    title="Validation, canonicalization, and signing"
+    description="Strict parsing, Schema assertions, JCS, Ed25519, Registry evidence, and signing hashes."
+    href="./runtime/validation-canonicalization-and-signing/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed Admission Log outcomes, atomic first admission, record validation, and historical replay."
+    href="./runtime/first-admission-and-historical-trust/"
+  />
+  <LinkCard
+    title="Persistence and recovery"
+    description="Authoritative state, local projections, receipts, replay, Cursors, snapshots, and side effects."
+    href="./runtime/persistence-and-recovery/"
+  />
+  <LinkCard
+    title="Transport and framing"
+    description="HELLO authentication, Session Epoch fencing, subscriptions, multiplexing, ACK, PING, and backpressure."
+    href="./runtime/transport-and-framing/"
+  />
+  <LinkCard
+    title="Errors and observability"
+    description="Wire-safe errors, retry decisions, protected diagnostics, audit records, metrics, and tracing boundaries."
+    href="./runtime/errors-and-observability/"
+  />
+  <LinkCard
+    title="Conformance and upgrades"
+    description="Exact artifacts, structural and trust bundles, claim boundaries, extensions, and version transitions."
+    href="./runtime/conformance-and-upgrades/"
+  />
+</CardGrid>
+
+## Release before code
+
+Start from the local
+[normative release identity](../reference/normative-release/), not an unpinned
+repository branch or SDK README. The release page binds the protocol artifacts,
+all six SDK commits, profiles, digests, locales, and exact built-site identity
+used by this documentation.

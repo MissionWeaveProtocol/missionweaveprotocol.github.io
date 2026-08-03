@@ -1,0 +1,150 @@
+---
+title: "Persistence and recovery"
+description:
+  "Authoritative state, rebuildable projections, receipts, optimistic
+  concurrency, replay, Cursors, snapshots, and external side-effect recovery."
+---
+
+# Persistence and recovery
+
+Persistence is split by authority. Missions, Memberships, WorkItems, ownership
+and lease epochs, deduplication receipts, Approvals, and Group Events are
+authoritative. Agent-local Cursors, queues, checkpoints, inboxes, outboxes, and
+Scheduler state are rebuildable projections; losing them cannot change Mission
+truth
+([MWP-FND-023](../../../reference/specification/foundations/#mwp-fnd-023)).
+
+## Authoritative acceptance transaction
+
+For one Group transition, the authority must make the accepted state change,
+Event append, aggregate revision, fencing updates, budget or approval effects,
+and idempotency receipt visible as one atomic result. An Event is the immutable
+accepted fact carrying its Group sequence and aggregate revision
+([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)).
+
+The same `(actor ID, Action ID)` and byte-equivalent canonical content returns
+the original receipt instead of appending another transition; different content
+under the same Action ID fails with `ACTION_ID_COLLISION`
+([MWP-EVT-003](../../../reference/specification/commands-events-and-ordering/#mwp-evt-003)).
+
+Structured updates use optimistic concurrency. Revision mismatch rejects the
+whole Command, while first ownership, lease renewal, Membership change, and
+Approval always use compare-and-set acceptance
+([MWP-EVT-007](../../../reference/specification/commands-events-and-ordering/#mwp-evt-007)).
+
+## Projection transaction
+
+Event delivery is at least once, so each consumer deduplicates by Event ID and
+processes each Group in sequence. It may buffer later Events but cannot advance
+its durable Cursor over a gap
+([MWP-WRK-029](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)).
+This is the runtime form of the at-least-once invariant
+([MWP-FND-018](../../../reference/specification/foundations/#mwp-fnd-018)). Each
+Worker keeps a distinct durable Event inbox, Cursor, and Work queue per Group,
+all rebuildable from accepted Group Events
+([MWP-WRK-008](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008)).
+
+`ACK` reports the highest contiguous durable Cursor. It may permit delivery
+cleanup but never deletes authoritative Group history; reconnect replay may
+include duplicates around a disconnect
+([MWP-WRK-030](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)).
+
+## Snapshots and long gaps
+
+When online replay no longer contains the requested Cursor, the server returns
+`CURSOR_TOO_OLD` with a signed snapshot reference. Restore only after validating
+the snapshot's Schema, hash, signature, Organization and Group binding, and
+sequence. Then resume replay strictly after the snapshot sequence. The local
+[delivery, replay, and acknowledgement section](../../../reference/specification/work-scheduling-and-recovery/#16-delivery-replay-and-acknowledgement)
+defines this recovery path.
+
+Active Groups retain complete Event history. Archival produces a signed final
+snapshot, retains the encrypted audit log under Organization policy, and records
+legal deletion or security redaction through auditable tombstones rather than
+rewriting prior IDs or sequences
+([MWP-MSN-009](../../../reference/specification/missions-groups-and-membership/#mwp-msn-009)).
+
+## Checkpoints, leases, and restart
+
+Queued ownership and active execution are fenced. The Execution Lease binds the
+Agent, Session Epoch, WorkItem, Ownership Epoch, stable Lease ID, and time
+boundaries; every checkpoint, block, publication, submission, and reported
+failure references the current Lease ID
+([MWP-WRK-013](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013)).
+
+Checkpoint, block, and submission release the lease. Session replacement,
+reassignment, cancellation, and failure revoke it; a replacement session returns
+affected work to `queued` before execution resumes under new leases
+([MWP-WRK-014](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-014)).
+
+Blocked work checkpoints, emits its required resolution, releases its slot, and
+returns to its ready queue after resolution
+([MWP-WRK-017](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-017)).
+Automatic retries remain within Work Contract attempt, backoff, cost, and
+deadline budgets and use stable external attempt keys
+([MWP-WRK-018](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-018)).
+
+If a Worker misses its start deadline or lease renewal, a new owner can resume
+from the latest checkpoint under a higher Ownership Epoch; late results remain
+non-authoritative Evidence
+([MWP-WRK-019](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-019)).
+
+## Bounded outage recovery
+
+During Group-service unavailability, a Worker may continue only already-active,
+reversible computation within its bounded grace period. It cannot start new work
+or perform new high-risk, irreversible, or externally visible operations without
+a current lease and token, and it reconciles before submission or further side
+effects
+([MWP-WRK-020](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-020)).
+
+Buffered Commands retain the critical bounded-offline-execution binding, then
+rebase current session fields and are re-signed on reconnect
+([MWP-WRK-021](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-021)).
+Reconciliation and its resource charge are one authoritative transaction; budget
+overflow rejects both the charge and progress without partial state
+([MWP-WRK-022](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-022)).
+
+When a retry requires changed freshness or current fencing, follow the new
+Action-ID and signature rules in
+[MWP-EXT-005](../../../reference/specification/errors-extensions-and-security/#mwp-ext-005).
+
+## External side effects
+
+Network delivery cannot provide exactly-once external effects. Tool operations
+use a stable idempotency key derived from Mission ID, WorkItem ID, Ownership
+Epoch, and logical operation ID
+([MWP-WRK-031](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-031)).
+
+:::note[Implementation note]
+
+A safe local apply cycle is:
+
+```text
+begin local transaction
+→ reject or ignore duplicate Event ID
+→ verify next contiguous Group sequence
+→ update Group projection and per-Group queue
+→ persist any checkpoint or outbox intent
+→ advance durable Cursor
+→ commit
+```
+
+For an external side effect, persist the intent before dispatch, retain the
+external receipt, and reconcile an uncertain outcome before retrying.
+
+Use separate storage abstractions for authoritative service state and
+Agent-local projections even if both are backed by one database product. Make
+transaction boundaries visible in the API: `accept transition`, `apply Event`,
+`advance Cursor`, and `record side-effect receipt` should not be hidden inside
+unrelated object saves.
+
+An outbox is useful for transport publication after an authoritative commit, and
+an inbox or processed-Event table is useful for local deduplication. Retention,
+snapshot cadence, partitioning, compaction, and database choice are operational
+decisions; they cannot erase the append-only and replay obligations.
+
+:::
+
+Continue with [Transport and framing](../transport-and-framing/) to connect
+durable replay to the wire protocol.

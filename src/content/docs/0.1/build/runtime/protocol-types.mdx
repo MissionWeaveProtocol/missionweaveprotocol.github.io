@@ -1,0 +1,113 @@
+---
+title: "Protocol types"
+description:
+  "How wire JSON, scalar profiles, generated language types, durable objects,
+  Commands, Events, and semantic state fit together."
+---
+
+# Protocol types
+
+Treat a protocol object as more than a deserialized class. A conforming runtime
+preserves four distinct layers:
+
+```text
+received UTF-8 bytes
+→ lossless parsed JSON value
+→ schema-valid protocol object
+→ semantically accepted authoritative state or local projection
+```
+
+Skipping a layer creates normalization, validation-order, or authority bugs.
+
+## Scalar profiles
+
+All protocol objects are JSON, durable objects conform to the local normative
+Schemas, and protocol timestamps use RFC 3339 with additional deterministic
+rules where Signed Document verification applies
+([MWP-FND-004](../../../reference/specification/foundations/#mwp-fnd-004)).
+
+- Preserve timestamp spelling separately from the parsed instant. Do not rewrite
+  it before hashing or verification
+  ([MWP-FND-005](../../../reference/specification/foundations/#mwp-fnd-005)).
+- Decode base64url canonically without padding, use lower-case
+  `sha256:<64 hex digits>` hashes, and keep sequences, revisions, epochs, and
+  budgets within non-negative safe JSON integer range
+  ([MWP-FND-007](../../../reference/specification/foundations/#mwp-fnd-007)).
+- Validate identifiers as complete absolute RFC 3986 URIs and compare their
+  retained bytes without inventing recipient-side normalization
+  ([MWP-FND-008](../../../reference/specification/foundations/#mwp-fnd-008)).
+- Enable every Schema `format` keyword as an assertion, including `uri` and
+  `date-time`
+  ([MWP-FND-009](../../../reference/specification/foundations/#mwp-fnd-009)).
+
+## Schema types and semantic types
+
+Generated language types are useful projections of the JSON Schemas, but they do
+not replace validation. The v0.1 Schemas use Draft 2020-12, reject unknown core
+properties, and admit extensibility only through declared extension members and
+approved profiles
+([MWP-EXT-010](../../../reference/specification/errors-extensions-and-security/#mwp-ext-010)).
+
+Keep these categories separate:
+
+| Category            | Examples                                                        | Acceptance boundary                                          |
+| ------------------- | --------------------------------------------------------------- | ------------------------------------------------------------ |
+| Scalar              | identifier, timestamp, hash, base64url, safe integer            | lexical and value-profile validation                         |
+| Durable document    | Mission, WorkItem, Artifact, Evidence, Agent Card               | strict JSON plus complete normative Schema                   |
+| Signed Document     | Command, Event, Approval, Agent Card, Artifact manifest         | Schema plus six-stage verification                           |
+| Authoritative state | aggregate revision, Membership, ownership, lease, budget ledger | current Organization or Group Authority transition           |
+| Local projection    | Cursor, inbox, outbox, per-Group queue, checkpoint              | rebuildable from authoritative Events and local durable work |
+
+Each Signed Document kind selects one protected time and expected signer under
+[MWP-SDV-001](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-001).
+The First-Admission Record is a separate unsigned nine-field object and cannot
+authenticate its own bytes
+([MWP-ADM-001](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001)).
+
+## Commands and Events
+
+A Command is a signed request for one structured transition. Its envelope binds
+the stable Action ID, version, actor, kind, payload, correlation, issue time,
+and applicable Group and epoch fields
+([MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001)).
+A valid Command object is therefore not yet an accepted transition.
+
+An Event is an immutable accepted fact. Group Events contain the monotonic Group
+sequence and aggregate revision assigned by the Group Authority; the two
+Organization-scoped bootstrap Event kinds omit Group order fields
+([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)).
+
+## Preserve evidence needed by later stages
+
+A decoder must retain enough information to:
+
+- reject duplicate decoded member names before Schema validation;
+- compare protected timestamp text byte-for-byte;
+- apply the RFC 8785 binary64 and Unicode data model;
+- omit exactly the top-level `signature` member when producing signing bytes;
+- distinguish absent data from unavailable or indeterminate authoritative
+  evidence; and
+- report the first failing semantic stage without exposing protected details on
+  the wire.
+
+Duplicate-name rejection and content-derived canonical bytes follow
+[MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012).
+The ordered verification inputs and complete stage-4 Registry scan follow
+[MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015),
+including complete evidence validation before selected-key lookup under
+[MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008).
+A partial cache cannot replace authoritative completeness
+([MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009));
+the adapter must establish applicable revision, completeness, and historical
+coverage or report that it cannot
+([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)),
+and an unknown key is authoritative only after that completeness is established
+([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011)).
+Lossless retention preserves normative stage classification under
+[MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016),
+while protected diagnostic handling and the wire-safe failure boundary follow
+[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018).
+
+Browse the exact local types in the
+[JSON Schema catalog](../../../reference/schemas/). Then implement
+[Validation, canonicalization, and signing](../validation-canonicalization-and-signing/).

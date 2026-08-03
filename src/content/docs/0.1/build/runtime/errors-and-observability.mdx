@@ -1,0 +1,114 @@
+---
+title: "Errors and observability"
+description:
+  "Wire-safe errors, retry decisions, protected verification diagnostics,
+  access-controlled audit records, metrics, and tracing boundaries."
+---
+
+# Errors and observability
+
+The wire error is a stable protocol result, not a dump of internal exceptions.
+Errors conform to the local error Schema, state whether retry is safe, and may
+identify the related frame or Action ID without exposing unauthorized data
+([MWP-EXT-004](../../../reference/specification/errors-extensions-and-security/#mwp-ext-004)).
+
+## Classify at the correct layer
+
+| Layer                                                             | Public outcome                                       |
+| ----------------------------------------------------------------- | ---------------------------------------------------- |
+| invalid JSON, duplicate members, or impossible JCS value          | `PROTOCOL_VIOLATION`                                 |
+| complete Schema or required-envelope failure                      | `SCHEMA_VALIDATION_FAILED`                           |
+| cryptographic stage 3, 4, or 6 failure                            | `AUTH_INVALID_SIGNATURE`                             |
+| Admission or Command-freshness failure                            | `AUTH_INVALID_SIGNATURE`                             |
+| missing permission or policy eligibility                          | `AUTH_FORBIDDEN`                                     |
+| stale Session, Membership, Coordinator, ownership, or lease state | the corresponding stable fencing code                |
+| current aggregate revision mismatch                               | `REVISION_CONFLICT`                                  |
+| accepted pressure limit                                           | `BACKPRESSURE` or `RATE_LIMITED` with retry guidance |
+
+Cryptographic and Admission failures deliberately collapse on the wire. The
+Organization retains the first failing semantic stage and specific reason only
+in a protected, access-controlled audit record
+([MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)).
+Stage numbers are semantic classifications rather than required internal
+function boundaries
+([MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016)).
+Every failure after six-stage completion in the Admission path uses protected
+stage `admission` and the same public `AUTH_INVALID_SIGNATURE` code
+([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).
+
+## Retry decisions
+
+Retry behavior depends on the stable code and whether protected content remains
+valid:
+
+- an unchanged accepted Command retry keeps the original Action ID and signed
+  content;
+- `AUTH_INVALID_SIGNATURE` is not retried unchanged until its cause is
+  corrected;
+- expired Command freshness requires a new Command, Action ID, protected time,
+  and signature;
+- `ACTION_ID_COLLISION` always requires a new Action ID and signed content; and
+- stale fencing errors require current authoritative epochs plus a new Command
+  and signature.
+
+The complete rules are
+[MWP-EXT-005](../../../reference/specification/errors-extensions-and-security/#mwp-ext-005)).
+Transport timeouts without an authoritative response are indeterminate: query or
+replay by stable identity before deciding whether to send a new transition.
+
+## Protected audit record
+
+The Organization retains the first failing semantic stage and its specific
+reason in a protected, access-controlled audit record, as required by
+[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018).
+
+Do not put secrets, capability tokens, private key material, raw credentials,
+unauthorized Group existence, or protected trust-failure distinctions into the
+wire response. Tokens and credentials are excluded from Messages, Agent Cards,
+Context Packages, Artifacts, and Events as well
+([MWP-AUT-002](../../../reference/specification/authorization-and-budgets/#mwp-aut-002)).
+
+Audit evidence covers decisions, inputs, blockers, and outcomes without
+requiring private chain-of-thought, hidden prompts, or raw internal memory
+([MWP-FND-022](../../../reference/specification/foundations/#mwp-fnd-022)).
+
+## Revision-sensitive failures
+
+Do not treat alternate signing-byte behavior as a compatibility recovery path. A
+revision that protects a different portion of the signature envelope changes
+wire signing bytes and cannot be generated or silently accepted as v0.1
+([MWP-SDV-019](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-019)).
+
+:::note[Implementation note]
+
+Use separate public-error and protected-diagnostic types so serialization code
+cannot accidentally expose an internal reason. Logs and traces should reference
+stable IDs and hashes rather than embedding complete protocol documents.
+
+For an authorized auditor, useful structured fields include:
+
+- the first failing semantic stage, stable internal reason, and source adapter;
+- exact release, Schema, profile, and implementation version;
+- authorized Organization, Group, actor, Action ID, correlation ID, and signing
+  hash references;
+- relevant Registry revision or Admission Log result identity; and
+- whether authoritative state changed.
+
+Commands already carry stable Action and correlation identity
+([MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001)),
+and accepted Events retain immutable cause, actor, correlation, sequence, and
+revision context
+([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)).
+Prefer those references to an unrelated tracing identity.
+
+Useful metrics include accepted and rejected Commands by public code, first
+failing protected stage in restricted telemetry, replay lag by Group, Cursor gap
+count, duplicate Event count, lease and budget rejection counts, backpressure
+duration, Admission adapter outcomes, and end-to-end transition latency. Define
+bounded cardinality before attaching Organization, Group, actor, Action, key, or
+signing-hash identifiers.
+
+:::
+
+Finish with [Conformance and upgrades](../conformance-and-upgrades/) before
+claiming support for a release.

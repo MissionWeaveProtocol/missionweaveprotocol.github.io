@@ -319,25 +319,27 @@ git commit -m "docs(learn): add normative protocol learning path"
 - Create: `src/content/docs/0.1/build/runtime/transport-and-framing.mdx`
 - Create: `src/content/docs/0.1/build/runtime/errors-and-observability.mdx`
 - Create: `src/content/docs/0.1/build/runtime/conformance-and-upgrades.mdx`
+- Create: `scripts/check-runtime-pages.mjs`
+- Modify: `package.json`
 
-- [ ] **Step 1: Define the implementation sequence**
+- [x] **Step 1: Define the implementation sequence**
 
 Build pages must organize local Reference clauses into an implementer flow:
 bootstrap, strict parsing/schema, canonicalization/signing, key resolution,
 Admission, persistence/recovery, transport, protected diagnostics, and upgrades.
 
-- [ ] **Step 2: Keep common semantics in shared pages**
+- [x] **Step 2: Keep common semantics in shared pages**
 
 Use clause links for every cross-language requirement. SDK pages may show
 language syntax but must not redefine these semantics.
 
-- [ ] **Step 3: Mark implementation advice explicitly**
+- [x] **Step 3: Mark implementation advice explicitly**
 
 Wrap deployment topology, adapter examples, performance advice, and
 observability suggestions in `Implementation note` blocks unless they are backed
 by a normative clause.
 
-- [ ] **Step 4: Build and commit the runtime path**
+- [x] **Step 4: Build and commit the runtime path**
 
 ```bash
 npm run check:normative-clauses

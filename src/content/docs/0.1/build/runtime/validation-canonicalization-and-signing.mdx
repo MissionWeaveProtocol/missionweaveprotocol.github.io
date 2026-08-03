@@ -1,0 +1,142 @@
+---
+title: "Validation, canonicalization, and signing"
+description:
+  "The normative strict-JSON, Schema, JCS, Registry, signing, and six-stage
+  verification pipeline shared by every runtime."
+---
+
+# Validation, canonicalization, and signing
+
+Signed Document processing is an ordered semantic pipeline. Internal function
+boundaries may differ, but acceptance and diagnostic classification must
+preserve the normative stage order.
+
+Across the six stages, enforce the common JSON and timestamp profile
+([MWP-FND-004](../../../reference/specification/foundations/#mwp-fnd-004)),
+preserve timestamp lexical text
+([MWP-FND-005](../../../reference/specification/foundations/#mwp-fnd-005)),
+require canonical base64url, hashes, and safe integers
+([MWP-FND-007](../../../reference/specification/foundations/#mwp-fnd-007)), and
+enable every normative Schema format assertion
+([MWP-FND-009](../../../reference/specification/foundations/#mwp-fnd-009)). The
+same canonical wire rules apply to all content-derived hashes and signatures
+([MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012)).
+
+## Six-stage verification
+
+The controlling sequence is
+[MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015):
+
+1. strictly parse exactly one UTF-8 JSON value; reject a byte-order mark,
+   trailing data, invalid UTF-8, and duplicate decoded member names;
+2. validate the complete document against its normative Schema;
+3. validate the signature envelope, protected time, expected-signer rule, and
+   strict Ed25519 signature encoding;
+4. validate complete Organization-scoped Registry evidence, resolve the key and
+   Principal, and test the protected signed time against retained key history;
+5. omit exactly the top-level `signature` member and produce RFC 8785 JCS bytes;
+6. verify the pure Ed25519 signature over those exact bytes.
+
+The verifier stops at the first failing stage and does not authorize an actor,
+append an Event, or execute a state transition before all six stages complete.
+
+## Lossless JSON and JCS
+
+JCS input is restricted to the RFC 8785 and I-JSON data model. Numbers are
+finite IEEE 754 binary64 values serialized with the required shortest-round-trip
+form; unpaired Unicode surrogates and values outside that domain fail before
+canonical bytes are emitted
+([MWP-FND-006](../../../reference/specification/foundations/#mwp-fnd-006)).
+
+Do not canonicalize incoming wire JSON as a substitute for parsing or Schema
+validation. Canonicalization is stage 5 and operates on the received value after
+all earlier semantic checks that control stage classification.
+
+## Strict Ed25519 acceptance
+
+Provider import success is not the acceptance rule. A verifier:
+
+- canonically decodes `Renc`, requires prime-order subgroup membership, accepts
+  only `0 <= S < L`, and does not reduce an out-of-range scalar
+  ([MWP-SDV-003](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-003));
+- enforces immutable key-ID-to-Principal, algorithm, and public-key binding plus
+  Organization-wide no-reuse and no-alias invariants
+  ([MWP-SDV-004](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-004));
+- strictly decodes the 32-byte public key as a canonical, non-identity,
+  prime-order Edwards25519 point
+  ([MWP-SDV-005](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-005));
+  and
+- checks the pure-Ed25519 verification equation over the exact stage-5 bytes
+  ([MWP-SDV-006](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-006)).
+
+The Registry retains indexes and history sufficient to prove binding uniqueness
+and absence claims
+([MWP-SDV-007](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-007)).
+
+## Protected time and expected signer
+
+Each Signed Document schema maps to one protected signed-time field and one
+expected signer. The exact signer is selected under
+[MWP-SDV-001](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-001).
+The protected time and `signature.createdAt` use uppercase `Z`, must be
+byte-for-byte identical, and cannot be repaired or normalized before comparison
+([MWP-SDV-002](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-002)).
+
+## Registry-backed key resolution
+
+Stage 4 is wider than a selected-key lookup:
+
+- the evidence is scoped to exactly one Organization and one coherent
+  authoritative Registry revision;
+- every binding and retained history item needed for Organization-wide no-reuse,
+  no-alias, and completeness claims is validated before selection
+  ([MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008));
+- the deployment adapter establishes revision applicability, completeness, and
+  historical coverage or reports that it cannot
+  ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010));
+  and
+- the protected time is checked against half-open `validFrom`, `validUntil`, and
+  `revokedAt` boundaries as an instant
+  ([MWP-SDV-014](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-014)).
+
+Unavailable evidence, incomplete coverage, authoritative unknown key, invalid
+unrelated bindings, and an invalid selected key all fail closed at stage 4.
+Evidence may come from a complete snapshot or authoritative indexes and queries,
+but a partial cache cannot stand in for Organization-wide proof
+([MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009)).
+An unknown key is authoritative only after completeness is established
+([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011)).
+
+Validity history is append-only or explicitly versioned; its earliest effective
+`validUntil` and `revokedAt` boundaries are retained for historical verification
+([MWP-SDV-012](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-012)).
+The selected key's bound Principal must equal the exact expected signer
+([MWP-SDV-013](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-013)).
+
+## Signing and signing hashes
+
+A signer constructs the same protected value a verifier will reconstruct:
+
+1. Construct all non-signature fields, including the protected signed-time field
+   required by the document kind.
+2. Choose the protected time and expected signing key, retaining the
+   uppercase-`Z` timestamp spelling that will also become `signature.createdAt`.
+3. Produce RFC 8785 JCS signing bytes from the complete object with the
+   top-level `signature` member absent.
+4. Compute the signing hash and pure-Ed25519 signature over those exact bytes,
+   encoding the signature as canonical unpadded base64url.
+5. Attach the complete signature envelope with `Ed25519`, the selected key ID,
+   the byte-identical protected time, and the encoded signature value.
+6. Validate the final Signed Document against its complete normative Schema and
+   the same six-stage verifier before publication.
+
+The signing hash is independent of Admission state and has the exact form
+defined by
+[MWP-SDV-017](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-017).
+The stage numbers are semantic classifications rather than required function
+boundaries, as clarified by
+[MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016).
+
+Run every implementation against the local
+[cryptography conformance bundle](../../../reference/conformance/cryptography/)
+before layering Admission above the six-stage result.
