@@ -1,0 +1,22 @@
+---
+title: "Conformance surfaces"
+description:
+  "Structural, cryptographic, and Admission evidence for MissionWeaveProtocol
+  0.1."
+---
+
+# Conformance surfaces
+
+MissionWeaveProtocol 0.1 separates conformance evidence into three independently
+versioned surfaces:
+
+1. [Structural conformance](./structural/) checks JSON Schema validity for
+   implementation-neutral documents.
+2. [Cryptography conformance](./cryptography/) checks the six Signed Document
+   verification stages.
+3. [First Admission and Historical Trust](./admission/) checks authenticated
+   acceptance-record behavior on top of a successful six-stage result.
+
+Passing one surface does not imply passing either of the others. Full protocol
+conformance also requires evidence for the applicable behavioral clauses in the
+[local specification](../specification/).

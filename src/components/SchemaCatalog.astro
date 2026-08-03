@@ -1,0 +1,76 @@
+---
+import release from "../data/normative/0.1/release-source.json";
+
+interface SchemaDocument {
+  title?: string;
+  $id?: string;
+}
+
+const schemaModules = import.meta.glob(
+  "../../public/artifacts/0.1/protocol/schemas/*.schema.json",
+  { eager: true, import: "default" },
+) as Record<string, SchemaDocument>;
+const schemas = Object.entries(schemaModules)
+  .map(([modulePath, schema]) => {
+    const name = modulePath.split("/").at(-1);
+    if (!name) throw new Error(`invalid schema module path: ${modulePath}`);
+    return {
+      name,
+      schema,
+      href: `${import.meta.env.BASE_URL}artifacts/0.1/protocol/schemas/${name}`,
+    };
+  })
+  .sort((left, right) => {
+    if (left.name === "common.schema.json") return -1;
+    if (right.name === "common.schema.json") return 1;
+    return left.name.localeCompare(right.name);
+  });
+if (schemas.length !== release.schemas.count) {
+  throw new Error(
+    `schema catalog has ${schemas.length} files; expected ${release.schemas.count}`,
+  );
+}
+---
+
+<div class="schema-catalog">
+  <table>
+    <thead>
+      <tr>
+        <th scope="col">Schema artifact</th>
+        <th scope="col">Declared title</th>
+        <th scope="col">Canonical <code>$id</code></th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        schemas.map(({ name, schema, href }) => (
+          <tr>
+            <th scope="row">
+              <a href={href}>
+                <code>{name}</code>
+              </a>
+            </th>
+            <td>{schema.title ?? "—"}</td>
+            <td>
+              <code>{schema.$id ?? "—"}</code>
+            </td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .schema-catalog {
+    overflow-x: auto;
+  }
+
+  .schema-catalog table {
+    min-width: 48rem;
+  }
+
+  .schema-catalog code {
+    overflow-wrap: anywhere;
+  }
+</style>

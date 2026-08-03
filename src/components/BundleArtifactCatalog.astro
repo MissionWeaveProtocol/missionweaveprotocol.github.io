@@ -1,0 +1,93 @@
+---
+import admissionManifest from "../../public/artifacts/0.1/protocol/admission/manifest.json";
+import cryptographyManifest from "../../public/artifacts/0.1/protocol/cryptography/manifest.json";
+import release from "../data/normative/0.1/release-source.json";
+
+interface Props {
+  bundle: "cryptography" | "admission";
+}
+
+interface ArtifactEntry {
+  path: string;
+  byteLength: number;
+  sha256: string;
+}
+
+interface BundleManifest {
+  artifacts: ArtifactEntry[];
+}
+
+const { bundle } = Astro.props as Props;
+const manifests: Record<Props["bundle"], BundleManifest> = {
+  cryptography: cryptographyManifest,
+  admission: admissionManifest,
+};
+const manifest = manifests[bundle];
+if (manifest.artifacts.length !== release[bundle].artifacts) {
+  throw new Error(
+    `${bundle} artifact catalog differs from normative release data`,
+  );
+}
+const artifactUrl = (path: string) =>
+  `${import.meta.env.BASE_URL}artifacts/0.1/protocol/${path}`;
+---
+
+<details class="artifact-catalog">
+  <summary
+    >Browse all {manifest.artifacts.length} digest-protected artifacts</summary
+  >
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Path</th>
+          <th scope="col">Bytes</th>
+          <th scope="col">SHA-256</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          manifest.artifacts.map((artifact) => (
+            <tr>
+              <th scope="row">
+                <a href={artifactUrl(artifact.path)}>
+                  <code>{artifact.path}</code>
+                </a>
+              </th>
+              <td>{artifact.byteLength}</td>
+              <td>
+                <code>{artifact.sha256}</code>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</details>
+
+<style>
+  .artifact-catalog {
+    margin-block: 1.5rem;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.65rem;
+  }
+
+  summary {
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 62rem;
+  }
+
+  code {
+    overflow-wrap: anywhere;
+  }
+</style>

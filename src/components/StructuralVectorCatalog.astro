@@ -1,0 +1,91 @@
+---
+import manifest from "../../public/artifacts/0.1/protocol/conformance/manifest.json";
+import release from "../data/normative/0.1/release-source.json";
+
+const expectedValid = manifest.filter((entry) => entry.valid);
+const expectedInvalid = manifest.filter((entry) => !entry.valid);
+if (
+  manifest.length !== release.structural.total ||
+  expectedValid.length !== release.structural.valid ||
+  expectedInvalid.length !== release.structural.invalid
+) {
+  throw new Error(
+    "structural vector catalog differs from normative release data",
+  );
+}
+const artifactUrl = (path: string) =>
+  `${import.meta.env.BASE_URL}artifacts/0.1/protocol/${path}`;
+const groups = [
+  {
+    id: "expected-valid-vector-directory",
+    label: "Expected-valid vector directory",
+    className: "expected-valid",
+    entries: expectedValid,
+  },
+  {
+    id: "expected-invalid-vector-directory",
+    label: "Expected-invalid vector directory",
+    className: "expected-invalid",
+    entries: expectedInvalid,
+  },
+];
+---
+
+<div class="vector-catalog">
+  {
+    groups.map((group) => (
+      <section aria-labelledby={group.id}>
+        <h2 id={group.id}>
+          {group.label} ({group.entries.length})
+        </h2>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Case</th>
+                <th scope="col">Instance</th>
+                <th scope="col">Schema</th>
+              </tr>
+            </thead>
+            <tbody>
+              {group.entries.map((entry) => (
+                <tr class={group.className}>
+                  <th scope="row">{entry.name}</th>
+                  <td>
+                    <a href={artifactUrl(entry.instance)}>
+                      <code>{entry.instance}</code>
+                    </a>
+                  </td>
+                  <td>
+                    <a href={artifactUrl(entry.schema)}>
+                      <code>{entry.schema}</code>
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .vector-catalog {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 58rem;
+  }
+
+  code {
+    overflow-wrap: anywhere;
+  }
+</style>

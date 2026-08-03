@@ -112,6 +112,13 @@ for (const file of htmlFiles) {
   if (html.includes("/edit/main/")) {
     failures.push(`${path.relative(dist, file)} exposes an edit-page link`);
   }
+  for (const match of html.matchAll(
+    /\{(?:release|artifacts)\.[A-Za-z0-9_.]+\}/gu,
+  )) {
+    failures.push(
+      `${path.relative(dist, file)} exposes an unresolved normative data expression: ${match[0]}`,
+    );
+  }
   const route = path
     .relative(dist, file)
     .replace(/\\/gu, "/")

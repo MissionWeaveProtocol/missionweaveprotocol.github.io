@@ -203,36 +203,36 @@ git commit -m "docs(protocol): publish normative specification locally"
 - Create: `src/content/docs/0.1/reference/normative-release.mdx`
 - Create: `src/content/docs/0.1/reference/errata.mdx`
 
-- [ ] **Step 1: Add the reference landing pages**
+- [x] **Step 1: Add the reference landing pages**
 
 All artifact links must resolve below `/artifacts/0.1/`. The conformance
 overview must show three distinct surfaces and state that passing one does not
 imply passing the others.
 
-- [ ] **Step 2: Add exact structural conformance facts**
+- [x] **Step 2: Add exact structural conformance facts**
 
 Render 58 total, 27 valid, and 31 invalid from release data. Explain manifest
 semantics locally and link to the local manifest and vector directories.
 
-- [ ] **Step 3: Add exact cryptography conformance facts**
+- [x] **Step 3: Add exact cryptography conformance facts**
 
 Render 98 artifacts, 22 cases, 62 evaluations, 12 complete, 50 rejected, the six
 semantic stages, and digest `5eade516...` from release data.
 
-- [ ] **Step 4: Add exact Admission conformance facts**
+- [x] **Step 4: Add exact Admission conformance facts**
 
 Render 19 artifacts, 5 cases, 30 evaluations, 12 complete, 18 rejected, profile
 `missionweaveprotocol.first-admission-historical-trust.v0.1`, and digest
 `39971bfa...`. Include the explicit scope exclusions.
 
-- [ ] **Step 5: Add release and errata behavior**
+- [x] **Step 5: Add release and errata behavior**
 
 The release page must describe generated versus committed fields. The errata
 page must state that cross-language conflict is a release defect and record an
 empty initial errata set as `No published errata for this release` rather than
 using a placeholder.
 
-- [ ] **Step 6: Build and commit reference pages**
+- [x] **Step 6: Build and commit reference pages**
 
 ```bash
 npm run docs:build

@@ -1,0 +1,35 @@
+---
+title: "Normative release identity"
+description:
+  "Committed inputs and generated identity fields for MissionWeaveProtocol 0.1."
+---
+
+import ArtifactLink from "../../../../components/ArtifactLink.astro";
+import NormativeReleaseFacts from "../../../../components/NormativeReleaseFacts.astro";
+
+# Normative release identity
+
+MissionWeaveProtocol 0.1 is released as one website, protocol artifact bundle,
+and six exact SDK pins. The committed `release-source.json` records every
+non-self-referential input: protocol and SDK commits, release counts, profile
+identities, digests, locales, and the built-tree digest algorithm.
+
+The public
+
+<ArtifactLink path="normative-release.json">
+  <code>normative-release.json</code>
+</ArtifactLink>
+is generated during the production build. It copies every committed release
+source field and adds:
+
+- `websiteCommit`, the exact website Git commit;
+- `buildIdentity`, either the GitHub run/attempt pair or the local commit
+  identity; and
+- `contentDigests`, one digest of the built HTML tree for each locale.
+
+The generated manifest is not committed because a committed file cannot
+truthfully contain the Git identity of the commit that contains itself. Release
+verification reconstructs the generated fields and compares every committed
+field with `release-source.json`.
+
+<NormativeReleaseFacts />
