@@ -19,6 +19,14 @@ const expectedSdks = {
   java: "3b2798c21d906c81887c54fe80e5bca8a19ddac7",
   cpp: "481b0ce3a65c1f2265935318b54481ece5032fdf",
 };
+const expectedSdkRepositories = {
+  python: "https://github.com/MissionWeaveProtocol/python-sdk",
+  typescript: "https://github.com/MissionWeaveProtocol/typescript-sdk",
+  go: "https://github.com/MissionWeaveProtocol/go-sdk",
+  rust: "https://github.com/MissionWeaveProtocol/rust-sdk",
+  java: "https://github.com/MissionWeaveProtocol/java-sdk",
+  cpp: "https://github.com/MissionWeaveProtocol/cpp-sdk",
+};
 const expectedKeywords = [
   "MUST",
   "MUST NOT",
@@ -60,6 +68,7 @@ assert.equal(
 );
 assert.deepEqual(release.locales, expectedLocales);
 assert.deepEqual(release.sdks, expectedSdks);
+assert.deepEqual(release.sdkRepositories, expectedSdkRepositories);
 assert.deepEqual(release.schemas, { count: 22 });
 assert.deepEqual(release.structural, { total: 58, valid: 27, invalid: 31 });
 assert.deepEqual(release.cryptography, {

@@ -379,10 +379,13 @@ git commit -m "feat(docs): generate normative release manifest"
 
 - Create: `scripts/checkout-normative-sources.mjs`
 - Create: `scripts/check-normative-sources.mjs`
+- Create: `scripts/test-checkout-normative-sources.mjs`
 - Modify: `.github/workflows/pages.yml`
 - Modify: `package.json`
+- Modify: `scripts/check-normative-release-source.mjs`
+- Modify: `src/data/normative/0.1/release-source.json`
 
-- [ ] **Step 1: Implement source checkout from release data**
+- [x] **Step 1: Implement source checkout from release data**
 
 The checkout script must clone or fetch these repositories into an explicit
 temporary root and detach each at its pinned commit:
@@ -398,15 +401,24 @@ cpp-sdk
 ```
 
 It must reject a repository whose detached HEAD differs from the release source.
+Repository URLs are explicit release-source data. The checkout command may use
+an explicit local mirror root for offline verification, but the Pages gate uses
+the published repository URLs. Before any Git mutation, it must reject a
+repository destination that is a symbolic link or resolves outside the explicit
+sources root; the regression test must prove that an external checkout remains
+unchanged. Checkout must also refuse to overwrite ignored local files.
 
-- [ ] **Step 2: Implement source verification**
+- [x] **Step 2: Implement source verification**
 
 `check-normative-sources.mjs` must compare the protocol artifacts byte-for-byte
 with `public/artifacts/0.1/protocol/`, verify every SDK's exact
 `PROTOCOL_PIN.json` byte digest against `release-source.json`, and compare the
 complete parsed pin fields with the release and artifact metadata.
 
-- [ ] **Step 3: Run against local repositories**
+The release-sources gate must also run the destination-symlink regression
+against its checked-out repositories as local mirrors.
+
+- [x] **Step 3: Run against local repositories**
 
 ```bash
 MW_SOURCES_ROOT=/Users/lionelmbp/repos npm run check:release-sources
@@ -414,14 +426,14 @@ MW_SOURCES_ROOT=/Users/lionelmbp/repos npm run check:release-sources
 
 Expected: all seven exact pins and all vendored protocol artifacts pass.
 
-- [ ] **Step 4: Gate deployment on exact-source verification**
+- [x] **Step 4: Gate deployment on exact-source verification**
 
 In `.github/workflows/pages.yml`, add a `release-sources` job for pushes to
 `main` and manual dispatch. The deploy job must require both `build` and
 `release-sources`. Pull requests continue to run the offline committed-artifact
 checks.
 
-- [ ] **Step 5: Run the full foundation suite**
+- [x] **Step 5: Run the full foundation suite**
 
 ```bash
 npm run check
@@ -430,9 +442,9 @@ MW_SOURCES_ROOT=/Users/lionelmbp/repos npm run check:release-sources
 
 Expected: both commands pass.
 
-- [ ] **Step 6: Commit the source-verification gate**
+- [x] **Step 6: Commit the source-verification gate**
 
 ```bash
-git add .github/workflows/pages.yml package.json scripts/checkout-normative-sources.mjs scripts/check-normative-sources.mjs
+git add .github/workflows/pages.yml docs/superpowers/plans/2026-08-03-normative-release-foundation.md package.json scripts/check-normative-release-source.mjs scripts/check-normative-sources.mjs scripts/checkout-normative-sources.mjs scripts/test-checkout-normative-sources.mjs src/data/normative/0.1/release-source.json
 git commit -m "ci(docs): verify exact normative release sources"
 ```

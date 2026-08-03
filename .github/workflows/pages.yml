@@ -33,10 +33,32 @@ jobs:
         with:
           path: dist
 
+  release-sources:
+    name: Verify exact release sources
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Check out pinned protocol and SDK sources
+        run: >-
+          node scripts/checkout-normative-sources.mjs --sources-root
+          "$RUNNER_TEMP/missionweaveprotocol-sources"
+      - name: Reject source destination symlinks
+        run: >-
+          npm run test:sources-checkout-paths -- --mirror-root
+          "$RUNNER_TEMP/missionweaveprotocol-sources"
+      - name: Verify exact release sources
+        run: npm run check:release-sources
+        env:
+          MW_SOURCES_ROOT: ${{ runner.temp }}/missionweaveprotocol-sources
+
   deploy:
     name: Deploy Pages
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: build
+    needs: [build, release-sources]
     runs-on: ubuntu-latest
     concurrency:
       group: pages
