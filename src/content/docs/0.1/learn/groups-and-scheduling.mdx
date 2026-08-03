@@ -1,0 +1,75 @@
+---
+title: "Groups and scheduling"
+description:
+  "Per-Group queues, one Worker-owned Scheduler, isolated execution slots,
+  checkpoint-safe preemption, and replay."
+---
+
+# Groups and scheduling
+
+A Worker can belong to many Mission Groups without merging their contexts. It
+maintains a distinct Event inbox, Cursor, and Work queue for each Group, and
+those local projections remain rebuildable from accepted Events
+([MWP-WRK-008](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008)).
+
+```text
+Group A Events → Group A queue ┐
+Group B Events → Group B queue ├→ Worker Scheduler → isolated execution slots
+Group C Events → Group C queue ┘
+```
+
+## Who controls priority
+
+The Coordinator supplies requested urgency, deadline, and business impact for
+its Mission. The Worker Scheduler has final control over cross-Group ordering;
+one Coordinator cannot force its Mission ahead of unrelated Groups
+([MWP-WRK-009](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-009)).
+
+The Scheduler applies weighted fairness and anti-starvation. Effective order
+considers Organization priority class, deadlines, queue aging, per-Group quotas,
+risk gates, and available resources. Pure unbounded highest-priority-first
+scheduling is excluded by
+[MWP-WRK-010](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-010).
+
+## Isolation and schedule disclosure
+
+Each active slot isolates Mission context, credentials, checkpoints, tool
+budgets, and side-effect keys from every other slot
+([MWP-WRK-011](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-011)).
+
+A Worker can publish estimated start and completion windows, confidence,
+capacity status, and calculation time without exposing another Group's identity,
+content, assignments, or exact global queue position
+([MWP-WRK-012](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-012)).
+
+## Ownership, leases, and safe preemption
+
+Acceptance begins an Ownership Epoch and a start-by deadline. Active execution
+uses an Execution Lease bound to the Agent, Session Epoch, WorkItem, Ownership
+Epoch, stable Lease ID, and expiry
+([MWP-WRK-013](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013)).
+
+Priority changes reorder queued work immediately. Active work reaches a safe,
+idempotent checkpoint before releasing its slot:
+
+1. the Scheduler requests preemption;
+2. the Worker reaches a safe checkpoint;
+3. the Worker records the checkpoint and pauses;
+4. the execution slot is released; and
+5. the WorkItem returns to its Group queue.
+
+This sequence is the normative cooperative-preemption model in
+[MWP-WRK-015](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-015).
+
+## Recovery by replay
+
+Event delivery is at least once. A restarted Worker restores per-Group Cursors
+and queues from snapshots and ordered replay, deduplicates by Event ID, and does
+not advance a durable Cursor over a sequence gap
+([MWP-WRK-029](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)).
+Acknowledgement reports the highest contiguous durable position without deleting
+authoritative Group history
+([MWP-WRK-030](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)).
+
+MissionWeaveProtocol defines ordering within each Group, not one global order
+across Groups.

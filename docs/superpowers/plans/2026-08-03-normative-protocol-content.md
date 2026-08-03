@@ -254,14 +254,16 @@ git commit -m "docs(protocol): add local normative references"
 - Create: `src/content/docs/0.1/learn/signed-documents-and-trust.mdx`
 - Create: `src/content/docs/0.1/learn/first-admission-and-historical-trust.mdx`
 - Create: `src/content/docs/0.1/learn/security-boundaries.mdx`
+- Create: `scripts/check-learn-pages.mjs`
+- Modify: `package.json`
 
-- [ ] **Step 1: Migrate and consolidate existing learning material**
+- [x] **Step 1: Migrate and consolidate existing learning material**
 
 Move the useful content from current `docs/0.1/*` pages into the new learning
 path. Remove `non-normative learning guide` wording and identify each local
 Reference clause used by the explanation.
 
-- [ ] **Step 2: Add the First-Admission learning flow**
+- [x] **Step 2: Add the First-Admission learning flow**
 
 The page must show this exact sequence:
 
@@ -278,22 +280,27 @@ six-stage cryptographic verification
 Historical replay must show six-stage verification, required found record,
 record validation, and no trusted context or append.
 
-- [ ] **Step 3: Add security boundaries**
+- [x] **Step 3: Add security boundaries**
 
 Distinguish current from historical Registry evidence and list command
 freshness, signer authorization, portable log proof, state-machine acceptance,
 and caller-provided trust booleans as separate or excluded concerns.
 
-- [ ] **Step 4: Verify local-only documentation links**
+- [x] **Step 4: Verify local-only documentation links**
 
-Run the external-doc dependency checker introduced in Task 6. Expected: all
-learning-path documentation links are local except normative RFCs, source code,
-exact commits, downloads, and issue reporting.
+Until Task 6 introduces the full-site external-document dependency checker, run
+the Learn-specific `npm run check:learn` gate and the built-site internal-link
+check. Expected: all learning-path documentation links are local except
+normative RFCs, source code, exact commits, downloads, and issue reporting. Task
+6 retains responsibility for the full-site GitHub README/docs/specification
+allowlist.
 
-- [ ] **Step 5: Commit the Learn path**
+- [x] **Step 5: Commit the Learn path**
 
 ```bash
-git add src/content/docs/0.1/learn
+git add package.json scripts/check-learn-pages.mjs \
+  src/content/docs/0.1/learn \
+  docs/superpowers/plans/2026-08-03-normative-protocol-content.md
 git commit -m "docs(learn): add normative protocol learning path"
 ```
 
