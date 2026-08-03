@@ -26,7 +26,9 @@
     "check:built-site": "node scripts/check-built-site.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run check:policy && npm run check:normative-release && npm run check:normative-artifacts && npm run check:locales && npm run check:terminology && npm run assets:check && npm run format:check && npm run typecheck && npm run docs:build && npm run check:generated-release && npm run check:built-site"
+    "check": "npm run check:policy && npm run check:normative-release && npm run check:normative-artifacts && npm run test:normative-clauses && npm run check:normative-clauses && npm run check:locales && npm run check:terminology && npm run assets:check && npm run format:check && npm run typecheck && npm run docs:build && npm run check:generated-release && npm run check:built-site",
+    "test:normative-clauses": "node scripts/test-normative-clauses.mjs",
+    "check:normative-clauses": "node scripts/check-normative-clauses.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.3",

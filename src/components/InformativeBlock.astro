@@ -1,0 +1,61 @@
+---
+interface Props {
+  label?: string;
+  title?: string;
+}
+
+const { label = "Informative — not a protocol requirement", title } =
+  Astro.props as Props;
+---
+
+<aside class="informative-block" aria-label={label}>
+  <header class="informative-block__header">
+    <span class="informative-block__label">{label}</span>
+    {title && <span class="informative-block__title">{title}</span>}
+  </header>
+  <div class="informative-block__body">
+    <slot />
+  </div>
+</aside>
+
+<style>
+  .informative-block {
+    margin-block: 1.5rem;
+    padding: 1rem 1.1rem;
+    border: 1px dashed var(--sl-color-gray-4);
+    border-radius: 0.65rem;
+    background: color-mix(
+      in srgb,
+      var(--sl-color-gray-6) 45%,
+      var(--sl-color-bg)
+    );
+  }
+
+  .informative-block__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.35rem 0.65rem;
+    margin-block-end: 0.75rem;
+  }
+
+  .informative-block__label {
+    color: var(--sl-color-gray-2);
+    font-size: 0.78rem;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .informative-block__title {
+    font-weight: 700;
+  }
+
+  .informative-block__body :global(> :first-child) {
+    margin-block-start: 0;
+  }
+
+  .informative-block__body :global(> :last-child) {
+    margin-block-end: 0;
+  }
+</style>

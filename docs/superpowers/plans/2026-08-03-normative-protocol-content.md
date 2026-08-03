@@ -28,9 +28,10 @@ scripts, BCP 14 keywords.
 - Create: `src/components/NormativeReleaseFacts.astro`
 - Create: `src/data/normative/0.1/clauses.json`
 - Create: `scripts/check-normative-clauses.mjs`
+- Create: `scripts/test-normative-clauses.mjs`
 - Modify: `package.json`
 
-- [ ] **Step 1: Write the failing clause checker**
+- [x] **Step 1: Write the failing clause checker**
 
 The checker must scan versioned English `.mdx` files and require:
 
@@ -40,10 +41,23 @@ The checker must scan versioned English `.mdx` files and require:
 </NormativeClause>
 ```
 
-It must reject duplicate IDs, malformed IDs, a BCP 14 keyword outside a
-`NormativeClause`, and an ID not listed in `clauses.json`.
+When a source paragraph contains multiple distinct levels, keep their
+first-occurrence order in the same `level` prop:
 
-- [ ] **Step 2: Verify the checker fails before components and data exist**
+```mdx
+<NormativeClause id="MWP-SDV-002" level={["MUST", "SHOULD", "MUST NOT"]}>
+  ...
+</NormativeClause>
+```
+
+It must reject duplicate IDs, malformed IDs, a BCP 14 keyword outside a
+`NormativeClause`, an ID not listed in `clauses.json`, or a scalar/array level
+set that differs from the complete first-occurrence level sequence in the clause
+body. The canonical `src/content/docs/0.1/` root may remain absent or empty
+during Task 1; Task 2 source-coverage checks make missing specification content
+fail.
+
+- [x] **Step 2: Verify the checker fails before components and data exist**
 
 ```bash
 node scripts/check-normative-clauses.mjs
@@ -51,14 +65,14 @@ node scripts/check-normative-clauses.mjs
 
 Expected: FAIL with missing clause manifest/component errors.
 
-- [ ] **Step 3: Implement the clause component**
+- [x] **Step 3: Implement the clause component**
 
 `NormativeClause.astro` must render a section with a stable lowercase HTML id,
-visible clause badge, normative level, and slot content.
+visible clause badge, every normative level, and slot content.
 `InformativeBlock.astro` must render an explicitly labelled non-requirement
 block. Neither component may alter or translate the BCP 14 keyword.
 
-- [ ] **Step 4: Define deterministic initial IDs**
+- [x] **Step 4: Define deterministic ID namespaces**
 
 Use these page prefixes:
 
@@ -76,17 +90,20 @@ MWP-EXT  extensions, errors, controls, compatibility, conformance
 
 Within each prefix, assign three-digit ordinals in source order. Once committed,
 an ID remains attached to its requirement even when wording moves.
+`clauses.json` records each source paragraph's exact line range and SHA-256. Its
+clause list starts empty until Task 2 imports the pinned source paragraphs.
 
-- [ ] **Step 5: Add release facts component**
+- [x] **Step 5: Add release facts component**
 
 Render protocol/SDK pins and all current counts from `release-source.json`. No
 count or digest may be hard-coded in content pages.
 
-- [ ] **Step 6: Run and commit the primitives**
+- [x] **Step 6: Run and commit the primitives**
 
 ```bash
 npm run check:normative-clauses
-git add src/components src/data/normative/0.1/clauses.json scripts/check-normative-clauses.mjs package.json
+npm run test:normative-clauses
+git add docs/superpowers/plans/2026-08-03-normative-protocol-content.md package.json scripts/check-normative-clauses.mjs scripts/test-normative-clauses.mjs src/components src/data/normative/0.1/clauses.json
 git commit -m "feat(docs): add normative clause primitives"
 ```
 
@@ -138,6 +155,9 @@ Use exact content from protocol commit `f7e70a72...` with this mapping:
 
 Preserve tables, code, exclusions, error mappings, and external normative RFC
 links. Replace GitHub-internal specification links with local clause links.
+Treat the BCP 14 interpretation paragraph at source lines 5-8 as a Foundation
+clause: it governs requirement interpretation even though it is not itself an
+implementation behavior.
 
 - [ ] **Step 3: Wrap every testable BCP 14 paragraph**
 

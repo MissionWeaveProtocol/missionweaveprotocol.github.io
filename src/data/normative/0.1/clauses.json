@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": "0.1",
+  "source": {
+    "path": "public/artifacts/0.1/protocol/spec/PROTOCOL.md"
+  },
+  "prefixes": {
+    "MWP-FND": "foundations",
+    "MWP-IDN": "identity, Registry, sessions",
+    "MWP-SDV": "Signed Document verification",
+    "MWP-ADM": "First Admission and Historical Trust",
+    "MWP-MSN": "Missions, Groups, Membership, Conversations, and child Missions",
+    "MWP-WRK": "WorkItems, scheduling, execution, recovery, Artifacts, and replay",
+    "MWP-AUT": "authorization, budgets, and side effects",
+    "MWP-EVT": "Commands, Events, and WebSocket binding",
+    "MWP-EXT": "extensions, errors, controls, compatibility, and conformance"
+  },
+  "clauses": []
+}

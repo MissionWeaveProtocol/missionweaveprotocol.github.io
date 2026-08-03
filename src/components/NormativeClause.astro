@@ -1,0 +1,133 @@
+---
+import terminology from "../data/normative/0.1/terminology.json";
+
+type NormativeLevel =
+  | "MUST"
+  | "MUST NOT"
+  | "REQUIRED"
+  | "SHALL"
+  | "SHALL NOT"
+  | "SHOULD"
+  | "SHOULD NOT"
+  | "RECOMMENDED"
+  | "NOT RECOMMENDED"
+  | "MAY"
+  | "OPTIONAL";
+
+interface Props {
+  id: string;
+  level: NormativeLevel | readonly NormativeLevel[];
+  title?: string;
+}
+
+const clauseIdPattern = /^MWP-(?:FND|IDN|SDV|ADM|MSN|WRK|AUT|EVT|EXT)-\d{3}$/u;
+const normativeLevels = terminology.normativeKeywords as NormativeLevel[];
+const { id, level, title } = Astro.props as Props;
+
+if (!clauseIdPattern.test(id)) {
+  throw new Error(`Invalid normative clause id: ${id}`);
+}
+const declaredLevels = typeof level === "string" ? [level] : [...level];
+if (
+  declaredLevels.length === 0 ||
+  new Set(declaredLevels).size !== declaredLevels.length ||
+  declaredLevels.some((entry) => !normativeLevels.includes(entry))
+) {
+  throw new Error(`Invalid normative clause levels for ${id}`);
+}
+
+const htmlId = id.toLowerCase();
+---
+
+<section
+  id={htmlId}
+  class="normative-clause"
+  data-clause-id={id}
+  data-normative-levels={declaredLevels.join("|")}
+>
+  <header class="normative-clause__header">
+    <a
+      class="normative-clause__id"
+      href={`#${htmlId}`}
+      aria-label={`Link to normative clause ${id}`}>{id}</a
+    >
+    {
+      declaredLevels.map((entry) => (
+        <span class="normative-clause__level">{entry}</span>
+      ))
+    }
+    {title && <span class="normative-clause__title">{title}</span>}
+  </header>
+  <div class="normative-clause__body">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .normative-clause {
+    margin-block: 1.5rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid
+      color-mix(in srgb, var(--sl-color-accent) 42%, var(--sl-color-gray-5));
+    border-inline-start: 0.3rem solid var(--sl-color-accent);
+    border-radius: 0.65rem;
+    background: color-mix(
+      in srgb,
+      var(--sl-color-accent-low) 62%,
+      var(--sl-color-bg)
+    );
+    scroll-margin-top: 6rem;
+  }
+
+  .normative-clause__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem 0.65rem;
+    margin-block-end: 0.75rem;
+    font-size: 0.82rem;
+  }
+
+  .normative-clause__id,
+  .normative-clause__level {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.65rem;
+    padding-inline: 0.55rem;
+    border-radius: 999px;
+    font-weight: 750;
+    letter-spacing: 0.035em;
+  }
+
+  .normative-clause__id {
+    color: var(--sl-color-text-invert);
+    background: var(--sl-color-accent-high);
+    text-decoration: none;
+  }
+
+  .normative-clause__id:hover,
+  .normative-clause__id:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.16em;
+  }
+
+  .normative-clause__level {
+    color: var(--sl-color-accent-high);
+    border: 1px solid
+      color-mix(in srgb, var(--sl-color-accent) 48%, transparent);
+    background: var(--sl-color-bg);
+  }
+
+  .normative-clause__title {
+    color: var(--sl-color-gray-2);
+    font-weight: 650;
+  }
+
+  .normative-clause__body :global(> :first-child) {
+    margin-block-start: 0;
+  }
+
+  .normative-clause__body :global(> :last-child) {
+    margin-block-end: 0;
+  }
+</style>
