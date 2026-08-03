@@ -1,6 +1,7 @@
 import { defineCollection } from "astro:content";
 import { docsLoader } from "@astrojs/starlight/loaders";
 import { docsSchema } from "@astrojs/starlight/schema";
+import { z } from "astro/zod";
 
 export const collections = {
   docs: defineCollection({
@@ -17,6 +18,15 @@ export const collections = {
         return path === "index" ? path : path.replace(/\/index$/u, "");
       },
     }),
-    schema: docsSchema(),
+    schema: docsSchema({
+      extend: z.object({
+        normativeVersion: z.literal("0.1").optional(),
+        normativeStatus: z.enum(["normative", "informative"]).optional(),
+        clausePrefix: z
+          .string()
+          .regex(/^MWP-[A-Z]{3}$/u)
+          .optional(),
+      }),
+    }),
   }),
 };

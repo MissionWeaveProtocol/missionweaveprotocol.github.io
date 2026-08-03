@@ -1,0 +1,30 @@
+{
+  "protocolCommit": "f7e70a72c76bbeb5014c186cd820aac2112f0dde",
+  "publicBase": "/artifacts/0.1/protocol/",
+  "specification": { "path": "spec/PROTOCOL.md" },
+  "schemas": {
+    "path": "schemas/",
+    "files": 22,
+    "digest": "sha256:941a5a19b8664207f1ff48b799219c2f981ecd491a5cca527d586028d976ec76"
+  },
+  "structural": {
+    "path": "conformance/",
+    "files": 59,
+    "vectors": 58,
+    "valid": 27,
+    "invalid": 31,
+    "digest": "sha256:2362acd8345e5860e605ed06984f1673a1ea0a00e76c1fe00fed222326782f24"
+  },
+  "cryptography": {
+    "path": "cryptography/",
+    "manifest": "cryptography/manifest.json",
+    "artifacts": 98,
+    "digest": "sha256:5eade516e4bc5dcf04477727ebcccd11f33348b2d9135fb6fe0365c6e6cc2ea3"
+  },
+  "admission": {
+    "path": "admission/",
+    "manifest": "admission/manifest.json",
+    "artifacts": 19,
+    "digest": "sha256:39971bfafb68ef6c18f9026220cccc4f023fd4d5c8074f8ff0276cb1129cd0a0"
+  }
+}

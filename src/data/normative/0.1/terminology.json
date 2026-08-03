@@ -1,0 +1,65 @@
+{
+  "protocolVersion": "0.1",
+  "locales": ["en", "zh-CN", "zh-TW", "ja", "es", "fr", "de"],
+  "normativeKeywords": [
+    "MUST",
+    "MUST NOT",
+    "REQUIRED",
+    "SHALL",
+    "SHALL NOT",
+    "SHOULD",
+    "SHOULD NOT",
+    "RECOMMENDED",
+    "NOT RECOMMENDED",
+    "MAY",
+    "OPTIONAL"
+  ],
+  "wireTerms": [
+    "Agent",
+    "Mission",
+    "Group",
+    "WorkItem",
+    "Command",
+    "Event",
+    "Registry",
+    "Admission Log",
+    "First-Admission Record"
+  ],
+  "labels": {
+    "en": {
+      "normative": "Normative",
+      "informativeExample": "Informative example",
+      "implementationNote": "Implementation note"
+    },
+    "zh-CN": {
+      "normative": "规范性",
+      "informativeExample": "信息性示例",
+      "implementationNote": "实现说明"
+    },
+    "zh-TW": {
+      "normative": "規範性",
+      "informativeExample": "資訊性範例",
+      "implementationNote": "實作說明"
+    },
+    "ja": {
+      "normative": "規範",
+      "informativeExample": "参考例",
+      "implementationNote": "実装上の注記"
+    },
+    "es": {
+      "normative": "Normativo",
+      "informativeExample": "Ejemplo informativo",
+      "implementationNote": "Nota de implementación"
+    },
+    "fr": {
+      "normative": "Normatif",
+      "informativeExample": "Exemple informatif",
+      "implementationNote": "Note d’implémentation"
+    },
+    "de": {
+      "normative": "Normativ",
+      "informativeExample": "Informatives Beispiel",
+      "implementationNote": "Implementierungshinweis"
+    }
+  }
+}
