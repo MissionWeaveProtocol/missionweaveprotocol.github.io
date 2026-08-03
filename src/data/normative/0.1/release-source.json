@@ -2,6 +2,7 @@
   "releaseId": "missionweaveprotocol-0.1",
   "status": "draft-standard",
   "protocolVersion": "0.1",
+  "contentDigestAlgorithm": "missionweaveprotocol.built-html-tree-sha256.v1",
   "repository": "https://github.com/missionweaveprotocol/missionweaveprotocol",
   "protocolCommit": "f7e70a72c76bbeb5014c186cd820aac2112f0dde",
   "wireNamespace": "missionweaveprotocol",

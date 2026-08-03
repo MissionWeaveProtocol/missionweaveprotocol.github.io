@@ -38,6 +38,10 @@ assert.equal(release.releaseId, "missionweaveprotocol-0.1");
 assert.equal(release.status, "draft-standard");
 assert.equal(release.protocolVersion, "0.1");
 assert.equal(
+  release.contentDigestAlgorithm,
+  "missionweaveprotocol.built-html-tree-sha256.v1",
+);
+assert.equal(
   release.repository,
   "https://github.com/missionweaveprotocol/missionweaveprotocol",
 );

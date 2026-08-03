@@ -314,7 +314,12 @@ for (const locale of ["en", "zh-CN", "zh-TW", "ja", "es", "fr", "de"]) {
 }
 ```
 
-The digest walk must exclude `normative-release.json` itself.
+The release source identifies the digest algorithm as
+`missionweaveprotocol.built-html-tree-sha256.v1`. For each locale, hash the
+sorted built HTML output paths and exact bytes using `path`, NUL, `bytes`, NUL.
+English owns unprefixed HTML output; the other locales own their configured
+route prefixes. Non-content assets and `normative-release.json` itself are
+excluded.
 
 - [ ] **Step 2: Run the test before generation**
 
@@ -331,6 +336,10 @@ The generator must read `release-source.json`, obtain the exact website commit
 from `git rev-parse HEAD`, use `GITHUB_RUN_ID` and `GITHUB_RUN_ATTEMPT` when
 available for `buildIdentity`, hash sorted output files per locale, and write
 the deployed manifest under `dist/artifacts/0.1/`.
+
+The generated-release checker validates the recorded identity independently of
+the checker's current `GITHUB_RUN_*` environment. An exact expected identity may
+be supplied explicitly with `NORMATIVE_EXPECTED_BUILD_IDENTITY`.
 
 - [ ] **Step 4: Integrate generation with the production build**
 
