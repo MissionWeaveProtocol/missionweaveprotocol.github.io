@@ -13,12 +13,15 @@
     "assets:generate": "node scripts/generate-brand-assets.mjs",
     "assets:check": "npm run assets:generate && node scripts/check-brand-assets.mjs",
     "artifacts:sync": "node scripts/sync-normative-artifacts.mjs",
+    "specification:sync": "node scripts/sync-normative-specification.mjs",
     "sources:checkout": "node scripts/checkout-normative-sources.mjs",
     "test:sources-checkout-paths": "node scripts/test-checkout-normative-sources.mjs",
+    "test:normative-specification": "node scripts/test-sync-normative-specification.mjs",
     "typecheck": "astro check",
     "check:policy": "node scripts/check-repository-policy.mjs",
     "check:normative-release": "node scripts/check-normative-release-source.mjs",
     "check:normative-artifacts": "node scripts/check-normative-artifacts.mjs",
+    "check:normative-specification": "node scripts/sync-normative-specification.mjs --check",
     "check:generated-release": "node scripts/check-generated-release.mjs",
     "check:release-sources": "node scripts/check-normative-sources.mjs",
     "check:locales": "node scripts/check-locale-source-parity.mjs",
@@ -26,7 +29,7 @@
     "check:built-site": "node scripts/check-built-site.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run check:policy && npm run check:normative-release && npm run check:normative-artifacts && npm run test:normative-clauses && npm run check:normative-clauses && npm run check:locales && npm run check:terminology && npm run assets:check && npm run format:check && npm run typecheck && npm run docs:build && npm run check:generated-release && npm run check:built-site",
+    "check": "npm run check:policy && npm run check:normative-release && npm run check:normative-artifacts && npm run test:normative-specification && npm run check:normative-specification && npm run test:normative-clauses && npm run check:normative-clauses && npm run check:locales && npm run check:terminology && npm run assets:check && npm run format:check && npm run typecheck && npm run docs:build && npm run check:generated-release && npm run check:built-site",
     "test:normative-clauses": "node scripts/test-normative-clauses.mjs",
     "check:normative-clauses": "node scripts/check-normative-clauses.mjs"
   },
@@ -39,8 +42,11 @@
     "@astrojs/check": "0.9.9",
     "prettier": "3.9.5",
     "prettier-plugin-astro": "0.14.1",
+    "remark-gfm": "4.0.1",
+    "remark-parse": "11.0.0",
     "sharp": "0.35.3",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "unified": "11.0.5"
   },
   "overrides": {
     "js-yaml@^4.0.0": "4.2.0"

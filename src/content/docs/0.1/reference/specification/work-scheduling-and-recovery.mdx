@@ -1,0 +1,418 @@
+---
+title: "Work, scheduling, and recovery"
+description:
+  "WorkItems, Work Contracts, scheduling, execution, recovery, Artifacts,
+  Evidence, replay, and acknowledgement."
+---
+
+import NormativeClause from "../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../components/InformativeBlock.astro";
+
+## 10. WorkItems and Work Contracts
+
+### 10.1 Required Work Contract
+
+<NormativeClause id="MWP-WRK-001" level="MUST">
+
+Every WorkItem MUST carry a versioned, machine-readable Work Contract
+containing:
+
+- a goal and required deliverables;
+- acceptance criteria and required Evidence;
+- input and dependency references;
+- allowed tools, data, operations, and resource constraints;
+- required capability IDs and versions;
+- deadline, requested urgency, and business impact;
+- financial, token, tool-call, compute, wall-clock, and side-effect budgets as
+  applicable;
+- retry attempts, backoff, deadline, and cost policy; and
+- risk classification and any pre-execution approval requirement.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-002" level={["MUST","MUST NOT","MAY"]}>
+
+An essential ambiguity MUST be raised in the WorkItem Conversation before
+acceptance; the Worker MUST NOT accept the WorkItem into its execution queue.
+The Coordinator resolves it by issuing a new `work.offer` with the corrected
+contract or by authorizing a replacement WorkItem. A materially revised Work
+Contract increments its revision and requires renewed Worker acceptance.
+Natural-language prose MAY supplement, but MUST NOT replace, the contract
+fields.
+
+</NormativeClause>
+
+### 10.2 WorkItem state machine
+
+The core WorkItem states and transitions are:
+
+<span id="workitem-transition-table"></span>
+
+| Current state                                                                     | Transition                               | Next state              | Notes                                                                             |
+| --------------------------------------------------------------------------------- | ---------------------------------------- | ----------------------- | --------------------------------------------------------------------------------- |
+| none                                                                              | `work.propose`                           | open Work Proposal      | Any Group member may propose; no WorkItem exists yet                              |
+| none or open Work Proposal                                                        | `work.authorize`                         | `open`                  | Coordinator or scoped delegate creates the WorkItem                               |
+| `open`, `offered`, `queued`, `active`, `blocked`, or `failed`, with no live owner | `work.offer`                             | `offered`               | Creates, replaces, or extends a durable offer; an expired owner is fenced first   |
+| `offered`                                                                         | `work.accept_offer`                      | `queued`                | Atomic ownership epoch begins                                                     |
+| `offered`                                                                         | offer expiry                             | `offered`               | Expiry invalidates acceptance but does not itself append an Event or change state |
+| `queued`                                                                          | `approval.grant_execution` when required | `queued`                | Satisfies the start gate without executing work                                   |
+| `queued`                                                                          | `work.start`                             | `active`                | Valid ownership and Execution Lease required                                      |
+| `active`                                                                          | `work.checkpoint`                        | `queued`                | Durable progress releases execution while retaining a bounded ownership lease     |
+| `active`                                                                          | `work.block`                             | `blocked`               | Checkpoint and bounded blocked lease                                              |
+| `blocked`                                                                         | `work.unblock`                           | `queued` or `open`      | Re-enters its queue or is re-offered after ownership expiry                       |
+| `active`                                                                          | `work.submit`                            | `submitted`             | Artifacts and Evidence required                                                   |
+| `submitted`                                                                       | `work.accept_result`                     | `verified`              | Coordinator review succeeds                                                       |
+| `open`, `offered`, `queued`, `active`, `blocked`, or `submitted`                  | `work.fail`                              | `failed`                | Failure Evidence required; a Coordinator may later issue a new `work.offer`       |
+| `open`, `offered`, `queued`, `active`, `blocked`, or `submitted`                  | `work.cancel`                            | `cancelled`             | Cleanup policy applies                                                            |
+| `open`, `offered`, `queued`, `active`, or `blocked`                               | `mission.create_child`                   | `blocked`               | Ownership is fenced while the linked child Mission runs                           |
+| `blocked`                                                                         | linked child Mission approval            | `verified`              | Child Approval becomes parent WorkItem Evidence                                   |
+| `blocked`                                                                         | linked child Mission failure             | `blocked` or `failed`   | The declared child-failure policy controls propagation                            |
+| `open`, `offered`, `queued`, `active`, `blocked`, or `submitted`                  | parent Mission failure or cancellation   | `failed` or `cancelled` | Terminal Mission state propagates to unfinished WorkItems                         |
+
+<NormativeClause id="MWP-WRK-003" level={["MAY","MUST"]}>
+
+`verified` and `cancelled` are terminal for that WorkItem revision. `failed`
+returns control to the Coordinator and may transition only through a new
+`work.offer`; the Coordinator MAY instead create a replacement WorkItem or
+cancel the branch at Mission level. Implementations MUST reject transitions not
+permitted by this table and the current aggregate revision.
+
+</NormativeClause>
+
+### 10.3 Offers, admission control, and ownership
+
+<NormativeClause id="MWP-WRK-004" level={["MAY","MUST NOT","SHOULD"]}>
+
+An offline Worker MAY receive a durable offer with an expiration time. The offer
+MUST NOT reserve exclusive ownership before acceptance. Exclusive WorkItems
+SHOULD be offered sequentially to the highest-ranked eligible Worker. For urgent
+placement the Coordinator MAY offer to a bounded candidate set; the first valid
+acceptance atomically wins a new Ownership Epoch and every losing offer is
+withdrawn before a loser may execute.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-005" level={["MUST","SHOULD"]}>
+
+Acceptance means a durable scheduling commitment, not immediate execution. A
+Worker MUST perform admission control against queue capacity, concurrency,
+capability availability, deadlines, authorization eligibility, dependencies, and
+budgets. It MUST decline when it cannot make a credible commitment and SHOULD
+use a structured reason such as `capacity`, `deadline`, `capability`,
+`authorization`, `dependency`, or `budget`.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-006" level={["MUST","MUST NOT"]}>
+
+Every assignment MUST record a structured selection basis: required capability
+matches, authorization eligibility, availability estimate, expected cost,
+capability-specific reliability Evidence, and applied policy rules. Private
+chain-of-thought MUST NOT be included.
+
+</NormativeClause>
+
+### 10.4 Dependencies and dynamic planning
+
+<NormativeClause id="MWP-WRK-007" level={["MAY","MUST"]}>
+
+A Mission's WorkItems form an evolving directed acyclic graph. A Coordinator MAY
+begin execution before the complete graph is known, add WorkItems as discoveries
+occur, and run independent branches in parallel. A WorkItem is eligible only
+when its declared dependencies satisfy the contract's dependency policy.
+Dependency cycles MUST be rejected.
+
+</NormativeClause>
+
+There is no cross-Group transaction. Cross-Group relationships use stable
+correlation IDs, parent/child Mission links, Artifacts, and compensating
+WorkItems.
+
+## 11. Scheduling, execution, and recovery
+
+### 11.1 Per-Group queues and global Scheduler
+
+<NormativeClause id="MWP-WRK-008" level="MUST">
+
+Each Worker MUST maintain a distinct Event inbox, Cursor, and Work queue for
+each Group. The queues are durable local projections of accepted Group Events
+and MUST be rebuildable by replay. Mission, ownership, lease, and WorkItem
+status remain authoritative in the Group log.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-009" level="MUST NOT">
+
+A Worker-owned Scheduler selects eligible WorkItems from all per-Group queues
+into declared isolated execution slots. The Scheduler has final authority over
+cross-Group order. A Coordinator supplies requested urgency, deadline, and
+business impact but MUST NOT force its Mission ahead of others. Escalation of
+organization priority goes through policy or the MissionOwner.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-010" level={["MUST","SHOULD"]}>
+
+The Scheduler MUST implement weighted fairness and anti-starvation. Effective
+order SHOULD consider organization priority class, deadlines, aging, per-Group
+quotas, risk gates, and resource availability. Pure unbounded
+highest-priority-first scheduling is non-conforming.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-011" level="MUST">
+
+An Agent Card declares maximum concurrency; Presence reports current capacity.
+Each active slot MUST isolate Mission context, credentials, checkpoints, tool
+budgets, and side-effect keys from other slots.
+
+</NormativeClause>
+
+### 11.2 Scheduling disclosure
+
+<NormativeClause id="MWP-WRK-012" level={["SHOULD","MUST NOT"]}>
+
+On acceptance and material schedule changes, a Worker SHOULD publish an
+estimated start window, estimated completion, confidence, capacity status, and
+calculation time. It MUST NOT expose names, content, assignments, or exact
+global queue positions from another Group.
+
+</NormativeClause>
+
+### 11.3 Execution Leases and preemption
+
+<NormativeClause id="MWP-WRK-013" level="MUST">
+
+Queued ownership and active execution use renewable, fenced leases. An ownership
+grant MUST include an Ownership Epoch and start-by deadline. Starting work
+requires an Execution Lease with a stable Lease ID bound to Agent ID, Session
+Epoch, WorkItem ID, Ownership Epoch, start, renewal history, and expiry. Every
+renewal, checkpoint, block, Artifact publication, submission, and
+Worker-reported failure MUST reference the current Lease ID. A delayed Command
+carrying an older Lease ID MUST be rejected even when its Ownership Epoch is
+unchanged.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-014" level="MUST">
+
+Capability tokens bind to the Execution Lease ID, not the reverse. This permits
+tokens to be rotated or narrowed while one lease remains active; every token
+still expires no later than the lease boundary under which it was issued.
+Checkpoint, block, and submission release the lease; timeout expires it; Session
+replacement, reassignment, cancellation, and failure revoke it. Opening a
+replacement Agent Session MUST revoke that Agent's active leases and return
+affected WorkItems to `queued` before the new runtime may start them under new
+leases.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-015" level="MUST NOT">
+
+Priority changes immediately reorder queued WorkItems. Active work MUST NOT be
+forcibly interrupted at an unsafe point. Preemption is cooperative:
+
+1. the Scheduler requests preemption;
+2. the Worker reaches a safe, idempotent checkpoint;
+3. it emits the checkpoint and pauses;
+4. its execution slot is released; and
+5. the paused WorkItem re-enters its Group queue for later resumption.
+
+</NormativeClause>
+
+### 11.4 Progress, blocking, and retries
+
+<NormativeClause id="MWP-WRK-016" level={["MUST","SHOULD"]}>
+
+Progress reports MUST be structured around current phase, completed milestones,
+next checkpoint, blockers, revised estimate, and Evidence references. Arbitrary
+percentages are non-authoritative. Workers SHOULD report at meaningful
+checkpoints, when an estimate changes materially, or when blocked.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-017" level={["MUST","MAY"]}>
+
+When blocked, a Worker MUST checkpoint, emit `work.blocked` with required
+resolution, and release its execution slot. Ownership MAY remain during a
+bounded blocked lease. The Coordinator may resolve the blocker, authorize
+proposed sub-work, or reassign. Unblocked work returns to its per-Group ready
+queue.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-018" level="MUST">
+
+Automatic retries are limited by the Work Contract's attempt, backoff, cost, and
+deadline budgets. External attempts MUST use the WorkItem execution idempotency
+key or a deterministic derived attempt key. Exhaustion or permanent failure
+emits `work.failed` with Evidence.
+
+</NormativeClause>
+
+### 11.5 Worker and Coordinator failure
+
+<NormativeClause id="MWP-WRK-019" level={["MAY","MUST NOT"]}>
+
+If a Worker misses its start deadline or stops renewing a lease, the Coordinator
+MAY reassign from the latest checkpoint with a higher Ownership Epoch. A late
+result from the old owner MAY be stored for audit but MUST NOT complete the
+WorkItem.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-020" level={["MAY","MUST NOT","MUST"]}>
+
+If the Group service is unavailable, a Worker MAY continue already-active
+reversible computation for a bounded lease-grace period and buffer signed
+progress and checkpoints. It MUST NOT start new WorkItems or perform new
+high-risk, irreversible, or externally visible actions without a currently valid
+lease and capability token. It MUST reconcile on reconnect before submission or
+further side effects.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-021" level="MUST">
+
+Each buffered Command MUST carry the critical
+`urn:missionweaveprotocol:extension:bounded-offline-execution` binding. The
+binding records the Agent, Group, WorkItem, original Session Epoch, Ownership
+Epoch, historical Execution Lease ID, disconnect time, buffer time, grace
+deadline, historical lease expiry, and the six-dimensional resource usage delta.
+On reconnect the Worker MUST preserve that binding but rebase and re-sign the
+Command with an `issuedAt`, Session Epoch, and Membership Epoch from the current
+authenticated session. The Group Authority MUST reject progress buffered outside
+the historical lease/grace window, after lease closure, for a changed owner, or
+outside the bound WorkItem Conversation.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-022" level="MUST">
+
+Reconciliation and its resource charge are one authoritative transaction. For
+every nonzero offline delta, the Group Authority MUST append an
+`ext.missionweaveprotocol.core.resource_usage_recorded` Event that identifies
+both the historical execution session and the reconciliation session, updates
+the WorkItem and complete budget ancestry, and then applies the Message or
+checkpoint. Budget overflow MUST reject both the charge and the progress Command
+without a partial Event or state change.
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+The next block resumes a later pinned source segment. See the
+[specification source map](./) for the intervening local page and exact line
+ranges.
+
+</InformativeBlock>
+
+## 13. Artifacts, Evidence, and Context Packages
+
+### 13.1 Artifacts
+
+<NormativeClause id="MWP-WRK-023" level="MUST">
+
+An Artifact is immutable and content addressed. Binary content MUST be stored
+outside the Group Event log. Its signed manifest MUST contain the content hash,
+media type and schema, producer Agent and Agent Card version,
+Mission/Group/WorkItem IDs, source Artifact hashes, relevant
+tool/model/capability versions, creation time, data classification, size, and
+retrieval URI.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-024" level={["MUST","MUST NOT"]}>
+
+Derived Artifacts form a provenance graph. Implementations MUST verify the
+content hash when retrieving an Artifact and MUST NOT treat a mutable URI as
+content identity.
+
+</NormativeClause>
+
+### 13.2 Evidence-based review
+
+<NormativeClause id="MWP-WRK-025" level={["MUST","SHOULD"]}>
+
+A Worker's claim of completion is insufficient. WorkItem submission MUST include
+Evidence mapped to acceptance criteria. Coordinator review SHOULD, in order:
+
+1. validate Artifact integrity and required output schemas;
+2. run deterministic tests or business rules where available;
+3. request reviewer-Agent Evidence for semantic or qualitative criteria;
+4. evaluate the combined Evidence; and
+5. retain all results for final human Approval.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-026" level={["MUST","MUST NOT"]}>
+
+Evidence MUST record subject, criteria, method, result, producer, timestamp, and
+referenced Artifacts. Evidence and decision records MUST NOT include private
+chain-of-thought.
+
+</NormativeClause>
+
+### 13.3 Context Packages
+
+<NormativeClause id="MWP-WRK-027" level="MUST">
+
+A Context Package is a signed, versioned, scoped summary, never an authoritative
+replacement for history. It MUST identify Mission and WorkItem scope, source
+Event range, Artifact hashes, decisions, constraints, unresolved questions,
+generator, time, and signature. A Worker may retrieve cited Events when its
+Membership permits. Updating a package creates a new version and retains
+provenance to the previous version.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-028" level="MUST NOT">
+
+Group content MUST NOT enter another Mission's context by default. Reusable
+knowledge must be explicitly published as an Organization-approved, classified,
+provenance-bearing Artifact. Cross-Group forwarding requires permission checks
+and an auditable Event. The global Scheduler may inspect scheduling metadata but
+MUST NOT inspect confidential Mission content.
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+The next block resumes a later pinned source segment. See the
+[specification source map](./) for the intervening local page and exact line
+ranges.
+
+</InformativeBlock>
+
+## 16. Delivery, replay, and acknowledgement
+
+<NormativeClause id="MWP-WRK-029" level={["MUST","MAY","MUST NOT"]}>
+
+MissionWeaveProtocol promises at-least-once Event delivery. A recipient MUST
+deduplicate by Event ID and MUST process each Group in sequence order. It MAY
+buffer an out-of-order Event, but MUST NOT advance its durable Cursor over a
+gap.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-030" level="MUST NOT">
+
+A Cursor is the highest contiguous Group sequence durably processed by an Agent.
+An `ACK` frame reports one or more Cursors. Acknowledgement permits delivery
+cleanup but MUST NOT delete the authoritative Group history. Reconnection uses
+`SUBSCRIBE.afterSequence`; the server replays Events after that position,
+possibly including duplicates around a prior disconnect.
+
+</NormativeClause>
+
+If an old Cursor is no longer available in the online log, the server returns
+`CURSOR_TOO_OLD` and a signed snapshot reference. The Agent restores the
+snapshot, verifies its hash/signature, and resumes from the snapshot sequence.
+
+<NormativeClause id="MWP-WRK-031" level="MUST">
+
+External tool operations MUST use a stable idempotency key derived from Mission
+ID, WorkItem ID, Ownership Epoch, and logical operation ID. Network delivery
+alone can never guarantee exactly-once external side effects.
+
+</NormativeClause>

@@ -131,13 +131,13 @@ git commit -m "feat(docs): add normative clause primitives"
   `src/content/docs/0.1/reference/specification/errors-extensions-and-security.mdx`
 - Modify: `src/data/normative/0.1/clauses.json`
 
-- [ ] **Step 1: Create the specification index and source map**
+- [x] **Step 1: Create the specification index and source map**
 
 The index must state `Draft Standard 0.1.0`, define BCP 14 keyword handling,
 identify the unified normative release, and map each original protocol section
 to a local page and clause range.
 
-- [ ] **Step 2: Migrate every source range without omission**
+- [x] **Step 2: Migrate every source range without omission**
 
 Use exact content from protocol commit `f7e70a72...` with this mapping:
 
@@ -159,19 +159,19 @@ Treat the BCP 14 interpretation paragraph at source lines 5-8 as a Foundation
 clause: it governs requirement interpretation even though it is not itself an
 implementation behavior.
 
-- [ ] **Step 3: Wrap every testable BCP 14 paragraph**
+- [x] **Step 3: Wrap every testable BCP 14 paragraph**
 
 Assign the page prefix and next stable ordinal. Keep BCP 14 keywords uppercase
 inside all locales; localized prose will surround the same keyword in the
 localization plan.
 
-- [ ] **Step 4: Verify complete source coverage**
+- [x] **Step 4: Verify complete source coverage**
 
 Add coverage to `check-normative-clauses.mjs` so every BCP 14 paragraph from the
 vendored `public/artifacts/0.1/protocol/spec/PROTOCOL.md` maps to one website
 clause ID. Expected: zero omitted or multiply mapped source paragraphs.
 
-- [ ] **Step 5: Run specification checks**
+- [x] **Step 5: Run specification checks**
 
 ```bash
 npm run check:normative-clauses
@@ -182,7 +182,7 @@ npm run docs:build
 Expected: the full local English specification builds and clause coverage is
 complete.
 
-- [ ] **Step 6: Commit the English specification**
+- [x] **Step 6: Commit the English specification**
 
 ```bash
 git add src/content/docs/0.1/reference/specification src/data/normative/0.1/clauses.json scripts/check-normative-clauses.mjs

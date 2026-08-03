@@ -1,6 +1,10 @@
 import { access, readFile, readdir } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import remarkGfm from "remark-gfm";
+import remarkParse from "remark-parse";
+import { unified } from "unified";
 
 function parseRepositoryRoot(argv) {
   if (argv.length === 0) {
@@ -45,11 +49,71 @@ const expectedPrefixes = {
   "MWP-EVT": "Commands, Events, and WebSocket binding",
   "MWP-EXT": "extensions, errors, controls, compatibility, and conformance",
 };
+const specificationPages = [
+  {
+    page: "reference/specification/foundations",
+    prefix: "MWP-FND",
+    ranges: [[1, 184]],
+  },
+  {
+    page: "reference/specification/identity-registry-and-sessions",
+    prefix: "MWP-IDN",
+    ranges: [[185, 246]],
+  },
+  {
+    page: "reference/specification/signed-documents-and-trust",
+    prefix: "MWP-SDV",
+    ranges: [
+      [247, 410],
+      [521, 536],
+    ],
+  },
+  {
+    page: "reference/specification/first-admission-and-historical-trust",
+    prefix: "MWP-ADM",
+    ranges: [[411, 520]],
+  },
+  {
+    page: "reference/specification/missions-groups-and-membership",
+    prefix: "MWP-MSN",
+    ranges: [
+      [538, 691],
+      [951, 976],
+    ],
+  },
+  {
+    page: "reference/specification/work-scheduling-and-recovery",
+    prefix: "MWP-WRK",
+    ranges: [
+      [692, 869],
+      [911, 950],
+      [1099, 1117],
+    ],
+  },
+  {
+    page: "reference/specification/authorization-and-budgets",
+    prefix: "MWP-AUT",
+    ranges: [[870, 910]],
+  },
+  {
+    page: "reference/specification/commands-events-and-ordering",
+    prefix: "MWP-EVT",
+    ranges: [
+      [977, 1098],
+      [1118, 1159],
+    ],
+  },
+  {
+    page: "reference/specification/errors-extensions-and-security",
+    prefix: "MWP-EXT",
+    ranges: [[1160, Number.POSITIVE_INFINITY]],
+  },
+];
 const terminology = JSON.parse(await readFile(terminologyPath, "utf8"));
 const normativeLevels = terminology.normativeKeywords;
-const keywordAlternatives = [...normativeLevels].sort(
-  (left, right) => right.length - left.length,
-);
+const keywordAlternatives = [...normativeLevels]
+  .sort((left, right) => right.length - left.length)
+  .map((level) => level.split(/\s+/u).join("\\s+"));
 const clauseIdPattern = /^MWP-(?:FND|IDN|SDV|ADM|MSN|WRK|AUT|EVT|EXT)-\d{3}$/u;
 const normativeKeywordPattern = new RegExp(
   `\\b(?:${keywordAlternatives.join("|")})\\b`,
@@ -182,8 +246,60 @@ function maskMarkdownNonProse(contents, { maskJsxTags = false } = {}) {
 
 function normativeLevelsIn(contents) {
   return unique(
-    [...contents.matchAll(normativeKeywordPattern)].map((match) => match[0]),
+    [...contents.matchAll(normativeKeywordPattern)].map((match) =>
+      match[0].replace(/\s+/gu, " "),
+    ),
   );
+}
+
+function sha256(value) {
+  return createHash("sha256").update(value).digest("hex");
+}
+
+function visibleMarkdownText(node) {
+  if (node.type === "inlineCode" || node.type === "code") return "";
+  if (node.type === "text") return node.value;
+  if (!Array.isArray(node.children)) return "";
+  return node.children.map(visibleMarkdownText).join(" ");
+}
+
+function collectSourceParagraphs(source) {
+  const tree = unified().use(remarkParse).use(remarkGfm).parse(source);
+  const paragraphs = [];
+
+  function visit(node) {
+    if (node.type === "paragraph") {
+      const levels = normativeLevelsIn(visibleMarkdownText(node));
+      if (levels.length > 0) {
+        const startLine = node.position.start.line;
+        const endLine = node.position.end.line;
+        const sourceText = source.slice(
+          node.position.start.offset,
+          node.position.end.offset,
+        );
+        const pageMatches = specificationPages.filter((definition) =>
+          definition.ranges.some(
+            ([start, end]) => startLine >= start && endLine <= end,
+          ),
+        );
+        paragraphs.push({
+          startLine,
+          endLine,
+          levels,
+          sha256: `sha256:${sha256(sourceText)}`,
+          pageMatches,
+        });
+      }
+    }
+    for (const child of node.children ?? []) visit(child);
+  }
+
+  visit(tree);
+  return paragraphs;
+}
+
+function sourceRangeKey(startLine, endLine) {
+  return `${startLine}-${endLine}`;
 }
 
 function maskRange(contents, start, end) {
@@ -214,6 +330,7 @@ if (!(await exists(manifestPath))) {
 }
 
 const manifestClauses = new Map();
+const validSourceIdentityIds = new Set();
 if (manifest) {
   if (manifest.schemaVersion !== 1) {
     failures.push("clause manifest schemaVersion must be 1");
@@ -227,6 +344,15 @@ if (manifest) {
     failures.push(
       "clause manifest source path differs from the vendored protocol",
     );
+  }
+  if (
+    !Number.isInteger(manifest.source?.bcp14Paragraphs) ||
+    manifest.source.bcp14Paragraphs < 0 ||
+    !Number.isInteger(manifest.source?.mixedLevelParagraphs) ||
+    manifest.source.mixedLevelParagraphs < 0 ||
+    manifest.source.mixedLevelParagraphs > manifest.source.bcp14Paragraphs
+  ) {
+    failures.push("clause manifest source paragraph counts are invalid");
   }
   if (JSON.stringify(manifest.prefixes) !== JSON.stringify(expectedPrefixes)) {
     failures.push("clause manifest prefixes differ from the normative plan");
@@ -253,16 +379,121 @@ if (manifest) {
       if (typeof clause.page !== "string" || clause.page.length === 0) {
         failures.push(`${clause.id} has no version-relative page`);
       }
-      if (
+      const hasInvalidSourceIdentity =
         !Number.isInteger(clause.source?.startLine) ||
         !Number.isInteger(clause.source?.endLine) ||
         clause.source.startLine < 1 ||
         clause.source.endLine < clause.source.startLine ||
-        !/^sha256:[0-9a-f]{64}$/u.test(clause.source?.sha256 ?? "")
-      ) {
+        !/^sha256:[0-9a-f]{64}$/u.test(clause.source?.sha256 ?? "");
+      if (hasInvalidSourceIdentity) {
         failures.push(`${clause.id} has invalid source paragraph identity`);
+      } else {
+        validSourceIdentityIds.add(clause.id);
       }
       manifestClauses.set(clause.id, clause);
+    }
+  }
+}
+
+let sourceParagraphs = [];
+if (manifest) {
+  const sourcePath = path.join(repositoryRoot, manifest.source?.path ?? "");
+  if (!(await exists(sourcePath))) {
+    failures.push(`missing clause manifest source: ${manifest.source?.path}`);
+  } else {
+    const source = await readFile(sourcePath, "utf8");
+    sourceParagraphs = collectSourceParagraphs(source);
+    if (sourceParagraphs.length !== manifest.source.bcp14Paragraphs) {
+      failures.push(
+        `vendored protocol has ${sourceParagraphs.length} BCP 14 paragraphs; expected ${manifest.source.bcp14Paragraphs}`,
+      );
+    }
+    const mixedLevelParagraphs = sourceParagraphs.filter(
+      (paragraph) => paragraph.levels.length > 1,
+    ).length;
+    if (mixedLevelParagraphs !== manifest.source.mixedLevelParagraphs) {
+      failures.push(
+        `vendored protocol has ${mixedLevelParagraphs} mixed-level paragraphs; expected ${manifest.source.mixedLevelParagraphs}`,
+      );
+    }
+
+    const paragraphsByRange = new Map();
+    for (const paragraph of sourceParagraphs) {
+      const key = sourceRangeKey(paragraph.startLine, paragraph.endLine);
+      if (paragraph.pageMatches.length !== 1) {
+        failures.push(
+          `source paragraph ${key} maps to ${paragraph.pageMatches.length} specification pages`,
+        );
+      }
+      paragraphsByRange.set(key, paragraph);
+    }
+
+    const manifestByRange = new Map();
+    for (const clause of manifestClauses.values()) {
+      if (!validSourceIdentityIds.has(clause.id)) continue;
+      const key = sourceRangeKey(
+        clause.source.startLine,
+        clause.source.endLine,
+      );
+      if (manifestByRange.has(key)) {
+        failures.push(
+          `${clause.id} duplicates source paragraph range ${key} from ${manifestByRange.get(key)}`,
+        );
+        continue;
+      }
+      manifestByRange.set(key, clause.id);
+      const paragraph = paragraphsByRange.get(key);
+      if (!paragraph) {
+        failures.push(
+          `${clause.id} source range ${key} is not one BCP 14 paragraph`,
+        );
+        continue;
+      }
+      const definition = paragraph.pageMatches[0];
+      if (clause.source.sha256 !== paragraph.sha256) {
+        failures.push(`${clause.id} source paragraph SHA-256 differs`);
+      }
+      if (
+        JSON.stringify(normalizeLevels(clause.level)) !==
+        JSON.stringify(paragraph.levels)
+      ) {
+        failures.push(`${clause.id} levels differ from its source paragraph`);
+      }
+      if (definition && clause.page !== definition.page) {
+        failures.push(
+          `${clause.id} page differs from its planned source range`,
+        );
+      }
+    }
+
+    for (const paragraph of sourceParagraphs) {
+      const key = sourceRangeKey(paragraph.startLine, paragraph.endLine);
+      if (!manifestByRange.has(key)) {
+        failures.push(`source paragraph ${key} is not mapped to a clause ID`);
+      }
+    }
+
+    for (const definition of specificationPages) {
+      const ordinalClauses = [...manifestClauses.values()]
+        .filter(
+          (clause) =>
+            validSourceIdentityIds.has(clause.id) &&
+            clause.id.startsWith(`${definition.prefix}-`),
+        )
+        .sort(
+          (left, right) =>
+            Number.parseInt(left.id.slice(-3), 10) -
+            Number.parseInt(right.id.slice(-3), 10),
+        );
+      for (const [index, clause] of ordinalClauses.entries()) {
+        const ordinal = Number.parseInt(clause.id.slice(-3), 10);
+        const expectedOrdinal = index + 1;
+        if (ordinal !== expectedOrdinal) {
+          failures.push(
+            `${clause.id} ordinal is not contiguous for ${definition.prefix}; expected ${String(expectedOrdinal).padStart(3, "0")}`,
+          );
+        }
+      }
     }
   }
 }
