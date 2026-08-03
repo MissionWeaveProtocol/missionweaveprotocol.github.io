@@ -86,6 +86,5 @@ Authority 对该状态的变更进行串行化。
 - Agent 发布审计所需的决策、输入、Evidence、阻塞因素和结果，而不是私有 chain-of-thought。
 
 完整规则请阅读规范性
-[核心不变量](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#4-core-invariants)
-和
-[系统架构](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#5-system-architecture)。
+[核心不变量](../../../0.1/reference/specification/foundations/#mwp-fnd-013) 和
+[系统架构](../../../0.1/reference/specification/foundations/#5-system-architecture)。

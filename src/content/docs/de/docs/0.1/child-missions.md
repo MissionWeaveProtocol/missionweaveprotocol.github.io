@@ -88,6 +88,6 @@ unverzichtbar und ohne Alternative einstuft.
   Arbeit, nachdem eine genehmigte Mission unveränderlich geworden ist.
 
 Die vollständigen Regeln stehen in den normativen Abschnitten zu
-[übergeordneten Missionen und Unteraufgaben](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#14-parent-and-child-missions)
+[übergeordneten Missionen und Unteraufgaben](../../../0.1/reference/specification/missions-groups-and-membership/#14-parent-and-child-missions)
 und zum
-[Mission-Lebenszyklus](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#7-mission-and-group-lifecycle).
+[Mission-Lebenszyklus](../../../0.1/reference/specification/missions-groups-and-membership/#7-mission-and-group-lifecycle).

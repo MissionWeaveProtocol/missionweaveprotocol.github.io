@@ -42,9 +42,8 @@ se transportan en miembros `extensions` explícitos.
 | [`extension-profile.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/extension-profile.schema.json) | Definición gobernada de Extension Profile y metadatos de compatibilidad                             |
 | [`websocket-frame.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/websocket-frame.schema.json)     | Unión canónica de frames WebSocket                                                                  |
 
-El
-[README canónico de schemas](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/README.md)
-registra las reglas de validación compartidas.
+La [referencia versionada de schemas](../../0.1/reference/schemas/) registra las
+reglas de validación compartidas.
 
 ## Validar el repositorio del protocolo
 

@@ -80,6 +80,6 @@ Agent 出具 Evidence，并保留结果。
 所有必需的 WorkItem 均验证完成后，Coordinator 提交特定 Mission 修订版本和 Artifact 集合。MissionOwner 随后签署最终 Approval 或请求变更。变更请求会重新打开同一个 Mission，而不会删除之前的提交。
 
 完整状态转换和权限规则请阅读规范性
-[WorkItem 状态机](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#102-workitem-state-machine)
+[WorkItem 状态机](../../../0.1/reference/specification/work-scheduling-and-recovery/#102-workitem-state-machine)
 和
-[基于 Evidence 的审查](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#132-evidence-based-review)。
+[基于 Evidence 的审查](../../../0.1/reference/specification/work-scheduling-and-recovery/#132-evidence-based-review)。

@@ -105,6 +105,6 @@ doit jamais modifier l’état autoritatif d’une Mission.
   résultats nécessaires à l’audit, mais pas leur chaîne de raisonnement privée.
 
 Pour toutes les règles, consultez les sections normatives sur les
-[invariants fondamentaux](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#4-core-invariants)
+[invariants fondamentaux](../../../0.1/reference/specification/foundations/#mwp-fnd-013)
 et l’
-[architecture du système](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#5-system-architecture).
+[architecture du système](../../../0.1/reference/specification/foundations/#5-system-architecture).

@@ -115,6 +115,5 @@ uv build
 The resulting local wheel includes `py.typed` and the 21 pinned schemas used for
 runtime document validation.
 
-For implementation details, tests, and current compatibility information, use
-the canonical
-[SDK README](https://github.com/missionweaveprotocol/python-sdk/blob/main/README.md).
+For normative runtime semantics and cross-language integration guidance, use the
+local [shared runtime reference](../../0.1/build/).

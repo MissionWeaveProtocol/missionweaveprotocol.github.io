@@ -92,6 +92,6 @@ MissionWeaveProtocol definiert eine Reihenfolge innerhalb einer Group, aber
 keine globale Reihenfolge über mehrere Group.
 
 Die vollständigen Regeln stehen in den normativen Abschnitten zu
-[Planung, Ausführung und Wiederherstellung](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#11-scheduling-execution-and-recovery)
+[Planung, Ausführung und Wiederherstellung](../../../0.1/reference/specification/work-scheduling-and-recovery/#11-scheduling-execution-and-recovery)
 und zu
-[Zustellung und Replay](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#16-delivery-replay-and-acknowledgement).
+[Zustellung und Replay](../../../0.1/reference/specification/work-scheduling-and-recovery/#16-delivery-replay-and-acknowledgement).

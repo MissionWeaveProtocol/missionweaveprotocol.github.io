@@ -19,8 +19,8 @@ Konformitätsfälle** bereit:
 Die kanonische Datei
 [`manifest.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/manifest.json)
 ordnet jeden Fall einem Schema, einem Instanzdokument und der erwarteten
-Gültigkeit zu. Die normativen Nutzungsanforderungen stehen in der
-[Konformitäts-README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/README.md).
+Gültigkeit zu. Die normativen Nutzungsanforderungen stehen in der lokalen
+[versionierten Konformitätsreferenz](../../0.1/reference/conformance/).
 
 ## Was die Vektoren belegen
 
@@ -32,8 +32,8 @@ widersprüchliche Provenienz.
 
 Das Bestehen des Manifests ist notwendig, aber nicht ausreichend.
 Verhaltenskonformität erfordert außerdem die Regeln der
-[normativen Spezifikation](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
-zu Zustandsmaschine, Reihenfolge, Autorisierung, Signatur, Epoch, Lease, Budget,
+[normativen Spezifikation](../../0.1/reference/specification/) zu
+Zustandsmaschine, Reihenfolge, Autorisierung, Signatur, Epoch, Lease, Budget,
 Hierarchie, Zeitstempel und Replay.
 
 Die Kryptografie signierter Dokumente ist ein eigenständiger
@@ -41,7 +41,7 @@ Konformitätsbereich. Ihr
 [Kryptografiemanifest](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/manifest.json)
 enthält 22 Fälle und 58 Auswertungen für alle neun signaturpflichtigen
 Schemaprofile. Die
-[Kryptografie-README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/README.md)
+[Kryptografie-Konformitätsreferenz](../../0.1/reference/conformance/cryptography/)
 definiert die geordneten Anforderungen der sechsstufigen Verifikation. Das
 Bestehen eines Manifests bedeutet nicht, dass auch das andere bestanden wurde.
 

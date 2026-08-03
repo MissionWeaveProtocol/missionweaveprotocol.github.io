@@ -18,8 +18,8 @@ case**を提供します。
 正本となる
 [`manifest.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/manifest.json)
 は、各 case を 1 つの schema、1 つの instance
-document、期待される妥当性に対応付けます。規範となる使用要件については、
-[conformance README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/README.md)
+document、期待される妥当性に対応付けます。規範となる使用要件については、サイト内の
+[バージョン化された conformance リファレンス](../../0.1/reference/conformance/)
 を参照してください。
 
 ## vector が証明すること
@@ -30,14 +30,13 @@ case には、signature の欠落、無効な lifecycle
 state、ownership の欠落、安全でない extension の動作、一貫しない provenance など、意図的に拒否される形式が含まれます。
 
 manifest への合格は必要条件ですが、十分条件ではありません。動作上の適合性には、
-[規範となる仕様](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
-で定める state
+[規範となる仕様](../../0.1/reference/specification/) で定める state
 machine、ordering、authorization、signature、epoch、lease、budget、hierarchy、timestamp、replay の各ルールへの準拠も必要です。
 
 Signed Document の暗号検証は、独立した適合性評価領域です。
 [暗号マニフェスト](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/manifest.json)
 には、署名が必須の 9 種類すべての Schema 検証プロファイルを対象とする 22 件のケースと 58 件の評価項目が含まれます。
-[暗号ベクトルの README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/README.md)
+[暗号 conformance リファレンス](../../0.1/reference/conformance/cryptography/)
 が、順序付き 6 段階検証の要件を定義します。一方のマニフェストへの合格は、もう一方への合格を意味しません。
 
 ## プロトコル checkout で検証する

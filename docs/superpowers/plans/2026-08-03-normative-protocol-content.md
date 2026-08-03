@@ -353,9 +353,12 @@ git commit -m "docs(build): add shared runtime reference"
 **Files:**
 
 - Create: `scripts/check-local-documentation-links.mjs`
+- Create: `scripts/test-local-documentation-links.mjs`
 - Modify: `package.json`
+- Modify: `package-lock.json`
+- Modify: `src/content/docs/**/*.{md,mdx}`
 
-- [ ] **Step 1: Write the prohibited-link test**
+- [x] **Step 1: Write the prohibited-link test**
 
 Reject Markdown links whose host is GitHub and whose path ends in or contains:
 
@@ -370,9 +373,14 @@ Reject Markdown links whose host is GitHub and whose path ends in or contains:
 ```
 
 Allow repository home pages, exact commit pages, source-code files used as
-provenance, raw artifact downloads, issues, and pull requests.
+provenance, raw artifact downloads, issues, and pull requests. MDX `href` and
+`link` expressions must be statically resolvable; the checker accepts literal
+values and local `import.meta.env.BASE_URL` templates, and fails closed for
+other expressions, spread attributes, and JSX embedded in expression or ESM
+blocks. Parse `.md` and `.mdx` with their respective grammars so valid Markdown
+is not rejected as MDX.
 
-- [ ] **Step 2: Verify the test fails against the legacy content**
+- [x] **Step 2: Verify the test fails against the legacy content**
 
 ```bash
 node scripts/check-local-documentation-links.mjs
@@ -380,12 +388,12 @@ node scripts/check-local-documentation-links.mjs
 
 Expected: FAIL listing current README/specification dependencies.
 
-- [ ] **Step 3: Point all explanatory links to local pages**
+- [x] **Step 3: Point all explanatory links to local pages**
 
 Replace each failure with the corresponding versioned local page or local
 artifact. Do not remove permitted source/provenance links.
 
-- [ ] **Step 4: Add the check to the full suite**
+- [x] **Step 4: Add the check to the full suite**
 
 ```json
 "check:local-docs": "node scripts/check-local-documentation-links.mjs"
@@ -393,11 +401,19 @@ artifact. Do not remove permitted source/provenance links.
 
 Run it before locale and build checks in `npm run check`.
 
-- [ ] **Step 5: Run and commit the self-containment gate**
+- [x] **Step 5: Run and commit the self-containment gate**
 
 ```bash
+npm run test:local-docs
 npm run check:local-docs
 npm run check
-git add scripts/check-local-documentation-links.mjs package.json src/content/docs/0.1
+git add scripts/check-local-documentation-links.mjs \
+  scripts/test-local-documentation-links.mjs package.json src/content/docs \
+  package-lock.json \
+  docs/superpowers/plans/2026-08-03-normative-protocol-content.md
 git commit -m "test(docs): require self-contained documentation"
 ```
+
+The full suite currently passes through `check:local-docs` and then stops at the
+intentionally unchanged locale-parity gate: 222 missing translation sources from
+37 English versioned pages across six locales. The locale gate remains enabled.

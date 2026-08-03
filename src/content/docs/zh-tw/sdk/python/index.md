@@ -108,6 +108,5 @@ uv build
 產生的本機 wheel 包含
 `py.typed`，以及用於 runtime 文件驗證的 21 個固定版本 schema。
 
-實作細節、測試和目前相容性資訊請以權威
-[SDK README](https://github.com/missionweaveprotocol/python-sdk/blob/main/README.md)
-為準。
+規範性執行階段語義和跨語言整合指南請參閱站內
+[共享執行階段參考](../../0.1/build/)。

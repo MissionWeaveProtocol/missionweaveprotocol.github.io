@@ -23,7 +23,7 @@ normative protocol source. The
 [`missionweaveprotocol` repository](https://github.com/missionweaveprotocol/missionweaveprotocol)
 owns the authoritative artifacts:
 
-- [MissionWeaveProtocol 0.1 specification](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
+- [MissionWeaveProtocol 0.1 specification](../../0.1/reference/specification/)
 - [Protocol glossary](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
 - [Normative JSON Schemas](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
 - [Conformance manifest and vectors](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
@@ -50,9 +50,8 @@ or exact commit rather than infer compatibility from matching version numbers.
 1. Start with the
    [protocol glossary](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
    for the shared vocabulary.
-2. Read the
-   [normative specification](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
-   for requirements and lifecycle rules.
+2. Read the [normative specification](../../0.1/reference/specification/) for
+   requirements and lifecycle rules.
 3. Use the [schema reference](../schemas/) for document structure.
 4. Run the [conformance vectors](../conformance/) against an implementation.
 5. Follow the [Python SDK source guide](../../sdk/python/) to exercise the

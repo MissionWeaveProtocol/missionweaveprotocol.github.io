@@ -104,6 +104,6 @@ debe cambiar el estado autoritativo de la Mission.
   necesarios para la auditoría, no su chain-of-thought privado.
 
 Para consultar todas las reglas, lee las secciones normativas sobre
-[invariantes centrales](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#4-core-invariants)
+[invariantes centrales](../../../0.1/reference/specification/foundations/#mwp-fnd-013)
 y
-[arquitectura del sistema](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#5-system-architecture).
+[arquitectura del sistema](../../../0.1/reference/specification/foundations/#5-system-architecture).

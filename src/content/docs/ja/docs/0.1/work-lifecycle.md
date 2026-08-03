@@ -84,7 +84,7 @@ Worker の申告だけでは、完了の十分な証明になりません。提�
 必要な WorkItem がすべて verified になると、Coordinator は特定の Mission リビジョンと Artifact セットを提出します。MissionOwner は最終 Approval に署名するか、変更を要求します。変更要求は過去の提出を消去せず、同じ Mission を再び開きます。
 
 完全な遷移と権限規則については、規範となる
-[WorkItem 状態機械](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#102-workitem-state-machine)
+[WorkItem 状態機械](../../../0.1/reference/specification/work-scheduling-and-recovery/#102-workitem-state-machine)
 および
-[Evidence に基づくレビュー](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#132-evidence-based-review)
+[Evidence に基づくレビュー](../../../0.1/reference/specification/work-scheduling-and-recovery/#132-evidence-based-review)
 を参照してください。

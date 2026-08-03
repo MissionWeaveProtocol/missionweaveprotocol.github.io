@@ -119,6 +119,5 @@ uv build
 Le wheel local obtenu contient `py.typed` et les 21 schémas fixés utilisés pour
 la validation des documents à l’exécution.
 
-Pour les détails d’implémentation, les tests et les informations de
-compatibilité actuelles, consultez le
-[README canonique du SDK](https://github.com/missionweaveprotocol/python-sdk/blob/main/README.md).
+Pour la sémantique normative du runtime et les conseils d’intégration entre
+langages, consultez la [référence locale du runtime partagé](../../0.1/build/).

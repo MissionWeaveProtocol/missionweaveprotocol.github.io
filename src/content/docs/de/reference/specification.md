@@ -24,7 +24,7 @@ nicht die normative Protokollquelle. Das
 [`missionweaveprotocol`-Repository](https://github.com/missionweaveprotocol/missionweaveprotocol)
 enthält die autoritativen Artefakte:
 
-- [MissionWeaveProtocol 0.1-Spezifikation](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
+- [MissionWeaveProtocol 0.1-Spezifikation](../../0.1/reference/specification/)
 - [Protokollglossar](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
 - [Normative JSON-Schemata](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
 - [Konformitätsmanifest und -vektoren](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
@@ -52,9 +52,8 @@ gleichen Versionsnummern abzuleiten.
 1. Beginne mit dem
    [Protokollglossar](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md),
    um das gemeinsame Vokabular kennenzulernen.
-2. Lies die
-   [normative Spezifikation](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
-   für Anforderungen und Lebenszyklusregeln.
+2. Lies die [normative Spezifikation](../../0.1/reference/specification/) für
+   Anforderungen und Lebenszyklusregeln.
 3. Verwende die [Schema-Referenz](../schemas/) für die Dokumentstruktur.
 4. Führe die [Konformitätsvektoren](../conformance/) gegen eine Implementierung
    aus.

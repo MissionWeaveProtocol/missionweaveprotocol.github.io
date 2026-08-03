@@ -19,9 +19,9 @@ l’implémentation** :
 Le fichier canonique
 [`manifest.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/manifest.json)
 associe chaque cas à un schéma, un document d’instance et sa validité attendue.
-Consultez le
-[README de conformité](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/README.md)
-pour les exigences normatives d’utilisation.
+Consultez la
+[référence de conformité versionnée](../../0.1/reference/conformance/) pour les
+exigences normatives d’utilisation.
 
 ## Ce que prouvent les vecteurs
 
@@ -35,14 +35,14 @@ Réussir le manifeste est nécessaire, mais insuffisant. La conformité
 comportementale exige également les règles de machine à états, d’ordonnancement,
 d’autorisation, de signature, d’epoch, de lease, de budget, de hiérarchie, de
 timestamp et de Replay définies dans la
-[spécification normative](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md).
+[spécification normative](../../0.1/reference/specification/).
 
 La cryptographie des documents signés constitue un domaine de conformité
 indépendant. Son
 [manifeste cryptographique](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/manifest.json)
 contient 22 cas et 58 évaluations couvrant les neuf profils de schéma exigeant
 une signature. Le
-[README cryptographique](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/README.md)
+[référence de conformité cryptographique](../../0.1/reference/conformance/cryptography/)
 définit les exigences ordonnées de la vérification en six étapes. La réussite de
 l’un des manifestes n’implique pas celle de l’autre.
 

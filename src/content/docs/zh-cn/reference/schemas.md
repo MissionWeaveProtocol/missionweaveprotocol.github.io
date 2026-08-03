@@ -39,9 +39,7 @@ MissionWeaveProtocol 0.1 定义了 **21 个规范性 JSON Schema Draft
 | [`extension-profile.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/extension-profile.schema.json) | 受治理的扩展定义和兼容性 metadata                      |
 | [`websocket-frame.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/websocket-frame.schema.json)     | 规范化 WebSocket frame union                           |
 
-权威
-[schema README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/README.md)
-记录了共享验证规则。
+站内 [版本化 Schema 参考](../../0.1/reference/schemas/) 记录了共享验证规则。
 
 ## 验证协议仓库
 

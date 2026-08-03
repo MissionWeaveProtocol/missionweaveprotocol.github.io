@@ -25,7 +25,7 @@ mais il n’est pas la source normative du protocole. Le
 [dépôt `missionweaveprotocol`](https://github.com/missionweaveprotocol/missionweaveprotocol)
 contient les artefacts faisant autorité :
 
-- [Spécification MissionWeaveProtocol 0.1](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
+- [Spécification MissionWeaveProtocol 0.1](../../0.1/reference/specification/)
 - [Glossaire du protocole](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
 - [JSON Schemas normatifs](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
 - [Manifeste et vecteurs de conformité](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
@@ -54,9 +54,8 @@ de version identiques.
 1. Commencez par le
    [glossaire du protocole](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
    afin de partager le même vocabulaire.
-2. Lisez la
-   [spécification normative](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
-   pour connaître les exigences et les règles de cycle de vie.
+2. Lisez la [spécification normative](../../0.1/reference/specification/) pour
+   connaître les exigences et les règles de cycle de vie.
 3. Consultez la [référence des schémas](../schemas/) pour la structure des
    documents.
 4. Exécutez les [vecteurs de conformité](../conformance/) sur une

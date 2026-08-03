@@ -87,8 +87,8 @@ Approval，Authorization Service 才會核發能力令牌。
 Approval 允許執行邊界明確的高風險操作；最終 Approval 接受已完成的 Mission 修訂版本和 Artifact 集合。
 
 完整規則請閱讀規範性
-[身份與 session](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#6-identity-agent-registry-and-sessions)、
-[Membership 與可見性](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#8-membership-visibility-and-attention)
+[身份與 session](../../../0.1/reference/specification/identity-registry-and-sessions/#6-identity-agent-registry-and-sessions)、
+[Membership 與可見性](../../../0.1/reference/specification/missions-groups-and-membership/#8-membership-visibility-and-attention)
 和
-[授權與預算](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#12-authorization-budgets-and-side-effects)
+[授權與預算](../../../0.1/reference/specification/authorization-and-budgets/#12-authorization-budgets-and-side-effects)
 章節。

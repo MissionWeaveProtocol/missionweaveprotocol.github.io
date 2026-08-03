@@ -102,6 +102,6 @@ zu löschen.
 
 Die vollständigen Übergänge und Autoritätsregeln stehen in den normativen
 Abschnitten zur
-[WorkItem-Zustandsmaschine](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#102-workitem-state-machine)
+[WorkItem-Zustandsmaschine](../../../0.1/reference/specification/work-scheduling-and-recovery/#102-workitem-state-machine)
 und zur
-[Evidence-basierten Prüfung](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#132-evidence-based-review).
+[Evidence-basierten Prüfung](../../../0.1/reference/specification/work-scheduling-and-recovery/#132-evidence-based-review).

@@ -94,6 +94,6 @@ or requests changes. A change request reopens the same Mission without erasing
 earlier submissions.
 
 For the complete transitions and authority rules, read the normative
-[WorkItem state machine](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#102-workitem-state-machine)
+[WorkItem state machine](../../../0.1/reference/specification/work-scheduling-and-recovery/#102-workitem-state-machine)
 and
-[Evidence-based review](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#132-evidence-based-review).
+[Evidence-based review](../../../0.1/reference/specification/work-scheduling-and-recovery/#132-evidence-based-review).

@@ -18,9 +18,9 @@ cases**:
 The canonical
 [`manifest.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/manifest.json)
 maps every case to one schema, one instance document, and its expected validity.
-See the
-[conformance README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/README.md)
-for the normative usage requirements.
+See the local
+[versioned conformance reference](../../0.1/reference/conformance/) for the
+normative usage requirements.
 
 ## What the vectors prove
 
@@ -32,13 +32,13 @@ extension behavior, and inconsistent provenance.
 Passing the manifest is necessary but not sufficient. Behavioral conformance
 also requires the state-machine, ordering, authorization, signature, epoch,
 lease, budget, hierarchy, timestamp, and replay rules in the
-[normative specification](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md).
+[normative specification](../../0.1/reference/specification/).
 
 Signed-document cryptography is a separate conformance surface. Its
 [cryptography manifest](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/manifest.json)
 contains 22 cases and 58 evaluations across all nine signature-required schema
 profiles. The
-[cryptography README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/README.md)
+[cryptography conformance reference](../../0.1/reference/conformance/cryptography/)
 defines the ordered six-stage verification requirements. Passing either manifest
 does not imply passing the other.
 

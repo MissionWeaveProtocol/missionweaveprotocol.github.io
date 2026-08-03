@@ -101,6 +101,6 @@ Mission sin borrar los envíos anteriores.
 
 Para consultar todas las transiciones y reglas de autoridad, lee las secciones
 normativas sobre la
-[máquina de estados de WorkItem](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#102-workitem-state-machine)
+[máquina de estados de WorkItem](../../../0.1/reference/specification/work-scheduling-and-recovery/#102-workitem-state-machine)
 y la
-[revisión basada en Evidence](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#132-evidence-based-review).
+[revisión basada en Evidence](../../../0.1/reference/specification/work-scheduling-and-recovery/#132-evidence-based-review).

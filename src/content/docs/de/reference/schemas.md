@@ -42,8 +42,7 @@ Properties ab, und genehmigte Erweiterungsdaten werden nur in ausdrücklichen
 | [`extension-profile.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/extension-profile.schema.json) | Kontrollierte Extension Profile-Definition und Kompatibilitätsmetadaten                            |
 | [`websocket-frame.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/websocket-frame.schema.json)     | Kanonische WebSocket-Frame-Union                                                                   |
 
-Die kanonische
-[Schema-README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/README.md)
+Die lokale [versionierte Schema-Referenz](../../0.1/reference/schemas/)
 dokumentiert die gemeinsamen Validierungsregeln.
 
 ## Das Protokoll-Repository validieren

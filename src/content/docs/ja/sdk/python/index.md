@@ -119,6 +119,6 @@ uv build
 生成されるローカル wheel には `py.typed` と、runtime document
 validation に使用する pin 済みの 21 個の schema が含まれます。
 
-実装の詳細、test、現在の compatibility 情報については、正式な
-[SDK README](https://github.com/missionweaveprotocol/python-sdk/blob/main/README.md)
+規範となる runtime semantics と言語横断の integration
+guidance については、サイト内の [shared runtime リファレンス](../../0.1/build/)
 を参照してください。

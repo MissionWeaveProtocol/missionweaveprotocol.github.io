@@ -85,6 +85,6 @@ et ne prévoit aucune alternative.
   travail supplémentaire après qu’une Mission approuvée est devenue immuable.
 
 Pour toutes les règles, consultez les sections normatives sur les
-[Missions parentes et sous-tâches](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#14-parent-and-child-missions)
+[Missions parentes et sous-tâches](../../../0.1/reference/specification/missions-groups-and-membership/#14-parent-and-child-missions)
 et le
-[cycle de vie des Mission](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#7-mission-and-group-lifecycle).
+[cycle de vie des Mission](../../../0.1/reference/specification/missions-groups-and-membership/#7-mission-and-group-lifecycle).

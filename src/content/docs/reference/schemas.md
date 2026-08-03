@@ -41,9 +41,8 @@ members.
 | [`extension-profile.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/extension-profile.schema.json) | Governed extension definition and compatibility metadata                           |
 | [`websocket-frame.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/websocket-frame.schema.json)     | Canonical WebSocket frame union                                                    |
 
-The canonical
-[schema README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/README.md)
-records the shared validation rules.
+The local [versioned schema reference](../../0.1/reference/schemas/) records the
+shared validation rules.
 
 ## Validate the protocol repository
 

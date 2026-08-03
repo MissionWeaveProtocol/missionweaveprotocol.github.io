@@ -101,6 +101,6 @@ signe l’Approval finale ou demande des modifications. Une demande de
 modification rouvre la même Mission sans effacer les soumissions antérieures.
 
 Pour toutes les transitions et règles d’autorité, consultez la
-[machine à états du WorkItem](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#102-workitem-state-machine)
+[machine à états du WorkItem](../../../0.1/reference/specification/work-scheduling-and-recovery/#102-workitem-state-machine)
 et la
-[revue fondée sur les Evidence](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#132-evidence-based-review).
+[revue fondée sur les Evidence](../../../0.1/reference/specification/work-scheduling-and-recovery/#132-evidence-based-review).

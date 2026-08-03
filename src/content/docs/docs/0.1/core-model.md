@@ -99,6 +99,6 @@ Events. Losing a local database must not change authoritative Mission state.
   for audit, not private chain-of-thought.
 
 For the complete rules, read the normative
-[core invariants](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#4-core-invariants)
+[core invariants](../../../0.1/reference/specification/foundations/#mwp-fnd-013)
 and
-[system architecture](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#5-system-architecture).
+[system architecture](../../../0.1/reference/specification/foundations/#5-system-architecture).

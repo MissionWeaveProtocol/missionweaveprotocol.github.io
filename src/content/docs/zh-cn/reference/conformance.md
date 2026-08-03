@@ -15,21 +15,21 @@ MissionWeaveProtocol 0.1 提供 **56 个与实现无关的符合性用例**：
 
 权威
 [`manifest.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/manifest.json)
-将每个用例映射到一个 schema、一个实例文档及其预期有效性。规范性使用要求请参阅
-[符合性 README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/README.md)。
+将每个用例映射到一个 schema、一个实例文档及其预期有效性。规范性使用要求请参阅站内
+[版本化符合性参考](../../0.1/reference/conformance/)。
 
 ## 测试向量证明什么
 
 运行全部 56 个用例，可以检查实现是否遵循协议的结构化文档规则。无效用例涵盖刻意拒绝的结构，例如缺少签名、无效生命周期状态、缺少 ownership、不安全的扩展行为和不一致的溯源信息。
 
 通过 manifest 是必要条件，但并不充分。行为符合性还要求满足
-[规范性协议说明](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
+[规范性协议说明](../../0.1/reference/specification/)
 中的状态机、排序、授权、签名、epoch、lease、预算、层级、时间戳和 replay 规则。
 
 Signed Document 密码学是独立的符合性测试范围。其
 [密码学清单](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/manifest.json)
 包含 22 个用例和 58 个评估项，覆盖全部 9 种需要签名的 Schema 验证配置。
-[密码学 README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/README.md)
+[密码学符合性参考](../../0.1/reference/conformance/cryptography/)
 定义了有序的六阶段验证要求。通过其中一份清单并不代表也通过另一份清单。
 
 ## 在协议检出目录中验证

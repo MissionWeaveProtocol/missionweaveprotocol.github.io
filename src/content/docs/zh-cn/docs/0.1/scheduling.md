@@ -73,7 +73,7 @@ ID 去重，并且只推进每个 Group 中已持久化的最高连续 Cursor。
 MissionWeaveProtocol 只定义 Group 内的顺序，不定义跨 Group 的全局顺序。
 
 完整规则请阅读规范性
-[调度、执行与恢复](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#11-scheduling-execution-and-recovery)
+[调度、执行与恢复](../../../0.1/reference/specification/work-scheduling-and-recovery/#11-scheduling-execution-and-recovery)
 和
-[交付与 replay](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#16-delivery-replay-and-acknowledgement)
+[交付与 replay](../../../0.1/reference/specification/work-scheduling-and-recovery/#16-delivery-replay-and-acknowledgement)
 章节。

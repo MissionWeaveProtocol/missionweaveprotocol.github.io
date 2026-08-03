@@ -84,6 +84,6 @@ y no ofrece ninguna alternativa.
   adicional después de que una Mission aprobada se haya vuelto inmutable.
 
 Para consultar todas las reglas, lee las secciones normativas sobre
-[Mission padre y subtarea](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#14-parent-and-child-missions)
+[Mission padre y subtarea](../../../0.1/reference/specification/missions-groups-and-membership/#14-parent-and-child-missions)
 y
-[ciclo de vida de Mission](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#7-mission-and-group-lifecycle).
+[ciclo de vida de Mission](../../../0.1/reference/specification/missions-groups-and-membership/#7-mission-and-group-lifecycle).

@@ -73,7 +73,7 @@ ID で重複を排除し、各 Group について永続化された連続する�
 MissionWeaveProtocol が定義するのは Group 内の順序であり、Group を横断する全体順序ではありません。
 
 完全なルールについては、規範となる
-[スケジューリング、実行、復旧](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#11-scheduling-execution-and-recovery)
+[スケジューリング、実行、復旧](../../../0.1/reference/specification/work-scheduling-and-recovery/#11-scheduling-execution-and-recovery)
 および
-[配信と Replay](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#16-delivery-replay-and-acknowledgement)
+[配信と Replay](../../../0.1/reference/specification/work-scheduling-and-recovery/#16-delivery-replay-and-acknowledgement)
 を参照してください。

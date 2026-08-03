@@ -108,7 +108,7 @@ erlaubt einen begrenzten riskanten Vorgang; finale Approval akzeptiert eine
 abgeschlossene Mission-Revision und einen Artifact-Satz.
 
 Die vollständigen Regeln stehen in den normativen Abschnitten zu
-[Identität und Session](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#6-identity-agent-registry-and-sessions),
-[Membership und Sichtbarkeit](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#8-membership-visibility-and-attention)
+[Identität und Session](../../../0.1/reference/specification/identity-registry-and-sessions/#6-identity-agent-registry-and-sessions),
+[Membership und Sichtbarkeit](../../../0.1/reference/specification/missions-groups-and-membership/#8-membership-visibility-and-attention)
 und
-[Autorisierung und Budgets](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#12-authorization-budgets-and-side-effects).
+[Autorisierung und Budgets](../../../0.1/reference/specification/authorization-and-budgets/#12-authorization-budgets-and-side-effects).

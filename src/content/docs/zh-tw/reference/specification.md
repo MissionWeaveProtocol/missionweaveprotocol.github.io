@@ -20,7 +20,7 @@ Group、明確的 WorkItem、對等 Message、排程、權限、持久排序、r
 [`missionweaveprotocol` 儲存庫](https://github.com/missionweaveprotocol/missionweaveprotocol)
 擁有以下權威產出物：
 
-- [MissionWeaveProtocol 0.1 協定規格](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
+- [MissionWeaveProtocol 0.1 協定規格](../../0.1/reference/specification/)
 - [協定術語表](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
 - [規範性 JSON Schema](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
 - [符合性清單和測試向量](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
@@ -43,8 +43,7 @@ Group、明確的 WorkItem、對等 Message、排程、權限、持久排序、r
 1. 先閱讀
    [協定術語表](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
    了解共享詞彙。
-2. 閱讀
-   [規範性協定規格](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
+2. 閱讀 [規範性協定規格](../../0.1/reference/specification/)
    了解要求和生命週期規則。
 3. 使用 [JSON Schema 參考](../schemas/)了解文件結構。
 4. 針對實作執行[符合性測試向量](../conformance/)。

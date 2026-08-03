@@ -22,7 +22,7 @@ Group、明示的な WorkItem、Agent 間の Message、スケジューリング�
 [`missionweaveprotocol` リポジトリ](https://github.com/missionweaveprotocol/missionweaveprotocol)
 が次の正本となる成果物を管理します。
 
-- [MissionWeaveProtocol 0.1 仕様](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
+- [MissionWeaveProtocol 0.1 仕様](../../0.1/reference/specification/)
 - [プロトコル用語集](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
 - [規範となる JSON Schema](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/schemas)
 - [適合性 manifest と vector](https://github.com/missionweaveprotocol/missionweaveprotocol/tree/main/conformance)
@@ -47,8 +47,7 @@ Group、明示的な WorkItem、Agent 間の Message、スケジューリング�
    [プロトコル用語集](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/CONTEXT.md)
    から始めます。
 2. 要件とライフサイクル規則について、
-   [規範となる仕様](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md)
-   を読みます。
+   [規範となる仕様](../../0.1/reference/specification/) を読みます。
 3. 文書構造について [schema リファレンス](../schemas/) を参照します。
 4. 実装に対して [適合性 vector](../conformance/) を実行します。
 5. リファレンス実装を動かすには、 [Python SDK ソースガイド](../../sdk/python/)

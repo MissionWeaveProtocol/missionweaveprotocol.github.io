@@ -77,7 +77,7 @@ child indispensable and provides no alternative.
   after an approved Mission has become immutable.
 
 For the complete rules, read the normative
-[parent and child Missions](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#14-parent-and-child-missions)
+[parent and child Missions](../../../0.1/reference/specification/missions-groups-and-membership/#14-parent-and-child-missions)
 and
-[Mission lifecycle](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#7-mission-and-group-lifecycle)
+[Mission lifecycle](../../../0.1/reference/specification/missions-groups-and-membership/#7-mission-and-group-lifecycle)
 sections.

@@ -92,6 +92,6 @@ MissionWeaveProtocol définit l’ordre au sein d’un Group, pas un ordre globa
 entre les Group.
 
 Pour toutes les règles, consultez les sections normatives sur la
-[planification, l’exécution et la récupération](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#11-scheduling-execution-and-recovery)
+[planification, l’exécution et la récupération](../../../0.1/reference/specification/work-scheduling-and-recovery/#11-scheduling-execution-and-recovery)
 et sur la
-[livraison et le Replay](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#16-delivery-replay-and-acknowledgement).
+[livraison et le Replay](../../../0.1/reference/specification/work-scheduling-and-recovery/#16-delivery-replay-and-acknowledgement).

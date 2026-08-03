@@ -108,6 +108,4 @@ uv build
 生成的本地 wheel 包含
 `py.typed`，以及用于 runtime 文档验证的 21 个固定版本 schema。
 
-实现细节、测试和当前兼容性信息请以权威
-[SDK README](https://github.com/missionweaveprotocol/python-sdk/blob/main/README.md)
-为准。
+规范性运行时语义和跨语言集成指南请参阅站内 [共享运行时参考](../../0.1/build/)。

@@ -107,6 +107,6 @@ Datenbank darf den autoritativen Mission-Zustand nicht verändern.
   Evidence, Blockaden und Ergebnisse, nicht ihre private Chain-of-Thought.
 
 Die vollständigen Regeln stehen in den normativen Abschnitten zu
-[Kerninvarianten](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#4-core-invariants)
+[Kerninvarianten](../../../0.1/reference/specification/foundations/#mwp-fnd-013)
 und
-[Systemarchitektur](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#5-system-architecture).
+[Systemarchitektur](../../../0.1/reference/specification/foundations/#5-system-architecture).

@@ -42,9 +42,8 @@ approuvées ne sont transportées que dans des membres `extensions` explicites.
 | [`extension-profile.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/extension-profile.schema.json) | Définition d’extension gouvernée et métadonnées de compatibilité                                 |
 | [`websocket-frame.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/websocket-frame.schema.json)     | Union canonique des trames WebSocket                                                             |
 
-Le
-[README canonique des schémas](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/README.md)
-consigne les règles de validation partagées.
+La [référence versionnée des schémas](../../0.1/reference/schemas/) consigne les
+règles de validation partagées.
 
 ## Valider le dépôt du protocole
 

@@ -92,7 +92,7 @@ Event が含まれます。Group Authority が、この状態への変更を直�
 - Agent は監査に必要な決定、入力、Evidence、阻害要因、結果を公開し、非公開の思考過程は公開しません。
 
 完全なルールについては、規範となる
-[コア不変条件](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#4-core-invariants)
+[コア不変条件](../../../0.1/reference/specification/foundations/#mwp-fnd-013)
 および
-[システムアーキテクチャ](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#5-system-architecture)
+[システムアーキテクチャ](../../../0.1/reference/specification/foundations/#5-system-architecture)
 を参照してください。

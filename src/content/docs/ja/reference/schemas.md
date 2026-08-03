@@ -42,8 +42,8 @@ object は未知の property を拒否し、承認済みの extension data は�
 | [`extension-profile.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/extension-profile.schema.json) | governance 対象となる extension definition と compatibility metadata |
 | [`websocket-frame.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/websocket-frame.schema.json)     | canonical WebSocket frame union                                      |
 
-正本となる
-[schema README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/README.md)
+サイト内の
+[バージョン化された schema リファレンス](../../0.1/reference/schemas/)
 に共有 validation rule が記録されています。
 
 ## プロトコルリポジトリを検証する

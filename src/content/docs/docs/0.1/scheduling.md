@@ -86,7 +86,7 @@ MissionWeaveProtocol defines ordering within a Group, not a global order across
 Groups.
 
 For the complete rules, read the normative
-[scheduling, execution, and recovery](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#11-scheduling-execution-and-recovery)
+[scheduling, execution, and recovery](../../../0.1/reference/specification/work-scheduling-and-recovery/#11-scheduling-execution-and-recovery)
 and
-[delivery and replay](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#16-delivery-replay-and-acknowledgement)
+[delivery and replay](../../../0.1/reference/specification/work-scheduling-and-recovery/#16-delivery-replay-and-acknowledgement)
 sections.

@@ -59,7 +59,7 @@ Mission）**にできます。ここでいうサブタスクは独立した Miss
   Mission** を使用します。
 
 完全なルールについては、規範となる
-[親 Mission とサブタスク](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#14-parent-and-child-missions)
+[親 Mission とサブタスク](../../../0.1/reference/specification/missions-groups-and-membership/#14-parent-and-child-missions)
 および
-[Mission のライフサイクル](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#7-mission-and-group-lifecycle)
+[Mission のライフサイクル](../../../0.1/reference/specification/missions-groups-and-membership/#7-mission-and-group-lifecycle)
 を参照してください。

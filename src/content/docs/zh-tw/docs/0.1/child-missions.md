@@ -58,7 +58,7 @@ Mission）**。子任务是獨立 Mission，不是 WorkItem；它擁有自己的
   對已核准且不可變的 Mission 進行修正、補救或額外工作。
 
 完整規則請閱讀規範性
-[上層 Mission 與子任务](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#14-parent-and-child-missions)
+[上層 Mission 與子任务](../../../0.1/reference/specification/missions-groups-and-membership/#14-parent-and-child-missions)
 和
-[Mission 生命週期](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#7-mission-and-group-lifecycle)
+[Mission 生命週期](../../../0.1/reference/specification/missions-groups-and-membership/#7-mission-and-group-lifecycle)
 章節。

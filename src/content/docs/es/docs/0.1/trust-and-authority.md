@@ -104,7 +104,7 @@ permite una operación arriesgada y acotada; la Approval final acepta una
 revisión concreta de la Mission completada y un conjunto de Artifact.
 
 Para consultar todas las reglas, lee las secciones normativas sobre
-[identidad y Session](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#6-identity-agent-registry-and-sessions),
-[Membership y visibilidad](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#8-membership-visibility-and-attention)
+[identidad y Session](../../../0.1/reference/specification/identity-registry-and-sessions/#6-identity-agent-registry-and-sessions),
+[Membership y visibilidad](../../../0.1/reference/specification/missions-groups-and-membership/#8-membership-visibility-and-attention)
 y
-[autorización y presupuestos](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#12-authorization-budgets-and-side-effects).
+[autorización y presupuestos](../../../0.1/reference/specification/authorization-and-budgets/#12-authorization-budgets-and-side-effects).

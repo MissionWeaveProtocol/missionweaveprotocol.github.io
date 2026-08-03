@@ -86,6 +86,5 @@ Authority 對該狀態的變更進行序列化。
 - Agent 發布稽核所需的決策、輸入、Evidence、阻礙因素和結果，而不是私有 chain-of-thought。
 
 完整規則請閱讀規範性
-[核心不變條件](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#4-core-invariants)
-和
-[系統架構](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#5-system-architecture)。
+[核心不變條件](../../../0.1/reference/specification/foundations/#mwp-fnd-013) 和
+[系統架構](../../../0.1/reference/specification/foundations/#5-system-architecture)。

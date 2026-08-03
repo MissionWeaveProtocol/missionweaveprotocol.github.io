@@ -107,8 +107,8 @@ une opération risquée bornée ; l’Approval finale accepte une révision term
 de la Mission et un ensemble exact d’Artifact.
 
 Pour toutes les règles, consultez les sections normatives sur
-[l’identité et les sessions](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#6-identity-agent-registry-and-sessions),
+[l’identité et les sessions](../../../0.1/reference/specification/identity-registry-and-sessions/#6-identity-agent-registry-and-sessions),
 la
-[Membership et la visibilité](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#8-membership-visibility-and-attention),
+[Membership et la visibilité](../../../0.1/reference/specification/missions-groups-and-membership/#8-membership-visibility-and-attention),
 ainsi que
-[l’autorisation et les budgets](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#12-authorization-budgets-and-side-effects).
+[l’autorisation et les budgets](../../../0.1/reference/specification/authorization-and-budgets/#12-authorization-budgets-and-side-effects).

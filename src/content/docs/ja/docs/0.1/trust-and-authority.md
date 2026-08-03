@@ -92,7 +92,7 @@ Coordinator が結果を検証した後も、ルート Mission には別の最�
 Approval は範囲の限定された高リスク操作を許可し、最終 Approval は完了した Mission リビジョンと Artifact セットを受諾します。
 
 完全なルールについては、規範となる
-[identity と session](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#6-identity-agent-registry-and-sessions)、
-[Membership と visibility](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#8-membership-visibility-and-attention)、
-[authorization と budget](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md#12-authorization-budgets-and-side-effects)
+[identity と session](../../../0.1/reference/specification/identity-registry-and-sessions/#6-identity-agent-registry-and-sessions)、
+[Membership と visibility](../../../0.1/reference/specification/missions-groups-and-membership/#8-membership-visibility-and-attention)、
+[authorization と budget](../../../0.1/reference/specification/authorization-and-budgets/#12-authorization-budgets-and-side-effects)
 を参照してください。

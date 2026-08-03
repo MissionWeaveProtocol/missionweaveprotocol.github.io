@@ -40,9 +40,7 @@ property 名稱使用 lowerCamelCase。核心物件拒絕未知屬性，已核�
 | [`extension-profile.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/extension-profile.schema.json) | 受治理的擴充定義和相容性 metadata                        |
 | [`websocket-frame.schema.json`](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/websocket-frame.schema.json)     | 規範化 WebSocket frame union                             |
 
-權威
-[schema README](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/schemas/README.md)
-記錄了共享驗證規則。
+站內 [版本化 Schema 參考](../../0.1/reference/schemas/) 記錄了共享驗證規則。
 
 ## 驗證協定儲存庫
 

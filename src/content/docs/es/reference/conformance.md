@@ -19,9 +19,9 @@ la implementación**:
 El
 [`manifest.json` canónico](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/manifest.json)
 asocia cada caso con un schema, un documento de instancia y su validez esperada.
-Consulta el
-[README de conformidad](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/conformance/README.md)
-para conocer los requisitos normativos de uso.
+Consulta la
+[referencia de conformidad versionada](../../0.1/reference/conformance/) para
+conocer los requisitos normativos de uso.
 
 ## Qué demuestran los vectores
 
@@ -34,15 +34,14 @@ procedencia incoherente.
 Superar el manifiesto es necesario, pero no suficiente. La conformidad de
 comportamiento también exige las reglas de máquina de estados, orden,
 autorización, firma, epoch, lease, presupuesto, jerarquía, timestamp y Replay de
-la
-[especificación normativa](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/spec/PROTOCOL.md).
+la [especificación normativa](../../0.1/reference/specification/).
 
 La criptografía de documentos firmados constituye una superficie de conformidad
 independiente. Su
 [manifiesto criptográfico](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/manifest.json)
 contiene 22 casos y 58 evaluaciones para los nueve perfiles de esquema que
 requieren firma. El
-[README criptográfico](https://github.com/missionweaveprotocol/missionweaveprotocol/blob/main/cryptography/README.md)
+[referencia de conformidad criptográfica](../../0.1/reference/conformance/cryptography/)
 define los requisitos ordenados de verificación en seis etapas. Superar uno de
 los manifiestos no implica superar el otro.
 
