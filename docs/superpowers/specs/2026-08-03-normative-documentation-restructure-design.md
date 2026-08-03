@@ -9,9 +9,9 @@ Status: Approved design, pending implementation plan
 The MissionWeaveProtocol website currently combines learning material, SDK
 summaries, and selected references, while depending on GitHub-hosted README and
 repository documentation for important details. Its structure predates the
-First-Admission and Historical-Trust contract, the Admission conformance
-bundle, and full runtime documentation for all six official SDKs. Several
-published counts and pins are also stale.
+First-Admission and Historical-Trust contract, the Admission conformance bundle,
+and full runtime documentation for all six official SDKs. Several published
+counts and pins are also stale.
 
 The website is now defined as a normative publication of the protocol. It must
 be understandable without following links to GitHub README or `docs/` pages,
@@ -25,8 +25,8 @@ one release.
    Learn/Build/Reference information architecture.
 2. Make versioned website documentation a normative component of each protocol
    release.
-3. Publish English, Simplified Chinese, Traditional Chinese, Japanese,
-   Spanish, French, and German with equal normative force.
+3. Publish English, Simplified Chinese, Traditional Chinese, Japanese, Spanish,
+   French, and German with equal normative force.
 4. Provide complete, local runtime reference documentation for Python,
    TypeScript, Go, Rust, Java, and C++.
 5. Keep protocol explanations, SDK instructions, and normative reference
@@ -81,44 +81,42 @@ choose an undocumented source of truth.
 The initial synchronized release uses protocol commit
 `f7e70a72c76bbeb5014c186cd820aac2112f0dde` and the following SDK commits:
 
-| SDK | Commit |
-| --- | --- |
-| Python | `9403cf1310914670506c56cbab363fdaa465d3cc` |
+| SDK        | Commit                                     |
+| ---------- | ------------------------------------------ |
+| Python     | `9403cf1310914670506c56cbab363fdaa465d3cc` |
 | TypeScript | `6d53ebfcf8350ae81d89fd818611b07f7373685c` |
-| Go | `80c39852e8a2053ac761b8d53d62483264f803f1` |
-| Rust | `2727f8777737265d98dde4ceaca306612ef54c52` |
-| Java | `3b2798c21d906c81887c54fe80e5bca8a19ddac7` |
-| C++ | `481b0ce3a65c1f2265935318b54481ece5032fdf` |
+| Go         | `80c39852e8a2053ac761b8d53d62483264f803f1` |
+| Rust       | `2727f8777737265d98dde4ceaca306612ef54c52` |
+| Java       | `3b2798c21d906c81887c54fe80e5bca8a19ddac7` |
+| C++        | `481b0ce3a65c1f2265935318b54481ece5032fdf` |
 
 The synchronized artifacts contain:
 
 - 22 normative schemas;
 - 58 structural vectors: 27 valid and 31 invalid;
-- 98 cryptography artifacts, 22 cases, and 62 evaluations: 12 complete and
-  50 rejected, with digest
+- 98 cryptography artifacts, 22 cases, and 62 evaluations: 12 complete and 50
+  rejected, with digest
   `sha256:5eade516e4bc5dcf04477727ebcccd11f33348b2d9135fb6fe0365c6e6cc2ea3`;
-- 19 Admission artifacts, 5 cases, and 30 evaluations: 12 complete and
-  18 rejected, with digest
-  `sha256:39971bfafb68ef6c18f9026220cccc4f023fd4d5c8074f8ff0276cb1129cd0a0`;
-  and
+- 19 Admission artifacts, 5 cases, and 30 evaluations: 12 complete and 18
+  rejected, with digest
+  `sha256:39971bfafb68ef6c18f9026220cccc4f023fd4d5c8074f8ff0276cb1129cd0a0`; and
 - Admission profile
   `missionweaveprotocol.first-admission-historical-trust.v0.1`.
 
 ### Equal normative languages
 
-All seven language variants are normative and structurally complete. No
-language automatically overrides another. A semantic inconsistency between
-languages is a normative defect and must be corrected through the errata and
-release process.
+All seven language variants are normative and structurally complete. No language
+automatically overrides another. A semantic inconsistency between languages is a
+normative defect and must be corrected through the errata and release process.
 
 Every testable requirement receives a stable clause identifier, such as
 `MWP-ADM-001`. All translations, conformance cases, and SDK reference pages use
 the same identifier. Checks compare clause presence, order, normative keywords,
 and cross-references across locales.
 
-Examples or implementation advice that do not create protocol requirements
-must be explicitly marked `Informative example` or `Implementation note`.
-Unmarked requirements on normative pages have normative force.
+Examples or implementation advice that do not create protocol requirements must
+be explicitly marked `Informative example` or `Implementation note`. Unmarked
+requirements on normative pages have normative force.
 
 ## URL and version model
 
@@ -131,9 +129,9 @@ The site provides three forms of navigation:
    current reference routes.
 
 The Latest aliases always identify the current published protocol version.
-Versioned routes remain available when a later protocol version becomes
-current. Old routes use one-to-one redirects to the corresponding replacement;
-they must not fall back generically to a section index or home page.
+Versioned routes remain available when a later protocol version becomes current.
+Old routes use one-to-one redirects to the corresponding replacement; they must
+not fall back generically to a section index or home page.
 
 Every locale has the same route tree. Canonical and alternate-language metadata
 must identify the versioned route and all language equivalents correctly.
@@ -195,13 +193,13 @@ Every SDK reference covers:
 - conformance, bundle pins, and upgrades; and
 - complete runnable examples.
 
-"Complete runtime reference" means complete documentation of the runtime
-surface that the pinned SDK actually implements, including explicit support
-and availability information. It does not mean inventing missing APIs or
-claiming that all SDKs have identical implementation breadth. If a required
-documented surface does not exist at the pinned commit, the normative release
-is blocked. Implementing missing SDK functionality is a separate cross-repository
-change and requires separate authorization.
+"Complete runtime reference" means complete documentation of the runtime surface
+that the pinned SDK actually implements, including explicit support and
+availability information. It does not mean inventing missing APIs or claiming
+that all SDKs have identical implementation breadth. If a required documented
+surface does not exist at the pinned commit, the normative release is blocked.
+Implementing missing SDK functionality is a separate cross-repository change and
+requires separate authorization.
 
 The website must verify these descriptions against the public API at the pinned
 SDK commit. It must not manufacture parity by copying Python names into another
@@ -245,8 +243,7 @@ The Learn, Build, and Reference views must express one consistent contract:
 5. Any record returned by an adapter is validated again.
 6. Historical replay reruns cryptography, requires an existing record, never
    issues a trusted context, and never appends.
-7. The protected instant and trusted instant use the same selected key
-   interval.
+7. The protected instant and trusted instant use the same selected key interval.
 8. Admission failures use stage `admission` and wire code
    `AUTH_INVALID_SIGNATURE`.
 
@@ -295,9 +292,9 @@ bundles, release pins, and SDK API inventories. Readers can view or download
 them without visiting GitHub.
 
 The ordinary site build is offline and uses committed artifacts. The formal
-release verification additionally checks out the exact protocol and SDK
-commits from `normative-release.json`, regenerates inventories, recomputes
-digests, and compares the results with the committed website artifacts.
+release verification additionally checks out the exact protocol and SDK commits
+from `normative-release.json`, regenerates inventories, recomputes digests, and
+compares the results with the committed website artifacts.
 
 ## SDK source verification
 
@@ -309,8 +306,8 @@ For each pinned SDK, the release verification must:
 4. Compile or execute documentation examples when the SDK toolchain supports
    such checks.
 5. Produce a committed, reviewable API inventory.
-6. Reject undocumented substitutions that make one language appear equivalent
-   by name alone.
+6. Reject undocumented substitutions that make one language appear equivalent by
+   name alone.
 
 A normal offline content build may use the committed inventories. A normative
 release cannot proceed unless the fresh exact-commit verification succeeds for
@@ -320,8 +317,7 @@ all six SDKs.
 
 Implementation is staged for review but published atomically:
 
-1. Add versioned routes, Latest aliases, structured facts, and the redirect
-   map.
+1. Add versioned routes, Latest aliases, structured facts, and the redirect map.
 2. Migrate and expand the complete protocol specification into local pages.
 3. Add shared runtime documentation and all six SDK reference trees.
 4. Complete all seven normative translations.
@@ -349,16 +345,16 @@ The repository must add or extend checks for:
 - the final built site's required pages and downloads.
 
 Missing locales, unavailable exact source commits, API mismatches, digest
-mismatches, broken internal links, invalid redirects, or failed SDK examples
-are release-blocking errors. The workflow must not silently omit a language,
-SDK, example, or artifact.
+mismatches, broken internal links, invalid redirects, or failed SDK examples are
+release-blocking errors. The workflow must not silently omit a language, SDK,
+example, or artifact.
 
 ## Publication and live verification
 
-All repository checks and the production build must pass before publication.
-The deployment workflow must be confirmed against the current objective,
-branch, commit, and Pages configuration immediately before any externally
-visible action.
+All repository checks and the production build must pass before publication. The
+deployment workflow must be confirmed against the current objective, branch,
+commit, and Pages configuration immediately before any externally visible
+action.
 
 A successful GitHub Actions job is not sufficient evidence of completion. The
 published site must be read back to verify:
