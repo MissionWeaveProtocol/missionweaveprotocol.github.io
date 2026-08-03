@@ -38,14 +38,30 @@ assert.equal(release.releaseId, "missionweaveprotocol-0.1");
 assert.equal(release.status, "draft-standard");
 assert.equal(release.protocolVersion, "0.1");
 assert.equal(
+  release.repository,
+  "https://github.com/missionweaveprotocol/missionweaveprotocol",
+);
+assert.equal(
   release.protocolCommit,
   "f7e70a72c76bbeb5014c186cd820aac2112f0dde",
+);
+assert.equal(release.wireNamespace, "missionweaveprotocol");
+assert.equal(
+  release.protocolPinSha256,
+  "bfb11b76a989b9949844d3380c3b01cefcde6c01259167b922b6f30d151bac31",
+);
+assert.equal(
+  release.protocolBundleSha256,
+  "c95fc8f8334947dacf51a2c6e84d9b13f5b39b7d3827591569a1e2c5acfe47d7",
 );
 assert.deepEqual(release.locales, expectedLocales);
 assert.deepEqual(release.sdks, expectedSdks);
 assert.deepEqual(release.schemas, { count: 22 });
 assert.deepEqual(release.structural, { total: 58, valid: 27, invalid: 31 });
 assert.deepEqual(release.cryptography, {
+  sourceCommit: release.protocolCommit,
+  profile: "missionweaveprotocol.signed-document-verification.v0.1",
+  manifestVersion: 1,
   artifacts: 98,
   cases: 22,
   evaluations: 62,
@@ -55,12 +71,15 @@ assert.deepEqual(release.cryptography, {
     "sha256:5eade516e4bc5dcf04477727ebcccd11f33348b2d9135fb6fe0365c6e6cc2ea3",
 });
 assert.deepEqual(release.admission, {
+  sourceCommit: release.protocolCommit,
+  manifestVersion: 1,
   artifacts: 19,
   cases: 5,
   evaluations: 30,
   complete: 12,
   rejected: 18,
   profile: "missionweaveprotocol.first-admission-historical-trust.v0.1",
+  cryptographyDigest: release.cryptography.digest,
   digest:
     "sha256:39971bfafb68ef6c18f9026220cccc4f023fd4d5c8074f8ff0276cb1129cd0a0",
 });
@@ -70,7 +89,22 @@ assert.equal("contentDigests" in release, false);
 const artifacts = await readJson("artifacts.json");
 assert.equal(artifacts.protocolCommit, release.protocolCommit);
 assert.equal(artifacts.publicBase, "/artifacts/0.1/protocol/");
-assert.deepEqual(artifacts.specification, { path: "spec/PROTOCOL.md" });
+assert.deepEqual(artifacts.protocolPin, {
+  sha256: release.protocolPinSha256,
+  bundleSha256: release.protocolBundleSha256,
+});
+assert.deepEqual(artifacts.context, {
+  path: "CONTEXT.md",
+  byteLength: 12330,
+  sha256:
+    "sha256:a16b598f4254545952b6c043e11f505cb14b58bb6a09797b14b15e1bd0e3b31a",
+});
+assert.deepEqual(artifacts.specification, {
+  path: "spec/PROTOCOL.md",
+  byteLength: 83039,
+  sha256:
+    "sha256:9c7297a1d2973652641efe43ca352830d2dbd69b1782ef15c22e2470f105d235",
+});
 assert.deepEqual(artifacts.schemas, {
   path: "schemas/",
   files: 22,
@@ -89,14 +123,23 @@ assert.deepEqual(artifacts.structural, {
 assert.deepEqual(artifacts.cryptography, {
   path: "cryptography/",
   manifest: "cryptography/manifest.json",
+  manifestSha256:
+    "sha256:314f05d7aafee0d23654411c2f709b360cfde62a0079f654ae7ac01e105bdd16",
   artifacts: release.cryptography.artifacts,
   digest: release.cryptography.digest,
 });
 assert.deepEqual(artifacts.admission, {
   path: "admission/",
   manifest: "admission/manifest.json",
+  manifestSha256:
+    "sha256:140f75fed9ae4c9c180d6055b28ede99fe5c35eedbe7d22016c8022df50b6065",
   artifacts: release.admission.artifacts,
   digest: release.admission.digest,
+});
+assert.deepEqual(artifacts.bundle, {
+  files: 194,
+  digest:
+    "sha256:95a16adaab17df2626db0f35b470723558637fc496840ddd837ce68fbe234875",
 });
 
 const terminology = await readJson("terminology.json");

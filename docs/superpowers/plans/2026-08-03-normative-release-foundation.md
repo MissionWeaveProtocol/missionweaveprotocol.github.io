@@ -200,6 +200,10 @@ git commit -m "feat(docs): define normative release source"
 - Create: `scripts/sync-normative-artifacts.mjs`
 - Create: `scripts/check-normative-artifacts.mjs`
 - Create: `public/artifacts/0.1/protocol/`
+- Create: `.gitattributes`
+- Modify: `.prettierignore`
+- Modify: `scripts/check-normative-release-source.mjs`
+- Modify: `src/data/normative/0.1/release-source.json`
 - Modify: `src/data/normative/0.1/artifacts.json`
 - Modify: `package.json`
 
@@ -208,6 +212,7 @@ git commit -m "feat(docs): define normative release source"
 The checker must require these local roots:
 
 ```text
+public/artifacts/0.1/protocol/CONTEXT.md
 public/artifacts/0.1/protocol/spec/PROTOCOL.md
 public/artifacts/0.1/protocol/schemas/
 public/artifacts/0.1/protocol/conformance/
@@ -215,8 +220,13 @@ public/artifacts/0.1/protocol/cryptography/
 public/artifacts/0.1/protocol/admission/
 ```
 
-It must count 22 `schemas/*.schema.json`, 58 structural vectors, and compare the
-cryptography and Admission manifest digests with `release-source.json`.
+It must count 22 `schemas/*.schema.json`, 58 structural vectors, verify every
+manifest-listed artifact path, byte length, and SHA-256, recompute the
+cryptography and Admission JCS manifest digests, and compare their cases,
+evaluations, and outcomes with `release-source.json`. The RFC 8785
+canonicalization evaluation has an implicit successful outcome and no `expect`
+member. The release data must also record the byte digest shared by all six
+exact `PROTOCOL_PIN.json` files and the pinned structural bundle digest.
 
 - [ ] **Step 2: Verify the artifact check fails before synchronization**
 
@@ -240,7 +250,7 @@ For each path returned by the equivalent of this exact local verification
 command:
 
 ```bash
-git -C /Users/lionelmbp/repos/missionweaveprotocol ls-tree -r --name-only f7e70a72c76bbeb5014c186cd820aac2112f0dde -- spec/PROTOCOL.md schemas conformance cryptography admission
+git -C /Users/lionelmbp/repos/missionweaveprotocol ls-tree -r --name-only f7e70a72c76bbeb5014c186cd820aac2112f0dde -- CONTEXT.md spec/PROTOCOL.md schemas conformance cryptography admission
 ```
 
 the script must read exact bytes with
@@ -383,8 +393,9 @@ It must reject a repository whose detached HEAD differs from the release source.
 - [ ] **Step 2: Implement source verification**
 
 `check-normative-sources.mjs` must compare the protocol artifacts byte-for-byte
-with `public/artifacts/0.1/protocol/` and compare every SDK's
-`PROTOCOL_PIN.json` with `release-source.json`.
+with `public/artifacts/0.1/protocol/`, verify every SDK's exact
+`PROTOCOL_PIN.json` byte digest against `release-source.json`, and compare the
+complete parsed pin fields with the release and artifact metadata.
 
 - [ ] **Step 3: Run against local repositories**
 

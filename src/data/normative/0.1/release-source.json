@@ -2,7 +2,11 @@
   "releaseId": "missionweaveprotocol-0.1",
   "status": "draft-standard",
   "protocolVersion": "0.1",
+  "repository": "https://github.com/missionweaveprotocol/missionweaveprotocol",
   "protocolCommit": "f7e70a72c76bbeb5014c186cd820aac2112f0dde",
+  "wireNamespace": "missionweaveprotocol",
+  "protocolPinSha256": "bfb11b76a989b9949844d3380c3b01cefcde6c01259167b922b6f30d151bac31",
+  "protocolBundleSha256": "c95fc8f8334947dacf51a2c6e84d9b13f5b39b7d3827591569a1e2c5acfe47d7",
   "locales": ["en", "zh-CN", "zh-TW", "ja", "es", "fr", "de"],
   "sdks": {
     "python": "9403cf1310914670506c56cbab363fdaa465d3cc",
@@ -15,6 +19,9 @@
   "schemas": { "count": 22 },
   "structural": { "total": 58, "valid": 27, "invalid": 31 },
   "cryptography": {
+    "sourceCommit": "f7e70a72c76bbeb5014c186cd820aac2112f0dde",
+    "profile": "missionweaveprotocol.signed-document-verification.v0.1",
+    "manifestVersion": 1,
     "artifacts": 98,
     "cases": 22,
     "evaluations": 62,
@@ -23,12 +30,15 @@
     "digest": "sha256:5eade516e4bc5dcf04477727ebcccd11f33348b2d9135fb6fe0365c6e6cc2ea3"
   },
   "admission": {
+    "sourceCommit": "f7e70a72c76bbeb5014c186cd820aac2112f0dde",
+    "manifestVersion": 1,
     "artifacts": 19,
     "cases": 5,
     "evaluations": 30,
     "complete": 12,
     "rejected": 18,
     "profile": "missionweaveprotocol.first-admission-historical-trust.v0.1",
+    "cryptographyDigest": "sha256:5eade516e4bc5dcf04477727ebcccd11f33348b2d9135fb6fe0365c6e6cc2ea3",
     "digest": "sha256:39971bfafb68ef6c18f9026220cccc4f023fd4d5c8074f8ff0276cb1129cd0a0"
   }
 }
