@@ -1,0 +1,609 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": "0.1",
+  "sdks": [
+    {
+      "id": "python",
+      "name": "Python",
+      "package": "missionweaveprotocol",
+      "toolchain": ["Python 3.12", "uv"],
+      "commit": "9403cf1310914670506c56cbab363fdaa465d3cc",
+      "repository": "https://github.com/MissionWeaveProtocol/python-sdk",
+      "admissionOperations": {
+        "prepare": "prepare_first_admission",
+        "firstAdmission": "admit_first",
+        "historicalReplay": "verify_historical_admission"
+      },
+      "implemented": [
+        {
+          "capability": "core-runtime",
+          "label": "Authoritative Core runtime",
+          "sourceFiles": ["src/missionweaveprotocol/core.py"]
+        },
+        {
+          "capability": "agent-runtime",
+          "label": "Agent runtime",
+          "sourceFiles": ["src/missionweaveprotocol/agent.py"]
+        },
+        {
+          "capability": "worker-scheduler",
+          "label": "Worker scheduling",
+          "sourceFiles": ["src/missionweaveprotocol/scheduler.py"]
+        },
+        {
+          "capability": "group-gateway",
+          "label": "Authenticated Group gateway",
+          "sourceFiles": ["src/missionweaveprotocol/gateway.py"]
+        },
+        {
+          "capability": "stores",
+          "label": "Authoritative and Agent-local stores",
+          "sourceFiles": [
+            "src/missionweaveprotocol/store.py",
+            "src/missionweaveprotocol/local_store.py"
+          ]
+        },
+        {
+          "capability": "replay",
+          "label": "Event replay and projection recovery",
+          "sourceFiles": ["src/missionweaveprotocol/replay.py"]
+        },
+        {
+          "capability": "policy",
+          "label": "Policy enforcement",
+          "sourceFiles": ["src/missionweaveprotocol/policy.py"]
+        },
+        {
+          "capability": "leases",
+          "label": "Execution leases",
+          "sourceFiles": ["src/missionweaveprotocol/lease.py"]
+        },
+        {
+          "capability": "budgets",
+          "label": "Budget accounting",
+          "sourceFiles": ["src/missionweaveprotocol/budget.py"]
+        },
+        {
+          "capability": "delegation",
+          "label": "Delegation authority",
+          "sourceFiles": ["src/missionweaveprotocol/delegation.py"]
+        },
+        {
+          "capability": "strict-json-schema-validation",
+          "label": "Strict JSON and Draft 2020-12 Schema validation",
+          "sourceFiles": [
+            "src/missionweaveprotocol/conformance.py",
+            "src/missionweaveprotocol/schema_formats.py",
+            "src/missionweaveprotocol/signed_documents.py"
+          ]
+        },
+        {
+          "capability": "canonical-json",
+          "label": "RFC 8785 canonical JSON",
+          "sourceFiles": ["src/missionweaveprotocol/canonical.py"]
+        },
+        {
+          "capability": "signed-document-cryptography",
+          "label": "Signed Document signing and six-stage verification",
+          "sourceFiles": ["src/missionweaveprotocol/signed_documents.py"]
+        },
+        {
+          "capability": "registry-key-resolution",
+          "label": "Registry-backed signing-key resolution",
+          "sourceFiles": [
+            "src/missionweaveprotocol/signed_documents.py",
+            "src/missionweaveprotocol/registry.py"
+          ]
+        },
+        {
+          "capability": "frame-codec",
+          "label": "WebSocket frame models and codec",
+          "sourceFiles": ["src/missionweaveprotocol/wire.py"]
+        },
+        {
+          "capability": "conformance",
+          "label": "Structural and cryptographic conformance runner",
+          "sourceFiles": ["src/missionweaveprotocol/conformance.py"]
+        },
+        {
+          "capability": "embedded-protocol-bundles",
+          "label": "Embedded protocol bundles and digest verification",
+          "sourceFiles": ["src/missionweaveprotocol/bundle.py"]
+        },
+        {
+          "capability": "first-admission-and-historical-trust",
+          "label": "First Admission and Historical Trust",
+          "sourceFiles": ["src/missionweaveprotocol/admission.py"]
+        }
+      ],
+      "deploymentAdapters": [
+        {
+          "capability": "external-persistence-services",
+          "label": "External persistence services",
+          "sourceFiles": ["src/missionweaveprotocol/store.py"],
+          "reason": "PostgreSQL-backed operation requires a configured database service and driver."
+        },
+        {
+          "capability": "websocket-tls-serving",
+          "label": "WebSocket and TLS serving",
+          "sourceFiles": ["src/missionweaveprotocol/gateway.py"],
+          "reason": "Production serving requires deployment-owned network binding, certificates, and keys."
+        },
+        {
+          "capability": "admission-authority-adapters",
+          "label": "Admission authority adapters",
+          "sourceFiles": ["src/missionweaveprotocol/admission.py"],
+          "reason": "Deployments provide the current-Registry resolver, authoritative Admission Log, and trusted-context issuer."
+        }
+      ],
+      "notImplemented": []
+    },
+    {
+      "id": "typescript",
+      "name": "TypeScript",
+      "package": "@missionweaveprotocol/sdk",
+      "toolchain": ["Node.js 20", "npm"],
+      "commit": "6d53ebfcf8350ae81d89fd818611b07f7373685c",
+      "repository": "https://github.com/MissionWeaveProtocol/typescript-sdk",
+      "admissionOperations": {
+        "prepare": "prepareFirstAdmission",
+        "firstAdmission": "admitFirst",
+        "historicalReplay": "verifyHistoricalAdmission"
+      },
+      "implemented": [
+        {
+          "capability": "strict-json-schema-validation",
+          "label": "Strict JSON and Draft 2020-12 Schema validation",
+          "sourceFiles": ["src/strict-json.ts", "src/schema-catalog.ts"]
+        },
+        {
+          "capability": "canonical-json",
+          "label": "RFC 8785 canonical JSON",
+          "sourceFiles": ["src/canonical-json.ts"]
+        },
+        {
+          "capability": "signed-document-cryptography",
+          "label": "Signed Document signing and six-stage verification",
+          "sourceFiles": [
+            "src/signed-document-codec.ts",
+            "src/crypto.ts",
+            "src/ed25519-strict.ts"
+          ]
+        },
+        {
+          "capability": "registry-key-resolution",
+          "label": "Registry-backed signing-key resolution",
+          "sourceFiles": ["src/signed-document-codec.ts"]
+        },
+        {
+          "capability": "frame-codec",
+          "label": "WebSocket frame codec",
+          "sourceFiles": ["src/frame-codec.ts"]
+        },
+        {
+          "capability": "conformance",
+          "label": "Structural and cryptographic conformance runner",
+          "sourceFiles": ["src/conformance.ts", "src/bin/conformance.ts"]
+        },
+        {
+          "capability": "embedded-protocol-bundles",
+          "label": "Packaged protocol bundles",
+          "sourceFiles": ["src/package-root.ts", "src/schema-catalog.ts"]
+        },
+        {
+          "capability": "first-admission-and-historical-trust",
+          "label": "First Admission and Historical Trust",
+          "sourceFiles": ["src/admission.ts"]
+        }
+      ],
+      "deploymentAdapters": [
+        {
+          "capability": "admission-authority-adapters",
+          "label": "Admission authority adapters",
+          "sourceFiles": ["src/admission.ts"],
+          "reason": "Deployments provide the current-Registry resolver, authoritative Admission Log, and trusted-context issuer."
+        }
+      ],
+      "notImplemented": [
+        {
+          "capability": "mission-orchestration",
+          "label": "Mission orchestration",
+          "reason": "No high-level Mission orchestration runtime is exported at the pinned commit."
+        },
+        {
+          "capability": "worker-scheduler",
+          "label": "Worker scheduler",
+          "reason": "No Worker scheduling runtime is exported at the pinned commit."
+        },
+        {
+          "capability": "gateway-service",
+          "label": "Gateway service",
+          "reason": "The SDK provides frame codecs, not a hosted gateway service."
+        },
+        {
+          "capability": "persistence-runtime",
+          "label": "Persistence runtime",
+          "reason": "No authoritative or Agent-local persistence runtime is exported at the pinned commit."
+        }
+      ]
+    },
+    {
+      "id": "go",
+      "name": "Go",
+      "package": "github.com/missionweaveprotocol/go-sdk",
+      "toolchain": ["Go 1.24"],
+      "commit": "80c39852e8a2053ac761b8d53d62483264f803f1",
+      "repository": "https://github.com/MissionWeaveProtocol/go-sdk",
+      "admissionOperations": {
+        "prepare": "PrepareFirstAdmission",
+        "firstAdmission": "AdmitFirst",
+        "historicalReplay": "VerifyHistoricalAdmission"
+      },
+      "implemented": [
+        {
+          "capability": "strict-json-schema-validation",
+          "label": "Strict JSON and Draft 2020-12 Schema validation",
+          "sourceFiles": ["json.go", "schema.go"]
+        },
+        {
+          "capability": "canonical-json",
+          "label": "RFC 8785 canonical JSON",
+          "sourceFiles": ["canonical.go"]
+        },
+        {
+          "capability": "signed-document-cryptography",
+          "label": "Signed Document signing and six-stage verification",
+          "sourceFiles": [
+            "signed_document_codec.go",
+            "signed_document_verification.go",
+            "signing.go",
+            "ed25519_strict.go"
+          ]
+        },
+        {
+          "capability": "registry-key-resolution",
+          "label": "Registry-backed signing-key resolution",
+          "sourceFiles": ["signed_document_codec.go"]
+        },
+        {
+          "capability": "frame-codec",
+          "label": "WebSocket frame codec",
+          "sourceFiles": ["frame.go"]
+        },
+        {
+          "capability": "conformance",
+          "label": "Structural and cryptographic conformance runner",
+          "sourceFiles": [
+            "conformance.go",
+            "cmd/missionweaveprotocol-conformance/main.go"
+          ]
+        },
+        {
+          "capability": "embedded-protocol-bundles",
+          "label": "Embedded protocol bundles and digest verification",
+          "sourceFiles": ["bundle.go"]
+        },
+        {
+          "capability": "first-admission-and-historical-trust",
+          "label": "First Admission and Historical Trust",
+          "sourceFiles": ["admission.go"]
+        }
+      ],
+      "deploymentAdapters": [
+        {
+          "capability": "admission-authority-adapters",
+          "label": "Admission authority adapters",
+          "sourceFiles": ["admission.go"],
+          "reason": "Deployments provide the current-Registry resolver, authoritative Admission Log, and trusted-context issuer."
+        }
+      ],
+      "notImplemented": [
+        {
+          "capability": "mission-orchestration",
+          "label": "Mission orchestration",
+          "reason": "No high-level Mission orchestration runtime is exported at the pinned commit."
+        },
+        {
+          "capability": "worker-scheduler",
+          "label": "Worker scheduler",
+          "reason": "No Worker scheduling runtime is exported at the pinned commit."
+        },
+        {
+          "capability": "gateway-service",
+          "label": "Gateway service",
+          "reason": "The SDK provides frame codecs, not a hosted gateway service."
+        },
+        {
+          "capability": "persistence-runtime",
+          "label": "Persistence runtime",
+          "reason": "No authoritative or Agent-local persistence runtime is exported at the pinned commit."
+        }
+      ]
+    },
+    {
+      "id": "rust",
+      "name": "Rust",
+      "package": "missionweaveprotocol",
+      "toolchain": ["Rust 1.85", "Cargo"],
+      "commit": "2727f8777737265d98dde4ceaca306612ef54c52",
+      "repository": "https://github.com/MissionWeaveProtocol/rust-sdk",
+      "admissionOperations": {
+        "prepare": "prepare_first_admission",
+        "firstAdmission": "admit_first",
+        "historicalReplay": "verify_historical_admission"
+      },
+      "implemented": [
+        {
+          "capability": "strict-json-schema-validation",
+          "label": "Strict JSON and Draft 2020-12 Schema validation",
+          "sourceFiles": ["src/strict_json.rs", "src/schema.rs"]
+        },
+        {
+          "capability": "canonical-json",
+          "label": "RFC 8785 canonical JSON",
+          "sourceFiles": ["src/canonical.rs"]
+        },
+        {
+          "capability": "signed-document-cryptography",
+          "label": "Signed Document signing and six-stage verification",
+          "sourceFiles": ["src/signed_document.rs"]
+        },
+        {
+          "capability": "registry-key-resolution",
+          "label": "Registry-backed signing-key resolution",
+          "sourceFiles": ["src/signed_document.rs"]
+        },
+        {
+          "capability": "frame-codec",
+          "label": "WebSocket frame codec",
+          "sourceFiles": ["src/frame.rs"]
+        },
+        {
+          "capability": "conformance",
+          "label": "Structural and cryptographic conformance runner",
+          "sourceFiles": [
+            "src/conformance.rs",
+            "src/bin/missionweaveprotocol-conformance.rs"
+          ]
+        },
+        {
+          "capability": "embedded-protocol-bundles",
+          "label": "Embedded protocol bundles and digest verification",
+          "sourceFiles": ["src/bundle.rs"]
+        },
+        {
+          "capability": "first-admission-and-historical-trust",
+          "label": "First Admission and Historical Trust",
+          "sourceFiles": ["src/admission.rs"]
+        }
+      ],
+      "deploymentAdapters": [
+        {
+          "capability": "admission-authority-adapters",
+          "label": "Admission authority adapters",
+          "sourceFiles": ["src/admission.rs"],
+          "reason": "Deployments provide the current-Registry resolver, authoritative Admission Log, and trusted-context issuer."
+        }
+      ],
+      "notImplemented": [
+        {
+          "capability": "mission-orchestration",
+          "label": "Mission orchestration",
+          "reason": "No high-level Mission orchestration runtime is exported at the pinned commit."
+        },
+        {
+          "capability": "worker-scheduler",
+          "label": "Worker scheduler",
+          "reason": "No Worker scheduling runtime is exported at the pinned commit."
+        },
+        {
+          "capability": "gateway-service",
+          "label": "Gateway service",
+          "reason": "The SDK provides frame codecs, not a hosted gateway service."
+        },
+        {
+          "capability": "persistence-runtime",
+          "label": "Persistence runtime",
+          "reason": "No authoritative or Agent-local persistence runtime is exported at the pinned commit."
+        }
+      ]
+    },
+    {
+      "id": "java",
+      "name": "Java",
+      "package": "org.missionweaveprotocol:missionweaveprotocol-sdk",
+      "toolchain": ["Java 21", "Maven 3.9"],
+      "commit": "3b2798c21d906c81887c54fe80e5bca8a19ddac7",
+      "repository": "https://github.com/MissionWeaveProtocol/java-sdk",
+      "admissionOperations": {
+        "prepare": "prepareFirstAdmission",
+        "firstAdmission": "admitFirst",
+        "historicalReplay": "verifyHistoricalAdmission"
+      },
+      "implemented": [
+        {
+          "capability": "strict-json-schema-validation",
+          "label": "Strict JSON and Draft 2020-12 Schema validation",
+          "sourceFiles": [
+            "src/main/java/org/missionweaveprotocol/sdk/StrictJson.java",
+            "src/main/java/org/missionweaveprotocol/sdk/SchemaCatalog.java"
+          ]
+        },
+        {
+          "capability": "canonical-json",
+          "label": "RFC 8785 canonical JSON",
+          "sourceFiles": [
+            "src/main/java/org/missionweaveprotocol/sdk/CanonicalJson.java"
+          ]
+        },
+        {
+          "capability": "signed-document-cryptography",
+          "label": "Signed Document signing and six-stage verification",
+          "sourceFiles": [
+            "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentCodec.java",
+            "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java"
+          ]
+        },
+        {
+          "capability": "registry-key-resolution",
+          "label": "Registry-backed signing-key resolution",
+          "sourceFiles": [
+            "src/main/java/org/missionweaveprotocol/sdk/AgentRegistryKeyResolution.java",
+            "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentCodec.java"
+          ]
+        },
+        {
+          "capability": "frame-codec",
+          "label": "WebSocket frame codec",
+          "sourceFiles": [
+            "src/main/java/org/missionweaveprotocol/sdk/FrameCodec.java"
+          ]
+        },
+        {
+          "capability": "conformance",
+          "label": "Structural and cryptographic conformance runner",
+          "sourceFiles": [
+            "src/main/java/org/missionweaveprotocol/sdk/ConformanceRunner.java",
+            "src/main/java/org/missionweaveprotocol/sdk/cli/ConformanceCli.java"
+          ]
+        },
+        {
+          "capability": "embedded-protocol-bundles",
+          "label": "Embedded protocol bundles and digest verification",
+          "sourceFiles": [
+            "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java"
+          ]
+        },
+        {
+          "capability": "first-admission-and-historical-trust",
+          "label": "First Admission and Historical Trust",
+          "sourceFiles": [
+            "src/main/java/org/missionweaveprotocol/sdk/AdmissionService.java"
+          ]
+        }
+      ],
+      "deploymentAdapters": [
+        {
+          "capability": "admission-authority-adapters",
+          "label": "Admission authority adapters",
+          "sourceFiles": [
+            "src/main/java/org/missionweaveprotocol/sdk/AdmissionService.java",
+            "src/main/java/org/missionweaveprotocol/sdk/AdmissionLog.java",
+            "src/main/java/org/missionweaveprotocol/sdk/AdmissionCurrentKeyResolver.java"
+          ],
+          "reason": "Deployments provide the current-Registry resolver, authoritative Admission Log, and trusted-context issuer."
+        }
+      ],
+      "notImplemented": [
+        {
+          "capability": "mission-orchestration",
+          "label": "Mission orchestration",
+          "reason": "No high-level Mission orchestration runtime is exported at the pinned commit."
+        },
+        {
+          "capability": "worker-scheduler",
+          "label": "Worker scheduler",
+          "reason": "No Worker scheduling runtime is exported at the pinned commit."
+        },
+        {
+          "capability": "gateway-service",
+          "label": "Gateway service",
+          "reason": "The SDK provides frame codecs, not a hosted gateway service."
+        },
+        {
+          "capability": "persistence-runtime",
+          "label": "Persistence runtime",
+          "reason": "No authoritative or Agent-local persistence runtime is exported at the pinned commit."
+        }
+      ]
+    },
+    {
+      "id": "cpp",
+      "name": "C++",
+      "package": "MissionWeaveProtocol::sdk",
+      "toolchain": ["C++20", "CMake 3.24", "OpenSSL 3"],
+      "commit": "481b0ce3a65c1f2265935318b54481ece5032fdf",
+      "repository": "https://github.com/MissionWeaveProtocol/cpp-sdk",
+      "admissionOperations": {
+        "prepare": "prepare_first_admission",
+        "firstAdmission": "admit_first",
+        "historicalReplay": "verify_historical_admission"
+      },
+      "implemented": [
+        {
+          "capability": "strict-json-schema-validation",
+          "label": "Strict JSON and Draft 2020-12 Schema validation",
+          "sourceFiles": ["src/json.cpp", "src/schema.cpp"]
+        },
+        {
+          "capability": "canonical-json",
+          "label": "RFC 8785 canonical JSON",
+          "sourceFiles": ["src/canonical.cpp"]
+        },
+        {
+          "capability": "signed-document-cryptography",
+          "label": "Signed Document signing and six-stage verification",
+          "sourceFiles": ["src/signed_document.cpp", "src/crypto.cpp"]
+        },
+        {
+          "capability": "registry-key-resolution",
+          "label": "Registry-backed signing-key resolution",
+          "sourceFiles": ["src/agent_registry_key_resolution.cpp"]
+        },
+        {
+          "capability": "frame-codec",
+          "label": "WebSocket frame codec",
+          "sourceFiles": ["src/frame.cpp"]
+        },
+        {
+          "capability": "conformance",
+          "label": "Structural and cryptographic conformance runner",
+          "sourceFiles": ["src/conformance.cpp", "src/conformance_main.cpp"]
+        },
+        {
+          "capability": "embedded-protocol-bundles",
+          "label": "Embedded protocol bundles and digest verification",
+          "sourceFiles": ["src/bundle.cpp"]
+        },
+        {
+          "capability": "first-admission-and-historical-trust",
+          "label": "First Admission and Historical Trust",
+          "sourceFiles": [
+            "include/missionweaveprotocol/admission.hpp",
+            "src/admission.cpp"
+          ]
+        }
+      ],
+      "deploymentAdapters": [
+        {
+          "capability": "admission-authority-adapters",
+          "label": "Admission authority adapters",
+          "sourceFiles": ["include/missionweaveprotocol/admission.hpp"],
+          "reason": "Deployments provide the current-Registry resolver, authoritative Admission Log, and trusted-context issuer."
+        }
+      ],
+      "notImplemented": [
+        {
+          "capability": "mission-orchestration",
+          "label": "Mission orchestration",
+          "reason": "No high-level Mission orchestration runtime is exported at the pinned commit."
+        },
+        {
+          "capability": "worker-scheduler",
+          "label": "Worker scheduler",
+          "reason": "No Worker scheduling runtime is exported at the pinned commit."
+        },
+        {
+          "capability": "gateway-service",
+          "label": "Gateway service",
+          "reason": "The SDK provides frame codecs, not a hosted gateway service."
+        },
+        {
+          "capability": "persistence-runtime",
+          "label": "Persistence runtime",
+          "reason": "No authoritative or Agent-local persistence runtime is exported at the pinned commit."
+        }
+      ]
+    }
+  ]
+}

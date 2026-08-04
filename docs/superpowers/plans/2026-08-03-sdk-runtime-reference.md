@@ -29,7 +29,7 @@ examples against exact pinned sources.
 - Create: `scripts/check-sdk-runtime-matrix.mjs`
 - Modify: `package.json`
 
-- [ ] **Step 1: Write a failing matrix checker**
+- [x] **Step 1: Write a failing matrix checker**
 
 Require exactly six entries with these package identities and toolchains:
 
@@ -46,7 +46,7 @@ The checker must require exact pins from `release-source.json`, at least one
 source file per capability, explicit `implemented` and `notImplemented` arrays,
 and public Admission operation names.
 
-- [ ] **Step 2: Run the checker before the matrix exists**
+- [x] **Step 2: Run the checker before the matrix exists**
 
 ```bash
 node scripts/check-sdk-runtime-matrix.mjs
@@ -54,7 +54,7 @@ node scripts/check-sdk-runtime-matrix.mjs
 
 Expected: FAIL with missing `sdk-runtime-matrix.json`.
 
-- [ ] **Step 3: Add the actual runtime breadth**
+- [x] **Step 3: Add the actual runtime breadth**
 
 Record Python as the reference runtime with Core, Agent runtime, Scheduler,
 Group gateway, stores, replay, policy, leases, budgets, delegation, validation,
@@ -67,7 +67,7 @@ bundles, and First Admission/Historical Trust. Explicitly list high-level
 Mission orchestration, Worker scheduling, gateway service, and persistence
 runtime as not implemented where source verification confirms their absence.
 
-- [ ] **Step 4: Record exact Admission operation names**
+- [x] **Step 4: Record exact Admission operation names**
 
 Use:
 
@@ -80,7 +80,7 @@ Use:
 | Java       | `prepareFirstAdmission`   | `admitFirst`    | `verifyHistoricalAdmission`   |
 | C++        | `prepare_first_admission` | `admit_first`   | `verify_historical_admission` |
 
-- [ ] **Step 5: Run and commit the matrix**
+- [x] **Step 5: Run and commit the matrix**
 
 ```bash
 npm run check:sdk-matrix
