@@ -35,21 +35,27 @@ const requiredOutputs = [
   "zh-cn/index.html",
   "zh-cn/docs/0.1/index.html",
   "zh-cn/sdk/index.html",
+  "zh-cn/sdk/python/index.html",
   "zh-tw/index.html",
   "zh-tw/docs/0.1/index.html",
   "zh-tw/sdk/index.html",
+  "zh-tw/sdk/python/index.html",
   "ja/index.html",
   "ja/docs/0.1/index.html",
   "ja/sdk/index.html",
+  "ja/sdk/python/index.html",
   "es/index.html",
   "es/docs/0.1/index.html",
   "es/sdk/index.html",
+  "es/sdk/python/index.html",
   "fr/index.html",
   "fr/docs/0.1/index.html",
   "fr/sdk/index.html",
+  "fr/sdk/python/index.html",
   "de/index.html",
   "de/docs/0.1/index.html",
   "de/sdk/index.html",
+  "de/sdk/python/index.html",
   "sitemap-index.xml",
   "llms.txt",
   "robots.txt",
@@ -58,6 +64,70 @@ const requiredOutputs = [
 for (const output of requiredOutputs) {
   await access(path.join(dist, output));
 }
+
+const localePrefixes = ["", "zh-cn", "zh-tw", "ja", "es", "fr", "de"];
+const latestSdkAliases = localePrefixes.flatMap((locale) => {
+  const prefix = locale === "" ? "" : `${locale}/`;
+  return [
+    [`${prefix}sdk/index.html`, `/${prefix}0.1/build/sdk/`],
+    [`${prefix}sdk/python/index.html`, `/${prefix}0.1/build/sdk/python/`],
+  ];
+});
+
+const aliasFailures = [];
+for (const [output, target] of latestSdkAliases) {
+  const html = await readFile(path.join(dist, output), "utf8");
+  const targetWithBase = withBase(target);
+  if (
+    !html.includes(
+      `<meta http-equiv="refresh" content="0;url=${targetWithBase}">`,
+    )
+  ) {
+    aliasFailures.push(`${output} does not redirect to ${targetWithBase}`);
+  }
+  if (
+    !html.includes(`<link rel="canonical" href="${origin}${targetWithBase}">`)
+  ) {
+    aliasFailures.push(
+      `${output} does not declare ${origin}${targetWithBase} canonical`,
+    );
+  }
+}
+
+for (const locale of localePrefixes) {
+  const prefix = locale === "" ? "" : `${locale}/`;
+  const html = await readFile(
+    path.join(dist, prefix, "0.1/build/sdk/index.html"),
+    "utf8",
+  );
+  for (const target of [
+    `/${prefix}0.1/build/sdk/`,
+    `/${prefix}0.1/build/sdk/python/`,
+  ]) {
+    const targetWithBase = withBase(target);
+    if (!html.includes(`href="${targetWithBase}"`)) {
+      aliasFailures.push(
+        `${prefix}0.1/build/sdk/index.html navigation misses ${targetWithBase}`,
+      );
+    }
+  }
+  for (const staleTarget of [`/${prefix}sdk/`, `/${prefix}sdk/python/`]) {
+    const staleTargetWithBase = withBase(staleTarget);
+    if (html.includes(`href="${staleTargetWithBase}"`)) {
+      aliasFailures.push(
+        `${prefix}0.1/build/sdk/index.html navigation retains ${staleTargetWithBase}`,
+      );
+    }
+  }
+}
+
+assert.equal(
+  aliasFailures.length,
+  0,
+  `Latest SDK alias validation failed:\n${aliasFailures
+    .map((failure) => `  ${failure}`)
+    .join("\n")}`,
+);
 
 async function collectHtmlFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });

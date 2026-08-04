@@ -167,7 +167,6 @@ const requiredPaths = [
   "docs/0.1/index.mdx",
   "docs/0.1/core-model.md",
   "reference/terminology.md",
-  "sdk/python/index.md",
 ];
 const allContentFiles = await collectContentFiles(contentRoot);
 const localizedContentPathCount = allContentFiles.filter((file) =>

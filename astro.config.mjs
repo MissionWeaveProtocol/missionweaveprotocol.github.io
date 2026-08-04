@@ -8,11 +8,22 @@ const base =
 const site = process.env.SITE_URL ?? "https://missionweaveprotocol.github.io";
 const withBase = (path) => `${base === "/" ? "" : base}${path}`;
 const absoluteAsset = (path) => new URL(withBase(path), site).href;
+const localePaths = ["", "zh-cn", "zh-tw", "ja", "es", "fr", "de"];
+const latestSdkRedirects = Object.fromEntries(
+  localePaths.flatMap((locale) => {
+    const prefix = locale === "" ? "" : `/${locale}`;
+    return [
+      [`${prefix}/sdk`, `${prefix}/0.1/build/sdk/`],
+      [`${prefix}/sdk/python`, `${prefix}/0.1/build/sdk/python/`],
+    ];
+  }),
+);
 
 export default defineConfig({
   site,
   base,
   trailingSlash: "always",
+  redirects: latestSdkRedirects,
   integrations: [
     starlight({
       title: {
@@ -155,9 +166,9 @@ export default defineConfig({
                 fr: "SDK",
                 de: "SDK",
               },
-              slug: "sdk",
+              slug: "0.1/build/sdk",
             },
-            { label: "Python SDK", slug: "sdk/python" },
+            { label: "Python SDK", slug: "0.1/build/sdk/python" },
           ],
         },
         {
