@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": "0.1",
+  "sourceLocale": "en",
+  "locales": [
+    {
+      "directory": "zh-cn",
+      "tag": "zh-CN",
+      "name": "简体中文",
+      "childMissionTerm": "子任务",
+      "childMissionFirstUse": "子任务（Child Mission）"
+    },
+    {
+      "directory": "zh-tw",
+      "tag": "zh-TW",
+      "name": "繁體中文",
+      "childMissionTerm": "子任务",
+      "childMissionFirstUse": "子任务（Child Mission）"
+    },
+    {
+      "directory": "ja",
+      "tag": "ja",
+      "name": "日本語",
+      "childMissionTerm": "サブタスク",
+      "childMissionFirstUse": "サブタスク（Child Mission）"
+    },
+    {
+      "directory": "es",
+      "tag": "es",
+      "name": "Español",
+      "childMissionTerm": "subtarea",
+      "childMissionFirstUse": "subtarea (Child Mission)"
+    },
+    {
+      "directory": "fr",
+      "tag": "fr",
+      "name": "Français",
+      "childMissionTerm": "sous-tâche",
+      "childMissionFirstUse": "sous-tâche (Child Mission)"
+    },
+    {
+      "directory": "de",
+      "tag": "de",
+      "name": "Deutsch",
+      "childMissionTerm": "Unteraufgabe",
+      "childMissionFirstUse": "Unteraufgabe (Child Mission)"
+    }
+  ],
+  "normativeKeywords": [
+    "MUST",
+    "MUST NOT",
+    "REQUIRED",
+    "SHALL",
+    "SHALL NOT",
+    "SHOULD",
+    "SHOULD NOT",
+    "RECOMMENDED",
+    "NOT RECOMMENDED",
+    "MAY",
+    "OPTIONAL"
+  ],
+  "protocolTerms": [
+    "Agent",
+    "Mission",
+    "Group",
+    "WorkItem",
+    "Command",
+    "Event",
+    "Registry",
+    "Admission Log",
+    "First-Admission Record"
+  ]
+}
