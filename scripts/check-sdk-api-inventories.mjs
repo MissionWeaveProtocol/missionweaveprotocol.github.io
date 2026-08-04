@@ -18,6 +18,48 @@ const requiredAdmissionTypes = [
   "PreparedFirstAdmission",
   "AdmittedSignedDocument",
 ];
+const typescriptSelectiveRootExports = new Map([
+  ["src/rfc3339.ts", new Set(["Rfc3339Instant"])],
+  [
+    "src/strict-json.ts",
+    new Set([
+      "parseStrictJson",
+      "parseStrictJsonObject",
+      "StrictJsonSyntaxError",
+    ]),
+  ],
+]);
+const requiredQualifiedEntries = new Map([
+  [
+    "typescript",
+    new Map([
+      ["SchemaCatalog.root", "getter"],
+      ["SchemaCatalog.names", "getter"],
+      ["AdmissionError.wireCode", "property"],
+      ["AdmissionError.auditDetail", "property"],
+      ["KeyResolutionRequest.protectedTime", "property"],
+      ["SignedDocument.signature", "property"],
+      ["SignedDocumentVerificationError.auditDetail", "getter"],
+      ["SignedDocumentKind.Command", "enum-member"],
+      ["VerifiedSignedDocument.protectedTime", "property"],
+    ]),
+  ],
+  [
+    "go",
+    new Map([
+      ["TrustedAdmissionContext.Issue", "method"],
+      ["AdmissionCurrentKeyResolver.ResolveCurrent", "method"],
+      ["AdmissionLog.Lookup", "method"],
+      ["AdmissionLog.AppendOrReturnExisting", "method"],
+      ["AdmissionContextValue.AdmissionRecordID", "field"],
+      ["AuthenticatedAdmissionRecord.RecordBytes", "field"],
+    ]),
+  ],
+]);
+const requiredEntryCounts = new Map([
+  ["typescript", 192],
+  ["go", 241],
+]);
 
 function safeSourcePath(sourcePath) {
   return (
@@ -157,6 +199,46 @@ if (matrix?.sdks) {
     const sortedEntries = [...inventory.entries].sort(compareEntries);
     if (JSON.stringify(inventory.entries) !== JSON.stringify(sortedEntries)) {
       failures.push(`${prefix}: entries must be deterministically sorted`);
+    }
+
+    const requiredEntryCount = requiredEntryCounts.get(sdk.id);
+    if (
+      requiredEntryCount !== undefined &&
+      inventory.entries.length !== requiredEntryCount
+    ) {
+      failures.push(
+        `${prefix}: expected ${requiredEntryCount} exact-pinned entries, found ${inventory.entries.length}`,
+      );
+    }
+
+    if (sdk.id === "typescript") {
+      for (const entry of inventory.entries) {
+        const allowedRoots = typescriptSelectiveRootExports.get(
+          entry.sourceFile,
+        );
+        if (!allowedRoots) continue;
+        const rootName = entry.qualifiedName.split(".", 1)[0];
+        if (!allowedRoots.has(rootName)) {
+          failures.push(
+            `${prefix}: ${entry.qualifiedName} is not exported from the package root`,
+          );
+        }
+      }
+    }
+
+    const requiredEntries = requiredQualifiedEntries.get(sdk.id);
+    if (requiredEntries) {
+      for (const [qualifiedName, kind] of requiredEntries) {
+        const matches = inventory.entries.filter(
+          (entry) =>
+            entry.qualifiedName === qualifiedName && entry.kind === kind,
+        );
+        if (matches.length !== 1) {
+          failures.push(
+            `${prefix}: expected one ${kind} entry for ${qualifiedName}, found ${matches.length}`,
+          );
+        }
+      }
     }
 
     const expectedSymbols = [

@@ -4,6 +4,7 @@ import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { format } from "prettier";
+import ts from "typescript";
 
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 const matrixPath = path.join(
@@ -129,61 +130,112 @@ function parsePython(sourceFile, source) {
 
 function parseTypeScript(sourceFile, source) {
   const entries = [];
-  const lines = source.split("\n");
-  let braceDepth = 0;
-  let container;
+  const parsed = ts.createSourceFile(
+    sourceFile,
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TS,
+  );
 
-  for (const [index, line] of lines.entries()) {
-    const lineNumber = index + 1;
-    if (container && braceDepth <= container.depth) container = undefined;
+  function modifiers(node) {
+    return ts.canHaveModifiers(node) ? (ts.getModifiers(node) ?? []) : [];
+  }
 
-    const declaration = line.match(
-      /^export\s+(?:(?:declare|abstract)\s+)*(?:async\s+)?(class|interface|type|enum|function|const)\s+([A-Za-z_$][A-Za-z0-9_$]*)/u,
+  function hasModifier(node, kind) {
+    return modifiers(node).some((modifier) => modifier.kind === kind);
+  }
+
+  function declarationName(node) {
+    if (!node) return undefined;
+    if (ts.isIdentifier(node) || ts.isStringLiteral(node)) return node.text;
+    return undefined;
+  }
+
+  function lineNumber(node) {
+    return parsed.getLineAndCharacterOfPosition(node.getStart(parsed)).line + 1;
+  }
+
+  function add(name, qualifiedName, kind, node) {
+    entries.push(
+      entry(name, qualifiedName, kind, sourceFile, lineNumber(node)),
     );
-    if (declaration) {
-      const [, kind, name] = declaration;
-      entries.push(entry(name, name, kind, sourceFile, lineNumber));
-      if (["class", "interface"].includes(kind)) {
-        container = { name, kind, depth: braceDepth };
+  }
+
+  function addMembers(containerName, members) {
+    for (const member of members) {
+      if (
+        hasModifier(member, ts.SyntaxKind.PrivateKeyword) ||
+        hasModifier(member, ts.SyntaxKind.ProtectedKeyword) ||
+        (member.name && ts.isPrivateIdentifier(member.name))
+      ) {
+        continue;
+      }
+      if (ts.isConstructorDeclaration(member)) {
+        add(
+          "constructor",
+          `${containerName}.constructor`,
+          "constructor",
+          member,
+        );
+        continue;
+      }
+      const name = declarationName(member.name);
+      if (!name) continue;
+      if (ts.isGetAccessorDeclaration(member)) {
+        add(name, `${containerName}.${name}`, "getter", member);
+      } else if (ts.isSetAccessorDeclaration(member)) {
+        add(name, `${containerName}.${name}`, "setter", member);
+      } else if (
+        ts.isMethodDeclaration(member) ||
+        ts.isMethodSignature(member)
+      ) {
+        add(name, `${containerName}.${name}`, "method", member);
+      } else if (
+        ts.isPropertyDeclaration(member) ||
+        ts.isPropertySignature(member)
+      ) {
+        add(name, `${containerName}.${name}`, "property", member);
       }
     }
+  }
 
-    if (container && braceDepth === container.depth + 1) {
-      if (!/^\s*(?:private|protected)\b/u.test(line)) {
-        const method = line.match(
-          /^\s*(?:(?:public|static|abstract|readonly|async|override)\s+)*([A-Za-z_$][A-Za-z0-9_$]*)\s*(?:<[^>]*>)?\s*\(/u,
-        );
-        if (method) {
-          const name = method[1];
-          entries.push(
-            entry(
-              name,
-              `${container.name}.${name}`,
-              name === "constructor" ? "constructor" : "method",
-              sourceFile,
-              lineNumber,
-            ),
-          );
-        } else {
-          const property = line.match(
-            /^\s*(?:(?:public|static|readonly|abstract|override)\s+)*([A-Za-z_$][A-Za-z0-9_$]*)[!?]?\s*:[^;]+;\s*$/u,
-          );
-          if (property) {
-            const name = property[1];
-            entries.push(
-              entry(
-                name,
-                `${container.name}.${name}`,
-                "property",
-                sourceFile,
-                lineNumber,
-              ),
-            );
-          }
+  for (const statement of parsed.statements) {
+    if (!hasModifier(statement, ts.SyntaxKind.ExportKeyword)) continue;
+
+    if (ts.isVariableStatement(statement)) {
+      const kind =
+        statement.declarationList.flags & ts.NodeFlags.Const
+          ? "const"
+          : "variable";
+      for (const declaration of statement.declarationList.declarations) {
+        const name = declarationName(declaration.name);
+        if (name) add(name, name, kind, declaration);
+      }
+      continue;
+    }
+
+    const name = declarationName(statement.name);
+    if (!name) continue;
+    if (ts.isFunctionDeclaration(statement)) {
+      add(name, name, "function", statement);
+    } else if (ts.isTypeAliasDeclaration(statement)) {
+      add(name, name, "type", statement);
+    } else if (ts.isInterfaceDeclaration(statement)) {
+      add(name, name, "interface", statement);
+      addMembers(name, statement.members);
+    } else if (ts.isClassDeclaration(statement)) {
+      add(name, name, "class", statement);
+      addMembers(name, statement.members);
+    } else if (ts.isEnumDeclaration(statement)) {
+      add(name, name, "enum", statement);
+      for (const member of statement.members) {
+        const memberName = declarationName(member.name);
+        if (memberName) {
+          add(memberName, `${name}.${memberName}`, "enum-member", member);
         }
       }
     }
-    braceDepth += braceDelta(line);
   }
   return entries;
 }
@@ -192,9 +244,12 @@ function parseGo(sourceFile, source) {
   const entries = [];
   const lines = source.split("\n");
   let declarationBlock;
+  let braceDepth = 0;
+  let container;
 
   for (const [index, line] of lines.entries()) {
     const lineNumber = index + 1;
+    if (container && braceDepth <= container.depth) container = undefined;
     if (declarationBlock) {
       if (/^\)/u.test(line)) {
         declarationBlock = undefined;
@@ -209,59 +264,118 @@ function parseGo(sourceFile, source) {
       continue;
     }
 
+    let topLevelDeclaration = false;
     const type = line.match(
       /^type\s+([A-Z][A-Za-z0-9_]*)\s+(struct|interface)\b/u,
     );
     if (type) {
       entries.push(entry(type[1], type[1], type[2], sourceFile, lineNumber));
-      continue;
+      container = { name: type[1], kind: type[2], depth: braceDepth };
+      topLevelDeclaration = true;
     }
-    const alias = line.match(/^type\s+([A-Z][A-Za-z0-9_]*)\b/u);
-    if (alias) {
-      entries.push(entry(alias[1], alias[1], "type", sourceFile, lineNumber));
-      continue;
+    if (!topLevelDeclaration) {
+      const alias = line.match(/^type\s+([A-Z][A-Za-z0-9_]*)\b/u);
+      if (alias) {
+        entries.push(entry(alias[1], alias[1], "type", sourceFile, lineNumber));
+        topLevelDeclaration = true;
+      }
     }
-    const method = line.match(
-      /^func\s+\(([^)]*)\)\s+([A-Z][A-Za-z0-9_]*)\s*\(/u,
-    );
-    if (method) {
-      const receiver = method[1].match(/\*?([A-Za-z][A-Za-z0-9_]*)\s*$/u)?.[1];
-      assert.ok(
-        receiver,
-        `${sourceFile}:${lineNumber}: cannot parse Go receiver`,
+    if (!topLevelDeclaration) {
+      const method = line.match(
+        /^func\s+\(([^)]*)\)\s+([A-Z][A-Za-z0-9_]*)\s*\(/u,
       );
-      entries.push(
-        entry(
-          method[2],
-          `${receiver}.${method[2]}`,
-          "method",
-          sourceFile,
-          lineNumber,
-        ),
-      );
-      continue;
+      if (method) {
+        const receiver = method[1].match(
+          /\*?([A-Za-z][A-Za-z0-9_]*)\s*$/u,
+        )?.[1];
+        assert.ok(
+          receiver,
+          `${sourceFile}:${lineNumber}: cannot parse Go receiver`,
+        );
+        if (/^[A-Z]/u.test(receiver)) {
+          entries.push(
+            entry(
+              method[2],
+              `${receiver}.${method[2]}`,
+              "method",
+              sourceFile,
+              lineNumber,
+            ),
+          );
+        }
+        topLevelDeclaration = true;
+      }
     }
-    const fn = line.match(/^func\s+([A-Z][A-Za-z0-9_]*)\s*\(/u);
-    if (fn) {
-      entries.push(entry(fn[1], fn[1], "function", sourceFile, lineNumber));
-      continue;
+    if (!topLevelDeclaration) {
+      const fn = line.match(/^func\s+([A-Z][A-Za-z0-9_]*)\s*\(/u);
+      if (fn) {
+        entries.push(entry(fn[1], fn[1], "function", sourceFile, lineNumber));
+        topLevelDeclaration = true;
+      }
     }
-    const declaration = line.match(/^(const|var)\s+([A-Z][A-Za-z0-9_]*)\b/u);
-    if (declaration) {
-      entries.push(
-        entry(
-          declaration[2],
-          declaration[2],
-          declaration[1] === "const" ? "constant" : "variable",
-          sourceFile,
-          lineNumber,
-        ),
-      );
-      continue;
+    if (!topLevelDeclaration) {
+      const declaration = line.match(/^(const|var)\s+([A-Z][A-Za-z0-9_]*)\b/u);
+      if (declaration) {
+        entries.push(
+          entry(
+            declaration[2],
+            declaration[2],
+            declaration[1] === "const" ? "constant" : "variable",
+            sourceFile,
+            lineNumber,
+          ),
+        );
+        topLevelDeclaration = true;
+      }
     }
-    const block = line.match(/^(const|var)\s*\($/u);
-    if (block)
-      declarationBlock = block[1] === "const" ? "constant" : "variable";
+    if (!topLevelDeclaration) {
+      const block = line.match(/^(const|var)\s*\($/u);
+      if (block) {
+        declarationBlock = block[1] === "const" ? "constant" : "variable";
+        topLevelDeclaration = true;
+      }
+    }
+
+    if (
+      !topLevelDeclaration &&
+      container &&
+      braceDepth === container.depth + 1
+    ) {
+      if (container.kind === "interface") {
+        const method = line.match(
+          /^\s*([A-Z][A-Za-z0-9_]*)\s*(?:\[[^\]]+\])?\s*\(/u,
+        );
+        if (method) {
+          entries.push(
+            entry(
+              method[1],
+              `${container.name}.${method[1]}`,
+              "method",
+              sourceFile,
+              lineNumber,
+            ),
+          );
+        }
+      } else {
+        const fields = line.match(
+          /^\s*((?:[A-Z][A-Za-z0-9_]*\s*,\s*)*[A-Z][A-Za-z0-9_]*)\s+\S/u,
+        )?.[1];
+        if (fields) {
+          for (const name of fields.split(",").map((value) => value.trim())) {
+            entries.push(
+              entry(
+                name,
+                `${container.name}.${name}`,
+                "field",
+                sourceFile,
+                lineNumber,
+              ),
+            );
+          }
+        }
+      }
+    }
+    braceDepth += braceDelta(line);
   }
   return entries;
 }
@@ -472,28 +586,60 @@ const parsers = {
   cpp: parseCpp,
 };
 
-function sourceFilesFor(sdk, repo) {
+function typescriptSourceSelections(repo, commit) {
+  const indexPath = "src/index.ts";
+  const indexSource = sourceAt(repo, commit, indexPath);
+  const selections = new Map([[indexPath, null]]);
+  const modulePath = (specifier) => `src/${specifier}.ts`;
+
+  for (const match of indexSource.matchAll(
+    /export\s+\*\s+from\s+["']\.\/([^"']+)\.js["']\s*;/gu,
+  )) {
+    selections.set(modulePath(match[1]), null);
+  }
+
+  for (const match of indexSource.matchAll(
+    /export\s+(?:type\s+)?\{([\s\S]*?)\}\s+from\s+["']\.\/([^"']+)\.js["']\s*;/gu,
+  )) {
+    const sourceFile = modulePath(match[2]);
+    if (selections.get(sourceFile) === null) continue;
+    const exportedNames = selections.get(sourceFile) ?? new Set();
+    for (const rawSpecifier of match[1].split(",")) {
+      const specifier = rawSpecifier.trim();
+      if (!specifier) continue;
+      const parsed = specifier.match(
+        /^(?:type\s+)?([A-Za-z_$][A-Za-z0-9_$]*)(?:\s+as\s+[A-Za-z_$][A-Za-z0-9_$]*)?$/u,
+      );
+      assert.ok(parsed, `unsupported TypeScript export specifier ${specifier}`);
+      exportedNames.add(parsed[1]);
+    }
+    selections.set(sourceFile, exportedNames);
+  }
+
+  return [...selections.entries()]
+    .map(([sourceFile, exportedNames]) => ({ sourceFile, exportedNames }))
+    .sort((left, right) => compareStrings(left.sourceFile, right.sourceFile));
+}
+
+function sourceSelectionsFor(sdk, repo) {
   const allPaths = gitPaths(repo, sdk.commit);
   if (sdk.id === "python") {
-    return allPaths.filter((sourceFile) =>
-      /^src\/missionweaveprotocol\/[A-Za-z0-9_]+\.py$/u.test(sourceFile),
-    );
+    return allPaths
+      .filter((sourceFile) =>
+        /^src\/missionweaveprotocol\/[A-Za-z0-9_]+\.py$/u.test(sourceFile),
+      )
+      .map((sourceFile) => ({ sourceFile, exportedNames: null }));
   }
   if (sdk.id === "typescript") {
-    const indexPath = "src/index.ts";
-    const indexSource = sourceAt(repo, sdk.commit, indexPath);
-    const exportedModules = [
-      ...indexSource.matchAll(/from\s+["']\.\/([^"']+)\.js["']/gu),
-    ]
-      .map((match) => `src/${match[1]}.ts`)
-      .sort();
-    return [...new Set([indexPath, ...exportedModules])].sort();
+    return typescriptSourceSelections(repo, sdk.commit);
   }
   if (sdk.id === "go") {
-    return allPaths.filter(
-      (sourceFile) =>
-        /^[^/]+\.go$/u.test(sourceFile) && !sourceFile.endsWith("_test.go"),
-    );
+    return allPaths
+      .filter(
+        (sourceFile) =>
+          /^[^/]+\.go$/u.test(sourceFile) && !sourceFile.endsWith("_test.go"),
+      )
+      .map((sourceFile) => ({ sourceFile, exportedNames: null }));
   }
   if (sdk.id === "rust") {
     const libPath = "src/lib.rs";
@@ -501,19 +647,25 @@ function sourceFilesFor(sdk, repo) {
     const modules = [...libSource.matchAll(/^mod\s+([a-z][a-z0-9_]*)\s*;/gmu)]
       .map((match) => `src/${match[1]}.rs`)
       .sort();
-    return [libPath, ...modules].sort();
+    return [libPath, ...modules]
+      .sort()
+      .map((sourceFile) => ({ sourceFile, exportedNames: null }));
   }
   if (sdk.id === "java") {
-    return allPaths.filter((sourceFile) =>
-      /^src\/main\/java\/org\/missionweaveprotocol\/sdk\/.+\.java$/u.test(
-        sourceFile,
-      ),
-    );
+    return allPaths
+      .filter((sourceFile) =>
+        /^src\/main\/java\/org\/missionweaveprotocol\/sdk\/.+\.java$/u.test(
+          sourceFile,
+        ),
+      )
+      .map((sourceFile) => ({ sourceFile, exportedNames: null }));
   }
   if (sdk.id === "cpp") {
-    return allPaths.filter((sourceFile) =>
-      /^include\/missionweaveprotocol\/.+\.hpp$/u.test(sourceFile),
-    );
+    return allPaths
+      .filter((sourceFile) =>
+        /^include\/missionweaveprotocol\/.+\.hpp$/u.test(sourceFile),
+      )
+      .map((sourceFile) => ({ sourceFile, exportedNames: null }));
   }
   assert.fail(`unsupported SDK ${sdk.id}`);
 }
@@ -558,12 +710,20 @@ for (const sdk of matrix.sdks) {
     `${sdk.id} source does not contain the exact pinned commit`,
   );
 
-  const sourceFiles = sourceFilesFor(sdk, repo);
+  const sourceSelections = sourceSelectionsFor(sdk, repo);
+  const sourceFiles = sourceSelections.map(({ sourceFile }) => sourceFile);
   assert.ok(sourceFiles.length > 0, `${sdk.id} has no public API source files`);
   const entries = deduplicateEntries(
-    sourceFiles.flatMap((sourceFile) =>
-      parsers[sdk.id](sourceFile, sourceAt(repo, sdk.commit, sourceFile)),
-    ),
+    sourceSelections.flatMap(({ sourceFile, exportedNames }) => {
+      const parsed = parsers[sdk.id](
+        sourceFile,
+        sourceAt(repo, sdk.commit, sourceFile),
+      );
+      if (exportedNames === null) return parsed;
+      return parsed.filter((candidate) =>
+        exportedNames.has(candidate.qualifiedName.split(".", 1)[0]),
+      );
+    }),
   );
   const symbols = [
     ...new Set(entries.map((candidate) => candidate.name)),

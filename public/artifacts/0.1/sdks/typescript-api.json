@@ -30,13 +30,21 @@
     "AdmissionReason",
     "AdmissionService",
     "AdmittedSignedDocument",
+    "AgentCard",
+    "Approval",
+    "Artifact",
     "AuthenticatedAdmissionRecord",
+    "Command",
     "ConformanceCaseResult",
     "ConformanceReport",
+    "ContextPackage",
+    "Event",
+    "Evidence",
     "ExpectedSigner",
-    "ExtremeJsonNumber",
+    "ExtensionProfile",
     "FirstAdmissionRecord",
     "FrameCodec",
+    "GroupSnapshot",
     "JsonObject",
     "JsonPrimitive",
     "JsonValue",
@@ -65,8 +73,6 @@
     "TrustedAdmissionContext",
     "ValidationResult",
     "VerificationAuditDetail",
-    "VerificationJsonObject",
-    "VerificationJsonValue",
     "VerificationStage",
     "VerificationWireCode",
     "VerifiedSignedDocument",
@@ -77,12 +83,12 @@
     "algorithm",
     "appendOrReturnExisting",
     "assertValid",
+    "auditDetail",
     "authenticatedService",
     "bindings",
     "canonicalJsonBytes",
     "canonicalizeJson",
     "cases",
-    "compareRfc3339Instants",
     "completeness",
     "constructor",
     "decode",
@@ -99,31 +105,26 @@
     "fraction",
     "id",
     "invalidCases",
-    "isExtremeJsonNumber",
     "isJsonObject",
-    "isProtocolRfc3339",
     "issue",
     "keyId",
     "kind",
     "load",
     "lookup",
     "name",
-    "negative",
+    "names",
     "offset",
     "organizationId",
     "packageName",
     "packageRoot",
-    "parseRfc3339Instant",
     "parseStrictJson",
-    "parseStrictJsonForVerification",
     "parseStrictJsonObject",
-    "parseStrictJsonObjectForVerification",
     "passed",
     "prepareFirstAdmission",
     "principal",
+    "protectedTime",
     "protocolVersion",
     "publicKey",
-    "raw",
     "reason",
     "receivedBytes",
     "record",
@@ -135,6 +136,7 @@
     "resolvedPublicKeyBytes",
     "revokedAt",
     "revokedAtText",
+    "root",
     "runConformance",
     "schema",
     "schemaName",
@@ -224,11 +226,25 @@
       "line": 50
     },
     {
+      "name": "auditDetail",
+      "qualifiedName": "AdmissionError.auditDetail",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 52
+    },
+    {
       "name": "constructor",
       "qualifiedName": "AdmissionError.constructor",
       "kind": "constructor",
       "sourceFile": "src/admission.ts",
       "line": 57
+    },
+    {
+      "name": "wireCode",
+      "qualifiedName": "AdmissionError.wireCode",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 51
     },
     {
       "name": "AdmissionLog",
@@ -462,27 +478,6 @@
       "line": 83
     },
     {
-      "name": "ExtremeJsonNumber",
-      "qualifiedName": "ExtremeJsonNumber",
-      "kind": "interface",
-      "sourceFile": "src/strict-json.ts",
-      "line": 7
-    },
-    {
-      "name": "negative",
-      "qualifiedName": "ExtremeJsonNumber.negative",
-      "kind": "property",
-      "sourceFile": "src/strict-json.ts",
-      "line": 9
-    },
-    {
-      "name": "raw",
-      "qualifiedName": "ExtremeJsonNumber.raw",
-      "kind": "property",
-      "sourceFile": "src/strict-json.ts",
-      "line": 10
-    },
-    {
       "name": "FirstAdmissionRecord",
       "qualifiedName": "FirstAdmissionRecord",
       "kind": "interface",
@@ -656,6 +651,13 @@
       "kind": "property",
       "sourceFile": "src/signed-document-codec.ts",
       "line": 88
+    },
+    {
+      "name": "protectedTime",
+      "qualifiedName": "KeyResolutionRequest.protectedTime",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 91
     },
     {
       "name": "KeyResolver",
@@ -952,6 +954,20 @@
       "line": 79
     },
     {
+      "name": "names",
+      "qualifiedName": "SchemaCatalog.names",
+      "kind": "getter",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 89
+    },
+    {
+      "name": "root",
+      "qualifiedName": "SchemaCatalog.root",
+      "kind": "getter",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 85
+    },
+    {
       "name": "validate",
       "qualifiedName": "SchemaCatalog.validate",
       "kind": "method",
@@ -1029,6 +1045,13 @@
       "line": 136
     },
     {
+      "name": "signature",
+      "qualifiedName": "SignedDocument.signature",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 137
+    },
+    {
       "name": "SignedDocumentCodec",
       "qualifiedName": "SignedDocumentCodec",
       "kind": "class",
@@ -1057,11 +1080,81 @@
       "line": 36
     },
     {
+      "name": "AgentCard",
+      "qualifiedName": "SignedDocumentKind.AgentCard",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 37
+    },
+    {
+      "name": "Approval",
+      "qualifiedName": "SignedDocumentKind.Approval",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 38
+    },
+    {
+      "name": "Artifact",
+      "qualifiedName": "SignedDocumentKind.Artifact",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 39
+    },
+    {
+      "name": "Command",
+      "qualifiedName": "SignedDocumentKind.Command",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 40
+    },
+    {
+      "name": "ContextPackage",
+      "qualifiedName": "SignedDocumentKind.ContextPackage",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 41
+    },
+    {
+      "name": "Event",
+      "qualifiedName": "SignedDocumentKind.Event",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 42
+    },
+    {
+      "name": "Evidence",
+      "qualifiedName": "SignedDocumentKind.Evidence",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 43
+    },
+    {
+      "name": "ExtensionProfile",
+      "qualifiedName": "SignedDocumentKind.ExtensionProfile",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 44
+    },
+    {
+      "name": "GroupSnapshot",
+      "qualifiedName": "SignedDocumentKind.GroupSnapshot",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 45
+    },
+    {
       "name": "SignedDocumentVerificationError",
       "qualifiedName": "SignedDocumentVerificationError",
       "kind": "class",
       "sourceFile": "src/signed-document-codec.ts",
       "line": 117
+    },
+    {
+      "name": "auditDetail",
+      "qualifiedName": "SignedDocumentVerificationError.auditDetail",
+      "kind": "getter",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 131
     },
     {
       "name": "constructor",
@@ -1183,20 +1276,6 @@
       "line": 113
     },
     {
-      "name": "VerificationJsonObject",
-      "qualifiedName": "VerificationJsonObject",
-      "kind": "interface",
-      "sourceFile": "src/strict-json.ts",
-      "line": 19
-    },
-    {
-      "name": "VerificationJsonValue",
-      "qualifiedName": "VerificationJsonValue",
-      "kind": "type",
-      "sourceFile": "src/strict-json.ts",
-      "line": 13
-    },
-    {
       "name": "VerificationStage",
       "qualifiedName": "VerificationStage",
       "kind": "type",
@@ -1230,6 +1309,13 @@
       "kind": "property",
       "sourceFile": "src/signed-document-codec.ts",
       "line": 238
+    },
+    {
+      "name": "protectedTime",
+      "qualifiedName": "VerifiedSignedDocument.protectedTime",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 239
     },
     {
       "name": "receivedBytes",
@@ -1309,13 +1395,6 @@
       "line": 5
     },
     {
-      "name": "compareRfc3339Instants",
-      "qualifiedName": "compareRfc3339Instants",
-      "kind": "function",
-      "sourceFile": "src/rfc3339.ts",
-      "line": 69
-    },
-    {
       "name": "decodeBase64Url",
       "qualifiedName": "decodeBase64Url",
       "kind": "function",
@@ -1330,25 +1409,11 @@
       "line": 29
     },
     {
-      "name": "isExtremeJsonNumber",
-      "qualifiedName": "isExtremeJsonNumber",
-      "kind": "function",
-      "sourceFile": "src/strict-json.ts",
-      "line": 62
-    },
-    {
       "name": "isJsonObject",
       "qualifiedName": "isJsonObject",
       "kind": "function",
       "sourceFile": "src/json-types.ts",
       "line": 9
-    },
-    {
-      "name": "isProtocolRfc3339",
-      "qualifiedName": "isProtocolRfc3339",
-      "kind": "function",
-      "sourceFile": "src/rfc3339.ts",
-      "line": 85
     },
     {
       "name": "packageRoot",
@@ -1358,13 +1423,6 @@
       "line": 5
     },
     {
-      "name": "parseRfc3339Instant",
-      "qualifiedName": "parseRfc3339Instant",
-      "kind": "function",
-      "sourceFile": "src/rfc3339.ts",
-      "line": 9
-    },
-    {
       "name": "parseStrictJson",
       "qualifiedName": "parseStrictJson",
       "kind": "function",
@@ -1372,25 +1430,11 @@
       "line": 33
     },
     {
-      "name": "parseStrictJsonForVerification",
-      "qualifiedName": "parseStrictJsonForVerification",
-      "kind": "function",
-      "sourceFile": "src/strict-json.ts",
-      "line": 46
-    },
-    {
       "name": "parseStrictJsonObject",
       "qualifiedName": "parseStrictJsonObject",
       "kind": "function",
       "sourceFile": "src/strict-json.ts",
       "line": 38
-    },
-    {
-      "name": "parseStrictJsonObjectForVerification",
-      "qualifiedName": "parseStrictJsonObjectForVerification",
-      "kind": "function",
-      "sourceFile": "src/strict-json.ts",
-      "line": 52
     },
     {
       "name": "protocolVersion",
