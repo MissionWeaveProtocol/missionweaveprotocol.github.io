@@ -1,0 +1,146 @@
+---
+title: "TypeScript First Admission and Historical Trust"
+description:
+  "Typed TypeScript adapters, exact asynchronous call order, trust boundaries,
+  and a runnable Admission example."
+---
+
+import typescriptAdmissionExample from "../../../../../../../examples/sdk/typescript/admission.ts?raw";
+
+# TypeScript First Admission and Historical Trust
+
+The TypeScript `AdmissionService` layers First Admission and Historical Trust
+above the six-stage Signed Document verifier
+([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+The language-independent flow is the local
+[First Admission and Historical Trust runtime page](../../../runtime/first-admission-and-historical-trust/),
+and the exact requirements are the local
+[First-Admission and Historical-Trust clauses](../../../../reference/specification/first-admission-and-historical-trust/).
+
+## Public adapters and results
+
+| Public API                                   | Responsibility                                                                                                                                                                                                                                                                              |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.resolveCurrent` | Synchronously return complete Organization-wide Registry evidence that the deployment asserts is current for this decision.                                                                                                                                                                 |
+| `TrustedAdmissionContext.issue`              | Synchronously or asynchronously issue the trusted record ID, acceptance instant, and accepting service only after authoritative absence.                                                                                                                                                    |
+| `AdmissionLog.lookup`                        | Asynchronously return `{ status: "found", record }` or `{ status: "authoritative-absence" }`. Cache miss, timeout, unauthenticated absence, and indeterminate state fail closed under [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
+| `AdmissionLog.appendOrReturnExisting`        | Atomically append candidate bytes or return the concurrent authoritative winner through an authenticated service identity.                                                                                                                                                                  |
+| `AuthenticatedAdmissionRecord`               | Bind `recordBytes` to the service authenticated by the adapter so [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) can validate the returned record.                                                                                    |
+| `AdmissionService.prepareFirstAdmission`     | Create and validate candidate evidence from an SDK-produced `VerifiedSignedDocument`. It does not append or imply admission.                                                                                                                                                                |
+| `AdmissionService.admitFirst`                | Perform current verification, authoritative lookup, candidate creation, atomic append-or-return-existing, and returned-record validation under [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                                        |
+| `AdmissionService.verifyHistoricalAdmission` | Rerun six-stage verification with historical Registry evidence and require an existing record without issuing context or appending, as required by [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                                    |
+| `AdmittedSignedDocument`                     | Return immutable `verified` and `record` evidence plus a defensive `recordBytes` copy.                                                                                                                                                                                                      |
+
+The exact authoritative absence value is `{ status: "authoritative-absence" }`.
+A caller-provided trust boolean is not an Admission lookup outcome and must
+never select the success path.
+
+## First-admission call order
+
+:::note[Informative example]
+
+```ts
+const first = await new AdmissionService().admitFirst(
+  SignedDocumentKind.Command,
+  documentBytes,
+  currentRegistry,
+  admissionLog,
+  trustedContext,
+);
+```
+
+:::
+
+`admitFirst` completes all six signed-document stages before consulting the log.
+A found record is validated and returned without issuing trusted context or
+appending. After authoritative absence, the service issues trusted context,
+prepares canonical candidate bytes, calls `appendOrReturnExisting`, and
+validates the record actually returned. A concurrent winner is acceptable only
+when its Schema, authenticated service, document binding, and trusted time pass
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+and
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010).
+
+## Historical replay
+
+:::note[Informative example]
+
+```ts
+const historical = await new AdmissionService().verifyHistoricalAdmission(
+  SignedDocumentKind.Command,
+  documentBytes,
+  historicalRegistry,
+  admissionLog,
+);
+```
+
+:::
+
+Historical replay reruns verification with retained Registry history, requires
+`status: "found"`, and never calls `TrustedAdmissionContext.issue` or
+`AdmissionLog.appendOrReturnExisting`. Matching record IDs demonstrate recovery
+of the same authoritative record; they do not prove Command freshness, signer
+authorization, state-machine acceptance, or portable log-proof verification.
+Those remain separate under
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+and
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
+
+## Error surface
+
+`AdmissionError` exposes `wireCode: "AUTH_INVALID_SIGNATURE"` and protected
+`auditDetail.stage: "admission"`. Stable protected reasons distinguish missing,
+conflicting, malformed, unauthenticated, unavailable, indeterminate, and
+self-anchoring evidence while preserving the non-oracular wire result required
+by
+[MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012).
+
+Adapters may throw `AdmissionLogError` with a supported Admission reason. Other
+adapter exceptions are not automatically recategorized. Deployments must map
+their failures deliberately and must not treat generic success, availability, or
+cache state as authenticated evidence.
+
+## Runnable exact-pinned example
+
+:::note[Informative example]
+
+The example deterministically derives one Ed25519 key, constructs a complete
+Registry snapshot and signed Command, and supplies typed in-memory adapters. The
+fixed seed is demonstration material and must never be used outside the example.
+
+<pre>
+  <code>{typescriptAdmissionExample}</code>
+</pre>
+
+From an exact SDK checkout, type-check and run it as follows:
+
+```bash
+npm ci
+cp /absolute/path/to/examples/sdk/typescript/admission.ts examples/website-admission.ts
+npm run typecheck:examples
+npm run build
+node --experimental-strip-types examples/website-admission.ts
+```
+
+The package supports Node.js 20. Direct strip-only execution of this `.ts`
+source requires Node.js 22 or newer; on Node.js 20, transpile it with the
+project TypeScript toolchain before running the emitted ESM. Expected output
+contains the same record ID for `first admission` and `historical replay`. The
+program also asserts matching signing hashes and record bytes and exactly one
+append.
+
+:::
+
+:::note[Implementation note]
+
+Replace `CurrentRegistryFixture` with authenticated current and historical
+Registry adapters, `InMemoryAdmissionLog` with an authenticated durable log
+whose append-or-return-existing operation is atomic, and
+`FixedTrustedAdmissionContext` with Organization-controlled trusted time and
+accepting-service issuance.
+
+Replace `DeterministicSigningKey` with a deployment-owned key service. Preserve
+defensive byte copies and do not collapse authority boundaries into one
+caller-provided trust boolean.
+
+:::

@@ -15,6 +15,8 @@ const latestSdkRedirects = Object.fromEntries(
     return [
       [`${prefix}/sdk`, `${prefix}/0.1/build/sdk/`],
       [`${prefix}/sdk/python`, `${prefix}/0.1/build/sdk/python/`],
+      [`${prefix}/sdk/typescript`, `${prefix}/0.1/build/sdk/typescript/`],
+      [`${prefix}/sdk/go`, `${prefix}/0.1/build/sdk/go/`],
     ];
   }),
 );
@@ -169,6 +171,11 @@ export default defineConfig({
               slug: "0.1/build/sdk",
             },
             { label: "Python SDK", slug: "0.1/build/sdk/python" },
+            {
+              label: "TypeScript SDK",
+              slug: "0.1/build/sdk/typescript",
+            },
+            { label: "Go SDK", slug: "0.1/build/sdk/go" },
           ],
         },
         {

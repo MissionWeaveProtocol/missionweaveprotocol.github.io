@@ -1,0 +1,146 @@
+---
+title: "Go First Admission and Historical Trust"
+description:
+  "Typed Go adapters, exact call order, trust boundaries, atomic log
+  requirements, and a runnable Admission example."
+---
+
+import goAdmissionExample from "../../../../../../../examples/sdk/go/admission/main.go?raw";
+
+# Go First Admission and Historical Trust
+
+The Go `AdmissionService` layers First Admission and Historical Trust above the
+six-stage Signed Document verifier
+([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+The language-independent flow is the local
+[First Admission and Historical Trust runtime page](../../../runtime/first-admission-and-historical-trust/),
+and the exact requirements are the local
+[First-Admission and Historical-Trust clauses](../../../../reference/specification/first-admission-and-historical-trust/).
+
+## Public adapters and results
+
+| Public API                                   | Responsibility                                                                                                                                                                                                                                                                      |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.ResolveCurrent` | Return complete Organization-wide Registry evidence that the deployment asserts is current for this decision.                                                                                                                                                                       |
+| `TrustedAdmissionContext.Issue`              | Issue the trusted record ID, acceptance instant, and accepting service only after authoritative absence.                                                                                                                                                                            |
+| `AdmissionLog.Lookup`                        | Return a found authenticated record or `AdmissionLookup{AuthoritativeAbsence: true}`. Cache miss, timeout, unauthenticated absence, and indeterminate state fail closed under [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
+| `AdmissionLog.AppendOrReturnExisting`        | Atomically append candidate bytes or return the concurrent authoritative winner through an authenticated service identity.                                                                                                                                                          |
+| `AuthenticatedAdmissionRecord`               | Bind `RecordBytes` to the service authenticated by the adapter so [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) can validate the returned record.                                                                            |
+| `AdmissionService.PrepareFirstAdmission`     | Create and validate candidate evidence from an SDK-produced `VerifiedSignedDocument`. It does not append or imply admission.                                                                                                                                                        |
+| `AdmissionService.AdmitFirst`                | Perform current verification, authoritative lookup, candidate creation, atomic append-or-return-existing, and returned-record validation under [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                                |
+| `AdmissionService.VerifyHistoricalAdmission` | Rerun six-stage verification with historical Registry evidence and require an existing record without issuing context or appending, as required by [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                            |
+| `AdmittedSignedDocument`                     | Return verified and parsed record evidence plus a defensive `RecordBytes()` copy.                                                                                                                                                                                                   |
+
+A caller-provided trust boolean is not an Admission lookup outcome and must
+never select the success path.
+
+## First-admission call order
+
+:::note[Informative example]
+
+```go
+first, err := missionweaveprotocol.NewAdmissionService().AdmitFirst(
+    missionweaveprotocol.SignedDocumentCommand,
+    documentBytes,
+    currentRegistry,
+    admissionLog,
+    trustedContext,
+)
+```
+
+:::
+
+`AdmitFirst` completes all six signed-document stages before consulting the log.
+A found record is validated and returned without issuing trusted context or
+appending. After authoritative absence, the service issues trusted context,
+calls `PrepareFirstAdmission`, invokes `AppendOrReturnExisting`, snapshots the
+returned value, and validates the record actually returned. A concurrent winner
+is acceptable only when its Schema, authenticated service, document binding, and
+trusted time pass
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+and
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010).
+
+## Historical replay
+
+:::note[Informative example]
+
+```go
+historical, err := missionweaveprotocol.NewAdmissionService().VerifyHistoricalAdmission(
+    missionweaveprotocol.SignedDocumentCommand,
+    documentBytes,
+    historicalRegistry,
+    admissionLog,
+)
+```
+
+:::
+
+Historical replay reruns verification with retained Registry history, requires a
+found record, and never calls `TrustedAdmissionContext.Issue` or
+`AdmissionLog.AppendOrReturnExisting`. Matching record IDs demonstrate recovery
+of the same authoritative record; they do not prove Command freshness, signer
+authorization, state-machine acceptance, or portable log-proof verification.
+Those remain separate under
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+and
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
+
+## Error surface
+
+`AdmissionError.WireCode()` returns `AUTH_INVALID_SIGNATURE`, while
+`ProtectedDiagnostic().Stage()` returns `admission`. Stable protected reasons
+distinguish missing, conflicting, malformed, unauthenticated, unavailable,
+indeterminate, and self-anchoring evidence while preserving the non-oracular
+wire result required by
+[MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012).
+
+Deployment adapters should return `NewAdmissionAdapterError` with a supported
+reason when they need the service to remap a trusted local failure. Arbitrary
+errors are not proof of authoritative absence.
+
+## Runnable exact-pinned example
+
+:::note[Informative example]
+
+The example deterministically derives one Ed25519 key, constructs a complete
+Registry and signed Command, and supplies typed in-memory adapters. One
+`sync.Mutex` protects the shared authoritative map. `Lookup` and
+`AppendOrReturnExisting` acquire it independently; the mutex makes
+`AppendOrReturnExisting` atomic when it checks for a concurrent winner and
+conditionally appends. The protocol requires authoritative lookup and atomic
+append-or-return-existing behavior, not one transaction spanning both calls. The
+fixed seed is demonstration material and must never be used outside the example.
+
+<pre>
+  <code>{goAdmissionExample}</code>
+</pre>
+
+Run it from an exact SDK checkout:
+
+```bash
+go test ./...
+go run /absolute/path/to/examples/sdk/go/admission/main.go
+```
+
+Expected output contains the same record ID for `first admission` and
+`historical replay`. The program also asserts matching signing hashes and record
+bytes and exactly one append.
+
+:::
+
+:::note[Implementation note]
+
+Replace `currentRegistryFixture` with authenticated current and historical
+Registry adapters, `inMemoryAdmissionLog` with an authenticated durable log that
+returns authoritative lookup outcomes and makes `AppendOrReturnExisting` atomic
+over the logical key, and `fixedTrustedAdmissionContext` with
+Organization-controlled trusted time and accepting-service issuance. A
+deployment may use a wider transaction, but the protocol does not require one
+transaction to span `Lookup` and `AppendOrReturnExisting`.
+
+Replace `deterministicSigningKey` with a deployment-owned key service. Preserve
+defensive byte copies and do not collapse authority boundaries into one
+caller-provided trust boolean.
+
+:::

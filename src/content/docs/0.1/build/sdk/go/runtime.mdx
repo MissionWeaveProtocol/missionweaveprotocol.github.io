@@ -1,0 +1,109 @@
+---
+title: "Go runtime reference"
+description:
+  "The complete exported package surface and runtime boundaries of the
+  exact-pinned Go SDK."
+---
+
+import SupportStatus from "../../../../../../components/SupportStatus.astro";
+
+# Go runtime reference
+
+This page covers the complete Go package represented by the
+[exact API inventory](../api/). Shared protocol behavior remains defined by the
+local [runtime reference](../../../runtime/architecture-and-bootstrap/) and
+[Reference clauses](../../../../reference/specification/). The names below
+define how the pinned module exposes that behavior.
+
+<SupportStatus status="implemented" /> applies to the exported package APIs and
+in-process codecs listed below.
+
+<SupportStatus status="deployment-adapter-required" /> applies to current
+Registry authority, trusted Admission context, authenticated atomic log access,
+and other external services supplied by a deployment.
+
+<SupportStatus status="not-implemented" /> means the exact-pinned module has no
+corresponding exported runtime.
+
+## Import and execution model
+
+Import the single package as
+`missionweaveprotocol "github.com/missionweaveprotocol/go-sdk"`. The module
+requires Go 1.24. Public names follow Go export rules; unexported helpers and
+implementation adapters are not application contracts.
+
+The module uses the standard library for JSON, cryptography, embedding, and I/O,
+plus its declared Schema and RFC 8785 dependencies. Package installation alone
+does not start a process or create authority.
+
+## Complete source map
+
+| Runtime concern                    | Public source files                                                                              | Contract at the pinned commit                                                                                                           |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Package identity and documentation | `doc.go`                                                                                         | Package-level scope and supported implementation boundary.                                                                              |
+| Strict JSON and time values        | `json.go`, `rfc3339.go`                                                                          | Strict JSON decoding and the exported RFC 3339 instant comparison surface used by verification and Admission.                           |
+| Schema catalog                     | `schema.go`                                                                                      | Draft 2020-12 Schema loading, validation, and exact packaged Schema access.                                                             |
+| Canonical JSON                     | `canonical.go`                                                                                   | RFC 8785 canonicalization and canonical byte production.                                                                                |
+| Signing and Signed Documents       | `signing.go`, `signed_document_codec.go`, `signed_document_verification.go`, `ed25519_strict.go` | Ed25519 helpers, nine signed-document profiles, complete Registry resolution, strict point checks, and six-stage verification evidence. |
+| Frames                             | `frame.go`                                                                                       | Parse and encode operations for supported WebSocket frame values. This is a codec, not a hosted gateway service.                        |
+| Conformance and bundles            | `conformance.go`, `bundle.go`                                                                    | Embedded bundle identity, digest verification, manifest execution, and command support.                                                 |
+| First Admission                    | `admission.go`                                                                                   | First Admission and Historical Trust with typed deployment adapters above successful verification.                                      |
+
+## Validation and cryptography
+
+`DecodeJSON` enforces the supported strict JSON data model and `SchemaCatalog`
+validates the exact embedded Draft 2020-12 Schema set. `CanonicalizeJSON` and
+`MarshalCanonicalJSON` produce RFC 8785 bytes. These are separate gates: Schema
+success does not imply canonical or signed evidence.
+
+`SignedDocumentCodec.Sign` selects the explicit document kind, validates the
+protected time, canonicalizes the unsigned projection, calls `SigningKey`,
+checks the Ed25519 encoding, attaches the envelope, and validates the result.
+`Verify` consumes raw bytes and runs parse, Schema, signature-envelope,
+key-resolution, canonicalization, and signature stages in order. The returned
+`VerifiedSignedDocument` exposes defensive byte copies, signing and complete
+hashes, protected time, signature evidence, and the resolved key.
+
+`KeyResolver` must return complete Organization-wide Registry evidence. A
+selected key, map entry, or caller-provided trust flag is insufficient.
+
+## Frames, bundles, and conformance
+
+Frame functions parse and encode values but do not open sockets, authenticate a
+Session, persist Cursors, schedule work, or apply authoritative transitions.
+Those are deployment or higher-level runtime responsibilities.
+
+`VerifyProtocolBundle`, `VerifyCryptographyBundle`, and `VerifyAdmissionBundle`
+bind each embedded artifact set to its recorded identity.
+`RunEmbeddedConformance` executes the embedded structural vectors. Run these
+again when the SDK commit, protocol pin, Schema set, cryptography bundle,
+Admission bundle, or deployment adapter changes. Passing them proves only the
+exercised package surface.
+
+## First Admission
+
+`NewAdmissionService` constructs the exact-schema service.
+`PrepareFirstAdmission`, `AdmitFirst`, and `VerifyHistoricalAdmission` are
+synchronous Go calls that may return adapter or validation errors.
+`AdmissionCurrentKeyResolver`, `TrustedAdmissionContext`, and `AdmissionLog`
+remain deployment interfaces. Continue with the
+[Go Admission reference](../admission/) for the exact outcomes, atomicity
+requirements, and historical path.
+
+## Explicit availability boundaries
+
+<SupportStatus status="not-implemented" /> **Mission orchestration** — no
+high-level Mission state-machine or orchestration façade is exported.
+
+<SupportStatus status="not-implemented" /> **Worker scheduler** — no Worker
+queue, scheduler, lease runner, or recovery loop is exported.
+
+<SupportStatus status="not-implemented" /> **Hosted gateway service** — the
+module supplies frame codecs, not a gateway service with transport, Session,
+TLS, routing, or backpressure ownership.
+
+<SupportStatus status="not-implemented" /> **Authoritative persistence runtime**
+— no database-backed or Agent-local persistence runtime is exported.
+
+Those absences are part of the supported runtime contract. Applications must not
+infer Python reference-runtime capabilities from shared protocol names.

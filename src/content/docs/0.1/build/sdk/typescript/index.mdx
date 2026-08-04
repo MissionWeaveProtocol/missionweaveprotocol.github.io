@@ -1,0 +1,79 @@
+---
+title: "TypeScript SDK"
+description:
+  "Install and navigate the complete exact-pinned TypeScript runtime reference
+  for MissionWeaveProtocol 0.1."
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../components/SdkRuntimeMatrix.astro";
+
+# TypeScript SDK
+
+`@missionweaveprotocol/sdk` is the official TypeScript implementation package.
+This reference describes exact commit
+`6d53ebfcf8350ae81d89fd818611b07f7373685c`, package version `0.1.0`, and Node.js
+20 or newer. A different commit or package build is a different documented
+implementation input, even when its version string is unchanged.
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="typescript"
+  command={`git clone https://github.com/MissionWeaveProtocol/typescript-sdk.git missionweaveprotocol-typescript-sdk
+cd missionweaveprotocol-typescript-sdk
+git checkout --detach 6d53ebfcf8350ae81d89fd818611b07f7373685c
+npm ci
+npm run build
+npm pack --pack-destination ..
+cd ..
+npm install ./missionweaveprotocol-sdk-0.1.0.tgz`}
+  verifyCommand={`node -e 'import("@missionweaveprotocol/sdk").then(({ sdkMetadata }) => console.log(sdkMetadata()))'
+npx --no-install missionweaveprotocol-conformance --json`}
+>
+  <p slot="notes">
+    The package root supplies both ESM and CommonJS builds. Only the package
+    root and <code>package.json</code> are supported exports; internal
+    source-file paths are not public subpath APIs. The pinned source package
+    does not build <code>dist/</code> during a direct Git dependency install, so
+    the documented flow builds and installs a tarball explicitly. Another
+    tarball may replace it only when its provenance is bound to the same exact
+    commit.
+  </p>
+</SdkInstall>
+
+:::
+
+The installed `missionweaveprotocol-conformance` command runs the packaged
+Schema and vector surfaces. It does not establish deployment authority,
+Admission Log durability, network security, or production readiness.
+
+## Use this reference
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every supported package-root module, Node runtime boundary, conformance entry point, and explicit non-implementation."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, trusted-context, and Admission Log adapters with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="Every public package-root declaration resolved to its exact source line."
+    href="./api/"
+  />
+</CardGrid>
+
+## Support at the documented commit
+
+<SdkRuntimeMatrix sdk="typescript" />
+
+The matrix distinguishes in-process implementation from deployment-owned
+authority. Installing the package does not supply a current Registry service, an
+authenticated atomic Admission Log, a hosted gateway, or durable runtime
+persistence.

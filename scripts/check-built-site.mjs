@@ -22,11 +22,21 @@ const requiredOutputs = [
   "0.1/build/sdk/python/runtime/index.html",
   "0.1/build/sdk/python/admission/index.html",
   "0.1/build/sdk/python/api/index.html",
+  "0.1/build/sdk/typescript/index.html",
+  "0.1/build/sdk/typescript/runtime/index.html",
+  "0.1/build/sdk/typescript/admission/index.html",
+  "0.1/build/sdk/typescript/api/index.html",
+  "0.1/build/sdk/go/index.html",
+  "0.1/build/sdk/go/runtime/index.html",
+  "0.1/build/sdk/go/admission/index.html",
+  "0.1/build/sdk/go/api/index.html",
   "reference/specification/index.html",
   "reference/schemas/index.html",
   "reference/conformance/index.html",
   "sdk/index.html",
   "sdk/python/index.html",
+  "sdk/typescript/index.html",
+  "sdk/go/index.html",
   "artifacts/0.1/normative-release.json",
   "artifacts/0.1/protocol/CONTEXT.md",
   "artifacts/0.1/protocol/spec/PROTOCOL.md",
@@ -71,6 +81,11 @@ const latestSdkAliases = localePrefixes.flatMap((locale) => {
   return [
     [`${prefix}sdk/index.html`, `/${prefix}0.1/build/sdk/`],
     [`${prefix}sdk/python/index.html`, `/${prefix}0.1/build/sdk/python/`],
+    [
+      `${prefix}sdk/typescript/index.html`,
+      `/${prefix}0.1/build/sdk/typescript/`,
+    ],
+    [`${prefix}sdk/go/index.html`, `/${prefix}0.1/build/sdk/go/`],
   ];
 });
 
@@ -103,6 +118,8 @@ for (const locale of localePrefixes) {
   for (const target of [
     `/${prefix}0.1/build/sdk/`,
     `/${prefix}0.1/build/sdk/python/`,
+    `/${prefix}0.1/build/sdk/typescript/`,
+    `/${prefix}0.1/build/sdk/go/`,
   ]) {
     const targetWithBase = withBase(target);
     if (!html.includes(`href="${targetWithBase}"`)) {
@@ -111,7 +128,12 @@ for (const locale of localePrefixes) {
       );
     }
   }
-  for (const staleTarget of [`/${prefix}sdk/`, `/${prefix}sdk/python/`]) {
+  for (const staleTarget of [
+    `/${prefix}sdk/`,
+    `/${prefix}sdk/python/`,
+    `/${prefix}sdk/typescript/`,
+    `/${prefix}sdk/go/`,
+  ]) {
     const staleTargetWithBase = withBase(staleTarget);
     if (html.includes(`href="${staleTargetWithBase}"`)) {
       aliasFailures.push(
