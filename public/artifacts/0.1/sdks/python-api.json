@@ -1,0 +1,4688 @@
+{
+  "schemaVersion": 1,
+  "sdk": "python",
+  "name": "Python",
+  "repository": "https://github.com/MissionWeaveProtocol/python-sdk",
+  "commit": "9403cf1310914670506c56cbab363fdaa465d3cc",
+  "package": "missionweaveprotocol",
+  "toolchain": ["Python 3.12", "uv"],
+  "sourceFiles": [
+    "src/missionweaveprotocol/__init__.py",
+    "src/missionweaveprotocol/admission.py",
+    "src/missionweaveprotocol/agent.py",
+    "src/missionweaveprotocol/artifacts.py",
+    "src/missionweaveprotocol/auth.py",
+    "src/missionweaveprotocol/budget.py",
+    "src/missionweaveprotocol/bundle.py",
+    "src/missionweaveprotocol/canonical.py",
+    "src/missionweaveprotocol/cli.py",
+    "src/missionweaveprotocol/conformance.py",
+    "src/missionweaveprotocol/context.py",
+    "src/missionweaveprotocol/control.py",
+    "src/missionweaveprotocol/core.py",
+    "src/missionweaveprotocol/crypto.py",
+    "src/missionweaveprotocol/delegation.py",
+    "src/missionweaveprotocol/documents.py",
+    "src/missionweaveprotocol/execution.py",
+    "src/missionweaveprotocol/gateway.py",
+    "src/missionweaveprotocol/ingress.py",
+    "src/missionweaveprotocol/lease.py",
+    "src/missionweaveprotocol/local_store.py",
+    "src/missionweaveprotocol/models.py",
+    "src/missionweaveprotocol/offline.py",
+    "src/missionweaveprotocol/poc.py",
+    "src/missionweaveprotocol/policy.py",
+    "src/missionweaveprotocol/registry.py",
+    "src/missionweaveprotocol/replay.py",
+    "src/missionweaveprotocol/scheduler.py",
+    "src/missionweaveprotocol/schema_formats.py",
+    "src/missionweaveprotocol/signed_documents.py",
+    "src/missionweaveprotocol/store.py",
+    "src/missionweaveprotocol/wire.py"
+  ],
+  "symbols": [
+    "ANALYST",
+    "AcceptWorkOfferPayload",
+    "AckFrame",
+    "Acknowledgement",
+    "ActionIdCollision",
+    "ActiveSessionError",
+    "ActorType",
+    "AddMembershipPayload",
+    "AddWorkItemDependencyPayload",
+    "AdmissionBundleSummary",
+    "AdmissionContextValue",
+    "AdmissionCurrentKeyResolver",
+    "AdmissionDecision",
+    "AdmissionError",
+    "AdmissionLog",
+    "AdmissionLogError",
+    "AdmissionLookup",
+    "AdmissionLookupStatus",
+    "AdmissionPin",
+    "AdmissionReason",
+    "AdmissionService",
+    "AdmissionStage",
+    "AdmittedSignedDocument",
+    "AgentCard",
+    "AgentIdentity",
+    "AgentKeyRegistry",
+    "AgentRegistry",
+    "AgentRegistryKeyResolver",
+    "AgentReplay",
+    "AgentRuntime",
+    "AgentRuntimeSession",
+    "AlreadyExists",
+    "Approval",
+    "ApproveMissionPayload",
+    "ArchiveGroupPayload",
+    "Artifact",
+    "ArtifactError",
+    "ArtifactLocation",
+    "ArtifactManifest",
+    "Attempt",
+    "AttentionFilter",
+    "AuthFrame",
+    "AuthenticatedAdmissionRecord",
+    "AuthenticationError",
+    "AuthoritativePolicyReader",
+    "AuthoritativeState",
+    "AuthoritativeStore",
+    "AuthorizationDenied",
+    "AuthorizationService",
+    "BlockWorkItemPayload",
+    "BudgetExceeded",
+    "BudgetLedger",
+    "BudgetLedgerError",
+    "BudgetLedgerSnapshot",
+    "BudgetLedgerSnapshotV1",
+    "BudgetLimitState",
+    "BudgetMeter",
+    "BudgetUsageState",
+    "BundleVerificationError",
+    "CODER",
+    "COORD_AUTH",
+    "COORD_CLI",
+    "COORD_CLI_REPLACEMENT",
+    "CancelMissionPayload",
+    "CancelWorkItemPayload",
+    "Candidate",
+    "CanonicalizationError",
+    "Capability",
+    "CapabilityDescriptor",
+    "CapabilityGrant",
+    "CapabilityPerformance",
+    "CapabilityRequirement",
+    "Challenge",
+    "ChallengeFrame",
+    "Checkpoint",
+    "CheckpointRef",
+    "CheckpointWorkItemPayload",
+    "ChildFailurePolicy",
+    "ClosedSessionError",
+    "Command",
+    "CommandAdmissionError",
+    "CommandFrame",
+    "CommandIngress",
+    "CommandKind",
+    "ConformanceReport",
+    "ContextDecision",
+    "ContextPackage",
+    "ContextPackageService",
+    "ControlReceipt",
+    "Conversation",
+    "CooperationLimits",
+    "CooperationOverrideGrant",
+    "CooperationPolicyName",
+    "Core",
+    "CoreGatewayAdapter",
+    "CorrectMessagePayload",
+    "CreateChildMissionPayload",
+    "CreateMissionPayload",
+    "CreateWorkItemPayload",
+    "CryptographyBundleSummary",
+    "CursorStore",
+    "DedupRecord",
+    "DelegationAuthority",
+    "DelegationBudget",
+    "DelegationGrant",
+    "DelegationViolation",
+    "DelegationViolationKind",
+    "DependencyError",
+    "Dispatch",
+    "DocumentMappingError",
+    "DocumentSigner",
+    "Ed25519SigningKey",
+    "EndMembershipPayload",
+    "ErrorCode",
+    "ErrorDocument",
+    "ErrorFrame",
+    "EstimateBand",
+    "Event",
+    "EventFrame",
+    "EventKind",
+    "EventProjection",
+    "EventProjector",
+    "Evidence",
+    "ExecutionApproval",
+    "ExecutionAuthorization",
+    "ExecutionContext",
+    "ExecutionLease",
+    "ExpectedSignerEvidence",
+    "ExpectedSignerRule",
+    "ExtensionEnvelope",
+    "FailMissionPayload",
+    "FailWorkItemPayload",
+    "FirstAdmissionRecord",
+    "FrameModel",
+    "GROUP_AUTH",
+    "GROUP_CLI",
+    "GROUP_SECURITY",
+    "GatewayCore",
+    "GatewaySchemaError",
+    "GrantCooperationOverridePayload",
+    "GrantDelegationPayload",
+    "GrantExecutionApprovalPayload",
+    "Group",
+    "GroupCursor",
+    "GroupGateway",
+    "GroupReplayResult",
+    "GroupSchedulingPolicy",
+    "GroupSnapshot",
+    "HelloFrame",
+    "HumanControl",
+    "HumanIdentity",
+    "InMemoryCursorStore",
+    "InMemoryStore",
+    "InvalidCommand",
+    "InvalidTransition",
+    "IssuedCapabilityGrant",
+    "IssuedMembershipToken",
+    "KeyRegistryCompleteness",
+    "KeyRegistrySnapshot",
+    "KeyResolutionRequest",
+    "KeyResolver",
+    "KeyValidityEvidence",
+    "KnowledgePublication",
+    "KnowledgePublisher",
+    "LeaseExpired",
+    "LeaseState",
+    "LocalArtifactStore",
+    "LocalStoreError",
+    "MAX_SAFE_INTEGER",
+    "MISSION_AUTH",
+    "MISSION_CLI",
+    "MISSION_SECURITY",
+    "Membership",
+    "MembershipStatus",
+    "MembershipTokenClaims",
+    "MembershipTokenService",
+    "Message",
+    "MessageAmendment",
+    "MessageAmendmentKind",
+    "Mission",
+    "MissionBudgetState",
+    "MissionInspection",
+    "MissionResult",
+    "MissionStatus",
+    "MissionWeaveProtocolError",
+    "NotFound",
+    "OFFLINE_EXECUTION_EXTENSION",
+    "OFFLINE_EXECUTION_EXTENSION_VERSION",
+    "OWNER_ID",
+    "OfferWorkItemPayload",
+    "OfflineExecutionPolicy",
+    "OfflineLimits",
+    "OfflinePolicyError",
+    "OfflineProgressBinding",
+    "OpenAgentSessionPayload",
+    "POCReport",
+    "PingFrame",
+    "PolicyError",
+    "PolicyGuard",
+    "PolicyLogEntry",
+    "PolicyViolation",
+    "PostMessagePayload",
+    "PostgreSQLStore",
+    "Preempt",
+    "PreparedFirstAdmission",
+    "PresenceRecord",
+    "Principal",
+    "PrincipalEvidence",
+    "ProposeWorkItemPayload",
+    "ProtectedAdmissionError",
+    "ProtectedInstant",
+    "ProtectedTime",
+    "ProtectedVerificationError",
+    "ProtocolDocumentAdapter",
+    "ProtocolDocumentConfig",
+    "ProtocolModel",
+    "PublishArtifactPayload",
+    "Query",
+    "QueryKind",
+    "QueueRecord",
+    "REVIEWER",
+    "ReceivedCommandFrame",
+    "RecordResourceUsagePayload",
+    "RedactMessagePayload",
+    "RegisterAgentCardPayload",
+    "RegistryError",
+    "RenewCoordinatorLeasePayload",
+    "RenewExecutionLeasePayload",
+    "ReplaceCoordinatorPayload",
+    "ReplayError",
+    "ReplayGroupError",
+    "ReplayProjectionError",
+    "ReplaySequenceError",
+    "ReplaySource",
+    "RequestMissionChangesPayload",
+    "ResolvedKeyEvidence",
+    "ResourceBudget",
+    "ResourceUsage",
+    "RetractMessagePayload",
+    "RetryController",
+    "RetryExhausted",
+    "RetryPolicy",
+    "RetrySchedule",
+    "RevisionConflict",
+    "Role",
+    "SECURITY_COORDINATOR",
+    "SECURITY_WORKER",
+    "SNAPSHOT_AUTHORITY_KEY_ID",
+    "SQLStore",
+    "SQLiteAgentStore",
+    "SQLiteStore",
+    "SYSTEM_ID",
+    "Scheduler",
+    "SchedulerPolicy",
+    "SchedulerSnapshot",
+    "SchedulerStateError",
+    "SchedulingEstimate",
+    "SchemaCatalog",
+    "SelectionBasis",
+    "SessionAuthority",
+    "SessionDescriptor",
+    "SessionGrant",
+    "SignatureEnvelope",
+    "SignatureMaterial",
+    "SignedDocument",
+    "SignedDocumentCodec",
+    "SignedDocumentKind",
+    "SignedDocumentSigningError",
+    "SignedDocumentVerificationError",
+    "SigningKey",
+    "SnapshotArchive",
+    "SourceEventRange",
+    "StaleContextError",
+    "StaleCoordinatorEpoch",
+    "StaleMembershipEpoch",
+    "StaleOwnershipEpoch",
+    "StaleSessionEpoch",
+    "StaleSessionEpochError",
+    "StartWorkItemPayload",
+    "SubmitMissionPayload",
+    "SubmitWorkItemPayload",
+    "SubscribeFrame",
+    "SubscriptionDenied",
+    "T",
+    "TransitionKind",
+    "TrustedAdmissionContext",
+    "UnblockWorkItemPayload",
+    "UnknownCriticalExtension",
+    "VectorResult",
+    "VerificationStage",
+    "VerifiedSignedDocument",
+    "VerifyWorkItemPayload",
+    "WelcomeFrame",
+    "WireVerificationError",
+    "WorkContract",
+    "WorkItem",
+    "WorkItemBudgetState",
+    "WorkItemBudgetStateV1",
+    "WorkItemStatus",
+    "WorkOffer",
+    "WorkProposal",
+    "WorkProposalStatus",
+    "WorkState",
+    "WorkTransition",
+    "accepted_command",
+    "acknowledge",
+    "activate_session",
+    "active_session",
+    "admit",
+    "admit_first",
+    "agent",
+    "agent_card",
+    "algorithm",
+    "append_or_return_existing",
+    "apply",
+    "approval",
+    "approve",
+    "approve_execution",
+    "archive",
+    "archive_link_is_complete",
+    "artifact",
+    "artifact_does_not_source_itself",
+    "artifacts_are_not_empty",
+    "as_dict",
+    "attempts",
+    "authorize_descendant",
+    "authorize_existing",
+    "begin",
+    "budget_has_all_six_ceilings",
+    "budget_within_ceiling",
+    "buffer",
+    "buffered_actions",
+    "cancel",
+    "candidates",
+    "candidates_are_nonempty_and_unique",
+    "canonical_bytes",
+    "canonical_hash",
+    "canonical_json",
+    "capabilities_are_nonempty_and_unique",
+    "capabilities_are_unique",
+    "card",
+    "cast_connection",
+    "cast_pool",
+    "check_clarification_rate",
+    "check_delegation_depth",
+    "check_message_rate",
+    "check_proposal_rate",
+    "check_queue",
+    "check_unresolved_clarifications",
+    "classify_action",
+    "close",
+    "conformance",
+    "consume",
+    "contains",
+    "contract_sections_are_not_empty",
+    "conversation",
+    "create",
+    "create_gateway_app",
+    "cumulative_usage",
+    "current_epoch",
+    "current_session_epoch",
+    "cursor",
+    "deduplication_key",
+    "default_agent_key_id",
+    "default_bundle_root",
+    "default_conformance_root",
+    "default_schema_root",
+    "definition_is_not_empty",
+    "delete_checkpoint",
+    "delta_is_not_empty",
+    "demo",
+    "descriptor",
+    "dialect_name",
+    "direct",
+    "encode_frame",
+    "encode_private_key",
+    "encode_public_key",
+    "enqueue_action",
+    "event_count_matches_sequence",
+    "event_ids_are_nonempty_and_unique",
+    "event_ids_are_unique",
+    "event_position",
+    "evidence",
+    "evidence_is_not_empty",
+    "execution_payload",
+    "execution_scope_is_paired",
+    "expiry_follows_issue",
+    "expiry_is_bounded_by_execution_lease",
+    "finish",
+    "from_budget",
+    "from_usage",
+    "from_work_item",
+    "generate",
+    "generate_keypair",
+    "get",
+    "grace_deadline",
+    "group",
+    "group_context",
+    "has_event",
+    "high_risk_requires_execution_approval",
+    "human",
+    "idempotency_key",
+    "initialize",
+    "inspect",
+    "install",
+    "install_group_context",
+    "install_group_credentials",
+    "is_protocol_uri",
+    "issue",
+    "issue_challenge",
+    "issue_for_membership",
+    "key_id",
+    "load_agent_cards",
+    "load_checkpoint",
+    "load_private_key",
+    "load_public_key",
+    "load_scheduler",
+    "lookup",
+    "mark_action_sent",
+    "matches_registered_public_key",
+    "membership",
+    "membership_key",
+    "message",
+    "mission",
+    "nonce",
+    "offline_command_to_wire",
+    "open_session",
+    "operations_are_nonempty_and_unique",
+    "parse_frame",
+    "parse_received_frame",
+    "passed",
+    "pending_actions",
+    "perform",
+    "prepare",
+    "prepare_first_admission",
+    "presence",
+    "principal",
+    "project_verified",
+    "protocol_document",
+    "protocol_event_id",
+    "protocol_format_checker",
+    "protocol_group_id",
+    "public_key",
+    "public_key_bytes",
+    "publish",
+    "put",
+    "query",
+    "rebase_offline_command",
+    "rebuild",
+    "reconcile",
+    "record_performance",
+    "register",
+    "register_mission",
+    "register_work_item",
+    "reliability",
+    "remaining",
+    "remember_event",
+    "renew",
+    "replace_coordinator",
+    "replay",
+    "request_changes",
+    "require_success",
+    "requirements_are_unique",
+    "resolve",
+    "resolve_current",
+    "revoke",
+    "roles_are_nonempty_and_unique",
+    "run_manifest",
+    "run_poc",
+    "run_poc_sync",
+    "save_checkpoint",
+    "save_group_context",
+    "save_scheduler",
+    "schedule",
+    "scheduler",
+    "serialize_payload_model",
+    "server",
+    "sha256_hex",
+    "sign",
+    "sign_bytes",
+    "sign_canonical",
+    "signed_by",
+    "signing_bytes",
+    "signing_payload",
+    "snapshot",
+    "source_hashes_are_unique",
+    "start_session",
+    "submission_is_not_empty",
+    "summary",
+    "supports",
+    "synchronize_epoch",
+    "system",
+    "timestamps_and_renewals_are_consistent",
+    "tls13_context_factory",
+    "to_budget",
+    "to_dict",
+    "to_usage",
+    "transact",
+    "update_presence",
+    "upgrade_legacy_signature",
+    "url",
+    "usage",
+    "validate",
+    "validate_backoff",
+    "validate_grant",
+    "validate_lifetime",
+    "verify",
+    "verify_admission_bundle",
+    "verify_bytes",
+    "verify_canonical",
+    "verify_canonical_hash",
+    "verify_cryptography_bundle",
+    "verify_historical_admission",
+    "verify_membership",
+    "verify_session",
+    "window_is_ordered",
+    "work_contract",
+    "work_item"
+  ],
+  "entries": [
+    {
+      "name": "ANALYST",
+      "qualifiedName": "ANALYST",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 155
+    },
+    {
+      "name": "AcceptWorkOfferPayload",
+      "qualifiedName": "AcceptWorkOfferPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 997
+    },
+    {
+      "name": "AckFrame",
+      "qualifiedName": "AckFrame",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 154
+    },
+    {
+      "name": "Acknowledgement",
+      "qualifiedName": "Acknowledgement",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 143
+    },
+    {
+      "name": "ActionIdCollision",
+      "qualifiedName": "ActionIdCollision",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 169
+    },
+    {
+      "name": "ActiveSessionError",
+      "qualifiedName": "ActiveSessionError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 16
+    },
+    {
+      "name": "ActorType",
+      "qualifiedName": "ActorType",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 57
+    },
+    {
+      "name": "AddMembershipPayload",
+      "qualifiedName": "AddMembershipPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 913
+    },
+    {
+      "name": "AddWorkItemDependencyPayload",
+      "qualifiedName": "AddWorkItemDependencyPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 975
+    },
+    {
+      "name": "AdmissionBundleSummary",
+      "qualifiedName": "AdmissionBundleSummary",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/bundle.py",
+      "line": 75
+    },
+    {
+      "name": "AdmissionContextValue",
+      "qualifiedName": "AdmissionContextValue",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 86
+    },
+    {
+      "name": "AdmissionCurrentKeyResolver",
+      "qualifiedName": "AdmissionCurrentKeyResolver",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 107
+    },
+    {
+      "name": "resolve_current",
+      "qualifiedName": "AdmissionCurrentKeyResolver.resolve_current",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 110
+    },
+    {
+      "name": "AdmissionDecision",
+      "qualifiedName": "AdmissionDecision",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 182
+    },
+    {
+      "name": "AdmissionError",
+      "qualifiedName": "AdmissionError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 61
+    },
+    {
+      "name": "AdmissionLog",
+      "qualifiedName": "AdmissionLog",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 164
+    },
+    {
+      "name": "append_or_return_existing",
+      "qualifiedName": "AdmissionLog.append_or_return_existing",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 170
+    },
+    {
+      "name": "lookup",
+      "qualifiedName": "AdmissionLog.lookup",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 167
+    },
+    {
+      "name": "AdmissionLogError",
+      "qualifiedName": "AdmissionLogError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 75
+    },
+    {
+      "name": "AdmissionLookup",
+      "qualifiedName": "AdmissionLookup",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 148
+    },
+    {
+      "name": "AdmissionLookupStatus",
+      "qualifiedName": "AdmissionLookupStatus",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 140
+    },
+    {
+      "name": "AdmissionPin",
+      "qualifiedName": "AdmissionPin",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/bundle.py",
+      "line": 60
+    },
+    {
+      "name": "AdmissionReason",
+      "qualifiedName": "AdmissionReason",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 167
+    },
+    {
+      "name": "AdmissionService",
+      "qualifiedName": "AdmissionService",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 212
+    },
+    {
+      "name": "admit_first",
+      "qualifiedName": "AdmissionService.admit_first",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 268
+    },
+    {
+      "name": "prepare_first_admission",
+      "qualifiedName": "AdmissionService.prepare_first_admission",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 219
+    },
+    {
+      "name": "verify_historical_admission",
+      "qualifiedName": "AdmissionService.verify_historical_admission",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 303
+    },
+    {
+      "name": "AdmissionStage",
+      "qualifiedName": "AdmissionStage",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 47
+    },
+    {
+      "name": "AdmittedSignedDocument",
+      "qualifiedName": "AdmittedSignedDocument",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 205
+    },
+    {
+      "name": "AgentCard",
+      "qualifiedName": "AgentCard",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 350
+    },
+    {
+      "name": "AgentCard",
+      "qualifiedName": "AgentCard",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 41
+    },
+    {
+      "name": "capabilities_are_unique",
+      "qualifiedName": "AgentCard.capabilities_are_unique",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 362
+    },
+    {
+      "name": "signed_by",
+      "qualifiedName": "AgentCard.signed_by",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 57
+    },
+    {
+      "name": "signing_bytes",
+      "qualifiedName": "AgentCard.signing_bytes",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 54
+    },
+    {
+      "name": "supports",
+      "qualifiedName": "AgentCard.supports",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 368
+    },
+    {
+      "name": "AgentIdentity",
+      "qualifiedName": "AgentIdentity",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 41
+    },
+    {
+      "name": "generate",
+      "qualifiedName": "AgentIdentity.generate",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 48
+    },
+    {
+      "name": "public_key",
+      "qualifiedName": "AgentIdentity.public_key",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 52
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "AgentIdentity.sign",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 59
+    },
+    {
+      "name": "AgentKeyRegistry",
+      "qualifiedName": "AgentKeyRegistry",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 129
+    },
+    {
+      "name": "matches_registered_public_key",
+      "qualifiedName": "AgentKeyRegistry.matches_registered_public_key",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 190
+    },
+    {
+      "name": "register",
+      "qualifiedName": "AgentKeyRegistry.register",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 135
+    },
+    {
+      "name": "resolve",
+      "qualifiedName": "AgentKeyRegistry.resolve",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 169
+    },
+    {
+      "name": "revoke",
+      "qualifiedName": "AgentKeyRegistry.revoke",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 208
+    },
+    {
+      "name": "AgentRegistry",
+      "qualifiedName": "AgentRegistry",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 105
+    },
+    {
+      "name": "candidates",
+      "qualifiedName": "AgentRegistry.candidates",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 156
+    },
+    {
+      "name": "card",
+      "qualifiedName": "AgentRegistry.card",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 131
+    },
+    {
+      "name": "presence",
+      "qualifiedName": "AgentRegistry.presence",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 142
+    },
+    {
+      "name": "record_performance",
+      "qualifiedName": "AgentRegistry.record_performance",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 151
+    },
+    {
+      "name": "register",
+      "qualifiedName": "AgentRegistry.register",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 120
+    },
+    {
+      "name": "update_presence",
+      "qualifiedName": "AgentRegistry.update_presence",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 137
+    },
+    {
+      "name": "AgentRegistryKeyResolver",
+      "qualifiedName": "AgentRegistryKeyResolver",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 253
+    },
+    {
+      "name": "resolve",
+      "qualifiedName": "AgentRegistryKeyResolver.resolve",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 263
+    },
+    {
+      "name": "AgentReplay",
+      "qualifiedName": "AgentReplay",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/replay.py",
+      "line": 72
+    },
+    {
+      "name": "reconcile",
+      "qualifiedName": "AgentReplay.reconcile",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/replay.py",
+      "line": 116
+    },
+    {
+      "name": "scheduler",
+      "qualifiedName": "AgentReplay.scheduler",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/replay.py",
+      "line": 113
+    },
+    {
+      "name": "AgentRuntime",
+      "qualifiedName": "AgentRuntime",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 207
+    },
+    {
+      "name": "active_session",
+      "qualifiedName": "AgentRuntime.active_session",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 220
+    },
+    {
+      "name": "start_session",
+      "qualifiedName": "AgentRuntime.start_session",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 224
+    },
+    {
+      "name": "AgentRuntimeSession",
+      "qualifiedName": "AgentRuntimeSession",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 78
+    },
+    {
+      "name": "close",
+      "qualifiedName": "AgentRuntimeSession.close",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 185
+    },
+    {
+      "name": "descriptor",
+      "qualifiedName": "AgentRuntimeSession.descriptor",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 93
+    },
+    {
+      "name": "install_group_context",
+      "qualifiedName": "AgentRuntimeSession.install_group_context",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 101
+    },
+    {
+      "name": "install_group_credentials",
+      "qualifiedName": "AgentRuntimeSession.install_group_credentials",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 125
+    },
+    {
+      "name": "prepare",
+      "qualifiedName": "AgentRuntimeSession.prepare",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 149
+    },
+    {
+      "name": "scheduler",
+      "qualifiedName": "AgentRuntimeSession.scheduler",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 97
+    },
+    {
+      "name": "AlreadyExists",
+      "qualifiedName": "AlreadyExists",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 161
+    },
+    {
+      "name": "Approval",
+      "qualifiedName": "Approval",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 749
+    },
+    {
+      "name": "ApproveMissionPayload",
+      "qualifiedName": "ApproveMissionPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1114
+    },
+    {
+      "name": "ArchiveGroupPayload",
+      "qualifiedName": "ArchiveGroupPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1197
+    },
+    {
+      "name": "Artifact",
+      "qualifiedName": "Artifact",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 713
+    },
+    {
+      "name": "artifact_does_not_source_itself",
+      "qualifiedName": "Artifact.artifact_does_not_source_itself",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 738
+    },
+    {
+      "name": "signing_payload",
+      "qualifiedName": "Artifact.signing_payload",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 743
+    },
+    {
+      "name": "source_hashes_are_unique",
+      "qualifiedName": "Artifact.source_hashes_are_unique",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 732
+    },
+    {
+      "name": "ArtifactError",
+      "qualifiedName": "ArtifactError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/artifacts.py",
+      "line": 19
+    },
+    {
+      "name": "ArtifactLocation",
+      "qualifiedName": "ArtifactLocation",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 126
+    },
+    {
+      "name": "ArtifactManifest",
+      "qualifiedName": "ArtifactManifest",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/artifacts.py",
+      "line": 27
+    },
+    {
+      "name": "signed_by",
+      "qualifiedName": "ArtifactManifest.signed_by",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/artifacts.py",
+      "line": 50
+    },
+    {
+      "name": "signing_bytes",
+      "qualifiedName": "ArtifactManifest.signing_bytes",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/artifacts.py",
+      "line": 47
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "ArtifactManifest.verify",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/artifacts.py",
+      "line": 55
+    },
+    {
+      "name": "Attempt",
+      "qualifiedName": "Attempt",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/execution.py",
+      "line": 21
+    },
+    {
+      "name": "AttentionFilter",
+      "qualifiedName": "AttentionFilter",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 86
+    },
+    {
+      "name": "AuthFrame",
+      "qualifiedName": "AuthFrame",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 67
+    },
+    {
+      "name": "AuthenticatedAdmissionRecord",
+      "qualifiedName": "AuthenticatedAdmissionRecord",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 126
+    },
+    {
+      "name": "AuthenticationError",
+      "qualifiedName": "AuthenticationError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 24
+    },
+    {
+      "name": "AuthoritativePolicyReader",
+      "qualifiedName": "AuthoritativePolicyReader",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 469
+    },
+    {
+      "name": "query",
+      "qualifiedName": "AuthoritativePolicyReader.query",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 472
+    },
+    {
+      "name": "replay",
+      "qualifiedName": "AuthoritativePolicyReader.replay",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 474
+    },
+    {
+      "name": "AuthoritativeState",
+      "qualifiedName": "AuthoritativeState",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 51
+    },
+    {
+      "name": "AuthoritativeStore",
+      "qualifiedName": "AuthoritativeStore",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 81
+    },
+    {
+      "name": "close",
+      "qualifiedName": "AuthoritativeStore.close",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 90
+    },
+    {
+      "name": "inspect",
+      "qualifiedName": "AuthoritativeStore.inspect",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 87
+    },
+    {
+      "name": "transact",
+      "qualifiedName": "AuthoritativeStore.transact",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 84
+    },
+    {
+      "name": "AuthorizationDenied",
+      "qualifiedName": "AuthorizationDenied",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 165
+    },
+    {
+      "name": "AuthorizationService",
+      "qualifiedName": "AuthorizationService",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 301
+    },
+    {
+      "name": "issue",
+      "qualifiedName": "AuthorizationService.issue",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 315
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "AuthorizationService.verify",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 409
+    },
+    {
+      "name": "BlockWorkItemPayload",
+      "qualifiedName": "BlockWorkItemPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1039
+    },
+    {
+      "name": "BudgetExceeded",
+      "qualifiedName": "BudgetExceeded",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 209
+    },
+    {
+      "name": "BudgetLedger",
+      "qualifiedName": "BudgetLedger",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 120
+    },
+    {
+      "name": "consume",
+      "qualifiedName": "BudgetLedger.consume",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 192
+    },
+    {
+      "name": "rebuild",
+      "qualifiedName": "BudgetLedger.rebuild",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 265
+    },
+    {
+      "name": "register_mission",
+      "qualifiedName": "BudgetLedger.register_mission",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 127
+    },
+    {
+      "name": "register_work_item",
+      "qualifiedName": "BudgetLedger.register_work_item",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 161
+    },
+    {
+      "name": "remaining",
+      "qualifiedName": "BudgetLedger.remaining",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 234
+    },
+    {
+      "name": "snapshot",
+      "qualifiedName": "BudgetLedger.snapshot",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 258
+    },
+    {
+      "name": "BudgetLedgerError",
+      "qualifiedName": "BudgetLedgerError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 27
+    },
+    {
+      "name": "BudgetLedgerSnapshot",
+      "qualifiedName": "BudgetLedgerSnapshot",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 93
+    },
+    {
+      "name": "to_dict",
+      "qualifiedName": "BudgetLedgerSnapshot.to_dict",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 100
+    },
+    {
+      "name": "BudgetLedgerSnapshotV1",
+      "qualifiedName": "BudgetLedgerSnapshotV1",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 111
+    },
+    {
+      "name": "BudgetLimitState",
+      "qualifiedName": "BudgetLimitState",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 40
+    },
+    {
+      "name": "from_budget",
+      "qualifiedName": "BudgetLimitState.from_budget",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 51
+    },
+    {
+      "name": "to_budget",
+      "qualifiedName": "BudgetLimitState.to_budget",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 54
+    },
+    {
+      "name": "BudgetMeter",
+      "qualifiedName": "BudgetMeter",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 708
+    },
+    {
+      "name": "consume",
+      "qualifiedName": "BudgetMeter.consume",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 715
+    },
+    {
+      "name": "BudgetUsageState",
+      "qualifiedName": "BudgetUsageState",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 58
+    },
+    {
+      "name": "from_usage",
+      "qualifiedName": "BudgetUsageState.from_usage",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 69
+    },
+    {
+      "name": "to_usage",
+      "qualifiedName": "BudgetUsageState.to_usage",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 72
+    },
+    {
+      "name": "BundleVerificationError",
+      "qualifiedName": "BundleVerificationError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/bundle.py",
+      "line": 42
+    },
+    {
+      "name": "CODER",
+      "qualifiedName": "CODER",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 156
+    },
+    {
+      "name": "COORD_AUTH",
+      "qualifiedName": "COORD_AUTH",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 152
+    },
+    {
+      "name": "COORD_CLI",
+      "qualifiedName": "COORD_CLI",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 153
+    },
+    {
+      "name": "COORD_CLI_REPLACEMENT",
+      "qualifiedName": "COORD_CLI_REPLACEMENT",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 154
+    },
+    {
+      "name": "CancelMissionPayload",
+      "qualifiedName": "CancelMissionPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1193
+    },
+    {
+      "name": "CancelWorkItemPayload",
+      "qualifiedName": "CancelWorkItemPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1098
+    },
+    {
+      "name": "Candidate",
+      "qualifiedName": "Candidate",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 93
+    },
+    {
+      "name": "CanonicalizationError",
+      "qualifiedName": "CanonicalizationError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/canonical.py",
+      "line": 26
+    },
+    {
+      "name": "Capability",
+      "qualifiedName": "Capability",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 336
+    },
+    {
+      "name": "CapabilityDescriptor",
+      "qualifiedName": "CapabilityDescriptor",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 30
+    },
+    {
+      "name": "CapabilityGrant",
+      "qualifiedName": "CapabilityGrant",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 266
+    },
+    {
+      "name": "expiry_is_bounded_by_execution_lease",
+      "qualifiedName": "CapabilityGrant.expiry_is_bounded_by_execution_lease",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 285
+    },
+    {
+      "name": "CapabilityPerformance",
+      "qualifiedName": "CapabilityPerformance",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 74
+    },
+    {
+      "name": "reliability",
+      "qualifiedName": "CapabilityPerformance.reliability",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 88
+    },
+    {
+      "name": "CapabilityRequirement",
+      "qualifiedName": "CapabilityRequirement",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 345
+    },
+    {
+      "name": "Challenge",
+      "qualifiedName": "Challenge",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 64
+    },
+    {
+      "name": "nonce",
+      "qualifiedName": "Challenge.nonce",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 74
+    },
+    {
+      "name": "signing_bytes",
+      "qualifiedName": "Challenge.signing_bytes",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 79
+    },
+    {
+      "name": "ChallengeFrame",
+      "qualifiedName": "ChallengeFrame",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 58
+    },
+    {
+      "name": "Checkpoint",
+      "qualifiedName": "Checkpoint",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 492
+    },
+    {
+      "name": "CheckpointRef",
+      "qualifiedName": "CheckpointRef",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 198
+    },
+    {
+      "name": "CheckpointWorkItemPayload",
+      "qualifiedName": "CheckpointWorkItemPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1031
+    },
+    {
+      "name": "ChildFailurePolicy",
+      "qualifiedName": "ChildFailurePolicy",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 110
+    },
+    {
+      "name": "ClosedSessionError",
+      "qualifiedName": "ClosedSessionError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 24
+    },
+    {
+      "name": "Command",
+      "qualifiedName": "Command",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 785
+    },
+    {
+      "name": "serialize_payload_model",
+      "qualifiedName": "Command.serialize_payload_model",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 832
+    },
+    {
+      "name": "signing_payload",
+      "qualifiedName": "Command.signing_payload",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 837
+    },
+    {
+      "name": "upgrade_legacy_signature",
+      "qualifiedName": "Command.upgrade_legacy_signature",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 808
+    },
+    {
+      "name": "CommandAdmissionError",
+      "qualifiedName": "CommandAdmissionError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 120
+    },
+    {
+      "name": "CommandFrame",
+      "qualifiedName": "CommandFrame",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 118
+    },
+    {
+      "name": "CommandIngress",
+      "qualifiedName": "CommandIngress",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/ingress.py",
+      "line": 19
+    },
+    {
+      "name": "execution_payload",
+      "qualifiedName": "CommandIngress.execution_payload",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/ingress.py",
+      "line": 63
+    },
+    {
+      "name": "project_verified",
+      "qualifiedName": "CommandIngress.project_verified",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/ingress.py",
+      "line": 33
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "CommandIngress.verify",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/ingress.py",
+      "line": 25
+    },
+    {
+      "name": "CommandKind",
+      "qualifiedName": "CommandKind",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 124
+    },
+    {
+      "name": "ConformanceReport",
+      "qualifiedName": "ConformanceReport",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/conformance.py",
+      "line": 32
+    },
+    {
+      "name": "passed",
+      "qualifiedName": "ConformanceReport.passed",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/conformance.py",
+      "line": 36
+    },
+    {
+      "name": "summary",
+      "qualifiedName": "ConformanceReport.summary",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/conformance.py",
+      "line": 39
+    },
+    {
+      "name": "ContextDecision",
+      "qualifiedName": "ContextDecision",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 51
+    },
+    {
+      "name": "ContextPackage",
+      "qualifiedName": "ContextPackage",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 56
+    },
+    {
+      "name": "signing_payload",
+      "qualifiedName": "ContextPackage.signing_payload",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 73
+    },
+    {
+      "name": "ContextPackageService",
+      "qualifiedName": "ContextPackageService",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 77
+    },
+    {
+      "name": "install",
+      "qualifiedName": "ContextPackageService.install",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 175
+    },
+    {
+      "name": "publish",
+      "qualifiedName": "ContextPackageService.publish",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 95
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "ContextPackageService.verify",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 165
+    },
+    {
+      "name": "ControlReceipt",
+      "qualifiedName": "ControlReceipt",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 89
+    },
+    {
+      "name": "Conversation",
+      "qualifiedName": "Conversation",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 636
+    },
+    {
+      "name": "CooperationLimits",
+      "qualifiedName": "CooperationLimits",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 733
+    },
+    {
+      "name": "CooperationOverrideGrant",
+      "qualifiedName": "CooperationOverrideGrant",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 607
+    },
+    {
+      "name": "validate_lifetime",
+      "qualifiedName": "CooperationOverrideGrant.validate_lifetime",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 624
+    },
+    {
+      "name": "CooperationPolicyName",
+      "qualifiedName": "CooperationPolicyName",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 116
+    },
+    {
+      "name": "Core",
+      "qualifiedName": "Core",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 275
+    },
+    {
+      "name": "perform",
+      "qualifiedName": "Core.perform",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 296
+    },
+    {
+      "name": "query",
+      "qualifiedName": "Core.query",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 344
+    },
+    {
+      "name": "replay",
+      "qualifiedName": "Core.replay",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 421
+    },
+    {
+      "name": "CoreGatewayAdapter",
+      "qualifiedName": "CoreGatewayAdapter",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 156
+    },
+    {
+      "name": "activate_session",
+      "qualifiedName": "CoreGatewayAdapter.activate_session",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 196
+    },
+    {
+      "name": "current_session_epoch",
+      "qualifiedName": "CoreGatewayAdapter.current_session_epoch",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 188
+    },
+    {
+      "name": "perform",
+      "qualifiedName": "CoreGatewayAdapter.perform",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 230
+    },
+    {
+      "name": "replay",
+      "qualifiedName": "CoreGatewayAdapter.replay",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 260
+    },
+    {
+      "name": "CorrectMessagePayload",
+      "qualifiedName": "CorrectMessagePayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 940
+    },
+    {
+      "name": "CreateChildMissionPayload",
+      "qualifiedName": "CreateChildMissionPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 898
+    },
+    {
+      "name": "CreateMissionPayload",
+      "qualifiedName": "CreateMissionPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 884
+    },
+    {
+      "name": "CreateWorkItemPayload",
+      "qualifiedName": "CreateWorkItemPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 966
+    },
+    {
+      "name": "CryptographyBundleSummary",
+      "qualifiedName": "CryptographyBundleSummary",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/bundle.py",
+      "line": 47
+    },
+    {
+      "name": "CursorStore",
+      "qualifiedName": "CursorStore",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 454
+    },
+    {
+      "name": "acknowledge",
+      "qualifiedName": "CursorStore.acknowledge",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 455
+    },
+    {
+      "name": "cursor",
+      "qualifiedName": "CursorStore.cursor",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 457
+    },
+    {
+      "name": "DedupRecord",
+      "qualifiedName": "DedupRecord",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 46
+    },
+    {
+      "name": "DelegationAuthority",
+      "qualifiedName": "DelegationAuthority",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/delegation.py",
+      "line": 59
+    },
+    {
+      "name": "authorize_descendant",
+      "qualifiedName": "DelegationAuthority.authorize_descendant",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/delegation.py",
+      "line": 147
+    },
+    {
+      "name": "authorize_existing",
+      "qualifiedName": "DelegationAuthority.authorize_existing",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/delegation.py",
+      "line": 133
+    },
+    {
+      "name": "DelegationBudget",
+      "qualifiedName": "DelegationBudget",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 410
+    },
+    {
+      "name": "DelegationGrant",
+      "qualifiedName": "DelegationGrant",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 569
+    },
+    {
+      "name": "validate_grant",
+      "qualifiedName": "DelegationGrant.validate_grant",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 585
+    },
+    {
+      "name": "DelegationViolation",
+      "qualifiedName": "DelegationViolation",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/delegation.py",
+      "line": 36
+    },
+    {
+      "name": "DelegationViolationKind",
+      "qualifiedName": "DelegationViolationKind",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/delegation.py",
+      "line": 24
+    },
+    {
+      "name": "DependencyError",
+      "qualifiedName": "DependencyError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 201
+    },
+    {
+      "name": "Dispatch",
+      "qualifiedName": "Dispatch",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 240
+    },
+    {
+      "name": "DocumentMappingError",
+      "qualifiedName": "DocumentMappingError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 68
+    },
+    {
+      "name": "DocumentSigner",
+      "qualifiedName": "DocumentSigner",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 73
+    },
+    {
+      "name": "algorithm",
+      "qualifiedName": "DocumentSigner.algorithm",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 81
+    },
+    {
+      "name": "public_key",
+      "qualifiedName": "DocumentSigner.public_key",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 99
+    },
+    {
+      "name": "public_key_bytes",
+      "qualifiedName": "DocumentSigner.public_key_bytes",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 85
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "DocumentSigner.sign",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 95
+    },
+    {
+      "name": "Ed25519SigningKey",
+      "qualifiedName": "Ed25519SigningKey",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/crypto.py",
+      "line": 20
+    },
+    {
+      "name": "algorithm",
+      "qualifiedName": "Ed25519SigningKey.algorithm",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/crypto.py",
+      "line": 27
+    },
+    {
+      "name": "public_key_bytes",
+      "qualifiedName": "Ed25519SigningKey.public_key_bytes",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/crypto.py",
+      "line": 31
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "Ed25519SigningKey.sign",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/crypto.py",
+      "line": 41
+    },
+    {
+      "name": "EndMembershipPayload",
+      "qualifiedName": "EndMembershipPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 920
+    },
+    {
+      "name": "ErrorCode",
+      "qualifiedName": "ErrorCode",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 121
+    },
+    {
+      "name": "ErrorCode",
+      "qualifiedName": "ErrorCode",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 168
+    },
+    {
+      "name": "ErrorDocument",
+      "qualifiedName": "ErrorDocument",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 198
+    },
+    {
+      "name": "ErrorFrame",
+      "qualifiedName": "ErrorFrame",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 220
+    },
+    {
+      "name": "EstimateBand",
+      "qualifiedName": "EstimateBand",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 35
+    },
+    {
+      "name": "Event",
+      "qualifiedName": "Event",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 845
+    },
+    {
+      "name": "EventFrame",
+      "qualifiedName": "EventFrame",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 138
+    },
+    {
+      "name": "EventKind",
+      "qualifiedName": "EventKind",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 165
+    },
+    {
+      "name": "EventProjection",
+      "qualifiedName": "EventProjection",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/replay.py",
+      "line": 39
+    },
+    {
+      "name": "EventProjector",
+      "qualifiedName": "EventProjector",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/replay.py",
+      "line": 61
+    },
+    {
+      "name": "Evidence",
+      "qualifiedName": "Evidence",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 484
+    },
+    {
+      "name": "ExecutionApproval",
+      "qualifiedName": "ExecutionApproval",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 761
+    },
+    {
+      "name": "ExecutionAuthorization",
+      "qualifiedName": "ExecutionAuthorization",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 487
+    },
+    {
+      "name": "issue",
+      "qualifiedName": "ExecutionAuthorization.issue",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 505
+    },
+    {
+      "name": "ExecutionContext",
+      "qualifiedName": "ExecutionContext",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 52
+    },
+    {
+      "name": "ExecutionLease",
+      "qualifiedName": "ExecutionLease",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/lease.py",
+      "line": 31
+    },
+    {
+      "name": "close",
+      "qualifiedName": "ExecutionLease.close",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/lease.py",
+      "line": 107
+    },
+    {
+      "name": "renew",
+      "qualifiedName": "ExecutionLease.renew",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/lease.py",
+      "line": 82
+    },
+    {
+      "name": "timestamps_and_renewals_are_consistent",
+      "qualifiedName": "ExecutionLease.timestamps_and_renewals_are_consistent",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/lease.py",
+      "line": 52
+    },
+    {
+      "name": "ExpectedSignerEvidence",
+      "qualifiedName": "ExpectedSignerEvidence",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 138
+    },
+    {
+      "name": "ExpectedSignerRule",
+      "qualifiedName": "ExpectedSignerRule",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 130
+    },
+    {
+      "name": "ExtensionEnvelope",
+      "qualifiedName": "ExtensionEnvelope",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 777
+    },
+    {
+      "name": "FailMissionPayload",
+      "qualifiedName": "FailMissionPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1189
+    },
+    {
+      "name": "FailWorkItemPayload",
+      "qualifiedName": "FailWorkItemPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1085
+    },
+    {
+      "name": "execution_scope_is_paired",
+      "qualifiedName": "FailWorkItemPayload.execution_scope_is_paired",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1092
+    },
+    {
+      "name": "FirstAdmissionRecord",
+      "qualifiedName": "FirstAdmissionRecord",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 180
+    },
+    {
+      "name": "FrameModel",
+      "qualifiedName": "FrameModel",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 38
+    },
+    {
+      "name": "GROUP_AUTH",
+      "qualifiedName": "GROUP_AUTH",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 162
+    },
+    {
+      "name": "GROUP_CLI",
+      "qualifiedName": "GROUP_CLI",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 164
+    },
+    {
+      "name": "GROUP_SECURITY",
+      "qualifiedName": "GROUP_SECURITY",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 166
+    },
+    {
+      "name": "GatewayCore",
+      "qualifiedName": "GatewayCore",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 128
+    },
+    {
+      "name": "activate_session",
+      "qualifiedName": "GatewayCore.activate_session",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 133
+    },
+    {
+      "name": "current_session_epoch",
+      "qualifiedName": "GatewayCore.current_session_epoch",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 131
+    },
+    {
+      "name": "perform",
+      "qualifiedName": "GatewayCore.perform",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 135
+    },
+    {
+      "name": "replay",
+      "qualifiedName": "GatewayCore.replay",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 142
+    },
+    {
+      "name": "GatewaySchemaError",
+      "qualifiedName": "GatewaySchemaError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 83
+    },
+    {
+      "name": "GrantCooperationOverridePayload",
+      "qualifiedName": "GrantCooperationOverridePayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1140
+    },
+    {
+      "name": "GrantDelegationPayload",
+      "qualifiedName": "GrantDelegationPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1150
+    },
+    {
+      "name": "budget_has_all_six_ceilings",
+      "qualifiedName": "GrantDelegationPayload.budget_has_all_six_ceilings",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1171
+    },
+    {
+      "name": "capabilities_are_nonempty_and_unique",
+      "qualifiedName": "GrantDelegationPayload.capabilities_are_nonempty_and_unique",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1161
+    },
+    {
+      "name": "GrantExecutionApprovalPayload",
+      "qualifiedName": "GrantExecutionApprovalPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1122
+    },
+    {
+      "name": "operations_are_nonempty_and_unique",
+      "qualifiedName": "GrantExecutionApprovalPayload.operations_are_nonempty_and_unique",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1134
+    },
+    {
+      "name": "Group",
+      "qualifiedName": "Group",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 534
+    },
+    {
+      "name": "archive_link_is_complete",
+      "qualifiedName": "Group.archive_link_is_complete",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 543
+    },
+    {
+      "name": "GroupCursor",
+      "qualifiedName": "GroupCursor",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 100
+    },
+    {
+      "name": "GroupGateway",
+      "qualifiedName": "GroupGateway",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 489
+    },
+    {
+      "name": "GroupReplayResult",
+      "qualifiedName": "GroupReplayResult",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/replay.py",
+      "line": 46
+    },
+    {
+      "name": "GroupSchedulingPolicy",
+      "qualifiedName": "GroupSchedulingPolicy",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 106
+    },
+    {
+      "name": "GroupSnapshot",
+      "qualifiedName": "GroupSnapshot",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 286
+    },
+    {
+      "name": "event_count_matches_sequence",
+      "qualifiedName": "GroupSnapshot.event_count_matches_sequence",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 305
+    },
+    {
+      "name": "event_ids_are_unique",
+      "qualifiedName": "GroupSnapshot.event_ids_are_unique",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 299
+    },
+    {
+      "name": "protocol_document",
+      "qualifiedName": "GroupSnapshot.protocol_document",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 323
+    },
+    {
+      "name": "protocol_event_id",
+      "qualifiedName": "GroupSnapshot.protocol_event_id",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 315
+    },
+    {
+      "name": "protocol_group_id",
+      "qualifiedName": "GroupSnapshot.protocol_group_id",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 311
+    },
+    {
+      "name": "signing_payload",
+      "qualifiedName": "GroupSnapshot.signing_payload",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 318
+    },
+    {
+      "name": "HelloFrame",
+      "qualifiedName": "HelloFrame",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 49
+    },
+    {
+      "name": "HumanControl",
+      "qualifiedName": "HumanControl",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 106
+    },
+    {
+      "name": "accepted_command",
+      "qualifiedName": "HumanControl.accepted_command",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 306
+    },
+    {
+      "name": "approve",
+      "qualifiedName": "HumanControl.approve",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 212
+    },
+    {
+      "name": "approve_execution",
+      "qualifiedName": "HumanControl.approve_execution",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 245
+    },
+    {
+      "name": "cancel",
+      "qualifiedName": "HumanControl.cancel",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 279
+    },
+    {
+      "name": "create",
+      "qualifiedName": "HumanControl.create",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 122
+    },
+    {
+      "name": "direct",
+      "qualifiedName": "HumanControl.direct",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 173
+    },
+    {
+      "name": "inspect",
+      "qualifiedName": "HumanControl.inspect",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 153
+    },
+    {
+      "name": "replace_coordinator",
+      "qualifiedName": "HumanControl.replace_coordinator",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 288
+    },
+    {
+      "name": "request_changes",
+      "qualifiedName": "HumanControl.request_changes",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 194
+    },
+    {
+      "name": "HumanIdentity",
+      "qualifiedName": "HumanIdentity",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 47
+    },
+    {
+      "name": "generate",
+      "qualifiedName": "HumanIdentity.generate",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 56
+    },
+    {
+      "name": "principal",
+      "qualifiedName": "HumanIdentity.principal",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 66
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "HumanIdentity.sign",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 69
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "HumanIdentity.verify",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 81
+    },
+    {
+      "name": "InMemoryCursorStore",
+      "qualifiedName": "InMemoryCursorStore",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 460
+    },
+    {
+      "name": "acknowledge",
+      "qualifiedName": "InMemoryCursorStore.acknowledge",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 465
+    },
+    {
+      "name": "cursor",
+      "qualifiedName": "InMemoryCursorStore.cursor",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 473
+    },
+    {
+      "name": "InMemoryStore",
+      "qualifiedName": "InMemoryStore",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 94
+    },
+    {
+      "name": "close",
+      "qualifiedName": "InMemoryStore.close",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 113
+    },
+    {
+      "name": "inspect",
+      "qualifiedName": "InMemoryStore.inspect",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 108
+    },
+    {
+      "name": "transact",
+      "qualifiedName": "InMemoryStore.transact",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 101
+    },
+    {
+      "name": "InvalidCommand",
+      "qualifiedName": "InvalidCommand",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 153
+    },
+    {
+      "name": "InvalidTransition",
+      "qualifiedName": "InvalidTransition",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 193
+    },
+    {
+      "name": "IssuedCapabilityGrant",
+      "qualifiedName": "IssuedCapabilityGrant",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 296
+    },
+    {
+      "name": "IssuedMembershipToken",
+      "qualifiedName": "IssuedMembershipToken",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 151
+    },
+    {
+      "name": "KeyRegistryCompleteness",
+      "qualifiedName": "KeyRegistryCompleteness",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 145
+    },
+    {
+      "name": "KeyRegistrySnapshot",
+      "qualifiedName": "KeyRegistrySnapshot",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 152
+    },
+    {
+      "name": "KeyResolutionRequest",
+      "qualifiedName": "KeyResolutionRequest",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 160
+    },
+    {
+      "name": "KeyResolver",
+      "qualifiedName": "KeyResolver",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 245
+    },
+    {
+      "name": "resolve",
+      "qualifiedName": "KeyResolver.resolve",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 248
+    },
+    {
+      "name": "KeyValidityEvidence",
+      "qualifiedName": "KeyValidityEvidence",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 170
+    },
+    {
+      "name": "KnowledgePublication",
+      "qualifiedName": "KnowledgePublication",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 209
+    },
+    {
+      "name": "signing_payload",
+      "qualifiedName": "KnowledgePublication.signing_payload",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 222
+    },
+    {
+      "name": "KnowledgePublisher",
+      "qualifiedName": "KnowledgePublisher",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 226
+    },
+    {
+      "name": "publish",
+      "qualifiedName": "KnowledgePublisher.publish",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 242
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "KnowledgePublisher.verify",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 287
+    },
+    {
+      "name": "LeaseExpired",
+      "qualifiedName": "LeaseExpired",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 189
+    },
+    {
+      "name": "LeaseState",
+      "qualifiedName": "LeaseState",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/lease.py",
+      "line": 22
+    },
+    {
+      "name": "LocalArtifactStore",
+      "qualifiedName": "LocalArtifactStore",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/artifacts.py",
+      "line": 64
+    },
+    {
+      "name": "get",
+      "qualifiedName": "LocalArtifactStore.get",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/artifacts.py",
+      "line": 117
+    },
+    {
+      "name": "put",
+      "qualifiedName": "LocalArtifactStore.put",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/artifacts.py",
+      "line": 71
+    },
+    {
+      "name": "LocalStoreError",
+      "qualifiedName": "LocalStoreError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 23
+    },
+    {
+      "name": "MAX_SAFE_INTEGER",
+      "qualifiedName": "MAX_SAFE_INTEGER",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/lease.py",
+      "line": 18
+    },
+    {
+      "name": "MISSION_AUTH",
+      "qualifiedName": "MISSION_AUTH",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 161
+    },
+    {
+      "name": "MISSION_CLI",
+      "qualifiedName": "MISSION_CLI",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 163
+    },
+    {
+      "name": "MISSION_SECURITY",
+      "qualifiedName": "MISSION_SECURITY",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 165
+    },
+    {
+      "name": "Membership",
+      "qualifiedName": "Membership",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 549
+    },
+    {
+      "name": "roles_are_nonempty_and_unique",
+      "qualifiedName": "Membership.roles_are_nonempty_and_unique",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 561
+    },
+    {
+      "name": "MembershipStatus",
+      "qualifiedName": "MembershipStatus",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 72
+    },
+    {
+      "name": "MembershipTokenClaims",
+      "qualifiedName": "MembershipTokenClaims",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 118
+    },
+    {
+      "name": "expiry_follows_issue",
+      "qualifiedName": "MembershipTokenClaims.expiry_follows_issue",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 142
+    },
+    {
+      "name": "roles_are_nonempty_and_unique",
+      "qualifiedName": "MembershipTokenClaims.roles_are_nonempty_and_unique",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 134
+    },
+    {
+      "name": "MembershipTokenService",
+      "qualifiedName": "MembershipTokenService",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 156
+    },
+    {
+      "name": "issue",
+      "qualifiedName": "MembershipTokenService.issue",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 170
+    },
+    {
+      "name": "issue_for_membership",
+      "qualifiedName": "MembershipTokenService.issue_for_membership",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 195
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "MembershipTokenService.verify",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 217
+    },
+    {
+      "name": "verify_membership",
+      "qualifiedName": "MembershipTokenService.verify_membership",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 243
+    },
+    {
+      "name": "Message",
+      "qualifiedName": "Message",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 644
+    },
+    {
+      "name": "MessageAmendment",
+      "qualifiedName": "MessageAmendment",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 654
+    },
+    {
+      "name": "MessageAmendmentKind",
+      "qualifiedName": "MessageAmendmentKind",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 78
+    },
+    {
+      "name": "Mission",
+      "qualifiedName": "Mission",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 500
+    },
+    {
+      "name": "definition_is_not_empty",
+      "qualifiedName": "Mission.definition_is_not_empty",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 528
+    },
+    {
+      "name": "MissionBudgetState",
+      "qualifiedName": "MissionBudgetState",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 76
+    },
+    {
+      "name": "MissionInspection",
+      "qualifiedName": "MissionInspection",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/control.py",
+      "line": 97
+    },
+    {
+      "name": "MissionResult",
+      "qualifiedName": "MissionResult",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 184
+    },
+    {
+      "name": "to_dict",
+      "qualifiedName": "MissionResult.to_dict",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 193
+    },
+    {
+      "name": "MissionStatus",
+      "qualifiedName": "MissionStatus",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 84
+    },
+    {
+      "name": "MissionWeaveProtocolError",
+      "qualifiedName": "MissionWeaveProtocolError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 139
+    },
+    {
+      "name": "as_dict",
+      "qualifiedName": "MissionWeaveProtocolError.as_dict",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 149
+    },
+    {
+      "name": "NotFound",
+      "qualifiedName": "NotFound",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 157
+    },
+    {
+      "name": "OFFLINE_EXECUTION_EXTENSION",
+      "qualifiedName": "OFFLINE_EXECUTION_EXTENSION",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/offline.py",
+      "line": 32
+    },
+    {
+      "name": "OFFLINE_EXECUTION_EXTENSION_VERSION",
+      "qualifiedName": "OFFLINE_EXECUTION_EXTENSION_VERSION",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/offline.py",
+      "line": 33
+    },
+    {
+      "name": "OWNER_ID",
+      "qualifiedName": "OWNER_ID",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 151
+    },
+    {
+      "name": "OfferWorkItemPayload",
+      "qualifiedName": "OfferWorkItemPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 980
+    },
+    {
+      "name": "candidates_are_nonempty_and_unique",
+      "qualifiedName": "OfferWorkItemPayload.candidates_are_nonempty_and_unique",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 989
+    },
+    {
+      "name": "OfflineExecutionPolicy",
+      "qualifiedName": "OfflineExecutionPolicy",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/offline.py",
+      "line": 89
+    },
+    {
+      "name": "buffer",
+      "qualifiedName": "OfflineExecutionPolicy.buffer",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/offline.py",
+      "line": 152
+    },
+    {
+      "name": "buffered_actions",
+      "qualifiedName": "OfflineExecutionPolicy.buffered_actions",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/offline.py",
+      "line": 145
+    },
+    {
+      "name": "cumulative_usage",
+      "qualifiedName": "OfflineExecutionPolicy.cumulative_usage",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/offline.py",
+      "line": 149
+    },
+    {
+      "name": "grace_deadline",
+      "qualifiedName": "OfflineExecutionPolicy.grace_deadline",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/offline.py",
+      "line": 141
+    },
+    {
+      "name": "OfflineLimits",
+      "qualifiedName": "OfflineLimits",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/offline.py",
+      "line": 75
+    },
+    {
+      "name": "OfflinePolicyError",
+      "qualifiedName": "OfflinePolicyError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/offline.py",
+      "line": 42
+    },
+    {
+      "name": "OfflineProgressBinding",
+      "qualifiedName": "OfflineProgressBinding",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/offline.py",
+      "line": 46
+    },
+    {
+      "name": "window_is_ordered",
+      "qualifiedName": "OfflineProgressBinding.window_is_ordered",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/offline.py",
+      "line": 62
+    },
+    {
+      "name": "OpenAgentSessionPayload",
+      "qualifiedName": "OpenAgentSessionPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 880
+    },
+    {
+      "name": "POCReport",
+      "qualifiedName": "POCReport",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/cli.py",
+      "line": 39
+    },
+    {
+      "name": "POCReport",
+      "qualifiedName": "POCReport",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 206
+    },
+    {
+      "name": "passed",
+      "qualifiedName": "POCReport.passed",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/cli.py",
+      "line": 41
+    },
+    {
+      "name": "require_success",
+      "qualifiedName": "POCReport.require_success",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 223
+    },
+    {
+      "name": "to_dict",
+      "qualifiedName": "POCReport.to_dict",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/cli.py",
+      "line": 43
+    },
+    {
+      "name": "to_dict",
+      "qualifiedName": "POCReport.to_dict",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 228
+    },
+    {
+      "name": "PingFrame",
+      "qualifiedName": "PingFrame",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 160
+    },
+    {
+      "name": "PolicyError",
+      "qualifiedName": "PolicyError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 52
+    },
+    {
+      "name": "PolicyGuard",
+      "qualifiedName": "PolicyGuard",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 745
+    },
+    {
+      "name": "check_clarification_rate",
+      "qualifiedName": "PolicyGuard.check_clarification_rate",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 810
+    },
+    {
+      "name": "check_delegation_depth",
+      "qualifiedName": "PolicyGuard.check_delegation_depth",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 753
+    },
+    {
+      "name": "check_message_rate",
+      "qualifiedName": "PolicyGuard.check_message_rate",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 780
+    },
+    {
+      "name": "check_proposal_rate",
+      "qualifiedName": "PolicyGuard.check_proposal_rate",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 795
+    },
+    {
+      "name": "check_queue",
+      "qualifiedName": "PolicyGuard.check_queue",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 759
+    },
+    {
+      "name": "check_unresolved_clarifications",
+      "qualifiedName": "PolicyGuard.check_unresolved_clarifications",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 771
+    },
+    {
+      "name": "classify_action",
+      "qualifiedName": "PolicyGuard.classify_action",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/policy.py",
+      "line": 845
+    },
+    {
+      "name": "PolicyLogEntry",
+      "qualifiedName": "PolicyLogEntry",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 264
+    },
+    {
+      "name": "PolicyViolation",
+      "qualifiedName": "PolicyViolation",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 205
+    },
+    {
+      "name": "PostMessagePayload",
+      "qualifiedName": "PostMessagePayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 933
+    },
+    {
+      "name": "PostgreSQLStore",
+      "qualifiedName": "PostgreSQLStore",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 392
+    },
+    {
+      "name": "Preempt",
+      "qualifiedName": "Preempt",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 250
+    },
+    {
+      "name": "PreparedFirstAdmission",
+      "qualifiedName": "PreparedFirstAdmission",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 197
+    },
+    {
+      "name": "PresenceRecord",
+      "qualifiedName": "PresenceRecord",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 373
+    },
+    {
+      "name": "PresenceRecord",
+      "qualifiedName": "PresenceRecord",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 61
+    },
+    {
+      "name": "Principal",
+      "qualifiedName": "Principal",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 232
+    },
+    {
+      "name": "agent",
+      "qualifiedName": "Principal.agent",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 245
+    },
+    {
+      "name": "human",
+      "qualifiedName": "Principal.human",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 249
+    },
+    {
+      "name": "system",
+      "qualifiedName": "Principal.system",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 253
+    },
+    {
+      "name": "PrincipalEvidence",
+      "qualifiedName": "PrincipalEvidence",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 123
+    },
+    {
+      "name": "ProposeWorkItemPayload",
+      "qualifiedName": "ProposeWorkItemPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 959
+    },
+    {
+      "name": "ProtectedAdmissionError",
+      "qualifiedName": "ProtectedAdmissionError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 54
+    },
+    {
+      "name": "ProtectedInstant",
+      "qualifiedName": "ProtectedInstant",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 88
+    },
+    {
+      "name": "ProtectedTime",
+      "qualifiedName": "ProtectedTime",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 104
+    },
+    {
+      "name": "ProtectedVerificationError",
+      "qualifiedName": "ProtectedVerificationError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 70
+    },
+    {
+      "name": "ProtocolDocumentAdapter",
+      "qualifiedName": "ProtocolDocumentAdapter",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 139
+    },
+    {
+      "name": "agent_card",
+      "qualifiedName": "ProtocolDocumentAdapter.agent_card",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 154
+    },
+    {
+      "name": "approval",
+      "qualifiedName": "ProtocolDocumentAdapter.approval",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 585
+    },
+    {
+      "name": "artifact",
+      "qualifiedName": "ProtocolDocumentAdapter.artifact",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 484
+    },
+    {
+      "name": "conversation",
+      "qualifiedName": "ProtocolDocumentAdapter.conversation",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 311
+    },
+    {
+      "name": "evidence",
+      "qualifiedName": "ProtocolDocumentAdapter.evidence",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 539
+    },
+    {
+      "name": "group",
+      "qualifiedName": "ProtocolDocumentAdapter.group",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 284
+    },
+    {
+      "name": "membership",
+      "qualifiedName": "ProtocolDocumentAdapter.membership",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 197
+    },
+    {
+      "name": "message",
+      "qualifiedName": "ProtocolDocumentAdapter.message",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 348
+    },
+    {
+      "name": "mission",
+      "qualifiedName": "ProtocolDocumentAdapter.mission",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 234
+    },
+    {
+      "name": "work_contract",
+      "qualifiedName": "ProtocolDocumentAdapter.work_contract",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 364
+    },
+    {
+      "name": "work_item",
+      "qualifiedName": "ProtocolDocumentAdapter.work_item",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 433
+    },
+    {
+      "name": "ProtocolDocumentConfig",
+      "qualifiedName": "ProtocolDocumentConfig",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/documents.py",
+      "line": 104
+    },
+    {
+      "name": "ProtocolModel",
+      "qualifiedName": "ProtocolModel",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 29
+    },
+    {
+      "name": "PublishArtifactPayload",
+      "qualifiedName": "PublishArtifactPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1052
+    },
+    {
+      "name": "Query",
+      "qualifiedName": "Query",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 869
+    },
+    {
+      "name": "QueryKind",
+      "qualifiedName": "QueryKind",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 208
+    },
+    {
+      "name": "QueueRecord",
+      "qualifiedName": "QueueRecord",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 261
+    },
+    {
+      "name": "REVIEWER",
+      "qualifiedName": "REVIEWER",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 157
+    },
+    {
+      "name": "ReceivedCommandFrame",
+      "qualifiedName": "ReceivedCommandFrame",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 244
+    },
+    {
+      "name": "RecordResourceUsagePayload",
+      "qualifiedName": "RecordResourceUsagePayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1015
+    },
+    {
+      "name": "delta_is_not_empty",
+      "qualifiedName": "RecordResourceUsagePayload.delta_is_not_empty",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1022
+    },
+    {
+      "name": "RedactMessagePayload",
+      "qualifiedName": "RedactMessagePayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 953
+    },
+    {
+      "name": "RegisterAgentCardPayload",
+      "qualifiedName": "RegisterAgentCardPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 876
+    },
+    {
+      "name": "RegistryError",
+      "qualifiedName": "RegistryError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/registry.py",
+      "line": 17
+    },
+    {
+      "name": "RenewCoordinatorLeasePayload",
+      "qualifiedName": "RenewCoordinatorLeasePayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 929
+    },
+    {
+      "name": "RenewExecutionLeasePayload",
+      "qualifiedName": "RenewExecutionLeasePayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1008
+    },
+    {
+      "name": "ReplaceCoordinatorPayload",
+      "qualifiedName": "ReplaceCoordinatorPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 924
+    },
+    {
+      "name": "ReplayError",
+      "qualifiedName": "ReplayError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/replay.py",
+      "line": 22
+    },
+    {
+      "name": "ReplayGroupError",
+      "qualifiedName": "ReplayGroupError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/replay.py",
+      "line": 26
+    },
+    {
+      "name": "ReplayProjectionError",
+      "qualifiedName": "ReplayProjectionError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/replay.py",
+      "line": 34
+    },
+    {
+      "name": "ReplaySequenceError",
+      "qualifiedName": "ReplaySequenceError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/replay.py",
+      "line": 30
+    },
+    {
+      "name": "ReplaySource",
+      "qualifiedName": "ReplaySource",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/replay.py",
+      "line": 57
+    },
+    {
+      "name": "RequestMissionChangesPayload",
+      "qualifiedName": "RequestMissionChangesPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1184
+    },
+    {
+      "name": "ResolvedKeyEvidence",
+      "qualifiedName": "ResolvedKeyEvidence",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 182
+    },
+    {
+      "name": "ResourceBudget",
+      "qualifiedName": "ResourceBudget",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 382
+    },
+    {
+      "name": "contains",
+      "qualifiedName": "ResourceBudget.contains",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 390
+    },
+    {
+      "name": "ResourceUsage",
+      "qualifiedName": "ResourceUsage",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 399
+    },
+    {
+      "name": "RetractMessagePayload",
+      "qualifiedName": "RetractMessagePayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 947
+    },
+    {
+      "name": "RetryController",
+      "qualifiedName": "RetryController",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/execution.py",
+      "line": 34
+    },
+    {
+      "name": "attempts",
+      "qualifiedName": "RetryController.attempts",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/execution.py",
+      "line": 58
+    },
+    {
+      "name": "begin",
+      "qualifiedName": "RetryController.begin",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/execution.py",
+      "line": 65
+    },
+    {
+      "name": "consume",
+      "qualifiedName": "RetryController.consume",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/execution.py",
+      "line": 109
+    },
+    {
+      "name": "finish",
+      "qualifiedName": "RetryController.finish",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/execution.py",
+      "line": 92
+    },
+    {
+      "name": "idempotency_key",
+      "qualifiedName": "RetryController.idempotency_key",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/execution.py",
+      "line": 115
+    },
+    {
+      "name": "usage",
+      "qualifiedName": "RetryController.usage",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/execution.py",
+      "line": 62
+    },
+    {
+      "name": "RetryExhausted",
+      "qualifiedName": "RetryExhausted",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/execution.py",
+      "line": 16
+    },
+    {
+      "name": "RetryPolicy",
+      "qualifiedName": "RetryPolicy",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 416
+    },
+    {
+      "name": "validate_backoff",
+      "qualifiedName": "RetryPolicy.validate_backoff",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 422
+    },
+    {
+      "name": "RetrySchedule",
+      "qualifiedName": "RetrySchedule",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/execution.py",
+      "line": 28
+    },
+    {
+      "name": "RevisionConflict",
+      "qualifiedName": "RevisionConflict",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 197
+    },
+    {
+      "name": "Role",
+      "qualifiedName": "Role",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 63
+    },
+    {
+      "name": "SECURITY_COORDINATOR",
+      "qualifiedName": "SECURITY_COORDINATOR",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 158
+    },
+    {
+      "name": "SECURITY_WORKER",
+      "qualifiedName": "SECURITY_WORKER",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 159
+    },
+    {
+      "name": "SNAPSHOT_AUTHORITY_KEY_ID",
+      "qualifiedName": "SNAPSHOT_AUTHORITY_KEY_ID",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 167
+    },
+    {
+      "name": "SQLStore",
+      "qualifiedName": "SQLStore",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 117
+    },
+    {
+      "name": "close",
+      "qualifiedName": "SQLStore.close",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 152
+    },
+    {
+      "name": "dialect_name",
+      "qualifiedName": "SQLStore.dialect_name",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 136
+    },
+    {
+      "name": "initialize",
+      "qualifiedName": "SQLStore.initialize",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 143
+    },
+    {
+      "name": "inspect",
+      "qualifiedName": "SQLStore.inspect",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 149
+    },
+    {
+      "name": "transact",
+      "qualifiedName": "SQLStore.transact",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 146
+    },
+    {
+      "name": "url",
+      "qualifiedName": "SQLStore.url",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 140
+    },
+    {
+      "name": "SQLiteAgentStore",
+      "qualifiedName": "SQLiteAgentStore",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 39
+    },
+    {
+      "name": "acknowledge",
+      "qualifiedName": "SQLiteAgentStore.acknowledge",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 102
+    },
+    {
+      "name": "close",
+      "qualifiedName": "SQLiteAgentStore.close",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 99
+    },
+    {
+      "name": "cursor",
+      "qualifiedName": "SQLiteAgentStore.cursor",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 115
+    },
+    {
+      "name": "delete_checkpoint",
+      "qualifiedName": "SQLiteAgentStore.delete_checkpoint",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 309
+    },
+    {
+      "name": "enqueue_action",
+      "qualifiedName": "SQLiteAgentStore.enqueue_action",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 185
+    },
+    {
+      "name": "event_position",
+      "qualifiedName": "SQLiteAgentStore.event_position",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 173
+    },
+    {
+      "name": "group_context",
+      "qualifiedName": "SQLiteAgentStore.group_context",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 241
+    },
+    {
+      "name": "has_event",
+      "qualifiedName": "SQLiteAgentStore.has_event",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 166
+    },
+    {
+      "name": "load_checkpoint",
+      "qualifiedName": "SQLiteAgentStore.load_checkpoint",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 290
+    },
+    {
+      "name": "load_scheduler",
+      "qualifiedName": "SQLiteAgentStore.load_scheduler",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 340
+    },
+    {
+      "name": "mark_action_sent",
+      "qualifiedName": "SQLiteAgentStore.mark_action_sent",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 208
+    },
+    {
+      "name": "pending_actions",
+      "qualifiedName": "SQLiteAgentStore.pending_actions",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 201
+    },
+    {
+      "name": "remember_event",
+      "qualifiedName": "SQLiteAgentStore.remember_event",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 122
+    },
+    {
+      "name": "save_checkpoint",
+      "qualifiedName": "SQLiteAgentStore.save_checkpoint",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 250
+    },
+    {
+      "name": "save_group_context",
+      "qualifiedName": "SQLiteAgentStore.save_group_context",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 215
+    },
+    {
+      "name": "save_scheduler",
+      "qualifiedName": "SQLiteAgentStore.save_scheduler",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/local_store.py",
+      "line": 329
+    },
+    {
+      "name": "SQLiteStore",
+      "qualifiedName": "SQLiteStore",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 378
+    },
+    {
+      "name": "SYSTEM_ID",
+      "qualifiedName": "SYSTEM_ID",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 150
+    },
+    {
+      "name": "Scheduler",
+      "qualifiedName": "Scheduler",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 306
+    },
+    {
+      "name": "admit",
+      "qualifiedName": "Scheduler.admit",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 391
+    },
+    {
+      "name": "apply",
+      "qualifiedName": "Scheduler.apply",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 482
+    },
+    {
+      "name": "rebuild",
+      "qualifiedName": "Scheduler.rebuild",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 323
+    },
+    {
+      "name": "schedule",
+      "qualifiedName": "Scheduler.schedule",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 453
+    },
+    {
+      "name": "snapshot",
+      "qualifiedName": "Scheduler.snapshot",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 567
+    },
+    {
+      "name": "SchedulerPolicy",
+      "qualifiedName": "SchedulerPolicy",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 123
+    },
+    {
+      "name": "SchedulerSnapshot",
+      "qualifiedName": "SchedulerSnapshot",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 278
+    },
+    {
+      "name": "SchedulerStateError",
+      "qualifiedName": "SchedulerStateError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 287
+    },
+    {
+      "name": "SchedulingEstimate",
+      "qualifiedName": "SchedulingEstimate",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 47
+    },
+    {
+      "name": "SchemaCatalog",
+      "qualifiedName": "SchemaCatalog",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/conformance.py",
+      "line": 85
+    },
+    {
+      "name": "validate",
+      "qualifiedName": "SchemaCatalog.validate",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/conformance.py",
+      "line": 92
+    },
+    {
+      "name": "SelectionBasis",
+      "qualifiedName": "SelectionBasis",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 474
+    },
+    {
+      "name": "SessionAuthority",
+      "qualifiedName": "SessionAuthority",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 247
+    },
+    {
+      "name": "current_epoch",
+      "qualifiedName": "SessionAuthority.current_epoch",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 399
+    },
+    {
+      "name": "issue_challenge",
+      "qualifiedName": "SessionAuthority.issue_challenge",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 267
+    },
+    {
+      "name": "open_session",
+      "qualifiedName": "SessionAuthority.open_session",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 290
+    },
+    {
+      "name": "synchronize_epoch",
+      "qualifiedName": "SessionAuthority.synchronize_epoch",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 377
+    },
+    {
+      "name": "verify_session",
+      "qualifiedName": "SessionAuthority.verify_session",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 327
+    },
+    {
+      "name": "SessionDescriptor",
+      "qualifiedName": "SessionDescriptor",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 45
+    },
+    {
+      "name": "SessionGrant",
+      "qualifiedName": "SessionGrant",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 94
+    },
+    {
+      "name": "SignatureEnvelope",
+      "qualifiedName": "SignatureEnvelope",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 257
+    },
+    {
+      "name": "SignatureMaterial",
+      "qualifiedName": "SignatureMaterial",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 112
+    },
+    {
+      "name": "SignedDocument",
+      "qualifiedName": "SignedDocument",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 195
+    },
+    {
+      "name": "SignedDocumentCodec",
+      "qualifiedName": "SignedDocumentCodec",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 411
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "SignedDocumentCodec.sign",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 417
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "SignedDocumentCodec.verify",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 527
+    },
+    {
+      "name": "SignedDocumentKind",
+      "qualifiedName": "SignedDocumentKind",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 31
+    },
+    {
+      "name": "SignedDocumentSigningError",
+      "qualifiedName": "SignedDocumentSigningError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 45
+    },
+    {
+      "name": "SignedDocumentVerificationError",
+      "qualifiedName": "SignedDocumentVerificationError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 77
+    },
+    {
+      "name": "SigningKey",
+      "qualifiedName": "SigningKey",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 225
+    },
+    {
+      "name": "algorithm",
+      "qualifiedName": "SigningKey.algorithm",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 229
+    },
+    {
+      "name": "key_id",
+      "qualifiedName": "SigningKey.key_id",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 233
+    },
+    {
+      "name": "public_key_bytes",
+      "qualifiedName": "SigningKey.public_key_bytes",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 237
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "SigningKey.sign",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 240
+    },
+    {
+      "name": "SnapshotArchive",
+      "qualifiedName": "SnapshotArchive",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 300
+    },
+    {
+      "name": "archive",
+      "qualifiedName": "SnapshotArchive.archive",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 320
+    },
+    {
+      "name": "get",
+      "qualifiedName": "SnapshotArchive.get",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 369
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "SnapshotArchive.verify",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 375
+    },
+    {
+      "name": "SourceEventRange",
+      "qualifiedName": "SourceEventRange",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 38
+    },
+    {
+      "name": "event_ids_are_nonempty_and_unique",
+      "qualifiedName": "SourceEventRange.event_ids_are_nonempty_and_unique",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/context.py",
+      "line": 45
+    },
+    {
+      "name": "StaleContextError",
+      "qualifiedName": "StaleContextError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 28
+    },
+    {
+      "name": "StaleCoordinatorEpoch",
+      "qualifiedName": "StaleCoordinatorEpoch",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 181
+    },
+    {
+      "name": "StaleMembershipEpoch",
+      "qualifiedName": "StaleMembershipEpoch",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 177
+    },
+    {
+      "name": "StaleOwnershipEpoch",
+      "qualifiedName": "StaleOwnershipEpoch",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 185
+    },
+    {
+      "name": "StaleSessionEpoch",
+      "qualifiedName": "StaleSessionEpoch",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/core.py",
+      "line": 173
+    },
+    {
+      "name": "StaleSessionEpochError",
+      "qualifiedName": "StaleSessionEpochError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/agent.py",
+      "line": 20
+    },
+    {
+      "name": "StartWorkItemPayload",
+      "qualifiedName": "StartWorkItemPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1002
+    },
+    {
+      "name": "SubmitMissionPayload",
+      "qualifiedName": "SubmitMissionPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1103
+    },
+    {
+      "name": "artifacts_are_not_empty",
+      "qualifiedName": "SubmitMissionPayload.artifacts_are_not_empty",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1108
+    },
+    {
+      "name": "SubmitWorkItemPayload",
+      "qualifiedName": "SubmitWorkItemPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1058
+    },
+    {
+      "name": "submission_is_not_empty",
+      "qualifiedName": "SubmitWorkItemPayload.submission_is_not_empty",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1067
+    },
+    {
+      "name": "SubscribeFrame",
+      "qualifiedName": "SubscribeFrame",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 112
+    },
+    {
+      "name": "SubscriptionDenied",
+      "qualifiedName": "SubscriptionDenied",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 91
+    },
+    {
+      "name": "T",
+      "qualifiedName": "T",
+      "kind": "constant",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 77
+    },
+    {
+      "name": "TransitionKind",
+      "qualifiedName": "TransitionKind",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 215
+    },
+    {
+      "name": "TrustedAdmissionContext",
+      "qualifiedName": "TrustedAdmissionContext",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 95
+    },
+    {
+      "name": "issue",
+      "qualifiedName": "TrustedAdmissionContext.issue",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 98
+    },
+    {
+      "name": "UnblockWorkItemPayload",
+      "qualifiedName": "UnblockWorkItemPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1048
+    },
+    {
+      "name": "UnknownCriticalExtension",
+      "qualifiedName": "UnknownCriticalExtension",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/gateway.py",
+      "line": 95
+    },
+    {
+      "name": "VectorResult",
+      "qualifiedName": "VectorResult",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/conformance.py",
+      "line": 20
+    },
+    {
+      "name": "passed",
+      "qualifiedName": "VectorResult.passed",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/conformance.py",
+      "line": 27
+    },
+    {
+      "name": "VerificationStage",
+      "qualifiedName": "VerificationStage",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 49
+    },
+    {
+      "name": "VerifiedSignedDocument",
+      "qualifiedName": "VerifiedSignedDocument",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 209
+    },
+    {
+      "name": "VerifyWorkItemPayload",
+      "qualifiedName": "VerifyWorkItemPayload",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1073
+    },
+    {
+      "name": "evidence_is_not_empty",
+      "qualifiedName": "VerifyWorkItemPayload.evidence_is_not_empty",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 1079
+    },
+    {
+      "name": "WelcomeFrame",
+      "qualifiedName": "WelcomeFrame",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 77
+    },
+    {
+      "name": "WireVerificationError",
+      "qualifiedName": "WireVerificationError",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/signed_documents.py",
+      "line": 61
+    },
+    {
+      "name": "WorkContract",
+      "qualifiedName": "WorkContract",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 428
+    },
+    {
+      "name": "contract_sections_are_not_empty",
+      "qualifiedName": "WorkContract.contract_sections_are_not_empty",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 449
+    },
+    {
+      "name": "high_risk_requires_execution_approval",
+      "qualifiedName": "WorkContract.high_risk_requires_execution_approval",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 465
+    },
+    {
+      "name": "requirements_are_unique",
+      "qualifiedName": "WorkContract.requirements_are_unique",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 456
+    },
+    {
+      "name": "WorkItem",
+      "qualifiedName": "WorkItem",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 679
+    },
+    {
+      "name": "WorkItemBudgetState",
+      "qualifiedName": "WorkItemBudgetState",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 84
+    },
+    {
+      "name": "WorkItemBudgetStateV1",
+      "qualifiedName": "WorkItemBudgetStateV1",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/budget.py",
+      "line": 104
+    },
+    {
+      "name": "WorkItemStatus",
+      "qualifiedName": "WorkItemStatus",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 92
+    },
+    {
+      "name": "WorkOffer",
+      "qualifiedName": "WorkOffer",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 59
+    },
+    {
+      "name": "from_work_item",
+      "qualifiedName": "WorkOffer.from_work_item",
+      "kind": "method",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 81
+    },
+    {
+      "name": "WorkProposal",
+      "qualifiedName": "WorkProposal",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 665
+    },
+    {
+      "name": "WorkProposalStatus",
+      "qualifiedName": "WorkProposalStatus",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/models.py",
+      "line": 104
+    },
+    {
+      "name": "WorkState",
+      "qualifiedName": "WorkState",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 188
+    },
+    {
+      "name": "WorkTransition",
+      "qualifiedName": "WorkTransition",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/scheduler.py",
+      "line": 226
+    },
+    {
+      "name": "budget_within_ceiling",
+      "qualifiedName": "budget_within_ceiling",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/delegation.py",
+      "line": 44
+    },
+    {
+      "name": "canonical_bytes",
+      "qualifiedName": "canonical_bytes",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/canonical.py",
+      "line": 91
+    },
+    {
+      "name": "canonical_hash",
+      "qualifiedName": "canonical_hash",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/canonical.py",
+      "line": 103
+    },
+    {
+      "name": "canonical_json",
+      "qualifiedName": "canonical_json",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/canonical.py",
+      "line": 80
+    },
+    {
+      "name": "cast_connection",
+      "qualifiedName": "cast_connection",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 357
+    },
+    {
+      "name": "cast_pool",
+      "qualifiedName": "cast_pool",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 363
+    },
+    {
+      "name": "conformance",
+      "qualifiedName": "conformance",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/cli.py",
+      "line": 432
+    },
+    {
+      "name": "create_gateway_app",
+      "qualifiedName": "create_gateway_app",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/cli.py",
+      "line": 163
+    },
+    {
+      "name": "deduplication_key",
+      "qualifiedName": "deduplication_key",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 405
+    },
+    {
+      "name": "default_agent_key_id",
+      "qualifiedName": "default_agent_key_id",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/auth.py",
+      "line": 113
+    },
+    {
+      "name": "default_bundle_root",
+      "qualifiedName": "default_bundle_root",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/bundle.py",
+      "line": 88
+    },
+    {
+      "name": "default_conformance_root",
+      "qualifiedName": "default_conformance_root",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/conformance.py",
+      "line": 73
+    },
+    {
+      "name": "default_schema_root",
+      "qualifiedName": "default_schema_root",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/conformance.py",
+      "line": 61
+    },
+    {
+      "name": "demo",
+      "qualifiedName": "demo",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/cli.py",
+      "line": 426
+    },
+    {
+      "name": "encode_frame",
+      "qualifiedName": "encode_frame",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 480
+    },
+    {
+      "name": "encode_private_key",
+      "qualifiedName": "encode_private_key",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/crypto.py",
+      "line": 75
+    },
+    {
+      "name": "encode_public_key",
+      "qualifiedName": "encode_public_key",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/crypto.py",
+      "line": 84
+    },
+    {
+      "name": "generate_keypair",
+      "qualifiedName": "generate_keypair",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/crypto.py",
+      "line": 92
+    },
+    {
+      "name": "is_protocol_uri",
+      "qualifiedName": "is_protocol_uri",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/schema_formats.py",
+      "line": 25
+    },
+    {
+      "name": "load_agent_cards",
+      "qualifiedName": "load_agent_cards",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/cli.py",
+      "line": 69
+    },
+    {
+      "name": "load_private_key",
+      "qualifiedName": "load_private_key",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/crypto.py",
+      "line": 57
+    },
+    {
+      "name": "load_public_key",
+      "qualifiedName": "load_public_key",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/crypto.py",
+      "line": 66
+    },
+    {
+      "name": "membership_key",
+      "qualifiedName": "membership_key",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/store.py",
+      "line": 401
+    },
+    {
+      "name": "offline_command_to_wire",
+      "qualifiedName": "offline_command_to_wire",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/offline.py",
+      "line": 351
+    },
+    {
+      "name": "parse_frame",
+      "qualifiedName": "parse_frame",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 265
+    },
+    {
+      "name": "parse_received_frame",
+      "qualifiedName": "parse_received_frame",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/wire.py",
+      "line": 275
+    },
+    {
+      "name": "protocol_format_checker",
+      "qualifiedName": "protocol_format_checker",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/schema_formats.py",
+      "line": 17
+    },
+    {
+      "name": "rebase_offline_command",
+      "qualifiedName": "rebase_offline_command",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/offline.py",
+      "line": 287
+    },
+    {
+      "name": "run_manifest",
+      "qualifiedName": "run_manifest",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/conformance.py",
+      "line": 103
+    },
+    {
+      "name": "run_poc",
+      "qualifiedName": "run_poc",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 2900
+    },
+    {
+      "name": "run_poc_sync",
+      "qualifiedName": "run_poc_sync",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/poc.py",
+      "line": 2909
+    },
+    {
+      "name": "server",
+      "qualifiedName": "server",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/cli.py",
+      "line": 420
+    },
+    {
+      "name": "sha256_hex",
+      "qualifiedName": "sha256_hex",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/canonical.py",
+      "line": 97
+    },
+    {
+      "name": "sign_bytes",
+      "qualifiedName": "sign_bytes",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/crypto.py",
+      "line": 99
+    },
+    {
+      "name": "sign_canonical",
+      "qualifiedName": "sign_canonical",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/crypto.py",
+      "line": 111
+    },
+    {
+      "name": "tls13_context_factory",
+      "qualifiedName": "tls13_context_factory",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/cli.py",
+      "line": 52
+    },
+    {
+      "name": "verify_admission_bundle",
+      "qualifiedName": "verify_admission_bundle",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/bundle.py",
+      "line": 146
+    },
+    {
+      "name": "verify_bytes",
+      "qualifiedName": "verify_bytes",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/crypto.py",
+      "line": 103
+    },
+    {
+      "name": "verify_canonical",
+      "qualifiedName": "verify_canonical",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/crypto.py",
+      "line": 117
+    },
+    {
+      "name": "verify_canonical_hash",
+      "qualifiedName": "verify_canonical_hash",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/canonical.py",
+      "line": 109
+    },
+    {
+      "name": "verify_cryptography_bundle",
+      "qualifiedName": "verify_cryptography_bundle",
+      "kind": "function",
+      "sourceFile": "src/missionweaveprotocol/bundle.py",
+      "line": 104
+    }
+  ]
+}

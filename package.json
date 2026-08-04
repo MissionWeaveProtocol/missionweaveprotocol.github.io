@@ -26,6 +26,8 @@
     "check:learn": "node scripts/check-learn-pages.mjs",
     "check:runtime": "node scripts/check-runtime-pages.mjs",
     "check:sdk-matrix": "node scripts/check-sdk-runtime-matrix.mjs",
+    "generate:sdk-inventories": "node scripts/generate-sdk-api-inventories.mjs",
+    "check:sdk-inventories": "node scripts/check-sdk-api-inventories.mjs",
     "test:local-docs": "node scripts/test-local-documentation-links.mjs",
     "check:local-docs": "node scripts/check-local-documentation-links.mjs",
     "check:generated-release": "node scripts/check-generated-release.mjs",
@@ -35,7 +37,7 @@
     "check:built-site": "node scripts/check-built-site.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run check:policy && npm run check:normative-release && npm run check:normative-artifacts && npm run test:normative-specification && npm run check:normative-specification && npm run test:normative-clauses && npm run check:normative-clauses && npm run check:normative-references && npm run check:learn && npm run check:runtime && npm run check:sdk-matrix && npm run test:local-docs && npm run check:local-docs && npm run check:locales && npm run check:terminology && npm run assets:check && npm run format:check && npm run typecheck && npm run docs:build && npm run check:generated-release && npm run check:built-site",
+    "check": "npm run check:policy && npm run check:normative-release && npm run check:normative-artifacts && npm run test:normative-specification && npm run check:normative-specification && npm run test:normative-clauses && npm run check:normative-clauses && npm run check:normative-references && npm run check:learn && npm run check:runtime && npm run check:sdk-matrix && npm run check:sdk-inventories && npm run test:local-docs && npm run check:local-docs && npm run check:locales && npm run check:terminology && npm run assets:check && npm run format:check && npm run typecheck && npm run docs:build && npm run check:generated-release && npm run check:built-site",
     "test:normative-clauses": "node scripts/test-normative-clauses.mjs",
     "check:normative-clauses": "node scripts/check-normative-clauses.mjs"
   },

@@ -1,0 +1,1409 @@
+{
+  "schemaVersion": 1,
+  "sdk": "go",
+  "name": "Go",
+  "repository": "https://github.com/MissionWeaveProtocol/go-sdk",
+  "commit": "80c39852e8a2053ac761b8d53d62483264f803f1",
+  "package": "github.com/missionweaveprotocol/go-sdk",
+  "toolchain": ["Go 1.24"],
+  "sourceFiles": [
+    "admission.go",
+    "bundle.go",
+    "canonical.go",
+    "conformance.go",
+    "doc.go",
+    "ed25519_strict.go",
+    "frame.go",
+    "json.go",
+    "rfc3339.go",
+    "schema.go",
+    "signed_document_codec.go",
+    "signed_document_verification.go",
+    "signing.go"
+  ],
+  "symbols": [
+    "AcceptedBy",
+    "AdmissionAdapterError",
+    "AdmissionAppendIntegrityNotEstablished",
+    "AdmissionBundleSummary",
+    "AdmissionCommitFailed",
+    "AdmissionContextValue",
+    "AdmissionCurrentKeyResolver",
+    "AdmissionDiagnostic",
+    "AdmissionError",
+    "AdmissionEventSelfAnchoring",
+    "AdmissionLog",
+    "AdmissionLogAuthenticationFailed",
+    "AdmissionLogIndeterminate",
+    "AdmissionLogUnavailable",
+    "AdmissionLookup",
+    "AdmissionMalformedTrustedTime",
+    "AdmissionPin",
+    "AdmissionReason",
+    "AdmissionRecordBindingMismatch",
+    "AdmissionRecordConflict",
+    "AdmissionRecordID",
+    "AdmissionRecordMissing",
+    "AdmissionRecordSchemaInvalid",
+    "AdmissionService",
+    "AdmissionTrustedTimeOutsideKeyInterval",
+    "AdmitFirst",
+    "AdmittedSignedDocument",
+    "Algorithm",
+    "AuthenticatedAdmissionRecord",
+    "Bytes",
+    "CanonicalHash",
+    "CanonicalizeJSON",
+    "CompleteBytes",
+    "CompleteHash",
+    "ConformanceReport",
+    "CreatedAt",
+    "CryptographyPin",
+    "CurrentProtocolPin",
+    "DecodeFrame",
+    "DecodeJSON",
+    "Document",
+    "DocumentKind",
+    "DocumentSigningPayload",
+    "DocumentValidationError",
+    "EncodeFrame",
+    "EpochSecond",
+    "Error",
+    "ExpectedSigner",
+    "ExpectedSignerExactPrincipal",
+    "ExpectedSignerRule",
+    "ExpectedSignerServicePrincipal",
+    "FirstAdmissionRecord",
+    "Fraction",
+    "FrameCodec",
+    "KeyID",
+    "KeyRegistryCompleteness",
+    "KeyRegistryOrganizationWide",
+    "KeyRegistrySnapshot",
+    "KeyResolutionRequest",
+    "KeyResolver",
+    "Kind",
+    "Load",
+    "MarshalCanonicalJSON",
+    "MatchString",
+    "NewAdmissionAdapterError",
+    "NewAdmissionService",
+    "NewEmbeddedSchemaCatalog",
+    "NewFrameCodec",
+    "NewSchemaCatalog",
+    "NewSignedDocumentCodec",
+    "OrganizationID",
+    "Passed",
+    "PinnedArtifact",
+    "PrepareFirstAdmission",
+    "PreparedFirstAdmission",
+    "Principal",
+    "ProtectedDiagnostic",
+    "ProtectedInstant",
+    "ProtectedSignedTime",
+    "ProtectedTime",
+    "ProtocolFS",
+    "ProtocolPin",
+    "ProtocolVersion",
+    "PublicKeyBytes",
+    "PublicKeyText",
+    "RFC3339Instant",
+    "ReadProtocolFile",
+    "Reason",
+    "ReceivedBytes",
+    "Record",
+    "RecordBytes",
+    "Resolve",
+    "ResolvedKey",
+    "ResolvedKeyEvidence",
+    "RevokedAt",
+    "RevokedAtText",
+    "RunConformance",
+    "RunEmbeddedConformance",
+    "SDKVersion",
+    "SchemaCatalog",
+    "Sign",
+    "SignBytes",
+    "SignDocument",
+    "Signature",
+    "SignatureEvidence",
+    "SignedDocumentAgentCard",
+    "SignedDocumentApproval",
+    "SignedDocumentArtifact",
+    "SignedDocumentCodec",
+    "SignedDocumentCommand",
+    "SignedDocumentContextPackage",
+    "SignedDocumentEvent",
+    "SignedDocumentEvidence",
+    "SignedDocumentExtensionProfile",
+    "SignedDocumentGroupSnapshot",
+    "SignedDocumentKind",
+    "SignedDocumentVerificationError",
+    "SigningBytes",
+    "SigningHash",
+    "SigningKey",
+    "Stage",
+    "String",
+    "Summary",
+    "TrustedAcceptedAt",
+    "TrustedAdmissionContext",
+    "Unwrap",
+    "ValidFrom",
+    "ValidFromText",
+    "ValidUntil",
+    "ValidUntilText",
+    "Validate",
+    "Value",
+    "VectorResult",
+    "VerificationCanonicalization",
+    "VerificationComplete",
+    "VerificationDiagnostic",
+    "VerificationKeyResolution",
+    "VerificationParse",
+    "VerificationSchema",
+    "VerificationSignature",
+    "VerificationSignatureEnvelope",
+    "VerificationStage",
+    "Verified",
+    "VerifiedSignedDocument",
+    "Verify",
+    "VerifyAdmissionBundle",
+    "VerifyBytes",
+    "VerifyCryptographyBundle",
+    "VerifyDocument",
+    "VerifyHistoricalAdmission",
+    "VerifyProtocolBundle",
+    "WireAuthInvalidSignature",
+    "WireCode",
+    "WireErrorCode",
+    "WireProtocolViolation",
+    "WireSchemaValidationFailed"
+  ],
+  "entries": [
+    {
+      "name": "AdmissionAdapterError",
+      "qualifiedName": "AdmissionAdapterError",
+      "kind": "struct",
+      "sourceFile": "admission.go",
+      "line": 77
+    },
+    {
+      "name": "Error",
+      "qualifiedName": "AdmissionAdapterError.Error",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 88
+    },
+    {
+      "name": "Reason",
+      "qualifiedName": "AdmissionAdapterError.Reason",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 96
+    },
+    {
+      "name": "AdmissionAppendIntegrityNotEstablished",
+      "qualifiedName": "AdmissionAppendIntegrityNotEstablished",
+      "kind": "constant",
+      "sourceFile": "admission.go",
+      "line": 21
+    },
+    {
+      "name": "AdmissionBundleSummary",
+      "qualifiedName": "AdmissionBundleSummary",
+      "kind": "struct",
+      "sourceFile": "bundle.go",
+      "line": 78
+    },
+    {
+      "name": "AdmissionCommitFailed",
+      "qualifiedName": "AdmissionCommitFailed",
+      "kind": "constant",
+      "sourceFile": "admission.go",
+      "line": 24
+    },
+    {
+      "name": "AdmissionContextValue",
+      "qualifiedName": "AdmissionContextValue",
+      "kind": "struct",
+      "sourceFile": "admission.go",
+      "line": 99
+    },
+    {
+      "name": "AdmissionCurrentKeyResolver",
+      "qualifiedName": "AdmissionCurrentKeyResolver",
+      "kind": "interface",
+      "sourceFile": "admission.go",
+      "line": 111
+    },
+    {
+      "name": "AdmissionDiagnostic",
+      "qualifiedName": "AdmissionDiagnostic",
+      "kind": "struct",
+      "sourceFile": "admission.go",
+      "line": 44
+    },
+    {
+      "name": "Reason",
+      "qualifiedName": "AdmissionDiagnostic.Reason",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 52
+    },
+    {
+      "name": "Stage",
+      "qualifiedName": "AdmissionDiagnostic.Stage",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 49
+    },
+    {
+      "name": "AdmissionError",
+      "qualifiedName": "AdmissionError",
+      "kind": "struct",
+      "sourceFile": "admission.go",
+      "line": 55
+    },
+    {
+      "name": "Error",
+      "qualifiedName": "AdmissionError.Error",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 60
+    },
+    {
+      "name": "ProtectedDiagnostic",
+      "qualifiedName": "AdmissionError.ProtectedDiagnostic",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 68
+    },
+    {
+      "name": "WireCode",
+      "qualifiedName": "AdmissionError.WireCode",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 65
+    },
+    {
+      "name": "AdmissionEventSelfAnchoring",
+      "qualifiedName": "AdmissionEventSelfAnchoring",
+      "kind": "constant",
+      "sourceFile": "admission.go",
+      "line": 25
+    },
+    {
+      "name": "AdmissionLog",
+      "qualifiedName": "AdmissionLog",
+      "kind": "interface",
+      "sourceFile": "admission.go",
+      "line": 138
+    },
+    {
+      "name": "AdmissionLogAuthenticationFailed",
+      "qualifiedName": "AdmissionLogAuthenticationFailed",
+      "kind": "constant",
+      "sourceFile": "admission.go",
+      "line": 20
+    },
+    {
+      "name": "AdmissionLogIndeterminate",
+      "qualifiedName": "AdmissionLogIndeterminate",
+      "kind": "constant",
+      "sourceFile": "admission.go",
+      "line": 23
+    },
+    {
+      "name": "AdmissionLogUnavailable",
+      "qualifiedName": "AdmissionLogUnavailable",
+      "kind": "constant",
+      "sourceFile": "admission.go",
+      "line": 22
+    },
+    {
+      "name": "AdmissionLookup",
+      "qualifiedName": "AdmissionLookup",
+      "kind": "struct",
+      "sourceFile": "admission.go",
+      "line": 132
+    },
+    {
+      "name": "AdmissionMalformedTrustedTime",
+      "qualifiedName": "AdmissionMalformedTrustedTime",
+      "kind": "constant",
+      "sourceFile": "admission.go",
+      "line": 17
+    },
+    {
+      "name": "AdmissionPin",
+      "qualifiedName": "AdmissionPin",
+      "kind": "struct",
+      "sourceFile": "bundle.go",
+      "line": 65
+    },
+    {
+      "name": "AdmissionReason",
+      "qualifiedName": "AdmissionReason",
+      "kind": "type",
+      "sourceFile": "admission.go",
+      "line": 11
+    },
+    {
+      "name": "AdmissionRecordBindingMismatch",
+      "qualifiedName": "AdmissionRecordBindingMismatch",
+      "kind": "constant",
+      "sourceFile": "admission.go",
+      "line": 15
+    },
+    {
+      "name": "AdmissionRecordConflict",
+      "qualifiedName": "AdmissionRecordConflict",
+      "kind": "constant",
+      "sourceFile": "admission.go",
+      "line": 18
+    },
+    {
+      "name": "AdmissionRecordMissing",
+      "qualifiedName": "AdmissionRecordMissing",
+      "kind": "constant",
+      "sourceFile": "admission.go",
+      "line": 14
+    },
+    {
+      "name": "AdmissionRecordSchemaInvalid",
+      "qualifiedName": "AdmissionRecordSchemaInvalid",
+      "kind": "constant",
+      "sourceFile": "admission.go",
+      "line": 19
+    },
+    {
+      "name": "AdmissionService",
+      "qualifiedName": "AdmissionService",
+      "kind": "struct",
+      "sourceFile": "admission.go",
+      "line": 197
+    },
+    {
+      "name": "AdmitFirst",
+      "qualifiedName": "AdmissionService.AdmitFirst",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 276
+    },
+    {
+      "name": "PrepareFirstAdmission",
+      "qualifiedName": "AdmissionService.PrepareFirstAdmission",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 213
+    },
+    {
+      "name": "VerifyHistoricalAdmission",
+      "qualifiedName": "AdmissionService.VerifyHistoricalAdmission",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 323
+    },
+    {
+      "name": "AdmissionTrustedTimeOutsideKeyInterval",
+      "qualifiedName": "AdmissionTrustedTimeOutsideKeyInterval",
+      "kind": "constant",
+      "sourceFile": "admission.go",
+      "line": 16
+    },
+    {
+      "name": "AdmittedSignedDocument",
+      "qualifiedName": "AdmittedSignedDocument",
+      "kind": "struct",
+      "sourceFile": "admission.go",
+      "line": 184
+    },
+    {
+      "name": "Record",
+      "qualifiedName": "AdmittedSignedDocument.Record",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 191
+    },
+    {
+      "name": "RecordBytes",
+      "qualifiedName": "AdmittedSignedDocument.RecordBytes",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 192
+    },
+    {
+      "name": "Verified",
+      "qualifiedName": "AdmittedSignedDocument.Verified",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 190
+    },
+    {
+      "name": "AuthenticatedAdmissionRecord",
+      "qualifiedName": "AuthenticatedAdmissionRecord",
+      "kind": "struct",
+      "sourceFile": "admission.go",
+      "line": 126
+    },
+    {
+      "name": "CanonicalHash",
+      "qualifiedName": "CanonicalHash",
+      "kind": "function",
+      "sourceFile": "canonical.go",
+      "line": 35
+    },
+    {
+      "name": "CanonicalizeJSON",
+      "qualifiedName": "CanonicalizeJSON",
+      "kind": "function",
+      "sourceFile": "canonical.go",
+      "line": 14
+    },
+    {
+      "name": "ConformanceReport",
+      "qualifiedName": "ConformanceReport",
+      "kind": "struct",
+      "sourceFile": "conformance.go",
+      "line": 26
+    },
+    {
+      "name": "Passed",
+      "qualifiedName": "ConformanceReport.Passed",
+      "kind": "method",
+      "sourceFile": "conformance.go",
+      "line": 31
+    },
+    {
+      "name": "Summary",
+      "qualifiedName": "ConformanceReport.Summary",
+      "kind": "method",
+      "sourceFile": "conformance.go",
+      "line": 41
+    },
+    {
+      "name": "CryptographyPin",
+      "qualifiedName": "CryptographyPin",
+      "kind": "struct",
+      "sourceFile": "bundle.go",
+      "line": 53
+    },
+    {
+      "name": "CurrentProtocolPin",
+      "qualifiedName": "CurrentProtocolPin",
+      "kind": "function",
+      "sourceFile": "bundle.go",
+      "line": 152
+    },
+    {
+      "name": "DecodeJSON",
+      "qualifiedName": "DecodeJSON",
+      "kind": "function",
+      "sourceFile": "json.go",
+      "line": 14
+    },
+    {
+      "name": "DocumentSigningPayload",
+      "qualifiedName": "DocumentSigningPayload",
+      "kind": "function",
+      "sourceFile": "signing.go",
+      "line": 37
+    },
+    {
+      "name": "DocumentValidationError",
+      "qualifiedName": "DocumentValidationError",
+      "kind": "struct",
+      "sourceFile": "schema.go",
+      "line": 224
+    },
+    {
+      "name": "Error",
+      "qualifiedName": "DocumentValidationError.Error",
+      "kind": "method",
+      "sourceFile": "schema.go",
+      "line": 229
+    },
+    {
+      "name": "Unwrap",
+      "qualifiedName": "DocumentValidationError.Unwrap",
+      "kind": "method",
+      "sourceFile": "schema.go",
+      "line": 233
+    },
+    {
+      "name": "ExpectedSigner",
+      "qualifiedName": "ExpectedSigner",
+      "kind": "struct",
+      "sourceFile": "signed_document_verification.go",
+      "line": 40
+    },
+    {
+      "name": "ExpectedSignerExactPrincipal",
+      "qualifiedName": "ExpectedSignerExactPrincipal",
+      "kind": "constant",
+      "sourceFile": "signed_document_verification.go",
+      "line": 34
+    },
+    {
+      "name": "ExpectedSignerRule",
+      "qualifiedName": "ExpectedSignerRule",
+      "kind": "type",
+      "sourceFile": "signed_document_verification.go",
+      "line": 31
+    },
+    {
+      "name": "ExpectedSignerServicePrincipal",
+      "qualifiedName": "ExpectedSignerServicePrincipal",
+      "kind": "constant",
+      "sourceFile": "signed_document_verification.go",
+      "line": 35
+    },
+    {
+      "name": "FirstAdmissionRecord",
+      "qualifiedName": "FirstAdmissionRecord",
+      "kind": "struct",
+      "sourceFile": "admission.go",
+      "line": 148
+    },
+    {
+      "name": "AcceptedBy",
+      "qualifiedName": "FirstAdmissionRecord.AcceptedBy",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 168
+    },
+    {
+      "name": "AdmissionRecordID",
+      "qualifiedName": "FirstAdmissionRecord.AdmissionRecordID",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 161
+    },
+    {
+      "name": "DocumentKind",
+      "qualifiedName": "FirstAdmissionRecord.DocumentKind",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 163
+    },
+    {
+      "name": "KeyID",
+      "qualifiedName": "FirstAdmissionRecord.KeyID",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 165
+    },
+    {
+      "name": "OrganizationID",
+      "qualifiedName": "FirstAdmissionRecord.OrganizationID",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 162
+    },
+    {
+      "name": "Principal",
+      "qualifiedName": "FirstAdmissionRecord.Principal",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 166
+    },
+    {
+      "name": "ProtocolVersion",
+      "qualifiedName": "FirstAdmissionRecord.ProtocolVersion",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 160
+    },
+    {
+      "name": "SigningHash",
+      "qualifiedName": "FirstAdmissionRecord.SigningHash",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 164
+    },
+    {
+      "name": "TrustedAcceptedAt",
+      "qualifiedName": "FirstAdmissionRecord.TrustedAcceptedAt",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 167
+    },
+    {
+      "name": "FrameCodec",
+      "qualifiedName": "FrameCodec",
+      "kind": "struct",
+      "sourceFile": "frame.go",
+      "line": 11
+    },
+    {
+      "name": "DecodeFrame",
+      "qualifiedName": "FrameCodec.DecodeFrame",
+      "kind": "method",
+      "sourceFile": "frame.go",
+      "line": 25
+    },
+    {
+      "name": "EncodeFrame",
+      "qualifiedName": "FrameCodec.EncodeFrame",
+      "kind": "method",
+      "sourceFile": "frame.go",
+      "line": 44
+    },
+    {
+      "name": "KeyRegistryCompleteness",
+      "qualifiedName": "KeyRegistryCompleteness",
+      "kind": "type",
+      "sourceFile": "signed_document_verification.go",
+      "line": 15
+    },
+    {
+      "name": "KeyRegistryOrganizationWide",
+      "qualifiedName": "KeyRegistryOrganizationWide",
+      "kind": "constant",
+      "sourceFile": "signed_document_verification.go",
+      "line": 20
+    },
+    {
+      "name": "KeyRegistrySnapshot",
+      "qualifiedName": "KeyRegistrySnapshot",
+      "kind": "struct",
+      "sourceFile": "signed_document_verification.go",
+      "line": 25
+    },
+    {
+      "name": "KeyResolutionRequest",
+      "qualifiedName": "KeyResolutionRequest",
+      "kind": "struct",
+      "sourceFile": "signed_document_verification.go",
+      "line": 53
+    },
+    {
+      "name": "KeyResolver",
+      "qualifiedName": "KeyResolver",
+      "kind": "interface",
+      "sourceFile": "signed_document_verification.go",
+      "line": 63
+    },
+    {
+      "name": "MarshalCanonicalJSON",
+      "qualifiedName": "MarshalCanonicalJSON",
+      "kind": "function",
+      "sourceFile": "canonical.go",
+      "line": 26
+    },
+    {
+      "name": "NewAdmissionAdapterError",
+      "qualifiedName": "NewAdmissionAdapterError",
+      "kind": "function",
+      "sourceFile": "admission.go",
+      "line": 83
+    },
+    {
+      "name": "NewAdmissionService",
+      "qualifiedName": "NewAdmissionService",
+      "kind": "function",
+      "sourceFile": "admission.go",
+      "line": 204
+    },
+    {
+      "name": "NewEmbeddedSchemaCatalog",
+      "qualifiedName": "NewEmbeddedSchemaCatalog",
+      "kind": "function",
+      "sourceFile": "schema.go",
+      "line": 311
+    },
+    {
+      "name": "NewFrameCodec",
+      "qualifiedName": "NewFrameCodec",
+      "kind": "function",
+      "sourceFile": "frame.go",
+      "line": 16
+    },
+    {
+      "name": "NewSchemaCatalog",
+      "qualifiedName": "NewSchemaCatalog",
+      "kind": "function",
+      "sourceFile": "schema.go",
+      "line": 244
+    },
+    {
+      "name": "NewSignedDocumentCodec",
+      "qualifiedName": "NewSignedDocumentCodec",
+      "kind": "function",
+      "sourceFile": "signed_document_codec.go",
+      "line": 96
+    },
+    {
+      "name": "PinnedArtifact",
+      "qualifiedName": "PinnedArtifact",
+      "kind": "struct",
+      "sourceFile": "bundle.go",
+      "line": 46
+    },
+    {
+      "name": "PreparedFirstAdmission",
+      "qualifiedName": "PreparedFirstAdmission",
+      "kind": "struct",
+      "sourceFile": "admission.go",
+      "line": 171
+    },
+    {
+      "name": "Record",
+      "qualifiedName": "PreparedFirstAdmission.Record",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 178
+    },
+    {
+      "name": "RecordBytes",
+      "qualifiedName": "PreparedFirstAdmission.RecordBytes",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 179
+    },
+    {
+      "name": "Verified",
+      "qualifiedName": "PreparedFirstAdmission.Verified",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 177
+    },
+    {
+      "name": "Principal",
+      "qualifiedName": "Principal",
+      "kind": "struct",
+      "sourceFile": "signed_document_verification.go",
+      "line": 122
+    },
+    {
+      "name": "ProtectedSignedTime",
+      "qualifiedName": "ProtectedSignedTime",
+      "kind": "struct",
+      "sourceFile": "signed_document_verification.go",
+      "line": 46
+    },
+    {
+      "name": "ProtocolFS",
+      "qualifiedName": "ProtocolFS",
+      "kind": "function",
+      "sourceFile": "bundle.go",
+      "line": 135
+    },
+    {
+      "name": "ProtocolPin",
+      "qualifiedName": "ProtocolPin",
+      "kind": "struct",
+      "sourceFile": "bundle.go",
+      "line": 90
+    },
+    {
+      "name": "RFC3339Instant",
+      "qualifiedName": "RFC3339Instant",
+      "kind": "struct",
+      "sourceFile": "rfc3339.go",
+      "line": 17
+    },
+    {
+      "name": "EpochSecond",
+      "qualifiedName": "RFC3339Instant.EpochSecond",
+      "kind": "method",
+      "sourceFile": "rfc3339.go",
+      "line": 23
+    },
+    {
+      "name": "Fraction",
+      "qualifiedName": "RFC3339Instant.Fraction",
+      "kind": "method",
+      "sourceFile": "rfc3339.go",
+      "line": 26
+    },
+    {
+      "name": "ReadProtocolFile",
+      "qualifiedName": "ReadProtocolFile",
+      "kind": "function",
+      "sourceFile": "bundle.go",
+      "line": 140
+    },
+    {
+      "name": "ResolvedKeyEvidence",
+      "qualifiedName": "ResolvedKeyEvidence",
+      "kind": "struct",
+      "sourceFile": "signed_document_verification.go",
+      "line": 157
+    },
+    {
+      "name": "Algorithm",
+      "qualifiedName": "ResolvedKeyEvidence.Algorithm",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 203
+    },
+    {
+      "name": "KeyID",
+      "qualifiedName": "ResolvedKeyEvidence.KeyID",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 197
+    },
+    {
+      "name": "OrganizationID",
+      "qualifiedName": "ResolvedKeyEvidence.OrganizationID",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 194
+    },
+    {
+      "name": "Principal",
+      "qualifiedName": "ResolvedKeyEvidence.Principal",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 200
+    },
+    {
+      "name": "PublicKeyBytes",
+      "qualifiedName": "ResolvedKeyEvidence.PublicKeyBytes",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 209
+    },
+    {
+      "name": "PublicKeyText",
+      "qualifiedName": "ResolvedKeyEvidence.PublicKeyText",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 206
+    },
+    {
+      "name": "RevokedAt",
+      "qualifiedName": "ResolvedKeyEvidence.RevokedAt",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 244
+    },
+    {
+      "name": "RevokedAtText",
+      "qualifiedName": "ResolvedKeyEvidence.RevokedAtText",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 236
+    },
+    {
+      "name": "ValidFrom",
+      "qualifiedName": "ResolvedKeyEvidence.ValidFrom",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 217
+    },
+    {
+      "name": "ValidFromText",
+      "qualifiedName": "ResolvedKeyEvidence.ValidFromText",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 214
+    },
+    {
+      "name": "ValidUntil",
+      "qualifiedName": "ResolvedKeyEvidence.ValidUntil",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 228
+    },
+    {
+      "name": "ValidUntilText",
+      "qualifiedName": "ResolvedKeyEvidence.ValidUntilText",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 220
+    },
+    {
+      "name": "RunConformance",
+      "qualifiedName": "RunConformance",
+      "kind": "function",
+      "sourceFile": "conformance.go",
+      "line": 59
+    },
+    {
+      "name": "RunEmbeddedConformance",
+      "qualifiedName": "RunEmbeddedConformance",
+      "kind": "function",
+      "sourceFile": "conformance.go",
+      "line": 112
+    },
+    {
+      "name": "SDKVersion",
+      "qualifiedName": "SDKVersion",
+      "kind": "constant",
+      "sourceFile": "doc.go",
+      "line": 5
+    },
+    {
+      "name": "SchemaCatalog",
+      "qualifiedName": "SchemaCatalog",
+      "kind": "struct",
+      "sourceFile": "schema.go",
+      "line": 238
+    },
+    {
+      "name": "Validate",
+      "qualifiedName": "SchemaCatalog.Validate",
+      "kind": "method",
+      "sourceFile": "schema.go",
+      "line": 316
+    },
+    {
+      "name": "SignBytes",
+      "qualifiedName": "SignBytes",
+      "kind": "function",
+      "sourceFile": "signing.go",
+      "line": 12
+    },
+    {
+      "name": "SignDocument",
+      "qualifiedName": "SignDocument",
+      "kind": "function",
+      "sourceFile": "signing.go",
+      "line": 55
+    },
+    {
+      "name": "SignatureEvidence",
+      "qualifiedName": "SignatureEvidence",
+      "kind": "struct",
+      "sourceFile": "signed_document_verification.go",
+      "line": 128
+    },
+    {
+      "name": "Algorithm",
+      "qualifiedName": "SignatureEvidence.Algorithm",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 142
+    },
+    {
+      "name": "Bytes",
+      "qualifiedName": "SignatureEvidence.Bytes",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 154
+    },
+    {
+      "name": "CreatedAt",
+      "qualifiedName": "SignatureEvidence.CreatedAt",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 145
+    },
+    {
+      "name": "KeyID",
+      "qualifiedName": "SignatureEvidence.KeyID",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 148
+    },
+    {
+      "name": "Value",
+      "qualifiedName": "SignatureEvidence.Value",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 151
+    },
+    {
+      "name": "SignedDocumentAgentCard",
+      "qualifiedName": "SignedDocumentAgentCard",
+      "kind": "constant",
+      "sourceFile": "signed_document_codec.go",
+      "line": 17
+    },
+    {
+      "name": "SignedDocumentApproval",
+      "qualifiedName": "SignedDocumentApproval",
+      "kind": "constant",
+      "sourceFile": "signed_document_codec.go",
+      "line": 18
+    },
+    {
+      "name": "SignedDocumentArtifact",
+      "qualifiedName": "SignedDocumentArtifact",
+      "kind": "constant",
+      "sourceFile": "signed_document_codec.go",
+      "line": 19
+    },
+    {
+      "name": "SignedDocumentCodec",
+      "qualifiedName": "SignedDocumentCodec",
+      "kind": "struct",
+      "sourceFile": "signed_document_codec.go",
+      "line": 91
+    },
+    {
+      "name": "Sign",
+      "qualifiedName": "SignedDocumentCodec.Sign",
+      "kind": "method",
+      "sourceFile": "signed_document_codec.go",
+      "line": 106
+    },
+    {
+      "name": "Verify",
+      "qualifiedName": "SignedDocumentCodec.Verify",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 327
+    },
+    {
+      "name": "SignedDocumentCommand",
+      "qualifiedName": "SignedDocumentCommand",
+      "kind": "constant",
+      "sourceFile": "signed_document_codec.go",
+      "line": 20
+    },
+    {
+      "name": "SignedDocumentContextPackage",
+      "qualifiedName": "SignedDocumentContextPackage",
+      "kind": "constant",
+      "sourceFile": "signed_document_codec.go",
+      "line": 21
+    },
+    {
+      "name": "SignedDocumentEvent",
+      "qualifiedName": "SignedDocumentEvent",
+      "kind": "constant",
+      "sourceFile": "signed_document_codec.go",
+      "line": 22
+    },
+    {
+      "name": "SignedDocumentEvidence",
+      "qualifiedName": "SignedDocumentEvidence",
+      "kind": "constant",
+      "sourceFile": "signed_document_codec.go",
+      "line": 23
+    },
+    {
+      "name": "SignedDocumentExtensionProfile",
+      "qualifiedName": "SignedDocumentExtensionProfile",
+      "kind": "constant",
+      "sourceFile": "signed_document_codec.go",
+      "line": 24
+    },
+    {
+      "name": "SignedDocumentGroupSnapshot",
+      "qualifiedName": "SignedDocumentGroupSnapshot",
+      "kind": "constant",
+      "sourceFile": "signed_document_codec.go",
+      "line": 25
+    },
+    {
+      "name": "SignedDocumentKind",
+      "qualifiedName": "SignedDocumentKind",
+      "kind": "type",
+      "sourceFile": "signed_document_codec.go",
+      "line": 14
+    },
+    {
+      "name": "SignedDocumentVerificationError",
+      "qualifiedName": "SignedDocumentVerificationError",
+      "kind": "struct",
+      "sourceFile": "signed_document_verification.go",
+      "line": 103
+    },
+    {
+      "name": "Error",
+      "qualifiedName": "SignedDocumentVerificationError.Error",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 109
+    },
+    {
+      "name": "ProtectedDiagnostic",
+      "qualifiedName": "SignedDocumentVerificationError.ProtectedDiagnostic",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 117
+    },
+    {
+      "name": "WireCode",
+      "qualifiedName": "SignedDocumentVerificationError.WireCode",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 114
+    },
+    {
+      "name": "SigningKey",
+      "qualifiedName": "SigningKey",
+      "kind": "interface",
+      "sourceFile": "signed_document_codec.go",
+      "line": 29
+    },
+    {
+      "name": "TrustedAdmissionContext",
+      "qualifiedName": "TrustedAdmissionContext",
+      "kind": "interface",
+      "sourceFile": "admission.go",
+      "line": 106
+    },
+    {
+      "name": "VectorResult",
+      "qualifiedName": "VectorResult",
+      "kind": "struct",
+      "sourceFile": "conformance.go",
+      "line": 13
+    },
+    {
+      "name": "Passed",
+      "qualifiedName": "VectorResult.Passed",
+      "kind": "method",
+      "sourceFile": "conformance.go",
+      "line": 21
+    },
+    {
+      "name": "VerificationCanonicalization",
+      "qualifiedName": "VerificationCanonicalization",
+      "kind": "constant",
+      "sourceFile": "signed_document_verification.go",
+      "line": 75
+    },
+    {
+      "name": "VerificationComplete",
+      "qualifiedName": "VerificationComplete",
+      "kind": "constant",
+      "sourceFile": "signed_document_verification.go",
+      "line": 77
+    },
+    {
+      "name": "VerificationDiagnostic",
+      "qualifiedName": "VerificationDiagnostic",
+      "kind": "struct",
+      "sourceFile": "signed_document_verification.go",
+      "line": 91
+    },
+    {
+      "name": "Reason",
+      "qualifiedName": "VerificationDiagnostic.Reason",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 100
+    },
+    {
+      "name": "Stage",
+      "qualifiedName": "VerificationDiagnostic.Stage",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 97
+    },
+    {
+      "name": "VerificationKeyResolution",
+      "qualifiedName": "VerificationKeyResolution",
+      "kind": "constant",
+      "sourceFile": "signed_document_verification.go",
+      "line": 74
+    },
+    {
+      "name": "VerificationParse",
+      "qualifiedName": "VerificationParse",
+      "kind": "constant",
+      "sourceFile": "signed_document_verification.go",
+      "line": 71
+    },
+    {
+      "name": "VerificationSchema",
+      "qualifiedName": "VerificationSchema",
+      "kind": "constant",
+      "sourceFile": "signed_document_verification.go",
+      "line": 72
+    },
+    {
+      "name": "VerificationSignature",
+      "qualifiedName": "VerificationSignature",
+      "kind": "constant",
+      "sourceFile": "signed_document_verification.go",
+      "line": 76
+    },
+    {
+      "name": "VerificationSignatureEnvelope",
+      "qualifiedName": "VerificationSignatureEnvelope",
+      "kind": "constant",
+      "sourceFile": "signed_document_verification.go",
+      "line": 73
+    },
+    {
+      "name": "VerificationStage",
+      "qualifiedName": "VerificationStage",
+      "kind": "type",
+      "sourceFile": "signed_document_verification.go",
+      "line": 68
+    },
+    {
+      "name": "VerifiedSignedDocument",
+      "qualifiedName": "VerifiedSignedDocument",
+      "kind": "struct",
+      "sourceFile": "signed_document_verification.go",
+      "line": 252
+    },
+    {
+      "name": "CompleteBytes",
+      "qualifiedName": "VerifiedSignedDocument.CompleteBytes",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 293
+    },
+    {
+      "name": "CompleteHash",
+      "qualifiedName": "VerifiedSignedDocument.CompleteHash",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 298
+    },
+    {
+      "name": "Document",
+      "qualifiedName": "VerifiedSignedDocument.Document",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 271
+    },
+    {
+      "name": "Kind",
+      "qualifiedName": "VerifiedSignedDocument.Kind",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 268
+    },
+    {
+      "name": "ProtectedInstant",
+      "qualifiedName": "VerifiedSignedDocument.ProtectedInstant",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 304
+    },
+    {
+      "name": "ProtectedTime",
+      "qualifiedName": "VerifiedSignedDocument.ProtectedTime",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 301
+    },
+    {
+      "name": "ReceivedBytes",
+      "qualifiedName": "VerifiedSignedDocument.ReceivedBytes",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 280
+    },
+    {
+      "name": "ResolvedKey",
+      "qualifiedName": "VerifiedSignedDocument.ResolvedKey",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 314
+    },
+    {
+      "name": "Signature",
+      "qualifiedName": "VerifiedSignedDocument.Signature",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 309
+    },
+    {
+      "name": "SigningBytes",
+      "qualifiedName": "VerifiedSignedDocument.SigningBytes",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 285
+    },
+    {
+      "name": "SigningHash",
+      "qualifiedName": "VerifiedSignedDocument.SigningHash",
+      "kind": "method",
+      "sourceFile": "signed_document_verification.go",
+      "line": 290
+    },
+    {
+      "name": "VerifyAdmissionBundle",
+      "qualifiedName": "VerifyAdmissionBundle",
+      "kind": "function",
+      "sourceFile": "bundle.go",
+      "line": 309
+    },
+    {
+      "name": "VerifyBytes",
+      "qualifiedName": "VerifyBytes",
+      "kind": "function",
+      "sourceFile": "signing.go",
+      "line": 21
+    },
+    {
+      "name": "VerifyCryptographyBundle",
+      "qualifiedName": "VerifyCryptographyBundle",
+      "kind": "function",
+      "sourceFile": "bundle.go",
+      "line": 231
+    },
+    {
+      "name": "VerifyDocument",
+      "qualifiedName": "VerifyDocument",
+      "kind": "function",
+      "sourceFile": "signing.go",
+      "line": 64
+    },
+    {
+      "name": "VerifyProtocolBundle",
+      "qualifiedName": "VerifyProtocolBundle",
+      "kind": "function",
+      "sourceFile": "bundle.go",
+      "line": 193
+    },
+    {
+      "name": "WireAuthInvalidSignature",
+      "qualifiedName": "WireAuthInvalidSignature",
+      "kind": "constant",
+      "sourceFile": "signed_document_verification.go",
+      "line": 86
+    },
+    {
+      "name": "WireErrorCode",
+      "qualifiedName": "WireErrorCode",
+      "kind": "type",
+      "sourceFile": "signed_document_verification.go",
+      "line": 81
+    },
+    {
+      "name": "WireProtocolViolation",
+      "qualifiedName": "WireProtocolViolation",
+      "kind": "constant",
+      "sourceFile": "signed_document_verification.go",
+      "line": 84
+    },
+    {
+      "name": "WireSchemaValidationFailed",
+      "qualifiedName": "WireSchemaValidationFailed",
+      "kind": "constant",
+      "sourceFile": "signed_document_verification.go",
+      "line": 85
+    },
+    {
+      "name": "Resolve",
+      "qualifiedName": "currentResolverAdapter.Resolve",
+      "kind": "method",
+      "sourceFile": "admission.go",
+      "line": 119
+    },
+    {
+      "name": "MatchString",
+      "qualifiedName": "ecmaRegexp.MatchString",
+      "kind": "method",
+      "sourceFile": "schema.go",
+      "line": 355
+    },
+    {
+      "name": "String",
+      "qualifiedName": "ecmaRegexp.String",
+      "kind": "method",
+      "sourceFile": "schema.go",
+      "line": 360
+    },
+    {
+      "name": "Load",
+      "qualifiedName": "offlineSchemaLoader.Load",
+      "kind": "method",
+      "sourceFile": "schema.go",
+      "line": 349
+    }
+  ]
+}

@@ -102,7 +102,7 @@ git commit -m "feat(docs): define six SDK runtime matrix"
 - Create: `public/artifacts/0.1/sdks/cpp-api.json`
 - Modify: `package.json`
 
-- [ ] **Step 1: Write the failing inventory check**
+- [x] **Step 1: Write the failing inventory check**
 
 For example, require the Python inventory to contain this exact identity and
 shape; apply the corresponding exact values to the other five SDKs:
@@ -113,7 +113,16 @@ shape; apply the corresponding exact values to the other five SDKs:
   "commit": "9403cf1310914670506c56cbab363fdaa465d3cc",
   "package": "missionweaveprotocol",
   "symbols": ["AdmissionService"],
-  "sourceFiles": ["src/missionweaveprotocol/admission.py"]
+  "sourceFiles": ["src/missionweaveprotocol/admission.py"],
+  "entries": [
+    {
+      "name": "AdmissionService",
+      "qualifiedName": "AdmissionService",
+      "kind": "class",
+      "sourceFile": "src/missionweaveprotocol/admission.py",
+      "line": 212
+    }
+  ]
 }
 ```
 
@@ -121,7 +130,7 @@ Require `AdmissionService`, `AdmissionLog`, `AdmissionCurrentKeyResolver`,
 `TrustedAdmissionContext`, `FirstAdmissionRecord`, `PreparedFirstAdmission`,
 `AdmittedSignedDocument`, and the three operations in every inventory.
 
-- [ ] **Step 2: Verify the check fails before inventories exist**
+- [x] **Step 2: Verify the check fails before inventories exist**
 
 ```bash
 node scripts/check-sdk-api-inventories.mjs
@@ -129,25 +138,25 @@ node scripts/check-sdk-api-inventories.mjs
 
 Expected: FAIL listing six absent inventory files.
 
-- [ ] **Step 3: Implement exact-commit inventory generation**
+- [x] **Step 3: Implement exact-commit inventory generation**
 
-Read source bytes with `git -C sdkRoot show ${sdk.commit}:${sourcePath}`. Use
-these public-entry sources:
+Read source bytes with `git -C sdkRoot show ${sdk.commit}:${sourcePath}`. Build
+the inventory from each package's complete public API roots:
 
 ```text
-Python:     src/missionweaveprotocol/__init__.py, src/missionweaveprotocol/admission.py
-TypeScript: src/index.ts, src/admission.ts
-Go:         admission.go
-Rust:       src/lib.rs, src/admission.rs
-Java:       src/main/java/org/missionweaveprotocol/sdk/*.java
+Python:     every first-party src/missionweaveprotocol/*.py module, including submodule-qualified APIs
+TypeScript: src/index.ts and every module transitively exported from that package entry point
+Go:         every root non-test *.go package source
+Rust:       src/lib.rs and every module declared by the crate entry point
+Java:       src/main/java/org/missionweaveprotocol/sdk/**/*.java
 C++:        include/missionweaveprotocol/*.hpp
 ```
 
-The generator must preserve sorted symbol names, source paths, package identity,
-and exact commit. It must fail if a required source file or Admission operation
-is absent.
+The generator must preserve sorted symbol names, qualified names, declaration
+kinds, source paths and line numbers, package identity, and exact commit. It
+must fail if a required source file or Admission operation is absent.
 
-- [ ] **Step 4: Generate from local exact commits and prove determinism**
+- [x] **Step 4: Generate from local exact commits and prove determinism**
 
 ```bash
 MW_SOURCES_ROOT=/Users/lionelmbp/repos node scripts/generate-sdk-api-inventories.mjs
@@ -158,7 +167,7 @@ diff -ru /tmp/missionweaveprotocol-sdk-inventories public/artifacts/0.1/sdks
 
 Expected: no diff.
 
-- [ ] **Step 5: Check and commit inventories**
+- [x] **Step 5: Check and commit inventories**
 
 ```bash
 npm run check:sdk-inventories
@@ -271,7 +280,7 @@ git commit -m "docs(sdk): add Python runtime reference"
 
 Document Node.js 20+, package `@missionweaveprotocol/sdk`, ESM/CJS exports,
 strict JSON, schema catalog, canonical JSON, signed-document codec, frame codec,
-conformance CLI, embedded bundles, and Admission. State that Mission
+conformance CLI, packaged protocol bundles, and Admission. State that Mission
 orchestration, Scheduler, gateway, and persistence runtime are not implemented
 at the pinned commit.
 

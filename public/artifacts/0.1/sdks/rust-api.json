@@ -1,0 +1,1504 @@
+{
+  "schemaVersion": 1,
+  "sdk": "rust",
+  "name": "Rust",
+  "repository": "https://github.com/MissionWeaveProtocol/rust-sdk",
+  "commit": "2727f8777737265d98dde4ceaca306612ef54c52",
+  "package": "missionweaveprotocol",
+  "toolchain": ["Rust 1.85", "Cargo"],
+  "sourceFiles": [
+    "src/admission.rs",
+    "src/bundle.rs",
+    "src/canonical.rs",
+    "src/conformance.rs",
+    "src/frame.rs",
+    "src/lib.rs",
+    "src/schema.rs",
+    "src/signed_document.rs",
+    "src/strict_json.rs"
+  ],
+  "symbols": [
+    "AdapterError",
+    "AdmissionAdapterError",
+    "AdmissionBundleSummary",
+    "AdmissionContextValue",
+    "AdmissionCurrentKeyResolver",
+    "AdmissionDiagnostic",
+    "AdmissionError",
+    "AdmissionLog",
+    "AdmissionLookup",
+    "AdmissionOperationError",
+    "AdmissionPin",
+    "AdmissionReason",
+    "AdmissionService",
+    "AdmittedSignedDocument",
+    "ArtifactPin",
+    "ArtifactPins",
+    "AuthenticatedAdmissionRecord",
+    "BundleError",
+    "BundleSummary",
+    "CanonicalError",
+    "ConformanceError",
+    "ConformanceReport",
+    "ConformanceRunner",
+    "CryptographyBundleSummary",
+    "CryptographyPin",
+    "Ed25519Signer",
+    "FirstAdmissionRecord",
+    "FrameCodec",
+    "FrameError",
+    "KeyRegistryCompleteness",
+    "KeyRegistrySnapshot",
+    "KeyResolutionRequest",
+    "KeyResolver",
+    "KeySignerExpectation",
+    "PROTOCOL_VERSION",
+    "PreparedFirstAdmission",
+    "Principal",
+    "PrincipalKind",
+    "ProtocolBundle",
+    "ProtocolPin",
+    "ResolvedKeyEvidence",
+    "Rfc3339Instant",
+    "SDK_VERSION",
+    "SchemaCatalog",
+    "SchemaError",
+    "SignatureEvidence",
+    "SignedDocumentCodec",
+    "SignedDocumentKind",
+    "SigningError",
+    "SigningKey",
+    "StrictJsonError",
+    "TrustedAdmissionContext",
+    "VectorResult",
+    "VerificationDiagnostic",
+    "VerificationError",
+    "VerificationStage",
+    "VerifiedSignedDocument",
+    "WIRE_NAMESPACE",
+    "WireErrorCode",
+    "accepted_by",
+    "admission",
+    "admission_error",
+    "admission_record_id",
+    "admit_first",
+    "algorithm",
+    "append_or_return_existing",
+    "as_str",
+    "authenticated_service",
+    "bytes",
+    "canonical_bytes",
+    "canonical_sha256",
+    "complete_document_bytes",
+    "complete_document_hash",
+    "completeness",
+    "conformance",
+    "created_at",
+    "cryptography",
+    "decode",
+    "detail",
+    "diagnostic",
+    "document",
+    "document_kind",
+    "encode",
+    "epoch_second",
+    "expected_signer",
+    "fraction",
+    "from_parts",
+    "from_seed",
+    "id",
+    "identifier",
+    "is_protocol_uri",
+    "issue",
+    "key_id",
+    "kind",
+    "lookup",
+    "new",
+    "organization_id",
+    "organization_wide",
+    "parse_strict_json",
+    "passed",
+    "pin",
+    "prepare_first_admission",
+    "principal",
+    "protected_time",
+    "protected_time_text",
+    "protocol_version",
+    "public_key_bytes",
+    "public_key_text",
+    "reason",
+    "received_bytes",
+    "record",
+    "record_bytes",
+    "registry_bytes",
+    "registry_completeness",
+    "resolve",
+    "resolve_current",
+    "resolved_key",
+    "revoked_at",
+    "revoked_at_text",
+    "run",
+    "schema",
+    "schema_names",
+    "sign",
+    "sign_bytes",
+    "sign_document",
+    "signature",
+    "signature_input",
+    "signing_bytes",
+    "signing_hash",
+    "stage",
+    "summary",
+    "trusted_accepted_at",
+    "valid_from",
+    "valid_from_text",
+    "valid_until",
+    "valid_until_text",
+    "validate",
+    "validate_bytes",
+    "validate_document",
+    "value",
+    "verification_error",
+    "verified",
+    "verify",
+    "verify_admission",
+    "verify_bytes",
+    "verify_cryptography",
+    "verify_document",
+    "verify_historical_admission",
+    "verifying_key_bytes",
+    "wire_code"
+  ],
+  "entries": [
+    {
+      "name": "AdapterError",
+      "qualifiedName": "AdapterError",
+      "kind": "type",
+      "sourceFile": "src/signed_document.rs",
+      "line": 65
+    },
+    {
+      "name": "AdmissionAdapterError",
+      "qualifiedName": "AdmissionAdapterError",
+      "kind": "struct",
+      "sourceFile": "src/admission.rs",
+      "line": 157
+    },
+    {
+      "name": "detail",
+      "qualifiedName": "AdmissionAdapterError.detail",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 180
+    },
+    {
+      "name": "new",
+      "qualifiedName": "AdmissionAdapterError.new",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 165
+    },
+    {
+      "name": "reason",
+      "qualifiedName": "AdmissionAdapterError.reason",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 174
+    },
+    {
+      "name": "AdmissionBundleSummary",
+      "qualifiedName": "AdmissionBundleSummary",
+      "kind": "struct",
+      "sourceFile": "src/bundle.rs",
+      "line": 138
+    },
+    {
+      "name": "AdmissionContextValue",
+      "qualifiedName": "AdmissionContextValue",
+      "kind": "struct",
+      "sourceFile": "src/admission.rs",
+      "line": 187
+    },
+    {
+      "name": "accepted_by",
+      "qualifiedName": "AdmissionContextValue.accepted_by",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 222
+    },
+    {
+      "name": "admission_record_id",
+      "qualifiedName": "AdmissionContextValue.admission_record_id",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 210
+    },
+    {
+      "name": "new",
+      "qualifiedName": "AdmissionContextValue.new",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 196
+    },
+    {
+      "name": "trusted_accepted_at",
+      "qualifiedName": "AdmissionContextValue.trusted_accepted_at",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 216
+    },
+    {
+      "name": "AdmissionCurrentKeyResolver",
+      "qualifiedName": "AdmissionCurrentKeyResolver",
+      "kind": "trait",
+      "sourceFile": "src/admission.rs",
+      "line": 273
+    },
+    {
+      "name": "resolve_current",
+      "qualifiedName": "AdmissionCurrentKeyResolver.resolve_current",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 279
+    },
+    {
+      "name": "AdmissionDiagnostic",
+      "qualifiedName": "AdmissionDiagnostic",
+      "kind": "struct",
+      "sourceFile": "src/admission.rs",
+      "line": 67
+    },
+    {
+      "name": "reason",
+      "qualifiedName": "AdmissionDiagnostic.reason",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 80
+    },
+    {
+      "name": "stage",
+      "qualifiedName": "AdmissionDiagnostic.stage",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 74
+    },
+    {
+      "name": "AdmissionError",
+      "qualifiedName": "AdmissionError",
+      "kind": "struct",
+      "sourceFile": "src/admission.rs",
+      "line": 88
+    },
+    {
+      "name": "diagnostic",
+      "qualifiedName": "AdmissionError.diagnostic",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 107
+    },
+    {
+      "name": "wire_code",
+      "qualifiedName": "AdmissionError.wire_code",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 101
+    },
+    {
+      "name": "AdmissionLog",
+      "qualifiedName": "AdmissionLog",
+      "kind": "trait",
+      "sourceFile": "src/admission.rs",
+      "line": 300
+    },
+    {
+      "name": "append_or_return_existing",
+      "qualifiedName": "AdmissionLog.append_or_return_existing",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 317
+    },
+    {
+      "name": "lookup",
+      "qualifiedName": "AdmissionLog.lookup",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 306
+    },
+    {
+      "name": "AdmissionLookup",
+      "qualifiedName": "AdmissionLookup",
+      "kind": "enum",
+      "sourceFile": "src/admission.rs",
+      "line": 265
+    },
+    {
+      "name": "AdmissionOperationError",
+      "qualifiedName": "AdmissionOperationError",
+      "kind": "enum",
+      "sourceFile": "src/admission.rs",
+      "line": 116
+    },
+    {
+      "name": "admission_error",
+      "qualifiedName": "AdmissionOperationError.admission_error",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 128
+    },
+    {
+      "name": "verification_error",
+      "qualifiedName": "AdmissionOperationError.verification_error",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 137
+    },
+    {
+      "name": "wire_code",
+      "qualifiedName": "AdmissionOperationError.wire_code",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 146
+    },
+    {
+      "name": "AdmissionPin",
+      "qualifiedName": "AdmissionPin",
+      "kind": "struct",
+      "sourceFile": "src/bundle.rs",
+      "line": 69
+    },
+    {
+      "name": "AdmissionReason",
+      "qualifiedName": "AdmissionReason",
+      "kind": "enum",
+      "sourceFile": "src/admission.rs",
+      "line": 17
+    },
+    {
+      "name": "as_str",
+      "qualifiedName": "AdmissionReason.as_str",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 47
+    },
+    {
+      "name": "AdmissionService",
+      "qualifiedName": "AdmissionService",
+      "kind": "struct",
+      "sourceFile": "src/admission.rs",
+      "line": 451
+    },
+    {
+      "name": "admit_first",
+      "qualifiedName": "AdmissionService.admit_first",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 515
+    },
+    {
+      "name": "new",
+      "qualifiedName": "AdmissionService.new",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 462
+    },
+    {
+      "name": "prepare_first_admission",
+      "qualifiedName": "AdmissionService.prepare_first_admission",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 475
+    },
+    {
+      "name": "verify_historical_admission",
+      "qualifiedName": "AdmissionService.verify_historical_admission",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 557
+    },
+    {
+      "name": "AdmittedSignedDocument",
+      "qualifiedName": "AdmittedSignedDocument",
+      "kind": "struct",
+      "sourceFile": "src/admission.rs",
+      "line": 431
+    },
+    {
+      "name": "record",
+      "qualifiedName": "AdmittedSignedDocument.record",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 445
+    },
+    {
+      "name": "verified",
+      "qualifiedName": "AdmittedSignedDocument.verified",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 439
+    },
+    {
+      "name": "ArtifactPin",
+      "qualifiedName": "ArtifactPin",
+      "kind": "struct",
+      "sourceFile": "src/bundle.rs",
+      "line": 103
+    },
+    {
+      "name": "ArtifactPins",
+      "qualifiedName": "ArtifactPins",
+      "kind": "struct",
+      "sourceFile": "src/bundle.rs",
+      "line": 93
+    },
+    {
+      "name": "AuthenticatedAdmissionRecord",
+      "qualifiedName": "AuthenticatedAdmissionRecord",
+      "kind": "struct",
+      "sourceFile": "src/admission.rs",
+      "line": 229
+    },
+    {
+      "name": "authenticated_service",
+      "qualifiedName": "AuthenticatedAdmissionRecord.authenticated_service",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 258
+    },
+    {
+      "name": "new",
+      "qualifiedName": "AuthenticatedAdmissionRecord.new",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 237
+    },
+    {
+      "name": "record_bytes",
+      "qualifiedName": "AuthenticatedAdmissionRecord.record_bytes",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 252
+    },
+    {
+      "name": "BundleError",
+      "qualifiedName": "BundleError",
+      "kind": "enum",
+      "sourceFile": "src/bundle.rs",
+      "line": 201
+    },
+    {
+      "name": "BundleSummary",
+      "qualifiedName": "BundleSummary",
+      "kind": "struct",
+      "sourceFile": "src/bundle.rs",
+      "line": 114
+    },
+    {
+      "name": "CanonicalError",
+      "qualifiedName": "CanonicalError",
+      "kind": "enum",
+      "sourceFile": "src/canonical.rs",
+      "line": 11
+    },
+    {
+      "name": "ConformanceError",
+      "qualifiedName": "ConformanceError",
+      "kind": "enum",
+      "sourceFile": "src/conformance.rs",
+      "line": 55
+    },
+    {
+      "name": "ConformanceReport",
+      "qualifiedName": "ConformanceReport",
+      "kind": "struct",
+      "sourceFile": "src/conformance.rs",
+      "line": 33
+    },
+    {
+      "name": "passed",
+      "qualifiedName": "ConformanceReport.passed",
+      "kind": "method",
+      "sourceFile": "src/conformance.rs",
+      "line": 41
+    },
+    {
+      "name": "summary",
+      "qualifiedName": "ConformanceReport.summary",
+      "kind": "method",
+      "sourceFile": "src/conformance.rs",
+      "line": 47
+    },
+    {
+      "name": "ConformanceRunner",
+      "qualifiedName": "ConformanceRunner",
+      "kind": "struct",
+      "sourceFile": "src/conformance.rs",
+      "line": 85
+    },
+    {
+      "name": "new",
+      "qualifiedName": "ConformanceRunner.new",
+      "kind": "method",
+      "sourceFile": "src/conformance.rs",
+      "line": 95
+    },
+    {
+      "name": "run",
+      "qualifiedName": "ConformanceRunner.run",
+      "kind": "method",
+      "sourceFile": "src/conformance.rs",
+      "line": 110
+    },
+    {
+      "name": "CryptographyBundleSummary",
+      "qualifiedName": "CryptographyBundleSummary",
+      "kind": "struct",
+      "sourceFile": "src/bundle.rs",
+      "line": 125
+    },
+    {
+      "name": "CryptographyPin",
+      "qualifiedName": "CryptographyPin",
+      "kind": "struct",
+      "sourceFile": "src/bundle.rs",
+      "line": 46
+    },
+    {
+      "name": "Ed25519Signer",
+      "qualifiedName": "Ed25519Signer",
+      "kind": "struct",
+      "sourceFile": "src/canonical.rs",
+      "line": 61
+    },
+    {
+      "name": "from_seed",
+      "qualifiedName": "Ed25519Signer.from_seed",
+      "kind": "method",
+      "sourceFile": "src/canonical.rs",
+      "line": 68
+    },
+    {
+      "name": "sign_bytes",
+      "qualifiedName": "Ed25519Signer.sign_bytes",
+      "kind": "method",
+      "sourceFile": "src/canonical.rs",
+      "line": 82
+    },
+    {
+      "name": "sign_document",
+      "qualifiedName": "Ed25519Signer.sign_document",
+      "kind": "method",
+      "sourceFile": "src/canonical.rs",
+      "line": 102
+    },
+    {
+      "name": "verify_bytes",
+      "qualifiedName": "Ed25519Signer.verify_bytes",
+      "kind": "method",
+      "sourceFile": "src/canonical.rs",
+      "line": 88
+    },
+    {
+      "name": "verify_document",
+      "qualifiedName": "Ed25519Signer.verify_document",
+      "kind": "method",
+      "sourceFile": "src/canonical.rs",
+      "line": 133
+    },
+    {
+      "name": "verifying_key_bytes",
+      "qualifiedName": "Ed25519Signer.verifying_key_bytes",
+      "kind": "method",
+      "sourceFile": "src/canonical.rs",
+      "line": 76
+    },
+    {
+      "name": "FirstAdmissionRecord",
+      "qualifiedName": "FirstAdmissionRecord",
+      "kind": "struct",
+      "sourceFile": "src/admission.rs",
+      "line": 327
+    },
+    {
+      "name": "accepted_by",
+      "qualifiedName": "FirstAdmissionRecord.accepted_by",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 397
+    },
+    {
+      "name": "admission_record_id",
+      "qualifiedName": "FirstAdmissionRecord.admission_record_id",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 355
+    },
+    {
+      "name": "bytes",
+      "qualifiedName": "FirstAdmissionRecord.bytes",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 343
+    },
+    {
+      "name": "document_kind",
+      "qualifiedName": "FirstAdmissionRecord.document_kind",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 367
+    },
+    {
+      "name": "key_id",
+      "qualifiedName": "FirstAdmissionRecord.key_id",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 379
+    },
+    {
+      "name": "organization_id",
+      "qualifiedName": "FirstAdmissionRecord.organization_id",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 361
+    },
+    {
+      "name": "principal",
+      "qualifiedName": "FirstAdmissionRecord.principal",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 385
+    },
+    {
+      "name": "protocol_version",
+      "qualifiedName": "FirstAdmissionRecord.protocol_version",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 349
+    },
+    {
+      "name": "signing_hash",
+      "qualifiedName": "FirstAdmissionRecord.signing_hash",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 373
+    },
+    {
+      "name": "trusted_accepted_at",
+      "qualifiedName": "FirstAdmissionRecord.trusted_accepted_at",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 391
+    },
+    {
+      "name": "FrameCodec",
+      "qualifiedName": "FrameCodec",
+      "kind": "struct",
+      "sourceFile": "src/frame.rs",
+      "line": 25
+    },
+    {
+      "name": "decode",
+      "qualifiedName": "FrameCodec.decode",
+      "kind": "method",
+      "sourceFile": "src/frame.rs",
+      "line": 47
+    },
+    {
+      "name": "encode",
+      "qualifiedName": "FrameCodec.encode",
+      "kind": "method",
+      "sourceFile": "src/frame.rs",
+      "line": 59
+    },
+    {
+      "name": "new",
+      "qualifiedName": "FrameCodec.new",
+      "kind": "method",
+      "sourceFile": "src/frame.rs",
+      "line": 35
+    },
+    {
+      "name": "validate_document",
+      "qualifiedName": "FrameCodec.validate_document",
+      "kind": "method",
+      "sourceFile": "src/frame.rs",
+      "line": 70
+    },
+    {
+      "name": "FrameError",
+      "qualifiedName": "FrameError",
+      "kind": "enum",
+      "sourceFile": "src/frame.rs",
+      "line": 12
+    },
+    {
+      "name": "KeyRegistryCompleteness",
+      "qualifiedName": "KeyRegistryCompleteness",
+      "kind": "enum",
+      "sourceFile": "src/signed_document.rs",
+      "line": 275
+    },
+    {
+      "name": "KeyRegistrySnapshot",
+      "qualifiedName": "KeyRegistrySnapshot",
+      "kind": "struct",
+      "sourceFile": "src/signed_document.rs",
+      "line": 286
+    },
+    {
+      "name": "bytes",
+      "qualifiedName": "KeyRegistrySnapshot.bytes",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 309
+    },
+    {
+      "name": "completeness",
+      "qualifiedName": "KeyRegistrySnapshot.completeness",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 315
+    },
+    {
+      "name": "new",
+      "qualifiedName": "KeyRegistrySnapshot.new",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 294
+    },
+    {
+      "name": "organization_wide",
+      "qualifiedName": "KeyRegistrySnapshot.organization_wide",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 303
+    },
+    {
+      "name": "KeyResolutionRequest",
+      "qualifiedName": "KeyResolutionRequest",
+      "kind": "struct",
+      "sourceFile": "src/signed_document.rs",
+      "line": 233
+    },
+    {
+      "name": "expected_signer",
+      "qualifiedName": "KeyResolutionRequest.expected_signer",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 256
+    },
+    {
+      "name": "key_id",
+      "qualifiedName": "KeyResolutionRequest.key_id",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 250
+    },
+    {
+      "name": "kind",
+      "qualifiedName": "KeyResolutionRequest.kind",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 244
+    },
+    {
+      "name": "protected_time",
+      "qualifiedName": "KeyResolutionRequest.protected_time",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 268
+    },
+    {
+      "name": "protected_time_text",
+      "qualifiedName": "KeyResolutionRequest.protected_time_text",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 262
+    },
+    {
+      "name": "KeyResolver",
+      "qualifiedName": "KeyResolver",
+      "kind": "trait",
+      "sourceFile": "src/signed_document.rs",
+      "line": 325
+    },
+    {
+      "name": "resolve",
+      "qualifiedName": "KeyResolver.resolve",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 331
+    },
+    {
+      "name": "KeySignerExpectation",
+      "qualifiedName": "KeySignerExpectation",
+      "kind": "enum",
+      "sourceFile": "src/signed_document.rs",
+      "line": 224
+    },
+    {
+      "name": "PROTOCOL_VERSION",
+      "qualifiedName": "PROTOCOL_VERSION",
+      "kind": "constant",
+      "sourceFile": "src/lib.rs",
+      "line": 41
+    },
+    {
+      "name": "PreparedFirstAdmission",
+      "qualifiedName": "PreparedFirstAdmission",
+      "kind": "struct",
+      "sourceFile": "src/admission.rs",
+      "line": 404
+    },
+    {
+      "name": "record",
+      "qualifiedName": "PreparedFirstAdmission.record",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 418
+    },
+    {
+      "name": "record_bytes",
+      "qualifiedName": "PreparedFirstAdmission.record_bytes",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 424
+    },
+    {
+      "name": "verified",
+      "qualifiedName": "PreparedFirstAdmission.verified",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 412
+    },
+    {
+      "name": "Principal",
+      "qualifiedName": "Principal",
+      "kind": "struct",
+      "sourceFile": "src/signed_document.rs",
+      "line": 217
+    },
+    {
+      "name": "from_parts",
+      "qualifiedName": "Principal.from_parts",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 335
+    },
+    {
+      "name": "id",
+      "qualifiedName": "Principal.id",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 350
+    },
+    {
+      "name": "kind",
+      "qualifiedName": "Principal.kind",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 344
+    },
+    {
+      "name": "PrincipalKind",
+      "qualifiedName": "PrincipalKind",
+      "kind": "enum",
+      "sourceFile": "src/signed_document.rs",
+      "line": 206
+    },
+    {
+      "name": "ProtocolBundle",
+      "qualifiedName": "ProtocolBundle",
+      "kind": "struct",
+      "sourceFile": "src/bundle.rs",
+      "line": 292
+    },
+    {
+      "name": "admission",
+      "qualifiedName": "ProtocolBundle.admission",
+      "kind": "method",
+      "sourceFile": "src/bundle.rs",
+      "line": 531
+    },
+    {
+      "name": "conformance",
+      "qualifiedName": "ProtocolBundle.conformance",
+      "kind": "method",
+      "sourceFile": "src/bundle.rs",
+      "line": 516
+    },
+    {
+      "name": "cryptography",
+      "qualifiedName": "ProtocolBundle.cryptography",
+      "kind": "method",
+      "sourceFile": "src/bundle.rs",
+      "line": 522
+    },
+    {
+      "name": "pin",
+      "qualifiedName": "ProtocolBundle.pin",
+      "kind": "method",
+      "sourceFile": "src/bundle.rs",
+      "line": 300
+    },
+    {
+      "name": "schema",
+      "qualifiedName": "ProtocolBundle.schema",
+      "kind": "method",
+      "sourceFile": "src/bundle.rs",
+      "line": 494
+    },
+    {
+      "name": "schema_names",
+      "qualifiedName": "ProtocolBundle.schema_names",
+      "kind": "method",
+      "sourceFile": "src/bundle.rs",
+      "line": 500
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "ProtocolBundle.verify",
+      "kind": "method",
+      "sourceFile": "src/bundle.rs",
+      "line": 309
+    },
+    {
+      "name": "verify_admission",
+      "qualifiedName": "ProtocolBundle.verify_admission",
+      "kind": "method",
+      "sourceFile": "src/bundle.rs",
+      "line": 416
+    },
+    {
+      "name": "verify_cryptography",
+      "qualifiedName": "ProtocolBundle.verify_cryptography",
+      "kind": "method",
+      "sourceFile": "src/bundle.rs",
+      "line": 342
+    },
+    {
+      "name": "ProtocolPin",
+      "qualifiedName": "ProtocolPin",
+      "kind": "struct",
+      "sourceFile": "src/bundle.rs",
+      "line": 23
+    },
+    {
+      "name": "ResolvedKeyEvidence",
+      "qualifiedName": "ResolvedKeyEvidence",
+      "kind": "struct",
+      "sourceFile": "src/signed_document.rs",
+      "line": 444
+    },
+    {
+      "name": "algorithm",
+      "qualifiedName": "ResolvedKeyEvidence.algorithm",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 494
+    },
+    {
+      "name": "key_id",
+      "qualifiedName": "ResolvedKeyEvidence.key_id",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 482
+    },
+    {
+      "name": "organization_id",
+      "qualifiedName": "ResolvedKeyEvidence.organization_id",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 464
+    },
+    {
+      "name": "principal",
+      "qualifiedName": "ResolvedKeyEvidence.principal",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 488
+    },
+    {
+      "name": "public_key_bytes",
+      "qualifiedName": "ResolvedKeyEvidence.public_key_bytes",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 506
+    },
+    {
+      "name": "public_key_text",
+      "qualifiedName": "ResolvedKeyEvidence.public_key_text",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 500
+    },
+    {
+      "name": "registry_bytes",
+      "qualifiedName": "ResolvedKeyEvidence.registry_bytes",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 470
+    },
+    {
+      "name": "registry_completeness",
+      "qualifiedName": "ResolvedKeyEvidence.registry_completeness",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 476
+    },
+    {
+      "name": "revoked_at",
+      "qualifiedName": "ResolvedKeyEvidence.revoked_at",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 542
+    },
+    {
+      "name": "revoked_at_text",
+      "qualifiedName": "ResolvedKeyEvidence.revoked_at_text",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 536
+    },
+    {
+      "name": "valid_from",
+      "qualifiedName": "ResolvedKeyEvidence.valid_from",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 518
+    },
+    {
+      "name": "valid_from_text",
+      "qualifiedName": "ResolvedKeyEvidence.valid_from_text",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 512
+    },
+    {
+      "name": "valid_until",
+      "qualifiedName": "ResolvedKeyEvidence.valid_until",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 530
+    },
+    {
+      "name": "valid_until_text",
+      "qualifiedName": "ResolvedKeyEvidence.valid_until_text",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 524
+    },
+    {
+      "name": "Rfc3339Instant",
+      "qualifiedName": "Rfc3339Instant",
+      "kind": "struct",
+      "sourceFile": "src/signed_document.rs",
+      "line": 357
+    },
+    {
+      "name": "epoch_second",
+      "qualifiedName": "Rfc3339Instant.epoch_second",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 365
+    },
+    {
+      "name": "fraction",
+      "qualifiedName": "Rfc3339Instant.fraction",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 371
+    },
+    {
+      "name": "SDK_VERSION",
+      "qualifiedName": "SDK_VERSION",
+      "kind": "constant",
+      "sourceFile": "src/lib.rs",
+      "line": 38
+    },
+    {
+      "name": "SchemaCatalog",
+      "qualifiedName": "SchemaCatalog",
+      "kind": "struct",
+      "sourceFile": "src/schema.rs",
+      "line": 71
+    },
+    {
+      "name": "identifier",
+      "qualifiedName": "SchemaCatalog.identifier",
+      "kind": "method",
+      "sourceFile": "src/schema.rs",
+      "line": 149
+    },
+    {
+      "name": "new",
+      "qualifiedName": "SchemaCatalog.new",
+      "kind": "method",
+      "sourceFile": "src/schema.rs",
+      "line": 83
+    },
+    {
+      "name": "validate",
+      "qualifiedName": "SchemaCatalog.validate",
+      "kind": "method",
+      "sourceFile": "src/schema.rs",
+      "line": 112
+    },
+    {
+      "name": "validate_bytes",
+      "qualifiedName": "SchemaCatalog.validate_bytes",
+      "kind": "method",
+      "sourceFile": "src/schema.rs",
+      "line": 141
+    },
+    {
+      "name": "SchemaError",
+      "qualifiedName": "SchemaError",
+      "kind": "enum",
+      "sourceFile": "src/schema.rs",
+      "line": 39
+    },
+    {
+      "name": "SignatureEvidence",
+      "qualifiedName": "SignatureEvidence",
+      "kind": "struct",
+      "sourceFile": "src/signed_document.rs",
+      "line": 402
+    },
+    {
+      "name": "algorithm",
+      "qualifiedName": "SignatureEvidence.algorithm",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 413
+    },
+    {
+      "name": "bytes",
+      "qualifiedName": "SignatureEvidence.bytes",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 437
+    },
+    {
+      "name": "created_at",
+      "qualifiedName": "SignatureEvidence.created_at",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 425
+    },
+    {
+      "name": "key_id",
+      "qualifiedName": "SignatureEvidence.key_id",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 419
+    },
+    {
+      "name": "value",
+      "qualifiedName": "SignatureEvidence.value",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 431
+    },
+    {
+      "name": "SignedDocumentCodec",
+      "qualifiedName": "SignedDocumentCodec",
+      "kind": "struct",
+      "sourceFile": "src/signed_document.rs",
+      "line": 738
+    },
+    {
+      "name": "new",
+      "qualifiedName": "SignedDocumentCodec.new",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 748
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "SignedDocumentCodec.sign",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 762
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "SignedDocumentCodec.verify",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 842
+    },
+    {
+      "name": "SignedDocumentKind",
+      "qualifiedName": "SignedDocumentKind",
+      "kind": "enum",
+      "sourceFile": "src/signed_document.rs",
+      "line": 25
+    },
+    {
+      "name": "as_str",
+      "qualifiedName": "SignedDocumentKind.as_str",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 49
+    },
+    {
+      "name": "SigningError",
+      "qualifiedName": "SigningError",
+      "kind": "enum",
+      "sourceFile": "src/signed_document.rs",
+      "line": 633
+    },
+    {
+      "name": "SigningKey",
+      "qualifiedName": "SigningKey",
+      "kind": "trait",
+      "sourceFile": "src/signed_document.rs",
+      "line": 68
+    },
+    {
+      "name": "algorithm",
+      "qualifiedName": "SigningKey.algorithm",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 70
+    },
+    {
+      "name": "key_id",
+      "qualifiedName": "SigningKey.key_id",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 73
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "SigningKey.sign",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 80
+    },
+    {
+      "name": "StrictJsonError",
+      "qualifiedName": "StrictJsonError",
+      "kind": "enum",
+      "sourceFile": "src/strict_json.rs",
+      "line": 12
+    },
+    {
+      "name": "TrustedAdmissionContext",
+      "qualifiedName": "TrustedAdmissionContext",
+      "kind": "trait",
+      "sourceFile": "src/admission.rs",
+      "line": 286
+    },
+    {
+      "name": "issue",
+      "qualifiedName": "TrustedAdmissionContext.issue",
+      "kind": "method",
+      "sourceFile": "src/admission.rs",
+      "line": 292
+    },
+    {
+      "name": "VectorResult",
+      "qualifiedName": "VectorResult",
+      "kind": "struct",
+      "sourceFile": "src/conformance.rs",
+      "line": 12
+    },
+    {
+      "name": "passed",
+      "qualifiedName": "VectorResult.passed",
+      "kind": "method",
+      "sourceFile": "src/conformance.rs",
+      "line": 26
+    },
+    {
+      "name": "VerificationDiagnostic",
+      "qualifiedName": "VerificationDiagnostic",
+      "kind": "struct",
+      "sourceFile": "src/signed_document.rs",
+      "line": 136
+    },
+    {
+      "name": "reason",
+      "qualifiedName": "VerificationDiagnostic.reason",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 150
+    },
+    {
+      "name": "stage",
+      "qualifiedName": "VerificationDiagnostic.stage",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 144
+    },
+    {
+      "name": "VerificationError",
+      "qualifiedName": "VerificationError",
+      "kind": "struct",
+      "sourceFile": "src/signed_document.rs",
+      "line": 157
+    },
+    {
+      "name": "diagnostic",
+      "qualifiedName": "VerificationError.diagnostic",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 171
+    },
+    {
+      "name": "wire_code",
+      "qualifiedName": "VerificationError.wire_code",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 165
+    },
+    {
+      "name": "VerificationStage",
+      "qualifiedName": "VerificationStage",
+      "kind": "enum",
+      "sourceFile": "src/signed_document.rs",
+      "line": 85
+    },
+    {
+      "name": "VerifiedSignedDocument",
+      "qualifiedName": "VerifiedSignedDocument",
+      "kind": "struct",
+      "sourceFile": "src/signed_document.rs",
+      "line": 549
+    },
+    {
+      "name": "complete_document_bytes",
+      "qualifiedName": "VerifiedSignedDocument.complete_document_bytes",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 596
+    },
+    {
+      "name": "complete_document_hash",
+      "qualifiedName": "VerifiedSignedDocument.complete_document_hash",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 602
+    },
+    {
+      "name": "document",
+      "qualifiedName": "VerifiedSignedDocument.document",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 572
+    },
+    {
+      "name": "kind",
+      "qualifiedName": "VerifiedSignedDocument.kind",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 566
+    },
+    {
+      "name": "protected_time",
+      "qualifiedName": "VerifiedSignedDocument.protected_time",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 614
+    },
+    {
+      "name": "protected_time_text",
+      "qualifiedName": "VerifiedSignedDocument.protected_time_text",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 608
+    },
+    {
+      "name": "received_bytes",
+      "qualifiedName": "VerifiedSignedDocument.received_bytes",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 578
+    },
+    {
+      "name": "resolved_key",
+      "qualifiedName": "VerifiedSignedDocument.resolved_key",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 626
+    },
+    {
+      "name": "signature",
+      "qualifiedName": "VerifiedSignedDocument.signature",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 620
+    },
+    {
+      "name": "signing_bytes",
+      "qualifiedName": "VerifiedSignedDocument.signing_bytes",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 584
+    },
+    {
+      "name": "signing_hash",
+      "qualifiedName": "VerifiedSignedDocument.signing_hash",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 590
+    },
+    {
+      "name": "WIRE_NAMESPACE",
+      "qualifiedName": "WIRE_NAMESPACE",
+      "kind": "constant",
+      "sourceFile": "src/lib.rs",
+      "line": 44
+    },
+    {
+      "name": "WireErrorCode",
+      "qualifiedName": "WireErrorCode",
+      "kind": "enum",
+      "sourceFile": "src/signed_document.rs",
+      "line": 104
+    },
+    {
+      "name": "as_str",
+      "qualifiedName": "WireErrorCode.as_str",
+      "kind": "method",
+      "sourceFile": "src/signed_document.rs",
+      "line": 116
+    },
+    {
+      "name": "canonical_bytes",
+      "qualifiedName": "canonical_bytes",
+      "kind": "function",
+      "sourceFile": "src/canonical.rs",
+      "line": 31
+    },
+    {
+      "name": "canonical_sha256",
+      "qualifiedName": "canonical_sha256",
+      "kind": "function",
+      "sourceFile": "src/canonical.rs",
+      "line": 40
+    },
+    {
+      "name": "is_protocol_uri",
+      "qualifiedName": "is_protocol_uri",
+      "kind": "function",
+      "sourceFile": "src/schema.rs",
+      "line": 19
+    },
+    {
+      "name": "parse_strict_json",
+      "qualifiedName": "parse_strict_json",
+      "kind": "function",
+      "sourceFile": "src/strict_json.rs",
+      "line": 26
+    },
+    {
+      "name": "signature_input",
+      "qualifiedName": "signature_input",
+      "kind": "function",
+      "sourceFile": "src/canonical.rs",
+      "line": 51
+    }
+  ]
+}

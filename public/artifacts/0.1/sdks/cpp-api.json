@@ -1,0 +1,1406 @@
+{
+  "schemaVersion": 1,
+  "sdk": "cpp",
+  "name": "C++",
+  "repository": "https://github.com/MissionWeaveProtocol/cpp-sdk",
+  "commit": "481b0ce3a65c1f2265935318b54481ece5032fdf",
+  "package": "MissionWeaveProtocol::sdk",
+  "toolchain": ["C++20", "CMake 3.24", "OpenSSL 3"],
+  "sourceFiles": [
+    "include/missionweaveprotocol/admission.hpp",
+    "include/missionweaveprotocol/bundle.hpp",
+    "include/missionweaveprotocol/canonical.hpp",
+    "include/missionweaveprotocol/conformance.hpp",
+    "include/missionweaveprotocol/crypto.hpp",
+    "include/missionweaveprotocol/frame.hpp",
+    "include/missionweaveprotocol/json.hpp",
+    "include/missionweaveprotocol/schema.hpp",
+    "include/missionweaveprotocol/signed_document.hpp",
+    "include/missionweaveprotocol/version.hpp"
+  ],
+  "symbols": [
+    "AdmissionAdapterError",
+    "AdmissionBundleSummary",
+    "AdmissionContextValue",
+    "AdmissionCurrentKeyResolver",
+    "AdmissionDiagnostic",
+    "AdmissionError",
+    "AdmissionLog",
+    "AdmissionLookup",
+    "AdmissionPin",
+    "AdmissionReason",
+    "AdmissionService",
+    "AdmittedSignedDocument",
+    "ArtifactPin",
+    "AssetBytes",
+    "AuthenticatedAdmissionRecord",
+    "BundleError",
+    "BundleSummary",
+    "CanonicalError",
+    "ConformanceError",
+    "ConformanceReport",
+    "ConformanceRunner",
+    "CryptoError",
+    "CryptographyBundleSummary",
+    "CryptographyPin",
+    "Ed25519",
+    "Ed25519PublicKey",
+    "Ed25519Seed",
+    "Ed25519Signature",
+    "ExactInstant",
+    "FirstAdmissionRecord",
+    "FrameCodec",
+    "FrameError",
+    "Impl",
+    "Json",
+    "KeyRegistryCompleteness",
+    "KeyRegistrySnapshot",
+    "KeyResolutionRequest",
+    "KeyResolver",
+    "ParsedAdmissionRecord",
+    "PreparedFirstAdmission",
+    "Principal",
+    "ProtocolArtifacts",
+    "ProtocolBundle",
+    "ProtocolPin",
+    "ResolvedKey",
+    "SchemaCatalog",
+    "SchemaError",
+    "SignatureMaterial",
+    "SignedDocumentCodec",
+    "SignedDocumentKind",
+    "SignedDocumentVerificationError",
+    "SigningKey",
+    "StrictJsonError",
+    "TrustedAdmissionContext",
+    "ValidationIssue",
+    "ValidationResult",
+    "VectorResult",
+    "VerificationDiagnostic",
+    "VerificationStage",
+    "VerifiedSignedDocument",
+    "accepted_by",
+    "admission",
+    "admission_reason_id",
+    "admission_record_id",
+    "admit_first",
+    "append_or_return_existing",
+    "authenticated_service",
+    "authoritative_absence",
+    "bool",
+    "bytes",
+    "canonical_bytes",
+    "canonical_hash",
+    "canonical_json",
+    "canonical_sha256",
+    "canonical_sha256_document",
+    "canonicalize_json",
+    "completeness",
+    "conformance",
+    "cryptography",
+    "decode",
+    "detail",
+    "diagnostic",
+    "document",
+    "document_kind",
+    "document_signing_payload",
+    "encode",
+    "expected_valid_count",
+    "found",
+    "has_record",
+    "is_authoritative_absence",
+    "issue",
+    "key_id",
+    "kind",
+    "lookup",
+    "organization_id",
+    "organization_wide",
+    "parse_strict_json",
+    "passed",
+    "passed_count",
+    "pin",
+    "prepare_first_admission",
+    "principal",
+    "protected_instant",
+    "protected_time",
+    "protocol_pin_bytes",
+    "protocol_version",
+    "public_key_from_seed",
+    "reason",
+    "received_bytes",
+    "record",
+    "record_bytes",
+    "registry_bytes",
+    "resolve",
+    "resolve_current",
+    "resolved_key",
+    "resolved_principal",
+    "run",
+    "schema",
+    "schema_names",
+    "sign",
+    "sign_base64url",
+    "sign_document",
+    "signature",
+    "signed_document_kind_id",
+    "signing_bytes",
+    "signing_hash",
+    "summary",
+    "trusted_accepted_at",
+    "trusted_accepted_instant",
+    "validate",
+    "validate_document",
+    "verification_stage_id",
+    "verification_wire_code",
+    "verified",
+    "verify",
+    "verify_admission",
+    "verify_base64url",
+    "verify_cryptography",
+    "verify_document",
+    "verify_historical_admission",
+    "version",
+    "wire_code"
+  ],
+  "entries": [
+    {
+      "name": "AdmissionAdapterError",
+      "qualifiedName": "AdmissionAdapterError",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 48
+    },
+    {
+      "name": "AdmissionAdapterError",
+      "qualifiedName": "AdmissionAdapterError.AdmissionAdapterError",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 50
+    },
+    {
+      "name": "detail",
+      "qualifiedName": "AdmissionAdapterError.detail",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 53
+    },
+    {
+      "name": "reason",
+      "qualifiedName": "AdmissionAdapterError.reason",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 52
+    },
+    {
+      "name": "AdmissionBundleSummary",
+      "qualifiedName": "AdmissionBundleSummary",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 77
+    },
+    {
+      "name": "AdmissionContextValue",
+      "qualifiedName": "AdmissionContextValue",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 60
+    },
+    {
+      "name": "AdmissionCurrentKeyResolver",
+      "qualifiedName": "AdmissionCurrentKeyResolver",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 160
+    },
+    {
+      "name": "resolve_current",
+      "qualifiedName": "AdmissionCurrentKeyResolver.resolve_current",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 165
+    },
+    {
+      "name": "AdmissionCurrentKeyResolver",
+      "qualifiedName": "AdmissionCurrentKeyResolver.~AdmissionCurrentKeyResolver",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 162
+    },
+    {
+      "name": "AdmissionDiagnostic",
+      "qualifiedName": "AdmissionDiagnostic",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 32
+    },
+    {
+      "name": "AdmissionError",
+      "qualifiedName": "AdmissionError",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 37
+    },
+    {
+      "name": "AdmissionError",
+      "qualifiedName": "AdmissionError.AdmissionError",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 39
+    },
+    {
+      "name": "diagnostic",
+      "qualifiedName": "AdmissionError.diagnostic",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 42
+    },
+    {
+      "name": "wire_code",
+      "qualifiedName": "AdmissionError.wire_code",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 41
+    },
+    {
+      "name": "AdmissionLog",
+      "qualifiedName": "AdmissionLog",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 176
+    },
+    {
+      "name": "append_or_return_existing",
+      "qualifiedName": "AdmissionLog.append_or_return_existing",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 183
+    },
+    {
+      "name": "lookup",
+      "qualifiedName": "AdmissionLog.lookup",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 180
+    },
+    {
+      "name": "AdmissionLog",
+      "qualifiedName": "AdmissionLog.~AdmissionLog",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 178
+    },
+    {
+      "name": "AdmissionLookup",
+      "qualifiedName": "AdmissionLookup",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 145
+    },
+    {
+      "name": "authoritative_absence",
+      "qualifiedName": "AdmissionLookup.authoritative_absence",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 148
+    },
+    {
+      "name": "found",
+      "qualifiedName": "AdmissionLookup.found",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 147
+    },
+    {
+      "name": "has_record",
+      "qualifiedName": "AdmissionLookup.has_record",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 150
+    },
+    {
+      "name": "is_authoritative_absence",
+      "qualifiedName": "AdmissionLookup.is_authoritative_absence",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 151
+    },
+    {
+      "name": "record",
+      "qualifiedName": "AdmissionLookup.record",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 152
+    },
+    {
+      "name": "AdmissionPin",
+      "qualifiedName": "AdmissionPin",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 38
+    },
+    {
+      "name": "AdmissionReason",
+      "qualifiedName": "AdmissionReason",
+      "kind": "enum",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 15
+    },
+    {
+      "name": "AdmissionService",
+      "qualifiedName": "AdmissionService",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 187
+    },
+    {
+      "name": "AdmissionService",
+      "qualifiedName": "AdmissionService.AdmissionService",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 189
+    },
+    {
+      "name": "admit_first",
+      "qualifiedName": "AdmissionService.admit_first",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 196
+    },
+    {
+      "name": "prepare_first_admission",
+      "qualifiedName": "AdmissionService.prepare_first_admission",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 192
+    },
+    {
+      "name": "verify_historical_admission",
+      "qualifiedName": "AdmissionService.verify_historical_admission",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 201
+    },
+    {
+      "name": "AdmittedSignedDocument",
+      "qualifiedName": "AdmittedSignedDocument",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 117
+    },
+    {
+      "name": "record",
+      "qualifiedName": "AdmittedSignedDocument.record",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 120
+    },
+    {
+      "name": "record_bytes",
+      "qualifiedName": "AdmittedSignedDocument.record_bytes",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 121
+    },
+    {
+      "name": "verified",
+      "qualifiedName": "AdmittedSignedDocument.verified",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 119
+    },
+    {
+      "name": "ArtifactPin",
+      "qualifiedName": "ArtifactPin",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 16
+    },
+    {
+      "name": "AssetBytes",
+      "qualifiedName": "AssetBytes",
+      "kind": "type",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 14
+    },
+    {
+      "name": "AuthenticatedAdmissionRecord",
+      "qualifiedName": "AuthenticatedAdmissionRecord",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 132
+    },
+    {
+      "name": "AuthenticatedAdmissionRecord",
+      "qualifiedName": "AuthenticatedAdmissionRecord.AuthenticatedAdmissionRecord",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 134
+    },
+    {
+      "name": "authenticated_service",
+      "qualifiedName": "AuthenticatedAdmissionRecord.authenticated_service",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 138
+    },
+    {
+      "name": "record_bytes",
+      "qualifiedName": "AuthenticatedAdmissionRecord.record_bytes",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 137
+    },
+    {
+      "name": "BundleError",
+      "qualifiedName": "BundleError",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 88
+    },
+    {
+      "name": "BundleSummary",
+      "qualifiedName": "BundleSummary",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 61
+    },
+    {
+      "name": "CanonicalError",
+      "qualifiedName": "CanonicalError",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/canonical.hpp",
+      "line": 11
+    },
+    {
+      "name": "ConformanceError",
+      "qualifiedName": "ConformanceError",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/conformance.hpp",
+      "line": 12
+    },
+    {
+      "name": "ConformanceReport",
+      "qualifiedName": "ConformanceReport",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/conformance.hpp",
+      "line": 26
+    },
+    {
+      "name": "expected_valid_count",
+      "qualifiedName": "ConformanceReport.expected_valid_count",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/conformance.hpp",
+      "line": 31
+    },
+    {
+      "name": "passed",
+      "qualifiedName": "ConformanceReport.passed",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/conformance.hpp",
+      "line": 29
+    },
+    {
+      "name": "passed_count",
+      "qualifiedName": "ConformanceReport.passed_count",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/conformance.hpp",
+      "line": 30
+    },
+    {
+      "name": "summary",
+      "qualifiedName": "ConformanceReport.summary",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/conformance.hpp",
+      "line": 32
+    },
+    {
+      "name": "ConformanceRunner",
+      "qualifiedName": "ConformanceRunner",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/conformance.hpp",
+      "line": 35
+    },
+    {
+      "name": "ConformanceRunner",
+      "qualifiedName": "ConformanceRunner.ConformanceRunner",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/conformance.hpp",
+      "line": 37
+    },
+    {
+      "name": "run",
+      "qualifiedName": "ConformanceRunner.run",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/conformance.hpp",
+      "line": 39
+    },
+    {
+      "name": "CryptoError",
+      "qualifiedName": "CryptoError",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/crypto.hpp",
+      "line": 18
+    },
+    {
+      "name": "CryptographyBundleSummary",
+      "qualifiedName": "CryptographyBundleSummary",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 67
+    },
+    {
+      "name": "CryptographyPin",
+      "qualifiedName": "CryptographyPin",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 27
+    },
+    {
+      "name": "Ed25519",
+      "qualifiedName": "Ed25519",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/crypto.hpp",
+      "line": 23
+    },
+    {
+      "name": "public_key_from_seed",
+      "qualifiedName": "Ed25519.public_key_from_seed",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/crypto.hpp",
+      "line": 25
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "Ed25519.sign",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/crypto.hpp",
+      "line": 26
+    },
+    {
+      "name": "sign_base64url",
+      "qualifiedName": "Ed25519.sign_base64url",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/crypto.hpp",
+      "line": 29
+    },
+    {
+      "name": "sign_document",
+      "qualifiedName": "Ed25519.sign_document",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/crypto.hpp",
+      "line": 32
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "Ed25519.verify",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/crypto.hpp",
+      "line": 27
+    },
+    {
+      "name": "verify_base64url",
+      "qualifiedName": "Ed25519.verify_base64url",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/crypto.hpp",
+      "line": 30
+    },
+    {
+      "name": "verify_document",
+      "qualifiedName": "Ed25519.verify_document",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/crypto.hpp",
+      "line": 33
+    },
+    {
+      "name": "Ed25519PublicKey",
+      "qualifiedName": "Ed25519PublicKey",
+      "kind": "type",
+      "sourceFile": "include/missionweaveprotocol/crypto.hpp",
+      "line": 15
+    },
+    {
+      "name": "Ed25519Seed",
+      "qualifiedName": "Ed25519Seed",
+      "kind": "type",
+      "sourceFile": "include/missionweaveprotocol/crypto.hpp",
+      "line": 14
+    },
+    {
+      "name": "Ed25519Signature",
+      "qualifiedName": "Ed25519Signature",
+      "kind": "type",
+      "sourceFile": "include/missionweaveprotocol/crypto.hpp",
+      "line": 16
+    },
+    {
+      "name": "ExactInstant",
+      "qualifiedName": "ExactInstant",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 39
+    },
+    {
+      "name": "FirstAdmissionRecord",
+      "qualifiedName": "FirstAdmissionRecord",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 66
+    },
+    {
+      "name": "accepted_by",
+      "qualifiedName": "FirstAdmissionRecord.accepted_by",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 78
+    },
+    {
+      "name": "admission_record_id",
+      "qualifiedName": "FirstAdmissionRecord.admission_record_id",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 70
+    },
+    {
+      "name": "bytes",
+      "qualifiedName": "FirstAdmissionRecord.bytes",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 68
+    },
+    {
+      "name": "document_kind",
+      "qualifiedName": "FirstAdmissionRecord.document_kind",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 72
+    },
+    {
+      "name": "key_id",
+      "qualifiedName": "FirstAdmissionRecord.key_id",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 74
+    },
+    {
+      "name": "organization_id",
+      "qualifiedName": "FirstAdmissionRecord.organization_id",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 71
+    },
+    {
+      "name": "principal",
+      "qualifiedName": "FirstAdmissionRecord.principal",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 75
+    },
+    {
+      "name": "protocol_version",
+      "qualifiedName": "FirstAdmissionRecord.protocol_version",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 69
+    },
+    {
+      "name": "signing_hash",
+      "qualifiedName": "FirstAdmissionRecord.signing_hash",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 73
+    },
+    {
+      "name": "trusted_accepted_at",
+      "qualifiedName": "FirstAdmissionRecord.trusted_accepted_at",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 76
+    },
+    {
+      "name": "trusted_accepted_instant",
+      "qualifiedName": "FirstAdmissionRecord.trusted_accepted_instant",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 77
+    },
+    {
+      "name": "FrameCodec",
+      "qualifiedName": "FrameCodec",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/frame.hpp",
+      "line": 18
+    },
+    {
+      "name": "FrameCodec",
+      "qualifiedName": "FrameCodec.FrameCodec",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/frame.hpp",
+      "line": 20
+    },
+    {
+      "name": "decode",
+      "qualifiedName": "FrameCodec.decode",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/frame.hpp",
+      "line": 22
+    },
+    {
+      "name": "decode",
+      "qualifiedName": "FrameCodec.decode",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/frame.hpp",
+      "line": 23
+    },
+    {
+      "name": "encode",
+      "qualifiedName": "FrameCodec.encode",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/frame.hpp",
+      "line": 24
+    },
+    {
+      "name": "validate_document",
+      "qualifiedName": "FrameCodec.validate_document",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/frame.hpp",
+      "line": 25
+    },
+    {
+      "name": "FrameError",
+      "qualifiedName": "FrameError",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/frame.hpp",
+      "line": 13
+    },
+    {
+      "name": "Impl",
+      "qualifiedName": "Impl",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/schema.hpp",
+      "line": 46
+    },
+    {
+      "name": "Json",
+      "qualifiedName": "Json",
+      "kind": "type",
+      "sourceFile": "include/missionweaveprotocol/json.hpp",
+      "line": 12
+    },
+    {
+      "name": "KeyRegistryCompleteness",
+      "qualifiedName": "KeyRegistryCompleteness",
+      "kind": "enum",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 73
+    },
+    {
+      "name": "KeyRegistrySnapshot",
+      "qualifiedName": "KeyRegistrySnapshot",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 75
+    },
+    {
+      "name": "KeyRegistrySnapshot",
+      "qualifiedName": "KeyRegistrySnapshot.KeyRegistrySnapshot",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 77
+    },
+    {
+      "name": "completeness",
+      "qualifiedName": "KeyRegistrySnapshot.completeness",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 87
+    },
+    {
+      "name": "organization_wide",
+      "qualifiedName": "KeyRegistrySnapshot.organization_wide",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 84
+    },
+    {
+      "name": "registry_bytes",
+      "qualifiedName": "KeyRegistrySnapshot.registry_bytes",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 86
+    },
+    {
+      "name": "KeyResolutionRequest",
+      "qualifiedName": "KeyResolutionRequest",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 47
+    },
+    {
+      "name": "KeyResolver",
+      "qualifiedName": "KeyResolver",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 101
+    },
+    {
+      "name": "resolve",
+      "qualifiedName": "KeyResolver.resolve",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 109
+    },
+    {
+      "name": "KeyResolver",
+      "qualifiedName": "KeyResolver.~KeyResolver",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 103
+    },
+    {
+      "name": "ParsedAdmissionRecord",
+      "qualifiedName": "ParsedAdmissionRecord",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 205
+    },
+    {
+      "name": "PreparedFirstAdmission",
+      "qualifiedName": "PreparedFirstAdmission",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 102
+    },
+    {
+      "name": "record",
+      "qualifiedName": "PreparedFirstAdmission.record",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 105
+    },
+    {
+      "name": "record_bytes",
+      "qualifiedName": "PreparedFirstAdmission.record_bytes",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 106
+    },
+    {
+      "name": "verified",
+      "qualifiedName": "PreparedFirstAdmission.verified",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 104
+    },
+    {
+      "name": "Principal",
+      "qualifiedName": "Principal",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 32
+    },
+    {
+      "name": "ProtocolArtifacts",
+      "qualifiedName": "ProtocolArtifacts",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 22
+    },
+    {
+      "name": "ProtocolBundle",
+      "qualifiedName": "ProtocolBundle",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 93
+    },
+    {
+      "name": "admission",
+      "qualifiedName": "ProtocolBundle.admission",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 101
+    },
+    {
+      "name": "conformance",
+      "qualifiedName": "ProtocolBundle.conformance",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 99
+    },
+    {
+      "name": "cryptography",
+      "qualifiedName": "ProtocolBundle.cryptography",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 100
+    },
+    {
+      "name": "pin",
+      "qualifiedName": "ProtocolBundle.pin",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 95
+    },
+    {
+      "name": "protocol_pin_bytes",
+      "qualifiedName": "ProtocolBundle.protocol_pin_bytes",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 96
+    },
+    {
+      "name": "schema",
+      "qualifiedName": "ProtocolBundle.schema",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 97
+    },
+    {
+      "name": "schema_names",
+      "qualifiedName": "ProtocolBundle.schema_names",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 98
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "ProtocolBundle.verify",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 102
+    },
+    {
+      "name": "verify_admission",
+      "qualifiedName": "ProtocolBundle.verify_admission",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 104
+    },
+    {
+      "name": "verify_cryptography",
+      "qualifiedName": "ProtocolBundle.verify_cryptography",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 103
+    },
+    {
+      "name": "ProtocolPin",
+      "qualifiedName": "ProtocolPin",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/bundle.hpp",
+      "line": 50
+    },
+    {
+      "name": "ResolvedKey",
+      "qualifiedName": "ResolvedKey",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 56
+    },
+    {
+      "name": "SchemaCatalog",
+      "qualifiedName": "SchemaCatalog",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/schema.hpp",
+      "line": 32
+    },
+    {
+      "name": "SchemaCatalog",
+      "qualifiedName": "SchemaCatalog.SchemaCatalog",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/schema.hpp",
+      "line": 34
+    },
+    {
+      "name": "SchemaCatalog",
+      "qualifiedName": "SchemaCatalog.SchemaCatalog",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/schema.hpp",
+      "line": 37
+    },
+    {
+      "name": "SchemaCatalog",
+      "qualifiedName": "SchemaCatalog.SchemaCatalog",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/schema.hpp",
+      "line": 40
+    },
+    {
+      "name": "validate",
+      "qualifiedName": "SchemaCatalog.validate",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/schema.hpp",
+      "line": 43
+    },
+    {
+      "name": "SchemaCatalog",
+      "qualifiedName": "SchemaCatalog.~SchemaCatalog",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/schema.hpp",
+      "line": 35
+    },
+    {
+      "name": "SchemaError",
+      "qualifiedName": "SchemaError",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/schema.hpp",
+      "line": 13
+    },
+    {
+      "name": "SignatureMaterial",
+      "qualifiedName": "SignatureMaterial",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 141
+    },
+    {
+      "name": "SignedDocumentCodec",
+      "qualifiedName": "SignedDocumentCodec",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 187
+    },
+    {
+      "name": "SignedDocumentCodec",
+      "qualifiedName": "SignedDocumentCodec.SignedDocumentCodec",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 189
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "SignedDocumentCodec.sign",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 191
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "SignedDocumentCodec.verify",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 193
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "SignedDocumentCodec.verify",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 195
+    },
+    {
+      "name": "SignedDocumentKind",
+      "qualifiedName": "SignedDocumentKind",
+      "kind": "enum",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 18
+    },
+    {
+      "name": "SignedDocumentVerificationError",
+      "qualifiedName": "SignedDocumentVerificationError",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 130
+    },
+    {
+      "name": "SignedDocumentVerificationError",
+      "qualifiedName": "SignedDocumentVerificationError.SignedDocumentVerificationError",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 132
+    },
+    {
+      "name": "diagnostic",
+      "qualifiedName": "SignedDocumentVerificationError.diagnostic",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 135
+    },
+    {
+      "name": "wire_code",
+      "qualifiedName": "SignedDocumentVerificationError.wire_code",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 134
+    },
+    {
+      "name": "SigningKey",
+      "qualifiedName": "SigningKey",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 94
+    },
+    {
+      "name": "key_id",
+      "qualifiedName": "SigningKey.key_id",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 97
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "SigningKey.sign",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 98
+    },
+    {
+      "name": "SigningKey",
+      "qualifiedName": "SigningKey.~SigningKey",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 96
+    },
+    {
+      "name": "StrictJsonError",
+      "qualifiedName": "StrictJsonError",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/json.hpp",
+      "line": 14
+    },
+    {
+      "name": "TrustedAdmissionContext",
+      "qualifiedName": "TrustedAdmissionContext",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 168
+    },
+    {
+      "name": "issue",
+      "qualifiedName": "TrustedAdmissionContext.issue",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 172
+    },
+    {
+      "name": "TrustedAdmissionContext",
+      "qualifiedName": "TrustedAdmissionContext.~TrustedAdmissionContext",
+      "kind": "constructor",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 170
+    },
+    {
+      "name": "ValidationIssue",
+      "qualifiedName": "ValidationIssue",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/schema.hpp",
+      "line": 18
+    },
+    {
+      "name": "ValidationResult",
+      "qualifiedName": "ValidationResult",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/schema.hpp",
+      "line": 25
+    },
+    {
+      "name": "bool",
+      "qualifiedName": "ValidationResult.bool",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/schema.hpp",
+      "line": 29
+    },
+    {
+      "name": "VectorResult",
+      "qualifiedName": "VectorResult",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/conformance.hpp",
+      "line": 17
+    },
+    {
+      "name": "passed",
+      "qualifiedName": "VectorResult.passed",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/conformance.hpp",
+      "line": 23
+    },
+    {
+      "name": "VerificationDiagnostic",
+      "qualifiedName": "VerificationDiagnostic",
+      "kind": "struct",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 125
+    },
+    {
+      "name": "VerificationStage",
+      "qualifiedName": "VerificationStage",
+      "kind": "enum",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 112
+    },
+    {
+      "name": "VerifiedSignedDocument",
+      "qualifiedName": "VerifiedSignedDocument",
+      "kind": "class",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 149
+    },
+    {
+      "name": "canonical_bytes",
+      "qualifiedName": "VerifiedSignedDocument.canonical_bytes",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 156
+    },
+    {
+      "name": "canonical_hash",
+      "qualifiedName": "VerifiedSignedDocument.canonical_hash",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 157
+    },
+    {
+      "name": "document",
+      "qualifiedName": "VerifiedSignedDocument.document",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 152
+    },
+    {
+      "name": "kind",
+      "qualifiedName": "VerifiedSignedDocument.kind",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 151
+    },
+    {
+      "name": "protected_instant",
+      "qualifiedName": "VerifiedSignedDocument.protected_instant",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 159
+    },
+    {
+      "name": "protected_time",
+      "qualifiedName": "VerifiedSignedDocument.protected_time",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 158
+    },
+    {
+      "name": "received_bytes",
+      "qualifiedName": "VerifiedSignedDocument.received_bytes",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 153
+    },
+    {
+      "name": "resolved_key",
+      "qualifiedName": "VerifiedSignedDocument.resolved_key",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 161
+    },
+    {
+      "name": "resolved_principal",
+      "qualifiedName": "VerifiedSignedDocument.resolved_principal",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 162
+    },
+    {
+      "name": "signature",
+      "qualifiedName": "VerifiedSignedDocument.signature",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 160
+    },
+    {
+      "name": "signing_bytes",
+      "qualifiedName": "VerifiedSignedDocument.signing_bytes",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 154
+    },
+    {
+      "name": "signing_hash",
+      "qualifiedName": "VerifiedSignedDocument.signing_hash",
+      "kind": "method",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 155
+    },
+    {
+      "name": "admission_reason_id",
+      "qualifiedName": "admission_reason_id",
+      "kind": "function",
+      "sourceFile": "include/missionweaveprotocol/admission.hpp",
+      "line": 30
+    },
+    {
+      "name": "canonical_json",
+      "qualifiedName": "canonical_json",
+      "kind": "function",
+      "sourceFile": "include/missionweaveprotocol/canonical.hpp",
+      "line": 16
+    },
+    {
+      "name": "canonical_sha256",
+      "qualifiedName": "canonical_sha256",
+      "kind": "function",
+      "sourceFile": "include/missionweaveprotocol/canonical.hpp",
+      "line": 18
+    },
+    {
+      "name": "canonical_sha256_document",
+      "qualifiedName": "canonical_sha256_document",
+      "kind": "function",
+      "sourceFile": "include/missionweaveprotocol/canonical.hpp",
+      "line": 19
+    },
+    {
+      "name": "canonicalize_json",
+      "qualifiedName": "canonicalize_json",
+      "kind": "function",
+      "sourceFile": "include/missionweaveprotocol/canonical.hpp",
+      "line": 17
+    },
+    {
+      "name": "document_signing_payload",
+      "qualifiedName": "document_signing_payload",
+      "kind": "function",
+      "sourceFile": "include/missionweaveprotocol/crypto.hpp",
+      "line": 37
+    },
+    {
+      "name": "parse_strict_json",
+      "qualifiedName": "parse_strict_json",
+      "kind": "function",
+      "sourceFile": "include/missionweaveprotocol/json.hpp",
+      "line": 19
+    },
+    {
+      "name": "parse_strict_json",
+      "qualifiedName": "parse_strict_json",
+      "kind": "function",
+      "sourceFile": "include/missionweaveprotocol/json.hpp",
+      "line": 20
+    },
+    {
+      "name": "signed_document_kind_id",
+      "qualifiedName": "signed_document_kind_id",
+      "kind": "function",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 30
+    },
+    {
+      "name": "verification_stage_id",
+      "qualifiedName": "verification_stage_id",
+      "kind": "function",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 122
+    },
+    {
+      "name": "verification_wire_code",
+      "qualifiedName": "verification_wire_code",
+      "kind": "function",
+      "sourceFile": "include/missionweaveprotocol/signed_document.hpp",
+      "line": 123
+    },
+    {
+      "name": "version",
+      "qualifiedName": "version",
+      "kind": "function",
+      "sourceFile": "include/missionweaveprotocol/version.hpp",
+      "line": 11
+    }
+  ]
+}
