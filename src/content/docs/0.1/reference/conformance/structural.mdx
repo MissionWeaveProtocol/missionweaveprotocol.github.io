@@ -1,0 +1,36 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Structural conformance"
+description:
+  "All expected-valid and expected-invalid MissionWeaveProtocol 0.1 structural
+  vectors."
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import StructuralVectorCatalog from "../../../../../components/StructuralVectorCatalog.astro";
+import release from "../../../../../data/normative/0.1/release-source.json";
+
+# Structural conformance
+
+The structural manifest contains **{release.structural.total}** cases:
+**{release.structural.valid}** expected-valid and
+**{release.structural.invalid}** expected-invalid. Each entry identifies one
+schema artifact, one instance artifact, and the expected validity result.
+
+- <ArtifactLink path="protocol/conformance/manifest.json">
+    Structural manifest
+  </ArtifactLink>
+- <ArtifactLink path="protocol/conformance/README.md">
+    Local manifest semantics
+  </ArtifactLink>
+
+An implementation runs the complete manifest against the exact local schema and
+instance bytes. A matching result demonstrates structural schema conformance
+only. It does not demonstrate state-machine, ordering, authorization, lease,
+budget, replay, cryptographic, or Admission behavior.
+
+The following tables are the browsable local expected-valid and expected-invalid
+vector directories.
+
+<StructuralVectorCatalog />

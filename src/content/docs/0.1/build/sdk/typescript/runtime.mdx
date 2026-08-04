@@ -1,0 +1,119 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "TypeScript runtime reference"
+description:
+  "The complete public package-root surface and runtime boundaries of the
+  exact-pinned TypeScript SDK."
+---
+
+import SupportStatus from "../../../../../../components/SupportStatus.astro";
+
+# TypeScript runtime reference
+
+This page covers the complete TypeScript surface represented by the
+[exact API inventory](../api/). Shared protocol behavior remains defined by the
+local [runtime reference](../../../runtime/architecture-and-bootstrap/) and
+[Reference clauses](../../../../reference/specification/). The names below
+define how the pinned package exposes that behavior.
+
+<SupportStatus status="implemented" /> applies to the package-root APIs and
+in-process codecs listed below.
+
+<SupportStatus status="deployment-adapter-required" /> applies to current
+Registry authority, trusted Admission context, authenticated atomic log access,
+and other external services supplied by a deployment.
+
+<SupportStatus status="not-implemented" /> means the exact-pinned package has no
+corresponding public runtime.
+
+## Import and execution model
+
+Import public names from `@missionweaveprotocol/sdk`. The package publishes ESM
+and CommonJS entry points and requires Node.js 20 or newer. It does not expose
+supported subpaths such as `@missionweaveprotocol/sdk/admission`; source module
+names below are provenance groupings for the single package-root API.
+
+The SDK uses Node cryptography and packaged file-system assets for Schema,
+conformance, cryptography, and Admission bundles. The pinned package does not
+claim browser or Deno runtime support.
+
+## Complete source map
+
+| Runtime concern                 | Public source modules                           | Contract at the pinned commit                                                                                                                                                                      |
+| ------------------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Package identity and JSON types | `src/index.ts`, `src/json-types.ts`             | Package metadata, protocol constants, and the JSON-domain types accepted by public codecs.                                                                                                         |
+| Strict JSON and time values     | `src/strict-json.ts`, `src/rfc3339.ts`          | Package-root strict parsing exports plus the public `Rfc3339Instant` type. Internal RFC 3339 parsers and verification-only strict-JSON helpers are not package-root exports.                       |
+| Schema catalog                  | `src/schema-catalog.ts`                         | Draft 2020-12 Schema discovery, validation, and structured validation failures over the packaged protocol set.                                                                                     |
+| Canonical JSON                  | `src/canonical-json.ts`                         | RFC 8785 canonicalization and byte production for signing and digest inputs.                                                                                                                       |
+| Signed Documents                | `src/signed-document-codec.ts`, `src/crypto.ts` | Ed25519 signing helpers, nine signed-document profiles, complete Organization-wide Registry resolution, and the six-stage verification result.                                                     |
+| Frames                          | `src/frame-codec.ts`                            | Strict parse and encode operations for supported WebSocket frame objects. This is a codec, not a hosted gateway service.                                                                           |
+| Conformance and bundles         | `src/conformance.ts`, `src/package-root.ts`     | Packaged-root discovery, structural manifest execution, and the `missionweaveprotocol-conformance` command. Cryptography and Admission assets are packaged but have no public verification runner. |
+| First Admission                 | `src/admission.ts`                              | Typed First Admission and Historical Trust flow layered after successful six-stage verification.                                                                                                   |
+
+## Validation and cryptography
+
+`parseStrictJson` and `parseStrictJsonObject` reject invalid UTF-8, BOMs,
+duplicate object members, unsupported number inputs, and other syntax outside
+the documented JSON pipeline. `SchemaCatalog` validates the exact packaged
+Schema set. `canonicalJsonBytes` creates RFC 8785 bytes; successful Schema
+validation alone does not replace canonicalization or signature verification.
+
+`SignedDocumentCodec.sign` selects an explicit profile, validates the protected
+time, canonicalizes the unsigned projection, obtains a strict 64-byte Ed25519
+signature through `SigningKey`, attaches the envelope, and validates the final
+document. `verify` consumes raw UTF-8 bytes and runs parse, Schema,
+signature-envelope, key-resolution, canonicalization, and signature stages in
+that order. The returned `VerifiedSignedDocument` exposes immutable evidence,
+defensive byte copies, both signing and complete hashes, protected time, and the
+resolved key.
+
+Key resolution requires complete Organization-wide Registry evidence. A selected
+key, cache entry, or caller-provided trust flag is not a complete Registry
+snapshot.
+
+## Frames, bundles, and conformance
+
+`FrameCodec` parses and encodes supported frame values but does not open a
+socket, authenticate a Session, persist a Cursor, schedule work, or apply an
+authoritative transition. A deployment must supply those higher-level runtime
+responsibilities.
+
+`packageRoot` locates the packaged artifact tree by finding its
+`PROTOCOL_PIN.json`; locating that file does not validate its contents or any
+artifact digest. `runConformance` executes only the structural conformance
+manifest and vectors through the packaged Schema catalog. The
+`missionweaveprotocol-conformance` command invokes that same structural runner.
+
+The pinned package includes cryptography and Admission assets for exact release
+provenance, but it does not expose public APIs that verify the cryptography or
+Admission bundle digests or execute those evaluation manifests. Applications
+must not treat `packageRoot` or a successful structural conformance report as
+proof that those two bundles were verified.
+
+## First Admission
+
+`AdmissionService` exposes asynchronous preparation, first admission, and
+historical replay above the synchronous signed-document verifier. Current
+Registry resolution is synchronous; trusted-context issuance may be synchronous
+or asynchronous; Admission Log lookup and append are asynchronous. Continue with
+the [TypeScript Admission reference](../admission/) for exact adapter outcomes
+and call order.
+
+## Explicit availability boundaries
+
+<SupportStatus status="not-implemented" /> **Mission orchestration** — no
+high-level Mission state-machine or orchestration façade is exported.
+
+<SupportStatus status="not-implemented" /> **Worker scheduler** — no Worker
+queue, scheduler, lease runner, or recovery loop is exported.
+
+<SupportStatus status="not-implemented" /> **Hosted gateway service** — the
+package supplies `FrameCodec`, not a hosted gateway service with transport,
+Session, TLS, routing, or backpressure ownership.
+
+<SupportStatus status="not-implemented" /> **Authoritative persistence runtime**
+— no database-backed or Agent-local persistence runtime is exported.
+
+Those absences are part of the supported runtime contract. Applications must not
+infer Python reference-runtime capabilities from shared protocol names.

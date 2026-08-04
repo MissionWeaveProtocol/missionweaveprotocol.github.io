@@ -1,0 +1,73 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Go SDK
+description: >-
+  Instale y navegue por la referencia completa del tiempo de ejecución de Go
+  fijada exactamente para MissionWeaveProtocol 0.1.
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Go SDK
+
+`github.com/missionweaveprotocol/go-sdk` es el módulo de implementación oficial
+de Go. Esta referencia describe el commit exacto
+`80c39852e8a2053ac761b8d53d62483264f803f1` y Go 1.24. Una confirmación o
+compilación de módulo diferente es una entrada de implementación documentada
+diferente.
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="go"
+  command={`go get github.com/missionweaveprotocol/go-sdk@80c39852e8a2053ac761b8d53d62483264f803f1`}
+  verifyCommand={`go list -m -f '{{.Path}} {{.Version}}' github.com/missionweaveprotocol/go-sdk
+go run github.com/missionweaveprotocol/go-sdk/cmd/missionweaveprotocol-conformance@80c39852e8a2053ac761b8d53d62483264f803f1 -h`}
+>
+  <p slot="notes">
+    Go resuelve la confirmación de una versión del módulo conservando la
+    identidad de origen documentada. Un proxy o una copia suministrada es
+    aceptable sólo cuando sus bytes y procedencia corresponden a la confirmación
+    exacta y sus paquetes de protocolos empaquetados pasan las mismas
+    comprobaciones de resumen.
+  </p>
+</SdkInstall>
+
+:::
+
+El comando `missionweaveprotocol-conformance` ejecuta el esquema empaquetado y
+las superficies vectoriales compatibles. No establece autoridad de
+implementación, durabilidad Admission Log, seguridad de la red o preparación
+para la producción.
+
+## Utilice esta referencia
+
+<CardGrid>
+  <LinkCard
+    title="Runtime completo"
+    description="Cada paquete exportado tiene que ver con el límite de ejecución de Go, el punto de entrada de conformidad y la no implementación explícita."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="Primera admisión y confianza histórica"
+    description="Interfaces tipadas para Registry actual, contexto de confianza y Admission Log, con un ejemplo ejecutable."
+    href="./admission/"
+  />
+  <LinkCard
+    title="API pública exacta"
+    description="Cada declaración Go exportada se resolvió en su línea de origen exacta."
+    href="./api/"
+  />
+</CardGrid>
+
+## Soporte en el compromiso documentado
+
+<SdkRuntimeMatrix sdk="go" />
+
+La matriz distingue la implementación del paquete de la autoridad que pertenece
+al despliegue. La importación del módulo no proporciona un servicio Registry
+actual, un Admission Log atómico autenticado, una puerta de enlace alojada o una
+persistencia duradera en tiempo de ejecución.

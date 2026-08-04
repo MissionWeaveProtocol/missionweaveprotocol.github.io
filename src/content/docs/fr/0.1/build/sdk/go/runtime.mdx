@@ -1,0 +1,121 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Référence d’exécution Go
+description: >-
+  Surface complète du package exporté et limites d’exécution du Go SDK
+  exactement épinglé.
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Référence d’exécution Go
+
+Cette page couvre le package Go complet représenté par l'inventaire
+[exact API](../api/). Le comportement du protocole partagé reste défini par la
+[référence d'exécution ](../../../runtime/architecture-and-bootstrap/) et les
+[clauses de référence ](../../../../reference/specification/) locales. Les noms
+ci-dessous définissent comment le module épinglé expose ce comportement.
+
+<SupportStatus status="implemented" /> s’applique aux API du package exporté et
+aux codecs en cours répertoriés ci-dessous.
+
+<SupportStatus status="deployment-adapter-required" /> s'applique à l'autorité
+Registry actuelle, au contexte d'acceptation fiable, à l'accès au journal
+atomique authentifié et à d'autres services externes fournis par un déploiement.
+
+<SupportStatus status="not-implemented" /> signifie que le module exactement
+épinglé n’a pas de runtime exporté correspondant.
+
+## Modèle d'importation et d'exécution
+
+Importez le package unique sous
+`missionweaveprotocol "github.com/missionweaveprotocol/go-sdk"`. Le module
+nécessite Go 1.24. Les noms publics suivent les règles d'exportation Go ; Les
+assistants et adaptateurs d'implémentation non exportés ne sont pas des contrats
+d'application.
+
+Le module utilise la bibliothèque standard pour JSON, la cryptographie,
+l'intégration et les E/S, ainsi que son schéma déclaré et ses dépendances
+RFC 8785. L'installation du package à elle seule ne démarre pas un processus ni
+ne crée d'autorité.
+
+## Carte source complète
+
+| Fonctionnalité d'exécution           | Fichiers sources publics                                                                         | Contrat au niveau du commit épinglé                                                                                                                       |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Identité et documentation du package | `doc.go`                                                                                         | Portée au niveau du package et limite d’implémentation prise en charge.                                                                                   |
+| JSON strictes et valeurs temporelles | `json.go`, `rfc3339.go`                                                                          | Décodage strict JSON et surface de comparaison instantanée RFC 3339 exportée utilisée par la vérification et l'admission.                                 |
+| Catalogue de schémas                 | `schema.go`                                                                                      | Chargement, validation et accès exact au schéma emballé 2020-12.                                                                                          |
+| Canonique JSON                       | `canonical.go`                                                                                   | RFC 8785 canonisation et production d'octets canoniques.                                                                                                  |
+| Signature et documents signés        | `signing.go`, `signed_document_codec.go`, `signed_document_verification.go`, `ed25519_strict.go` | Assistants Ed25519, neuf profils de documents signés, résolution complète Registry, contrôles ponctuels stricts et preuves de vérification en six étapes. |
+| Cadres                               | `frame.go`                                                                                       | Analyser et encoder les opérations pour les valeurs de trame WebSocket prises en charge. Il s'agit d'un codec et non d'un service de passerelle hébergé.  |
+| Conformité et bundles                | `conformance.go`, `bundle.go`                                                                    | Identité du bundle intégrée, vérification du résumé, exécution du manifeste et prise en charge des commandes.                                             |
+| Première admission                   | `admission.go`                                                                                   | Première admission et confiance historique avec des adaptateurs de déploiement typés au-dessus d’une vérification réussie.                                |
+
+## Validation et cryptographie
+
+`DecodeJSON` applique le modèle de données JSON strict pris en charge et
+`SchemaCatalog` valide l'ensemble de schémas Draft 2020-12 intégré exact.
+`CanonicalizeJSON` et `MarshalCanonicalJSON` produisent RFC 8785 octets. Il
+s'agit de portes distinctes : le succès du schéma n'implique pas de preuves
+canoniques ou signées.
+
+`SignedDocumentCodec.Sign` sélectionne le type de document explicite, valide
+l'heure protégée, canonise la projection non signée, appelle `SigningKey`,
+vérifie l'encodage Ed25519, joint l'enveloppe et valide le résultat. `Verify`
+consomme des octets bruts et exécute les étapes d'analyse, de schéma,
+d'enveloppe de signature, de résolution de clé, de canonisation et de signature
+dans l'ordre. Le `VerifiedSignedDocument` renvoyé expose les copies d’octets
+défensifs, les hachages de signature et complets, l’heure protégée, les preuves
+de signature et la clé résolue.
+
+`KeyResolver` doit renvoyer des preuves Organization complètes à l'échelle
+Registry. Une clé sélectionnée, une entrée de mappage ou un indicateur de
+confiance fourni par l'appelant est insuffisant.
+
+## Cadres, bundles et conformité
+
+Les fonctions Frame analysent et encodent les valeurs mais n'ouvrent pas de
+sockets, n'authentifient pas une session, ne conservent pas les curseurs, ne
+planifient pas le travail ou n'appliquent pas de transitions faisant autorité.
+Il s’agit de responsabilités de déploiement ou d’exécution de niveau supérieur.
+
+`VerifyProtocolBundle`, `VerifyCryptographyBundle` et `VerifyAdmissionBundle`
+lient chaque ensemble d'artefacts incorporés à son identité enregistrée.
+`RunEmbeddedConformance` exécute les vecteurs structurels intégrés. Exécutez-les
+à nouveau lorsque la validation SDK, la pin de protocole, l'ensemble de schémas,
+le bundle de cryptographie, le bundle d'admission ou l'adaptateur de déploiement
+changent. Leur passage ne prouve que la surface du paquet exercé.
+
+## Première admission
+
+`NewAdmissionService` construit le service de schéma exact.
+`PrepareFirstAdmission`, `AdmitFirst` et `VerifyHistoricalAdmission` sont des
+appels Go synchrones qui peuvent renvoyer des erreurs d'adaptateur ou de
+validation. `AdmissionCurrentKeyResolver`, `TrustedAdmissionContext` et
+`AdmissionLog` restent des interfaces de déploiement. Continuez avec la
+référence [Go Admission reference](../admission/) pour les résultats exacts, les
+exigences d'atomicité et le chemin historique.
+
+## Limites de disponibilité explicites
+
+<SupportStatus status="not-implemented" /> **Orchestration Mission** — aucune
+façade de machine à états ou d'orchestration Mission de haut niveau n'est
+exportée.
+
+<SupportStatus status="not-implemented" /> **Planificateur Worker** : aucune
+file d'attente Worker, planificateur, exécuteur de bail ou boucle de
+récupération n'est exporté.
+
+<SupportStatus status="not-implemented" /> **Service de passerelle hébergée** :
+le module fournit des codecs de trame, et non un service de passerelle avec
+propriété de transport, de session, de TLS, de routage ou de contre-pression.
+
+<SupportStatus status="not-implemented" /> **Exécution de persistance faisant
+autorité** : aucune exécution de persistance basée sur une base de données ou
+Agent locale n'est exportée.
+
+Ces absences font partie du contrat d'exécution pris en charge. Les applications
+ne doivent pas déduire les capacités d'exécution de référence Python à partir
+des noms de protocole partagés.

@@ -1,0 +1,26 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: TypeScript öffentliches API Inventar
+description: >-
+  Jede unterstützte TypeScript-Paketstammdeklaration wurde beim dokumentierten
+  SDK-Commit in ihre genaue Quelldatei und Zeile aufgelöst.
+---
+
+import SdkApiInventory from "../../../../../../../components/SdkApiInventory.astro";
+
+# TypeScript öffentliches API Inventar
+
+Dieses Exact-Commit-Inventar wird aus den echten Paket-Root-Exportdeklarationen
+unter `6d53ebfcf8350ae81d89fd818611b07f7373685c` generiert. Zu den Star-Exporten
+gehören ihre öffentlichen Erklärungen; Selektive Exporte umfassen nur die
+benannte Stammoberfläche. Ausgenommen sind normale Einfuhren und reine
+Inlandsanmeldungen.
+
+Die Bestandsaufnahme ist die Benennung und genaue Quellenherkunftsreferenz und
+kein Ersatz für die lokale [Laufzeitsemantik](../runtime/) oder
+[Zulassungsaufrufablauf](../admission/). Das Paket exportiert nur `.` und
+`./package.json`; Ein hier aufgeführtes Quellmodul ist kein unabhängig
+unterstützter Paketunterpfad.
+
+<SdkApiInventory sdk="typescript" />

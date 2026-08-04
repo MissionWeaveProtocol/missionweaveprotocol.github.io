@@ -1,0 +1,84 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: トランスポートとフレーム処理
+description: >-
+  標準的な HELLO 認証、Session Epoch フェンシング、WebSocket テキスト
+  フレーム、Group
+  サブスクリプション、多重化、ACK、PING、およびバックプレッシャー モデル。
+---
+
+# 輸送とフレーム化
+
+MissionWeaveProtocol 0.1 は、ランタイムを TLS
+1.3 経由で認証された WebSocket にバインドします。輸送用品の組み立てと配送。個々の Signed
+Document 検証、Group 承認、永続的リプレイ、またはフェンシングに代わるものではありません。必要な TLS、WebSocket、JSON、JCS、スキーマ、および暗号仕様は
+[MWP-FND-003](../../../reference/specification/foundations/#mwp-fnd-003)
+で列挙されています。
+
+## HELLO 認証
+
+4 つのメッセージの HELLO 交換では、フレッシュ サーバー チャレンジと Organization に登録された Ed25519 キーが使用されます。プロトコルのバージョンをネゴシエートし、有効期間の短いセッション トークンと新しく発行された Session
+Epoch
+([MWP-IDN-007](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-007)) を返します。
+
+エポック `n + 1` を発行すると、ランタイムごとにエポック `n`
+以下でフェンスが作成されます。状態を変更するすべての Agent
+Command は現在のエポックと照合され、2 つのランタイムが 1 つの安定した Agent
+ID を同時に操作することはできません ([MWP-IDN-008](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-008))。
+
+## WebSocket メッセージ境界
+
+サーバーは `wss`
+を提供します。 1 つの認証された接続で、1 つの Agent で使用されるすべてのグループを多重化できます。すべての WebSocket メッセージには、ローカル
+`websocket-frame` スキーマに準拠する UTF-8
+JSON テキスト フレームが 1 つだけ含まれます。バイナリ フレームはプロトコル オブジェクトや Artifact コンテンツ ([MWP-EVT-008](../../../reference/specification/commands-events-and-ordering/#mwp-evt-008)) を伝送できません。
+
+コア フレームのタイプは次のとおりです。
+
+| フレーム    | 目的                                                       |
+| ----------- | ---------------------------------------------------------- |
+| `HELLO`     | チャレンジ認証、バージョンネゴシエーション、セッション発行 |
+| `SUBSCRIBE` | 承認された Group の選択および再生位置                      |
+| `COMMAND`   | 構造化された移行に対する 1 つの署名付きリクエスト          |
+| `EVENT`     | 1 つの不変の受け入れられた事実                             |
+| `ACK`       | 1 つ以上の耐久性のある連続カーソル                         |
+| `PING`      | liveness とオプションの Presence                           |
+| `ERROR`     | 機械可読な拒否または輸送ガイダンス                         |
+
+## シーケンスの前にサブスクライブしてルーティングする
+
+認証後、`SUBSCRIBE` には Group
+ID、Group ごとのリプレイ位置、およびオプションのアテンション フィルターが含まれます。サーバーは独自に Membership を強制し、不正な Group が存在するかどうかは開示しません ([MWP-EVT-009](../../../reference/specification/commands-events-and-ordering/#mwp-evt-009))。
+
+異なるグループからのイベントが交互に発生する場合があります。受信側は、シーケンス、カーソル、重複排除、またはキュー ロジックを適用する前に、Group
+ID によって各 Event をルーティングします。 Group ごとの順序のみが定義されています ([MWP-EVT-010](../../../reference/specification/commands-events-and-ordering/#mwp-evt-010))。
+
+## 活気、進歩、そしてプレッシャー
+
+`ACK` は永続的な進行状況を報告します。 `PING`
+は生存を証明し、プレゼンス レコードを保持する可能性があります。ピアはそのノンスをエコーし​​ます。サーバーは、制限付きバッファーと Group ごとのバックプレッシャーを使用し、可能であれば無関係なグループを切断するのではなく、`BACKPRESSURE`
+ガイダンスでオーバーロードされた Group を一時停止します ([MWP-EVT-011](../../../reference/specification/commands-events-and-ordering/#mwp-evt-011))。
+
+プレゼンスは、個別の永続署名なしで認証された `PING`
+上で移動できますが、別の Group
+([MWP-IDN-006](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-006)) を公開することはできません。ノイズの多い Group が他のものを飢えさせることはできません。ゲートウェイは、Group ごとのフロー制御と、可能な場合には独立したサブスクリプション カーソルを提供します ([MWP-MSN-014](../../../reference/specification/missions-groups-and-membership/#mwp-msn-014))。
+
+ACK は権威ある Event 履歴を削除する権限ではなく、PING またはプレゼンス更新は割り当ての承認またはリースの更新ではありません。受信者はイベントの重複を排除し、シーケンス ギャップを越えてカーソルを進めることはありません ([MWP-WRK-029](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029))。 ACK と再接続のリプレイでは、最も連続した耐久性のあるカーソルが使用され、切断時にイベントが再配信される可能性があります ([MWP-WRK-030](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030))。
+
+## ワイヤー境界でのエンコーディング
+
+ワイヤ JSON は任意のメンバー順序で到着する可能性がありますが、重複するメンバー名はスキーマ検証の前に拒否されます。すべての署名、コンテンツ由来の識別子、およびハッシュは、正確な RFC
+8785
+JCS 値モデルとバイト ([MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012)) を使用します。大規模なコンテンツは、バイナリまたは部分ストリーミング プロトコル フレームではなく、コンテンツ アドレス指定された Artifact 参照として送信されます。
+
+:::note[Implementation note]
+
+Group ごとに独立した受信バッファを維持し、1 つの接続の背後で状態を再生します。制限されたバックオフで再接続しますが、各 Group の最後の永続カーソルは保持され、切断境界付近で重複したイベントが発生することが予想されます。
+
+最終的な安全弁として接続全体の制限を適用し、通常の分離メカニズムとして Group ごとの制限を適用します。バッファ サイズ、ハートビート周期、再接続ジッター、およびソケット ライブラリの選択は、ワイヤ定数ではなく展開のチューニングです。
+
+:::
+
+ワイヤ拒否と保護された診断については、[エラーと可観測性](../errors-and-observability/)
+に進みます。

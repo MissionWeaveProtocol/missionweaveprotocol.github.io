@@ -1,0 +1,97 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Kernmodell
+description: >-
+  Die Missionen, Gruppen, dauerhaften Datensätze, lokalen Projektionen und
+  Invarianten, aus denen MissionWeaveProtocol 0.1 besteht.
+---
+
+# Kernmodell
+
+MissionWeaveProtocol organisiert die Zusammenarbeit um einen begrenzten
+**Mission** und seinen temporären **Group**. Durch die Erstellung von Mission
+werden genau ein primärer Group, ein Root-Mensch MissionOwner, ein anfänglicher
+Coordinator, eine Planungskonversation und der anfängliche dauerhafte
+Event-Verlauf erstellt
+([MWP-MSN-001](../../reference/specification/missions-groups-and-membership/#mwp-msn-001)).
+
+```text
+Organization
+├── Agent Registry
+├── Group Authority und dauerhafter Event-Speicher
+├── Autorisierungsdienst
+└── Mission
+    └── Group
+        ├── MissionOwner
+        ├── Coordinator
+        ├── Worker Membership
+        ├── Konversationen und Message
+        ├── WorkItem und Work Contract
+        └── geordnete Event, Artifact, Evidence und Approval
+```
+
+## Die Datensätze, die Zusammenarbeit verbinden
+
+- Ein **Membership** verbindet einen Principal mit einem Group, Rollensatz,
+  Sichtbarkeit Bereich und Membership Epoche.
+- Eine **Konversation** enthält dauerhafte Nachrichten für die Group-Planung
+  oder ein WorkItem.
+- Ein **WorkItem** ist eine ausführbare Einheit der Mission-Arbeit. Sein
+  **Arbeitsvertrag** definiert das Ziel, die zu erbringenden Leistungen,
+  Evidence, Berechtigungen, die Frist und das Budget.
+- Ein **Artifact** ist eine unveränderliche, inhaltsadressierte Lieferung.
+- **Evidence** zeichnet auf, wie ein Artifact oder WorkItem die Akzeptanz
+  erfüllt.
+- Ein **Event** ist eine unveränderliche akzeptierte Tatsache in der monotonen
+  Geschichte eines Group.
+- Ein **Cursor** zeichnet den höchsten zusammenhängenden Group Event auf, der
+  von einem Agent dauerhaft verarbeitet wurde.
+
+Nachrichten liefern Kontext oder Vorschläge. Die ausführbare Verantwortung
+beginnt erst durch einen autorisierten WorkItem-Übergang und eine
+Worker-Akzeptanz. Dies ist die Konversationsgrenze in
+[MWP-FND-014](../../reference/specification/foundations/#mwp-fnd-014) und die
+strukturierte Ausführungsgrenze in
+[MWP-FND-015](../../reference/specification/foundations/#mwp-fnd-015).
+
+## Maßgebliche staatliche und lokale Prognosen
+
+MissionWeaveProtocol trennt die gemeinsame Wahrheit vom wiederherstellbaren
+Worker-Status.
+
+**Zuständiger Status** umfasst Missionen, Mitgliedschaften, WorkItems,
+Eigentums- und Leasing-Epochen, Deduplizierungsbelege, Genehmigungen und
+Group-Ereignisse. Der Group Authority serialisiert akzeptierte Änderungen an
+diesem Status.
+
+**Agent-lokale Projektionen** umfassen Cursor, pro-Group Warteschlangen,
+Prüfpunkte, Postausgänge, Posteingänge und den Planerstatus. Ein Agent kann sie
+aus dauerhaften Ereignissen neu erstellen. Durch den Verlust des lokalen
+Speichers ändert sich der maßgebliche Status von Mission nicht. Die vollständige
+Grenze ist
+[MWP-FND-023](../../reference/specification/foundations/#mwp-fnd-023).
+
+## Invarianten, an die man sich erinnern sollte
+
+Der normative Invariantensatz beginnt bei
+[MWP-FND-013](../../reference/specification/foundations/#mwp-fnd-013). Die
+konzeptionelle Zusammenfassung lautet:
+
+- ein Mission hat einen primären Group und eine Event-Reihenfolge pro Group;
+- Konversation schafft niemals Ausführungsbefugnis;
+- Exklusive Arbeiten sind durch Eigentums- und Pachtepochen eingegrenzt.
+- Akzeptierte Ereignisse und festgeschriebene Nachrichten können nur angehängt
+  werden.
+- Mission Kontext und Anmeldeinformationen sind standardmäßig isoliert;
+- WorkItem- und Unteraufgabenbudgets und -berechtigungen werden von ihren Eltern
+  eingeschränkt;
+- Der Abschluss von root Mission erfordert die menschliche Genehmigung einer
+  genauen Überarbeitung und Artifact gesetzt; und
+- Agenten veröffentlichen überprüfbare Entscheidungen, Eingaben, Evidence,
+  Blocker und Ergebnisse. keine private Gedankenkette.
+
+Fahren Sie mit
+[Identität, Rollen und Autorität](../identity-roles-and-authority/) fort, um zu
+sehen, wie diese Datensätze vertrauenswürdige Akteure und bereichsbezogene
+Autorität erlangen.

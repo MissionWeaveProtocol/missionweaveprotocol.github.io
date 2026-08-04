@@ -1,0 +1,87 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: MissionWeaveProtocol 0.1 ランタイムをビルドする
+description: 解析、信頼、アドミッション、永続性、トランスポート、診断、適合性、およびアップグレードのための標準的な共有実装パス。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+# MissionWeaveProtocol 0.1 ランタイムをビルドする
+
+:::caution[Draft Standard 0.1]
+
+このバージョン管理された Build パスは、規範的な Web サイト公開物の一部です。ローカルの Reference 条項を再定義せず、実装順に整理します。要約とリンク先の条項が食い違う場合は、リンク先の条項が要件を決定します。
+
+:::
+
+ローカル仕様で使用される BCP 14 要件言語は
+[MWP-FND-001](../reference/specification/foundations/#mwp-fnd-001).共有パスは、すべての言語実装が保持する必要があるセマンティクスを記述します。 SDK 固有のページには、インストール コマンド、言語タイプ、および公開 API 構文が追加される場合がありますが、これらのルールを弱めたり置き換えたりしてはなりません。
+
+:::note[Implementation note]
+
+## 推奨される実装順序
+
+1. 正確なリリース、信頼境界、バリデーター、ストア、およびランタイムをブートストラップするアイデンティティ。
+2. プロトコル JSON、識別子、タイムスタンプ、ハッシュ、エンベロープ タイプを保持します。ホスト言語の正規化なし。
+3. 厳密な解析、スキーマ検証、正規化、署名を実装します。Registry に基づく鍵解決と 6 段階の検証パイプライン。
+4. 暗号検証の上に重ねる初回アドミッションと履歴信頼。
+5. 権威ある状態を再構築可能なプロジェクションから分離し、実装するリプレイ、冪等性、フェンシング、および副作用の回復。
+6. 標準の WebSocket フレーム上でグループを認証し、多重化します。
+7. 保護された診断機能と有用な機能を維持しながら、安定したワイヤ エラーを公開します。操作信号。
+8. 正確なリリース成果物を検証し、証明された適合サブセットを報告し、ワイヤーセマンティクスをサイレントに変更することなくアップグレードできます。
+
+この命令は実装ガイダンスです。リンクされた参照条項は、要件とその許容範囲を定義します。
+
+:::
+
+## 共有ランタイム参照
+
+<CardGrid>
+  <LinkCard
+    title="アーキテクチャとブートストラップ"
+    description="信頼境界、実行時の責任、リリースの読み込み、ID、リカバリ、起動順序。"
+    href="./runtime/architecture-and-bootstrap/"
+  />
+  <LinkCard
+    title="プロトコル型"
+    description="Wire JSON、スカラープロファイル、永続オブジェクト、エンベロープ、生成型、およびセマンティック状態。"
+    href="./runtime/protocol-types/"
+  />
+  <LinkCard
+    title="検証、正規化、署名"
+    description="厳密な解析、スキーマ アサーション、JCS、Ed25519、Registry の証拠、および署名ハッシュ。"
+    href="./runtime/validation-canonicalization-and-signing/"
+  />
+  <LinkCard
+    title="初回アドミッションと履歴信頼"
+    description="Admission Log の型付き結果、アトミックな初回アドミッション、記録の検証、および履歴リプレイ。"
+    href="./runtime/first-admission-and-historical-trust/"
+  />
+  <LinkCard
+    title="永続化と復旧"
+    description="権威ある状態、ローカルプロジェクション、レシート、リプレイ、Cursors、スナップショット、および副作用。"
+    href="./runtime/persistence-and-recovery/"
+  />
+  <LinkCard
+    title="トランスポートとフレーム処理"
+    description="HELLO 認証、Session Epoch フェンシング、サブスクリプション、多重化、ACK、PING、およびバックプレッシャー。"
+    href="./runtime/transport-and-framing/"
+  />
+  <LinkCard
+    title="エラーと可観測性"
+    description="ワイヤーセーフなエラー、再試行の決定、保護された診断、監査レコード、メトリクス、およびトレース境界。"
+    href="./runtime/errors-and-observability/"
+  />
+  <LinkCard
+    title="適合性とアップグレード"
+    description="正確なアーティファクト、構造バンドルと信頼バンドル、クレーム境界、拡張機能、およびバージョン移行。"
+    href="./runtime/conformance-and-upgrades/"
+  />
+</CardGrid>
+
+## コードの前にリリースする
+
+固定されていないリポジトリ ブランチや SDK README ではなく、ローカルの
+[標準リリースのidentity](../reference/normative-release/)
+から開始します。リリース ページには、プロトコル アーティファクト、6 つすべての SDK コミット、プロファイル、ダイジェスト、ロケール、およびこのドキュメントで使用される正確な構築サイト ID がバインドされています。

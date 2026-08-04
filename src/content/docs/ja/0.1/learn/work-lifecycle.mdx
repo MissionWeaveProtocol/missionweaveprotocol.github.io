@@ -1,0 +1,78 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 仕事のライフサイクル
+description:
+  会話が明示的な WorkItem、受け入れられた実行、Evidence、検証、および Mission
+  承認になる方法。
+---
+
+# 仕事のライフサイクル
+
+MissionWeaveProtocol は、実行可能な責任を明確にしながら、会話の協力を円滑に保ちます。 Message はコンテキストやリクエスト作業を提供できますが、インターフェイスはそれを実行可能な命令として提示できません ([MWP-MSN-017](../../reference/specification/missions-groups-and-membership/#mwp-msn-017))。
+
+## 議論からコミットメントへ
+
+1. **ディスカッション**
+   エージェントは、完了したメッセージを Group または WorkItem で交換します。会話。
+2. **提案します。**
+   Group メンバーは作業提案を提出できます。実行可能ファイルはありません WorkItem はまだ存在します。
+3. **承認します。**
+   現在の Coordinator、MissionOwner 緊急オーバーライド、または有効な範囲の委任許可を持つ Agent は、WorkItem を作成します。
+4. **オファー。**
+   認可されたアクターは、WorkItem を適格な Worker にオファーし、選択基準を記録します。排他的権限セットと委任オファールールは
+   [MWP-MSN-019](../../reference/specification/missions-groups-and-membership/#mwp-msn-019).
+5. **承認します。**
+   Worker はアドミッション コントロールを実行します。受け入れは新しいことを始める所有権エポックを作成し、WorkItem を Worker の Group ごとのキューに配置します。
+
+受け入れは、即時実行ではなく、永続的なスケジュールのコミットメントです。 Worker のアドミッション チェックと所有権の効果は
+[MWP-WRK-005](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-005).
+
+## 労働契約
+
+すべての WorkItem には、バージョン管理された機械可読な作業契約が含まれています。その必要な形状は
+[MWP-WRK-001](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-001)
+によって識別され、次のものが含まれます。
+
+- 目標、成果物、および承認基準。
+- 必須の Evidence および入力または依存関係の参照。
+- 許可されたツール、データ、リソース、および操作。
+- 必要な機能識別子とバージョン。
+- 期限、要求された緊急性、およびビジネスへの影響。
+- 財務、トークン、ツール呼び出し、コンピューティング、実時間、および副作用の予算。
+- 再試行、バックオフ、期限、コストポリシー。そして
+- リスク分類と実行前の承認ゲート。
+
+本質的な曖昧さは、受け入れられる前に解決されます。重要な契約改訂は、更新された Worker 受諾を通じて返されます ([MWP-WRK-002](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-002))。
+
+## 一般的な成功パス
+
+```text
+Work Proposal
+    ↓ 認可
+open WorkItem
+    ↓ offer
+offered
+    ↓ Worker が受諾
+queued
+    ↓ 有効な所有権、Approval ゲート、Execution Lease
+active
+    ↓ Worker が Artifact と Evidence を提出
+submitted
+    ↓ Coordinator が結果を受諾
+verified
+```
+
+アクティブな作業は、チェックポイントで `queued` に戻るか、永続チェックポイントで
+`blocked`
+に入るか、Evidence で失敗するか、キャンセルされる可能性があります。完全な遷移テーブルは
+[WorkItem 仕様ページ ](../../reference/specification/work-scheduling-and-recovery/#workitem-transition-table)
+にあります。
+
+## 承認前 Evidence
+
+Worker クレームは完了の十分な証拠ではありません。送信には、受け入れ基準にマップされたアーティファクトと Evidence が含まれます。 Coordinator レビューは、Artifact の整合性、決定論的テスト、定性的レビュー担当者 Evidence、および
+[MWP-WRK-025](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-025)
+で説明されている順序で記録された受諾決定をチェックします。
+
+必要な WorkItem が検証された後、Coordinator は特定の Mission リビジョンと Artifact セットを送信します。 MissionOwner は、最終的な Approval に署名するか、以前の送信を消去せずに変更を要求します ([MWP-MSN-008](../../reference/specification/missions-groups-and-membership/#mwp-msn-008))。

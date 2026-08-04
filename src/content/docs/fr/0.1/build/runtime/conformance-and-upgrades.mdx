@@ -1,0 +1,118 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Conformité et mises à niveau
+description: >-
+  Comment vérifier les artefacts exacts de la version, signaler le sous-ensemble
+  de support éprouvé, conserver les extensions et mettre à niveau sans modifier
+  la sémantique de la version 0.1.
+---
+
+# Conformité et mises à niveau
+
+La conformité appartient à un ensemble d'artefacts exact, et non à un nom de
+branche ou à une affirmation générale selon laquelle un SDK prend en charge
+MissionWeaveProtocol. Commencez par la
+[version normative Identity](../../../reference/normative-release/) locale,
+vérifiez chaque résumé épinglé, puis exécutez les surfaces de preuves
+applicables.
+
+## Couches de preuves requises
+
+1. Le [JSON Schema catalog](../../../reference/schemas/) définit le schéma exact
+   des formes d'objets durables et des formats affirmés.
+2. Le
+   [le bundle de conformité structurelle](../../../reference/conformance/structural/)
+   exerce les documents de protocole attendus valides et attendus non valides.
+3. Le [bundle de cryptographie](../../../reference/conformance/cryptography/)
+   exerce chaque profil Signed Document à travers les six étapes sémantiques.
+4. Le [Pack d'admission](../../../reference/conformance/admission/) exercices
+   Première admission et confiance historique au-dessus du paquet de
+   cryptographie épinglé.
+5. Les allégations d'exécution complète nécessitent en outre des preuves
+   positives et négatives pour Commandes, événements, transitions d'état,
+   relecture, clôture, autorisation, budgets, reprise après incident et effets
+   secondaires obsolètes ou en double.
+
+Le [aperçu de la conformité](../../../reference/conformance/) local maintient
+ces surfaces séparées afin que le passage d'une couche ne soit pas promu
+silencieusement dans une autre.
+
+## Vérifier les manifestes avant les cas
+
+Pour le bundle de cryptographie, validez les schémas d'appareil, supprimez
+exactement le membre `artifactDigest` de niveau supérieur, JCS-canoniquez le
+manifeste restant, hachez-le avec SHA-256 et vérifiez chaque hachage d'octet
+d'artefact déclaré avant d'exécuter les cas.
+([MWP-EXT-011](../../../reference/specification/errors-extensions-and-security/#mwp-ext-011)).
+
+Le manifeste d’admission utilise la même procédure de résumé et épingle en outre
+le résumé de cryptographie inchangé. Vérifiez tous les artefacts référencés et
+cette pin avant d'exécuter les résultats de l'adaptateur
+([MWP-EXT-012](../../../reference/specification/errors-extensions-and-security/#mwp-ext-012)).
+
+## Indiquez le sous-ensemble éprouvé
+
+Les vecteurs de schéma prouvent le comportement de schéma et de vecteur. La
+cryptographie prouve les six étapes de vérification. L'admission prouve en outre
+ses cas déclarés de première admission et de relecture historique, mais pas la
+fraîcheur Command, l'autorisation du signataire, l'acceptation de la machine
+d'état ni un format de preuve portable pour un Admission Log déployé. Une
+implémentation de référence peut revendiquer une conformité totale à
+MissionWeaveProtocol 0.1 uniquement lorsque les preuves positives et négatives
+automatisées couvrent chaque type principal Command, chaque type principal Event
+et chaque ligne de transition. Sinon, il signale explicitement le sous-ensemble
+vérifié le plus restreint
+([MWP-EXT-013](../../../reference/specification/errors-extensions-and-security/#mwp-ext-013)).
+
+## Extensions et compatibilité
+
+Un Extension Profile déclare son URI unique au monde, sa version sémantique, son
+URI et son hachage de schéma, ses capacités, sa criticité et sa signature
+d'approbation Organization
+([MWP-EXT-001](../../../reference/specification/errors-extensions-and-security/#mwp-ext-001)).
+Les données d'extension non critiques inconnues peuvent être conservées et
+relayées, tandis qu'une transition dépendant d'un profil critique inconnu est
+refusée
+([MWP-EXT-002](../../../reference/specification/errors-extensions-and-security/#mwp-ext-002)).
+Aucun profil ne peut affaiblir l'identité, l'ordre, l'idempotence, la clôture,
+les budgets, Approval, la provenance, l'isolement ou l'invariant
+Message/non-autorité
+([MWP-EXT-003](../../../reference/specification/errors-extensions-and-security/#mwp-ext-003)).
+
+Les schémas v0.1 rejettent les propriétés de base inconnues et admettent
+l'extensibilité uniquement via des membres d'extension explicites. Conservez les
+octets d'extension non critiques inconnus pour le relais canonique lorsque cela
+est possible
+([MWP-EXT-010](../../../reference/specification/errors-extensions-and-security/#mwp-ext-010)).
+
+Pin d’affectation Agent Card et versions de fonctionnalités requises. Une mise à
+niveau de fonctionnalité incompatible vérifie le travail actif et nécessite une
+acceptation renouvelée avant la poursuite de l'exécution
+([MWP-IDN-003](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-003)).
+
+## Règle de mise à niveau
+
+Le fil `protocolVersion` reste `0.1` pour les clarifications des spécifications
+rétrocompatibles. Une modification de la sémantique principale, des champs
+obligatoires ou des octets de signature nécessite une nouvelle version mineure
+ou majeure du fil négociée. N'introduisez jamais de nouvelle règle de protection
+d'enveloppe de signature en tant que comportement silencieux v0.1
+([MWP-SDV-019](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-019)).
+
+:::note[Implementation note]
+
+Traitez une mise à niveau comme un nouvel ensemble de versions immuables.
+Organisez ensemble la nouvelle version du site Web, les schémas, les manifestes,
+les pins SDK et les inventaires générés ; les vérifier dans un environnement
+isolé ; puis négociez ou faites rouler le trafic uniquement lorsque les deux
+côtés prennent en charge la version de fil et les profils d'extension requis.
+
+Conservez les anciens validateurs et les preuves historiques Registry/Admission
+à disposition pour la relecture des enregistrements créés sous leur publication
+exacte. La mise en ligne, les fenêtres de restauration, les outils de migration
+de base de données et le séquençage du déploiement sont des choix opérationnels,
+mais une restauration ne peut pas réinterpréter les octets de signature ou les
+événements déjà acceptés.
+
+:::

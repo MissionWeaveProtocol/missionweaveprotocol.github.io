@@ -1,0 +1,86 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-AUT
+title: Autorisation, budgets et effets secondaires
+description: >-
+  Contrôles normatifs en matière d’autorisation, de capacité, d’approbation, de
+  budget et d’effets secondaires.
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 12. Autorisation, budgets et effets secondaires
+
+<NormativeClause id="MWP-AUT-001" level="MUST">
+
+Après l'acceptation du WorkItem et de toutes les Approval requises, le service
+d'autorisation émet un jeton de capacité de moindre privilège de courte durée.
+Le jeton MUST être lié à :
+
+- l'ID Worker Agent et le Session Epoch actuel ;
+- WorkItem ID et Ownership Epoch ;
+- l'Execution Lease ID actuel ;
+- les outils, ressources, données et opérations autorisés ;
+- limites financières, de jetons, d'appels, de calcul, de temps et d'effets
+  secondaires ; et
+- une expiration au plus tard au moment du Bail Exécutif applicable.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-002" level={["MAY","MUST NOT","MUST"]}>
+
+Le Coordinator MAY demander une autorisation, mais MUST NOT fabriquer, copier ou
+transmettre les identifiants d'un Worker. Les jetons et secrets MUST NOT
+apparaître dans les Message, Agent Card, Context Package, Artifact ou Group
+Event. Les jetons expirés, révoqués, incompatibles ou en dépassement de budget
+MUST être rejetés.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-003" level={["MUST","MAY"]}>
+
+La stratégie Organization MUST puisse placer un WorkItem dans
+`awaiting_execution_approval` avant le déploiement en production, les paiements,
+les communications externes, les modifications destructrices ou l'accès aux
+données sensibles. Le service d'autorisation MUST retenir le jeton de capacité
+jusqu'à ce que la porte d'approbation signée soit satisfaite. Les travaux à
+faible risque MAY se dérouler automatiquement conformément à la stratégie.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-004" level="MUST NOT">
+
+Les budgets Mission et WorkItem sont des concepts de protocole obligatoires. Le
+MissionOwner définit les limites Mission, le Coordinator n'alloue pas plus que
+ces limites aux WorkItems et aux sous-tâches, et le service d'autorisation
+applique des limites strictes. L’épuisement du budget suspend les travaux et
+nécessite une escalade explicite ; les Agent MUST NOT dépasser silencieusement
+une limite.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-005" level="MUST">
+
+Le Group Authority MUST conserver un grand livre budgétaire agrégé à six
+dimensions. Un `ext.missionweaveprotocol.core.resource_usage_record` Command
+signé enregistre un delta différent de zéro par rapport à un WorkItem, une
+époque de propriété et un ID de bail d'exécution ; le
+`ext.missionweaveprotocol.core.resource_usage_recorded` Event correspondant
+contient le delta, l'utilisation cumulée et le budget restant. La consommation
+MUST mettre à jour le WorkItem et son ascendance complète WorkItem/Mission en
+une seule transition atomique. Un débordement unidimensionnel MUST rejeter
+l'intégralité de la transition sous le nom `BUDGET_EXCEEDED`. Les budgets de
+jetons de capacité MUST être plafonnés à la fois par le contrat de travail et
+par le budget restant faisant autorité.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-006" level="MUST">
+
+L'annulation ou la résiliation d'urgence MUST révoquer les baux et les jetons de
+capacité concernés, arrêter les nouvelles affectations et lancer le nettoyage ou
+la compensation défini par le contrat pour les éléments de travail si
+nécessaire.
+
+</NormativeClause>

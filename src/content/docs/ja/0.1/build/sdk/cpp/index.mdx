@@ -1,0 +1,77 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: C++ SDK
+description:
+  MissionWeaveProtocol 0.1 の完全に固定された C++ ランタイム
+  リファレンスをインストールして操作します。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# C++ SDK
+
+`MissionWeaveProtocol::sdk` は、公式の C++
+SDK 用にインストールされた CMake ターゲットです。このリファレンスでは、正確なコミット
+`481b0ce3a65c1f2265935318b54481ece5032fdf`、バージョン `0.1.0`、C++20、CMake
+3.24 以降、OpenSSL 3、および jsoncons
+1.8.1 について説明します。異なるソース リビジョンまたはインストールされたプレフィックスは、異なる実装入力になります。
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="cpp"
+  command={`git clone https://github.com/MissionWeaveProtocol/cpp-sdk.git missionweaveprotocol-cpp-sdk
+cd missionweaveprotocol-cpp-sdk
+git checkout --detach 481b0ce3a65c1f2265935318b54481ece5032fdf
+cmake -S . -B build -DMISSIONWEAVEPROTOCOL_BUILD_TESTS=ON -DMISSIONWEAVEPROTOCOL_BUILD_EXAMPLES=ON
+cmake --build build --parallel 2
+ctest --test-dir build --output-on-failure
+cmake --install build --prefix /absolute/install/prefix`}
+  verifyCommand={`/absolute/install/prefix/bin/missionweaveprotocol-conformance`}
+>
+  <p slot="notes">
+    CMake が非 OpenSSL または 3.0 以前の実装を検出する場合は、
+    <code>OPENSSL_ROOT_DIR</code> を使用して構成します。ビルドは最初に jsoncons
+    1.8.1 を検索し、それ以外の場合は固定された SHA-256 を含む正確な v1.8.1
+    アーカイブをダウンロードします。ダウンストリーム CMake プロジェクトは{" "}
+    <code>find_package(missionweaveprotocol CONFIG)</code>{" "}
+    を構成し、パッケージが存在しない場合は独自のビルドに失敗し、
+    <code>MissionWeaveProtocol::sdk</code> をリンクします。
+  </p>
+</SdkInstall>
+
+:::
+
+インストールされた `missionweaveprotocol-conformance`
+実行可能ファイルは、埋め込まれた構造スキーマ ベクトルを実行します。文書化されたオプションは受け入れられず、Registry 通貨、Admission
+Log 耐久性、ネットワーク セキュリティ、または運用準備は確立されません。
+
+## このリファレンスを使用してください
+
+<CardGrid>
+  <LinkCard
+    title="完全なランタイム"
+    description="インストールされているすべてのヘッダー、コーデック、バンドル検証ツール、実行可能ファイルの境界、および明示的な非実装が考慮されます。"
+    href="./runtime/"
+  />
+  <LinkCard
+    title="初回アドミッションと履歴信頼"
+    description="型付きの current-Registry、trusted-context、および Admission Log インターフェイスと 1 つの実行可能な例。"
+    href="./admission/"
+  />
+  <LinkCard
+    title="正確なパブリック API"
+    description="すべてのinstalled-header宣言は、正確なソース行に解決されます。"
+    href="./api/"
+  />
+</CardGrid>
+
+## 文書化されたコミットでのサポート
+
+<SdkRuntimeMatrix sdk="cpp" />
+
+ライブラリは、デプロイメント権限ではなく、インプロセス プロトコルの動作を提供します。アプリケーションは引き続き、認証された現在および過去の Registry 証拠、信頼できるアドミッション コンテキスト、および権威ある Admission
+Log を提供します。

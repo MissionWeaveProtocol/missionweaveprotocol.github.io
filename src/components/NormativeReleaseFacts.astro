@@ -1,0 +1,244 @@
+---
+import release from "../data/normative/0.1/release-source.json";
+import { localizedText, uiCopyForPathname } from "../lib/normative-locale";
+
+interface Props {
+  heading?: string;
+}
+
+type SdkName = keyof typeof release.sdks;
+
+const copy = uiCopyForPathname(Astro.url.pathname);
+const { heading = localizedText(copy, "releaseFacts") } = Astro.props as Props;
+const headingId = "normative-release-facts";
+const sdkNames = Object.keys(release.sdks) as SdkName[];
+const sdkPins = sdkNames.map((name) => ({
+  name,
+  commit: release.sdks[name],
+  url: `${release.sdkRepositories[name]}/commit/${release.sdks[name]}`,
+}));
+const protocolCommitUrl = `${release.repository}/commit/${release.protocolCommit}`;
+---
+
+<section class="release-facts" aria-labelledby={headingId}>
+  <h2 id={headingId}>{heading}</h2>
+
+  <dl class="release-facts__summary">
+    <div>
+      <dt>{localizedText(copy, "release")}</dt>
+      <dd><code>{release.releaseId}</code></dd>
+    </div>
+    <div>
+      <dt>{localizedText(copy, "status")}</dt>
+      <dd><code>{release.status}</code></dd>
+    </div>
+    <div>
+      <dt>{localizedText(copy, "protocolVersion")}</dt>
+      <dd><code>{release.protocolVersion}</code></dd>
+    </div>
+    <div>
+      <dt>{localizedText(copy, "wireNamespace")}</dt>
+      <dd><code>{release.wireNamespace}</code></dd>
+    </div>
+    <div>
+      <dt>{localizedText(copy, "locales")}</dt>
+      <dd>{release.locales.length}</dd>
+    </div>
+    <div>
+      <dt>{localizedText(copy, "sdks")}</dt>
+      <dd>{sdkPins.length}</dd>
+    </div>
+  </dl>
+
+  <h3>{localizedText(copy, "protocolIdentity")}</h3>
+  <dl class="release-facts__identity">
+    <div>
+      <dt>{localizedText(copy, "commit")}</dt>
+      <dd>
+        <a href={protocolCommitUrl}><code>{release.protocolCommit}</code></a>
+      </dd>
+    </div>
+    <div>
+      <dt>{localizedText(copy, "pinSha256")}</dt>
+      <dd><code>{release.protocolPinSha256}</code></dd>
+    </div>
+    <div>
+      <dt>{localizedText(copy, "bundleSha256")}</dt>
+      <dd><code>{release.protocolBundleSha256}</code></dd>
+    </div>
+    <div>
+      <dt>{localizedText(copy, "builtTreeDigestAlgorithm")}</dt>
+      <dd><code>{release.contentDigestAlgorithm}</code></dd>
+    </div>
+  </dl>
+
+  <div class="release-facts__tables">
+    <section aria-labelledby="normative-artifact-counts">
+      <h3 id="normative-artifact-counts">
+        {localizedText(copy, "normativeArtifactsEvaluations")}
+      </h3>
+      <div class="release-facts__table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">{localizedText(copy, "surface")}</th>
+              <th scope="col">{localizedText(copy, "artifacts")}</th>
+              <th scope="col">{localizedText(copy, "cases")}</th>
+              <th scope="col">{localizedText(copy, "evaluations")}</th>
+              <th scope="col">{localizedText(copy, "completeValid")}</th>
+              <th scope="col">{localizedText(copy, "rejectedInvalid")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">{localizedText(copy, "jsonSchemas")}</th>
+              <td>{release.schemas.count}</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <th scope="row">{localizedText(copy, "structuralConformance")}</th
+              >
+              <td>—</td>
+              <td>{release.structural.total}</td>
+              <td>—</td>
+              <td>{release.structural.valid}</td>
+              <td>{release.structural.invalid}</td>
+            </tr>
+            <tr>
+              <th scope="row">{localizedText(copy, "cryptography")}</th>
+              <td>{release.cryptography.artifacts}</td>
+              <td>{release.cryptography.cases}</td>
+              <td>{release.cryptography.evaluations}</td>
+              <td>{release.cryptography.complete}</td>
+              <td>{release.cryptography.rejected}</td>
+            </tr>
+            <tr>
+              <th scope="row">{localizedText(copy, "firstAdmission")}</th>
+              <td>{release.admission.artifacts}</td>
+              <td>{release.admission.cases}</td>
+              <td>{release.admission.evaluations}</td>
+              <td>{release.admission.complete}</td>
+              <td>{release.admission.rejected}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="normative-profile-digests">
+      <h3 id="normative-profile-digests">
+        {localizedText(copy, "profilesDigests")}
+      </h3>
+      <dl class="release-facts__identity">
+        <div>
+          <dt>{localizedText(copy, "cryptographyProfile")}</dt>
+          <dd><code>{release.cryptography.profile}</code></dd>
+        </div>
+        <div>
+          <dt>{localizedText(copy, "cryptographyDigest")}</dt>
+          <dd><code>{release.cryptography.digest}</code></dd>
+        </div>
+        <div>
+          <dt>{localizedText(copy, "admissionProfile")}</dt>
+          <dd><code>{release.admission.profile}</code></dd>
+        </div>
+        <div>
+          <dt>{localizedText(copy, "admissionDigest")}</dt>
+          <dd><code>{release.admission.digest}</code></dd>
+        </div>
+      </dl>
+    </section>
+
+    <section aria-labelledby="normative-sdk-pins">
+      <h3 id="normative-sdk-pins">{localizedText(copy, "exactSdkPins")}</h3>
+      <div class="release-facts__table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">SDK</th>
+              <th scope="col">{localizedText(copy, "commit")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              sdkPins.map((sdk) => (
+                <tr>
+                  <th scope="row">{sdk.name}</th>
+                  <td>
+                    <a href={sdk.url}>
+                      <code>{sdk.commit}</code>
+                    </a>
+                  </td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</section>
+
+<style>
+  .release-facts {
+    margin-block: 2rem;
+    padding: clamp(1rem, 2.5vw, 1.5rem);
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.8rem;
+    background: color-mix(in srgb, var(--sl-color-gray-6) 36%, transparent);
+  }
+
+  .release-facts > :first-child {
+    margin-block-start: 0;
+  }
+
+  .release-facts__summary,
+  .release-facts__identity {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+    gap: 0.75rem;
+    margin-block: 1rem 1.5rem;
+  }
+
+  .release-facts__summary div,
+  .release-facts__identity div {
+    min-width: 0;
+    padding: 0.75rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.55rem;
+    background: var(--sl-color-bg);
+  }
+
+  dt {
+    color: var(--sl-color-gray-2);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 0.3rem 0 0;
+    overflow-wrap: anywhere;
+  }
+
+  .release-facts__tables {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .release-facts__table-scroll {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 38rem;
+  }
+
+  code {
+    overflow-wrap: anywhere;
+  }
+</style>

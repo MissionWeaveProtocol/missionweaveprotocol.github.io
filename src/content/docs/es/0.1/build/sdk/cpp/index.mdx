@@ -1,0 +1,80 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: C++ SDK
+description: >-
+  Instale y navegue por la referencia de tiempo de ejecución C++ fijada
+  exactamente para MissionWeaveProtocol 0.1.
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# C++ SDK
+
+`MissionWeaveProtocol::sdk` es el destino CMake instalado para el C++ SDK
+oficial. Esta referencia describe el commit exacto
+`481b0ce3a65c1f2265935318b54481ece5032fdf`, versión `0.1.0`, C++20, CMake 3.24 o
+posterior, OpenSSL 3 y jsoncons 1.8.1. Una revisión de fuente diferente o un
+prefijo instalado es una entrada de implementación diferente.
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="cpp"
+  command={`git clone https://github.com/MissionWeaveProtocol/cpp-sdk.git missionweaveprotocol-cpp-sdk
+cd missionweaveprotocol-cpp-sdk
+git checkout --detach 481b0ce3a65c1f2265935318b54481ece5032fdf
+cmake -S . -B build -DMISSIONWEAVEPROTOCOL_BUILD_TESTS=ON -DMISSIONWEAVEPROTOCOL_BUILD_EXAMPLES=ON
+cmake --build build --parallel 2
+ctest --test-dir build --output-on-failure
+cmake --install build --prefix /absolute/install/prefix`}
+  verifyCommand={`/absolute/install/prefix/bin/missionweaveprotocol-conformance`}
+>
+  <p slot="notes">
+    Configure con <code>OPENSSL_ROOT_DIR</code> cuando CMake encuentre una
+    implementación que no sea OpenSSL o anterior a 3.0. La compilación primero
+    busca jsoncons 1.8.1 y, de lo contrario, descarga el archivo v1.8.1 exacto
+    con un SHA-256 anclado. Los proyectos posteriores de CMake configuran{" "}
+    <code>find_package(missionweaveprotocol CONFIG)</code>, fallan en su propia
+    compilación cuando el paquete está ausente y vinculan{" "}
+    <code>MissionWeaveProtocol::sdk</code>.
+  </p>
+</SdkInstall>
+
+:::
+
+El ejecutable `missionweaveprotocol-conformance` instalado ejecuta los vectores
+de esquema estructural integrados. No acepta opciones documentadas y no
+establece moneda Registry, durabilidad Admission Log, seguridad de red o
+preparación para producción.
+
+## Utilice esta referencia
+
+<CardGrid>
+  <LinkCard
+    title="Runtime completo"
+    description="Cada problema de encabezado instalado, códec, verificador de paquete, límite ejecutable y no implementación explícita."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="Primera admisión y confianza histórica"
+    description="Interfaces tipadas para Registry actual, contexto de confianza y Admission Log, con un ejemplo ejecutable."
+    href="./admission/"
+  />
+  <LinkCard
+    title="API pública exacta"
+    description="Cada declaración de encabezado instalado se resolvió en su línea fuente exacta."
+    href="./api/"
+  />
+</CardGrid>
+
+## Soporte en el compromiso documentado
+
+<SdkRuntimeMatrix sdk="cpp" />
+
+La biblioteca proporciona comportamiento de protocolo dentro del proceso, no
+autoridad de despliegue. Las aplicaciones aún proporcionan evidencia Registry
+actual e histórica autenticada, contexto de admisión confiable y un Admission
+Log autoritativo.

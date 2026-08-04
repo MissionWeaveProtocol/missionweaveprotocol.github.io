@@ -1,0 +1,76 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Java SDK
+description: >-
+  Installieren und navigieren Sie durch die vollständige Laufzeitreferenz Java
+  für MissionWeaveProtocol 0.1.
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Java SDK
+
+`org.missionweaveprotocol:missionweaveprotocol-sdk` ist das offizielle
+Java-Artefakt. Diese Referenz beschreibt den genauen Commit
+`3b2798c21d906c81887c54fe80e5bca8a19ddac7`, Version `0.1.0-SNAPSHOT`, Java 21
+und Maven 3.9. Das Artefakt wird vom exakten Quell-Pin aus installiert; Ein
+anderes Commit oder ein lokal installierter SNAPSHOT ist eine andere
+Implementierungseingabe.
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="java"
+  command={`git clone https://github.com/MissionWeaveProtocol/java-sdk.git missionweaveprotocol-java-sdk
+cd missionweaveprotocol-java-sdk
+git checkout --detach 3b2798c21d906c81887c54fe80e5bca8a19ddac7
+./mvnw -B -ntp verify
+./mvnw -B -ntp install`}
+  verifyCommand={`./mvnw -q -Dexec.mainClass=org.missionweaveprotocol.sdk.cli.ConformanceCli -Dexec.args='' exec:java`}
+>
+  <p slot="notes">
+    Der Maven-Wrapper stellt Maven 3.9.x bereit, erfordert jedoch weiterhin eine
+    Java 21-Laufzeit. Downstream-Builds müssen das installierte Artefakt für den
+    genauen oben genannten Commit an die Herkunft anheften; Die
+    SNAPSHOT-Versionszeichenfolge allein identifiziert keine Quellbytes.
+  </p>
+</SdkInstall>
+
+:::
+
+Die CLI-Hauptklasse ist `org.missionweaveprotocol.sdk.cli.ConformanceCli`. Der
+unterstützte Aufruf ist `missionweaveprotocol-conformance [--root PATH]`; Es
+definiert weder `--help` noch `--json`. Ohne Root werden gepackte strukturelle
+Schema-Vektoren ausgeführt.
+
+## Verwenden Sie diese Referenz
+
+<CardGrid>
+  <LinkCard
+    title="Vollständige Laufzeit"
+    description="Alle Funktionen öffentlicher Klassen, Paketgrenzen, Bundle-Verifizierer, CLI-Einstiegspunkte und expliziten Nichtimplementierungen."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="Erstzulassung und historisches Vertrauen"
+    description="Typisierte Schnittstellen für den aktuellen Registry-Nachweis, vertrauenswürdigen Kontext und das Admission Log mit einem ausführbaren Beispiel."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exakte öffentliche API"
+    description="Jede öffentliche Java-Deklaration wurde in ihre genaue Quellzeile aufgelöst."
+    href="./api/"
+  />
+</CardGrid>
+
+## Unterstützung beim dokumentierten Commit
+
+<SdkRuntimeMatrix sdk="java" />
+
+Das JAR stellt prozessinternes Protokollverhalten bereit, keine
+Bereitstellungsberechtigung. Anwendungen stellen weiterhin authentifizierte
+aktuelle und historische Registry-Beweise, einen vertrauenswürdigen
+Zulassungskontext und einen autoritativen Admission Log bereit.

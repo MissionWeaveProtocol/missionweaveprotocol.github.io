@@ -1,0 +1,121 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Java First Admission and Historical Trust"
+description:
+  "Typed Java adapters, exact call order, trust boundaries, and a runnable
+  Admission example."
+---
+
+import javaAdmissionExample from "../../../../../../../examples/sdk/java/AdmissionExample.java?raw";
+
+# Java First Admission and Historical Trust
+
+The Java `AdmissionService` layers First Admission and Historical Trust above
+the six-stage Signed Document verifier
+([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+The language-independent flow is the local
+[First Admission and Historical Trust runtime page](../../../runtime/first-admission-and-historical-trust/),
+and the exact requirements are the local
+[Admission clauses](../../../../reference/specification/first-admission-and-historical-trust/).
+
+## Public adapters and results
+
+| Public API                                         | Responsibility                                                                                                                                                                                                                                     |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.resolveCurrent`       | Return complete Organization-wide Registry evidence that the deployment asserts is current for this decision.                                                                                                                                      |
+| `TrustedAdmissionContext.issue`                    | Issue the record ID, trusted acceptance instant, and accepting service only after authoritative absence.                                                                                                                                           |
+| `AdmissionLog.lookup`                              | Return `AdmissionLookup.Found` or `AdmissionLookup.AuthoritativeAbsence`. Cache miss, timeout, or unauthenticated absence fails closed under [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
+| `AdmissionLog.appendOrReturnExisting`              | Atomically append candidate bytes or return the concurrent authoritative winner through an authenticated service identity.                                                                                                                         |
+| `AuthenticatedAdmissionRecord`                     | Bind returned record bytes to the service authenticated by the adapter for [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009).                                                                   |
+| `AdmissionService.prepareFirstAdmission`           | Create and validate candidate evidence from an SDK-produced `VerifiedSignedDocument`; it does not append or imply admission.                                                                                                                       |
+| `AdmissionService.admitFirst`                      | Verify current evidence, lookup, prepare after absence, append-or-return-existing, and validate the returned record under [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                    |
+| `AdmissionService.verifyHistoricalAdmission`       | Rerun verification with historical Registry evidence and require an existing record without issuing context or appending under [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).               |
+| `PreparedFirstAdmission`, `AdmittedSignedDocument` | Preserve immutable verification and record evidence and return defensive record-byte copies.                                                                                                                                                       |
+
+A caller-provided trust boolean is not an Admission lookup outcome and must
+never select the success path.
+
+## First-admission call order
+
+:::note[Informative example]
+
+```java
+AdmittedSignedDocument first =
+    new AdmissionService()
+        .admitFirst(
+            SignedDocumentKind.COMMAND,
+            document,
+            currentRegistry,
+            admissionLog,
+            trustedContext);
+```
+
+:::
+
+`admitFirst` completes all six verification stages before log access. A found
+record is validated and returned without issuing trusted context or appending.
+After authoritative absence, the service issues context, prepares canonical
+candidate bytes, calls `appendOrReturnExisting`, and validates the record
+actually returned. A concurrent winner succeeds only when Schema,
+authentication, document binding, and trusted time satisfy
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+and
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010).
+
+## Historical replay and errors
+
+`verifyHistoricalAdmission` uses `KeyResolver`, reruns all six stages, requires
+`AdmissionLookup.Found`, and never calls `TrustedAdmissionContext.issue` or
+`AdmissionLog.appendOrReturnExisting`. Matching record IDs recover the same
+authoritative record but do not prove Command freshness, signer authorization,
+state-machine acceptance, or portable log-proof verification under
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+and
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
+
+Six-stage faults remain `SignedDocumentVerificationException`. Admission-stage
+faults are `AdmissionException` with wire code `AUTH_INVALID_SIGNATURE`, stage
+`admission`, and a typed `AdmissionReason`, as required by
+[MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012).
+Deployment adapters throw `AdmissionAdapterException`; generic success or
+availability is not authenticated evidence.
+
+## Runnable exact-pinned example
+
+:::note[Informative example]
+
+The example reads the signed Command and Registry from resources packaged in the
+exact JAR, then supplies typed in-memory authority adapters. It does not read
+repository files. It asserts identical record IDs, signing hashes, and record
+bytes for First Admission and historical replay, with exactly one append.
+
+<pre>
+  <code>{javaAdmissionExample}</code>
+</pre>
+
+Copy it into an exact checkout and run:
+
+```bash
+cp /absolute/path/to/examples/sdk/java/AdmissionExample.java \
+  examples/src/main/java/org/missionweaveprotocol/examples/AdmissionExample.java
+./mvnw -B -ntp verify
+./mvnw -q -Dexec.mainClass=org.missionweaveprotocol.examples.AdmissionExample \
+  -Dexec.classpathScope=test exec:java
+```
+
+Expected output contains the same record ID for `first admission` and
+`historical replay`.
+
+:::
+
+:::note[Implementation note]
+
+Replace `CurrentRegistry` with authenticated current and historical Registry
+adapters, `InMemoryAdmissionLog` with an authenticated durable log whose
+append-or-return-existing operation is atomic, and `FixedTrustedContext` with
+Organization-controlled trusted time and accepting-service issuance. Preserve
+defensive copies and never collapse these authority boundaries into one
+caller-provided trust boolean.
+
+:::

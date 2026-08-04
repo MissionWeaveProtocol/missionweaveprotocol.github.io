@@ -1,0 +1,44 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 工件和摘要
+description: MissionWeaveProtocol 0.1 网站如何绑定本地规范字节并释放身份。
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import artifacts from "../../../../../data/normative/0.1/artifacts.json";
+
+# 工件和摘要
+
+本地协议包包含**{artifacts.bundle.files}精确文件**以及树摘要<code>{artifacts.bundle.digest}</code>。协议固定版本 SHA-256 是
+
+<code>{artifacts.protocolPin.sha256}</code> 和固定协议包 SHA-256 是
+<code>{artifacts.protocolPin.bundleSha256}</code>。
+
+| 表面       |                                                              文件或工件 | 摘要                                         |
+| ---------- | ----------------------------------------------------------------------: | -------------------------------------------- |
+| 架构       |                                               {artifacts.schemas.files} | <code>{artifacts.schemas.digest}</code>      |
+| 结构一致性 | {artifacts.structural.files} 文件 / {artifacts.structural.vectors} 向量 | <code>{artifacts.structural.digest}</code>   |
+| 密码学     |                                      {artifacts.cryptography.artifacts} | <code>{artifacts.cryptography.digest}</code> |
+| 准入       |                                         {artifacts.admission.artifacts} | <code>{artifacts.admission.digest}</code>    |
+
+## 摘要语义
+
+各个清单条目将确切的文件字节与小写的 SHA-256 绑定。加密和准入顶级
+`artifactDigest` 值完全删除该成员，使用 RFC 8785
+JCS 序列化剩余清单，并对规范字节进行哈希处理。他们声明的工件条目可传递地绑定每个命名文件。
+
+网站捆绑树摘要还按排序路径顺序绑定每个规范相对路径、NUL 分隔符、确切的文件字节和尾随 NUL 分隔符。这可以防止两个不同的工件布局仅仅因为它们的串联字节匹配而共享同一标识。
+
+## 本地发布工件
+
+- <ArtifactLink path="protocol/spec/PROTOCOL.md">固定协议源</ArtifactLink>
+- <ArtifactLink path="protocol/CONTEXT.md">固定规范术语表</ArtifactLink>
+- <ArtifactLink path="protocol/conformance/manifest.json">
+    结构清单
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/manifest.json">
+    密码学清单
+  </ArtifactLink>
+- <ArtifactLink path="protocol/admission/manifest.json">准入清单</ArtifactLink>
+- <ArtifactLink path="normative-release.json">生成的网站发布清单</ArtifactLink>

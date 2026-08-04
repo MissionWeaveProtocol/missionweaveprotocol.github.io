@@ -1,0 +1,45 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Especificación MissionWeaveProtocol 0.1
+description: >-
+  La especificación normativa local completa y el mapa fuente fijado para
+  MissionWeaveProtocol 0.1.
+---
+
+import NormativeReleaseFacts from "../../../../../../components/NormativeReleaseFacts.astro";
+
+# MissionWeaveProtocol 0.1 especificación
+
+Este sitio web publica el **Borrador de Estándar 0.1.0** como una versión
+normativa unificada. La prosa versionada, los esquemas, los artefactos de
+conformidad, el pin de protocolo y seis pines SDK se liberan juntos.
+
+La interpretación de los términos de los requisitos capitalizados se define en
+[MWP-FND-001](./foundations/#mwp-fnd-001) según BCP 14. Los identificadores de
+cláusulas siguen siendo referencias estables en esta versión.
+
+<NormativeReleaseFacts />
+
+## Mapa fuente fijado
+
+La tabla asigna cada segmento de origen del protocolo anclado a su página
+normativa local. Las líneas fuente en blanco que se dejan intencionalmente entre
+segmentos se registran en el manifiesto de cláusula.
+
+| Sección de fuente original                                                       | Página normativa local                                                             | Líneas fuente fijadas | Rango de cláusulas                                                                                                                    |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | --------------------: | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Preámbulo y §§1 a 5                                                              | [Fundamentos](./foundations/)                                                      |                 1–184 | [MWP-FND-001](./foundations/#mwp-fnd-001)–[MWP-FND-024](./foundations/#mwp-fnd-024)                                                   |
+| §§6.1–6.3                                                                        | [Identidad, Registry y sesiones](./identity-registry-and-sessions/)                |               185–246 | [MWP-IDN-001](./identity-registry-and-sessions/#mwp-idn-001)–[MWP-IDN-009](./identity-registry-and-sessions/#mwp-idn-009)             |
+| §6.4 perfil de verificación y seis etapas                                        | [Documentos firmados y verificación de confianza](./signed-documents-and-trust/)   |               247–410 | [MWP-SDV-001](./signed-documents-and-trust/#mwp-sdv-001)–[MWP-SDV-017](./signed-documents-and-trust/#mwp-sdv-017)                     |
+| §6.4 Primera Admisión y Confianza Histórica                                      | [Primera admisión y confianza histórica](./first-admission-and-historical-trust/)  |               411–520 | [MWP-ADM-001](./first-admission-and-historical-trust/#mwp-adm-001)–[MWP-ADM-014](./first-admission-and-historical-trust/#mwp-adm-014) |
+| §6.4 diagnóstico y compatibilidad con versiones anteriores                       | [Documentos firmados y verificación de confianza](./signed-documents-and-trust/)   |               521–536 | [MWP-SDV-018](./signed-documents-and-trust/#mwp-sdv-018)–[MWP-SDV-019](./signed-documents-and-trust/#mwp-sdv-019)                     |
+| §§7–9 Mission, Group, Membership y Conversación                                  | [Misiones, Grupos, Membership y Conversaciones](./missions-groups-and-membership/) |               538–691 | [MWP-MSN-001](./missions-groups-and-membership/#mwp-msn-001)–[MWP-MSN-023](./missions-groups-and-membership/#mwp-msn-023)             |
+| §§10–11 Elementos de trabajo, programación, ejecución y recuperación             | [Trabajo, programación y recuperación](./work-scheduling-and-recovery/)            |               692–869 | [MWP-WRK-001](./work-scheduling-and-recovery/#mwp-wrk-001)–[MWP-WRK-022](./work-scheduling-and-recovery/#mwp-wrk-022)                 |
+| §12 Autorización, presupuestos y efectos secundarios                             | [Autorización, presupuestos y efectos secundarios](./authorization-and-budgets/)   |               870–910 | [MWP-AUT-001](./authorization-and-budgets/#mwp-aut-001)–[MWP-AUT-006](./authorization-and-budgets/#mwp-aut-006)                       |
+| §13 Artefactos, Evidence y paquetes de contexto                                  | [Trabajo, programación y recuperación](./work-scheduling-and-recovery/)            |               911–950 | [MWP-WRK-023](./work-scheduling-and-recovery/#mwp-wrk-023)–[MWP-WRK-028](./work-scheduling-and-recovery/#mwp-wrk-028)                 |
+| §14 Misiones de padres e hijos                                                   | [Misiones, Grupos, Membership y Conversaciones](./missions-groups-and-membership/) |               951–976 | [MWP-MSN-024](./missions-groups-and-membership/#mwp-msn-024)–[MWP-MSN-026](./missions-groups-and-membership/#mwp-msn-026)             |
+| §15 Comandos, Eventos y concurrencia                                             | [Comandos, eventos y ordenamiento](./commands-events-and-ordering/)                |              977–1098 | [MWP-EVT-001](./commands-events-and-ordering/#mwp-evt-001)–[MWP-EVT-007](./commands-events-and-ordering/#mwp-evt-007)                 |
+| §16 Entrega, repetición y acuse de recibo                                        | [Trabajo, programación y recuperación](./work-scheduling-and-recovery/)            |             1099–1117 | [MWP-WRK-029](./work-scheduling-and-recovery/#mwp-wrk-029)–[MWP-WRK-031](./work-scheduling-and-recovery/#mwp-wrk-031)                 |
+| §17 WebSocket vinculante                                                         | [Comandos, eventos y ordenamiento](./commands-events-and-ordering/)                |             1118–1159 | [MWP-EVT-008](./commands-events-and-ordering/#mwp-evt-008)–[MWP-EVT-012](./commands-events-and-ordering/#mwp-evt-012)                 |
+| §§18–23 Extensiones, errores, controles, compatibilidad, conformidad y licencias | [Extensiones, errores, controles y conformidad](./errors-extensions-and-security/) |             1160–1343 | [MWP-EXT-001](./errors-extensions-and-security/#mwp-ext-001)–[MWP-EXT-016](./errors-extensions-and-security/#mwp-ext-016)             |

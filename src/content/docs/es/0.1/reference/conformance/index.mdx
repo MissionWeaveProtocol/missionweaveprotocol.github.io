@@ -1,0 +1,25 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Ámbitos de conformidad
+description:
+  Evidencia estructural, criptográfica y de admisión para MissionWeaveProtocol
+  0.1.
+---
+
+# Ámbitos de conformidad
+
+MissionWeaveProtocol 0.1 separa la evidencia de conformidad en tres superficies
+versionadas de forma independiente:
+
+1. [Conformidad estructural](./structural/) comprueba JSON Validez del esquema
+   para documentos neutrales en cuanto a la implementación.
+2. [La conformidad con la criptografía ](./cryptography/) verifica los seis
+   Signed Document etapas de verificación.
+3. [Primera admisión y cheques históricos de confianza](./admission/)
+   autenticados comportamiento récord de aceptación además de un resultado
+   exitoso de seis etapas.
+
+Pasar una superficie no implica pasar ninguna de las otras. La conformidad total
+con el protocolo también requiere evidencia de las cláusulas de comportamiento
+aplicables en la [especificación local](../specification/).

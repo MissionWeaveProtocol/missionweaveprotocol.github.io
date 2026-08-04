@@ -1,0 +1,127 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Python Laufzeitreferenz
+description: >-
+  Das vollständige öffentliche Modul und die Laufzeitoberfläche der exakt
+  angehefteten Referenzimplementierung Python.
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Python Laufzeitreferenz
+
+Diese Seite deckt den kompletten Erstanbieter ab Python Oberfläche dargestellt
+durch die [exakte API Inventar](../api/). Das Verhalten des gemeinsam genutzten
+Protokolls bleibt durch die lokale
+[Laufzeitreferenz definiert](../../../runtime/architecture-and-bootstrap/) und
+[Referenzklauseln](../../../../reference/specification/). Die folgenden Namen
+definieren, wie angeheftet wird Python Die Implementierung deckt dieses
+Verhalten auf.
+
+<SupportStatus status="implemented" /> gilt für die unten aufgeführten
+Paketmodule und In-Process-Laufzeitverträge.
+
+<SupportStatus status="deployment-adapter-required" /> gilt, wenn ein
+erfolgreicher Vorgang von einer externen Datenbank, einer authentifizierten
+Stelle, einer Netzwerkbindung, einem Zertifikat, einem Schlüssel oder einem
+dauerhaften Dienst abhängt, der von der Bereitstellung bereitgestellt wird.
+
+## Modell importieren
+
+`missionweaveprotocol.__init__` Bietet kuratierte Exporte der obersten Ebene für
+signierte Dokumente, Zulassung, Paketüberprüfung, Budgets, Mietverträge und
+Delegation. Die umfassendere Referenzlaufzeit ist ein öffentliches Submodul API:
+importieren `Core` aus `missionweaveprotocol.core`, `AgentRuntime` aus
+`missionweaveprotocol.agent`, `Scheduler` aus `missionweaveprotocol.scheduler`,
+und andere Namen aus dem Modul, die im aufgezeichnet sind API Inventar. Gehen
+Sie nicht davon aus, dass jeder öffentliche Submodultyp aus dem Paketstamm
+erneut exportiert wird.
+
+## Vollständige Modulübersicht
+
+| Laufzeitproblem                     | Öffentliche Module                                                                                                                                                               | Vertrag beim angehefteten Commit                                                                                                                                                                                                                                                |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Protokoll- und semantische Modelle  | `missionweaveprotocol.models`, `missionweaveprotocol.documents`, `missionweaveprotocol.artifacts`, `missionweaveprotocol.context`                                                | Typisierte Protokollobjekte, Dokumenthilfsprogramme, Handhabung von Artifact und Evidence sowie Group-bezogene Kontextstrukturen. Schemagültige Daten erfordern weiterhin die durch die lokale Spezifikation definierten semantischen Prüfungen.                                |
+| Maßgebliche Zustandsübergänge       | `missionweaveprotocol.core`, `missionweaveprotocol.control`, `missionweaveprotocol.auth`, `missionweaveprotocol.ingress`                                                         | `Core` Pfade abfragen, wiedergeben und ausführen; Akzeptierte Aktionskontrolle, Sitzungs- und Signatur-Helfer sowie validierte Eingangsgrenzen. Konversation oder Modellausgabe allein erlauben niemals einen Zustandsübergang.                                                 |
+| Agent Ausführung                    | `missionweaveprotocol.agent`, `missionweaveprotocol.execution`, `missionweaveprotocol.offline`                                                                                   | Eine aktive Agent-Laufzeitsitzung, Group-Kontextinstallation, vorbereitete Ausführung, Checkpoint-fähige Arbeitsausführung und Offline-Koordinationshelfer. Sitzung, Membership, Coordinator und Besitzepochen bleiben Fencing-Eingaben.                                        |
+| Planung und Wiederherstellung       | `missionweaveprotocol.scheduler`, `missionweaveprotocol.replay`                                                                                                                  | Arbeitszulassung, Planung, Präemption, Übergangsanwendung, Snapshots, deterministische Neuerstellung, Event-Projektion, zusammenhängende Wiedergabe und Agent-lokaler Abgleich.                                                                                                 |
+| Beharrlichkeit                      | `missionweaveprotocol.store`, `missionweaveprotocol.local_store`                                                                                                                 | `InMemoryStore`, SQL-gestützte maßgebliche Speicher und `SQLiteAgentStore` für lokale Cursor, Kontext, Prüfpunkte, Planerstatus, Ereignisse und ausstehende Aktionen. Maßgeblicher Zustand und Agent-lokale Projektionen bleiben getrennt.                                      |
+| Politik und beschränkte Autorität   | `missionweaveprotocol.policy`, `missionweaveprotocol.lease`, `missionweaveprotocol.budget`, `missionweaveprotocol.delegation`                                                    | Membership und Capability-Token-Dienste, Policy Guards, Execution Lease-Übergänge, wiederherstellbare Budgetbücher und Delegationseinschränkungsprüfungen. Diese APIs ersetzen nicht die maßgebliche Richtlinie oder den Schlüsseldienst, den eine Bereitstellung steuern muss. |
+| Parsen, Kanonisierung und Signieren | `missionweaveprotocol.schema_formats`, `missionweaveprotocol.canonical`, `missionweaveprotocol.crypto`, `missionweaveprotocol.signed_documents`, `missionweaveprotocol.registry` | Skalare Protokollformate, strikte Validierungshilfen, RFC 8785-Kanonisierung, Ed25519-Primitive, sechsstufige Signed Document-Signierung und -Verifizierung sowie vollständige Organization-weite Registry-Unterstützung Schlüsselauflösung.                                    |
+| Erstzulassung                       | `missionweaveprotocol.admission`                                                                                                                                                 | Typisierte Adapter für den aktuellen Registry-Nachweis, das Admission Log und vertrauenswürdigen Kontext, geschichtet nach sechsstufiger Überprüfung. Erstzulassung und historische Wiederholung haben unterschiedliche Beweiswege.                                             |
+| Frames und Gateway                  | `missionweaveprotocol.wire`, `missionweaveprotocol.gateway`                                                                                                                      | HELLO/CHALLENGE/AUTH/WELCOME-Handshake-Modelle, Command/Event/ACK/PING-Frames, Parsing und Codierung, Abonnement-Cursor, Sitzungsaktivierung, Group-Routing und Gateway-Integration mit dem Core.                                                                               |
+| Bündel, Prüfungen und Befehle       | `missionweaveprotocol.bundle`, `missionweaveprotocol.conformance`, `missionweaveprotocol.cli`, `missionweaveprotocol.poc`                                                        | Paketierte Protokollbündelerkennung und Digest-Verifizierung, Schema- und Vektorausführung, die drei Konsoleneinstiegspunkte und der deterministische Proof-of-Concept-Bericht.                                                                                                 |
+
+## Kern, Geschäfte und Transaktionsgrenzen
+
+`Core` ist die maßgebliche Fassade der Zustandsmaschine. Seine öffentlichen
+Operationen `query`, `replay` und `perform` werden durch einen
+`AuthoritativeStore` unterstützt. Der Geschäftsvertrag legt Grenzen für
+Transaktionen, Inspektionen und Lebenszyklen offen. Die In-Memory-, SQLite-,
+generisches SQL- und PostgreSQL-Implementierungen ändern nicht die Atomizitäts-,
+Revisions-, Idempotenz- oder Fencing-Anforderungen des Protokolls.
+
+`SQLiteAgentStore` ist Agent-local. Es speichert die Wiedergabeposition, den
+Group-Kontext, Prüfpunkte, den Planerstatus, gesehene Ereignisse und ausstehende
+ausgehende Aktionen, damit Agent wiederhergestellt werden kann. Diese Prognosen
+sind rekonstruierbar und können keine Autorität für die Wahrheit von Mission
+oder Group werden. Fahren Sie mit
+[Persistenz und Wiederherstellung](../../../runtime/persistence-and-recovery/)
+für die normative Trennung fort.
+
+Eine externe Datenbank ist eine Bereitstellungsabhängigkeit. `PostgreSQLStore`
+erfordert einen konfigurierten Datenbankdienst und Treiber;
+Verbindungsverfügbarkeit oder ein lokaler Cache-Treffer sind kein Beweis dafür,
+dass ein maßgeblicher Übergang festgeschrieben wurde.
+
+## Agent, Planer und Wiedergabe
+
+`AgentRuntime.start_session` richtet die einzelne aktive lokale Sitzung ein und
+gibt einen `AgentRuntimeSession` zurück. Die Sitzung akzeptiert Group-bezogenen
+Kontext und Anmeldeinformationen, bereitet die Ausführung vor und macht
+`Scheduler` verfügbar. Der Scheduler lässt Arbeit zu, wendet Übergänge an, plant
+oder preempts und baut aus einem Snapshot neu auf. `AgentReplay` und
+`EventProjector` stellen lokale Projektionen aus geordneten Ereignissen wieder
+her und lehnen Lücken oder inkonsistente Projektionszustände ab.
+
+Ausführungsleasing-, Richtlinien-, Budget- und Delegations-APIs sind separate
+Prüfungen. Für einen geplanten Gegenstand sind noch die aktuelle Umzäunung, die
+akzeptierten Arbeiten, die geltenden Richtlinien, das verbleibende Budget und
+eine gültige Least-Privilege-Genehmigung erforderlich, bevor eine Nebenwirkung
+auftritt.
+
+## Validierung, Vertrauen und Framing
+
+Validieren Sie vor der geschützten Verarbeitung das strikte JSON und das
+angeheftete Entwurfsschema 2020-12, bewahren Sie die Skalarbytes des Protokolls
+auf, kanonisieren Sie die Signaturprojektion, überprüfen Sie das
+Ed25519-Material und lösen Sie den ausgewählten Schlüssel aus dem vollständigen
+Registry-Beweis auf. Die genaue sechsstufige Reihenfolge ist in
+[Validierung, Kanonisierung und Signierung](../../../runtime/validation-canonicalization-and-signing/)
+angegeben.
+
+`missionweaveprotocol.wire` besitzt typisierte Rahmenmodelle sowie
+`parse_frame`, `parse_received_frame` und `encode_frame`. `GroupGateway` bindet
+diese Frames an Sitzungsaktivierung, Abonnements, Cursor, Wiedergabe und
+Kernvorgänge. Eine Produktionsnetzwerkbereitstellung muss sichere Bindung,
+Authentifizierungseingaben, TLS 1.3-Zertifikate und -Schlüssel,
+Gegendruckgrenzen und Betriebsisolation bereitstellen. Das Paket Python stellt
+die Gateway-Laufzeit bereit; Es stellt keine Bereitstellungsnetzwerkberechtigung
+bereit.
+
+## Konformität und Upgrades
+
+`SchemaCatalog` und `run_manifest` führen die unterstützten lokalen
+Validierungsoberflächen aus. `verify_cryptography_bundle` und
+`verify_admission_bundle` binden verpackte Artefakte an die dokumentierten Pins
+und Digests. `missionweaveprotocol-conformance` macht den strukturellen
+Manifest-Runner für Operatoren verfügbar. Rufen Sie die beiden
+Bundle-Verifizierungsfunktionen separat auf, wenn Sie die gepackten
+Kryptografie- und Zulassungsartefaktidentitäten überprüfen.
+
+Führen Sie die Konformität erneut aus, wenn sich das SDK-Commit, die
+Protokoll-PIN, der Schemasatz, das Kryptografiepaket, das Zulassungspaket oder
+der Bereitstellungsadapter ändert. Die Übergabe einer Teilmenge beweist nur
+diese Teilmenge; Es stellt keine Haltbarkeit der Datenbank, Netzwerksicherheit,
+Hardwarekapazität oder Produktionsbereitschaft dar.

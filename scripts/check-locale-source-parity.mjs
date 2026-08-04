@@ -38,7 +38,9 @@ function normalizedBody(contents) {
 
 const allFiles = await collectContentFiles(contentRoot);
 const englishFiles = allFiles.filter(
-  (file) => !locales.some((locale) => file.startsWith(`${locale}/`)),
+  (file) =>
+    !file.startsWith("0.1/") &&
+    !locales.some((locale) => file.startsWith(`${locale}/`)),
 );
 const availableFiles = new Set(allFiles);
 const failures = [];

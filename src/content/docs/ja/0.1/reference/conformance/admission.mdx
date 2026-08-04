@@ -1,0 +1,41 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 初回アドミッションと履歴信頼への適合
+description:
+  6 段階の検証の上に重ねられた、完全なローカルアドミッション証拠バンドル。
+---
+
+import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
+import BundleArtifactCatalog from "../../../../../../components/BundleArtifactCatalog.astro";
+import release from "../../../../../../data/normative/0.1/release-source.json";
+
+# 初回アドミッションと履歴信頼への適合
+
+プロファイル <code>{release.admission.profile}</code>
+は、**{release.admission.artifacts} アーティファクト**、**{release.admission.cases} ケース**、**{release.admission.evaluations} 評価**をバインドします。正確に
+**{release.admission.complete}** 評価は完了し、**{release.admission.rejected}**
+は拒否されます。そのダイジェストは
+
+<code>{release.admission.digest}</code>、変更されていない暗号ダイジェスト
+<code>{release.admission.cryptographyDigest}</code> を固定します。
+
+- <ArtifactLink path="protocol/admission/manifest.json">
+    アドミッションマニフェスト
+  </ArtifactLink>
+- <ArtifactLink path="protocol/admission/manifest.schema.json">
+    マニフェストスキーマ
+  </ArtifactLink>
+- <ArtifactLink path="protocol/admission/README.md">
+    ローカルバンドルの意味論
+  </ArtifactLink>
+
+すべての評価では、最初に同じ 6 段階の暗号検証が繰り返され、次に初回アドミッションまたは履歴リプレイが実行されます。規範的なオーケストレーションと障害マッピングは、[初回アドミッションと履歴信頼の仕様ページ](../../specification/first-admission-and-historical-trust/)
+にあります。
+
+## スコープの除外
+
+このバンドルは、Command の鮮度またはクロック スキューの強制、署名者の認可、ステートマシン遷移、Event の作成、ポータブルな Admission
+Log 証明形式、またはデプロイメント固有の認可および保持ポリシーを実証しません。これらの事項には個別の証拠が必要です。
+
+<BundleArtifactCatalog bundle="admission" />

@@ -1,0 +1,167 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Validierung, Kanonisierung und Signierung
+description: >-
+  Die normative StrengeJSON, Schema, JCS, Registry, Signierung und sechsstufige
+  Verifizierungspipeline, die von jeder Laufzeit gemeinsam genutzt wird.
+---
+
+# Validierung, Kanonisierung und Signierung
+
+Die Signed Document-Verarbeitung ist eine geordnete semantische Pipeline.
+Interne Funktionsgrenzen können unterschiedlich sein, aber Akzeptanz und
+diagnostische Klassifizierung müssen die normative Stufenordnung wahren.
+
+Erzwingen Sie in den sechs Phasen das gemeinsame JSON- und Zeitstempelprofil
+([MWP-FND-004](../../../reference/specification/foundations/#mwp-fnd-004)),
+behalten Sie den lexikalischen Zeitstempeltext bei
+([MWP-FND-005](../../../reference/specification/foundations/#mwp-fnd-005)) und
+erfordern Sie kanonische Base64-URL, Hashes und sichere Ganzzahlen
+([MWP-FND-007](../../../reference/specification/foundations/#mwp-fnd-007)) und
+aktivieren Sie jede normative Schemaformatzusicherung
+([MWP-FND-009](../../../reference/specification/foundations/#mwp-fnd-009)). Für
+alle vom Inhalt abgeleiteten Hashes und Signaturen gelten die gleichen
+kanonischen Übertragungsregeln
+([MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012)).
+
+## Sechsstufige Verifizierung
+
+Die Kontrollsequenz ist
+[MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015):
+
+1. Genau einen UTF-8 JSON Wert strikt analysieren; eine Byte-Order-Markierung
+   ablehnen, Nachgestellte Daten, ungültiges UTF-8 und doppelte dekodierte
+   Mitgliedsnamen;
+2. Validierung des gesamten Dokuments anhand seines normativen Schemas;
+3. Validieren Sie den Signaturumschlag, die geschützte Zeit, die Regel für den
+   erwarteten Unterzeichner und strenge Ed25519-Signaturkodierung;
+4. Validieren Sie den vollständigen Organization-weiten Registry-Beweis, lösen
+   Sie den Schlüssel auf und Principal und testen Sie die geschützte signierte
+   Zeit anhand des Verlaufs des beibehaltenen Schlüssels.
+5. Lassen Sie genau das `signature`-Mitglied der obersten Ebene weg und erzeugen
+   Sie RFC 8785 JCS Bytes.
+6. Überprüfen Sie die reine Ed25519-Signatur über genau diese Bytes.
+
+Der Prüfer stoppt bei der ersten fehlgeschlagenen Stufe und autorisiert keinen
+Akteur, hängt kein Event an und führt keinen Zustandsübergang aus, bevor alle
+sechs Stufen abgeschlossen sind.
+
+## Verlustfrei JSON und JCS
+
+Die Eingabe von JCS ist auf die Datenmodelle RFC 8785 und I-JSON beschränkt.
+Zahlen sind endliche IEEE 754-Binär64-Werte, die mit der erforderlichen
+kürzesten Umlaufform serialisiert sind. Ungepaarte Unicode-Ersatzzeichen und
+Werte außerhalb dieser Domäne schlagen fehl, bevor kanonische Bytes ausgegeben
+werden
+([MWP-FND-006](../../../reference/specification/foundations/#mwp-fnd-006)).
+
+Kanonisieren Sie die eingehende Leitung JSON nicht als Ersatz für die Analyse
+oder Schemavalidierung. Die Kanonisierung ist Stufe 5 und basiert auf dem
+empfangenen Wert nach allen früheren semantischen Prüfungen, die die
+Stufenklassifizierung steuern.
+
+## Strikte Ed25519 Akzeptanz
+
+Der Erfolg des Anbieterimports ist nicht die Akzeptanzregel. Ein Prüfer:
+
+- Dekodiert `Renc` kanonisch, erfordert Untergruppenmitgliedschaft erster
+  Ordnung, akzeptiert nur `0 <= S < L` und reduziert keinen Skalar außerhalb des
+  Bereichs
+  ([MWP-SDV-003](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-003));
+- erzwingt unveränderliche Schlüssel-ID-zu-Principal, Algorithmus und
+  öffentliche Schlüsselbindung plus Organization-weite No-Reuse- und
+  No-Alias-Invarianten
+  ([MWP-SDV-004](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-004));
+- Entschlüsselt den 32-Byte-öffentlichen Schlüssel strikt als kanonische
+  Nichtidentität. Edwards25519-Punkt erster Ordnung
+  ([MWP-SDV-005](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-005));
+- und überprüft die Pure-Ed25519-Verifizierungsgleichung über die genauen
+  Stage-5-Bytes
+  ([MWP-SDV-006](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-006)).
+
+Der Registry speichert Indizes und Historie, die ausreichen, um verbindliche
+Eindeutigkeits- und Abwesenheitsansprüche nachzuweisen
+([MWP-SDV-007](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-007)).
+
+## Geschützte Zeit und erwarteter Unterzeichner
+
+Jedes Signed Document-Schema ist einem geschützten signierten Zeitfeld und einem
+erwarteten Unterzeichner zugeordnet. Der genaue Unterzeichner wird unter
+[MWP-SDV-001](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)
+ausgewählt. Die geschützte Zeit und `signature.createdAt` verwenden den
+Großbuchstaben `Z`, müssen Byte für Byte identisch sein und können vor dem
+Vergleich nicht repariert oder normalisiert werden
+([MWP-SDV-002](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-002)).
+
+## Registry-unterstützte Schlüsselauflösung
+
+Stufe 4 ist umfassender als eine Suche nach ausgewählten Schlüsseln:
+
+- Der Beweis ist auf genau einen Organization und eine kohärente maßgebliche
+  Registry-Revision beschränkt;
+- jedes Bindungs- und beibehaltene Verlaufselement, das für die
+  Organization-weite Nicht-Wiederverwendung, No-Alias- und
+  Vollständigkeitsansprüche benötigt wird, wird vor der Auswahl validiert
+  ([MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008));
+
+- Der Bereitstellungsadapter stellt die Anwendbarkeit, Vollständigkeit und
+  Gültigkeit der Revision fest historische Berichterstattung oder Berichte, dass
+  dies nicht möglich ist
+  ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010));
+  und
+- Die geschützte Zeit wird gegen halboffene `validFrom`, `validUntil` und
+  überprüft `revokedAt` Grenzen als Augenblick
+  ([MWP-SDV-014](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-014)).
+
+Nicht verfügbare Beweise, unvollständige Abdeckung, autoritativer unbekannter
+Schlüssel, ungültige unabhängige Bindungen und ein ungültiger ausgewählter
+Schlüssel werden in Stufe 4 nicht geschlossen. Evidence kann aus einem
+vollständigen Snapshot oder maßgeblichen Indizes und Abfragen stammen, ein
+teilweiser Cache kann jedoch nicht als Ersatz dienen Organization-weiter
+Nachweis
+([MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009)).
+Ein unbekannter Schlüssel ist erst dann maßgebend, wenn die Vollständigkeit
+festgestellt wurde
+([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011)).
+
+Der Gültigkeitsverlauf kann nur angehängt oder explizit versioniert werden. Es
+ist frühestens wirksam `validUntil` Und `revokedAt` Grenzen werden zur
+historischen Überprüfung beibehalten
+([MWP-SDV-012](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-012)).
+Der ausgewählte Schlüssel ist gebunden Principal muss genau dem erwarteten
+Unterzeichner entsprechen
+([MWP-SDV-013](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-013)).
+
+## Signieren und Signieren von Hashes
+
+Ein Unterzeichner erstellt denselben geschützten Wert, den ein Prüfer
+rekonstruiert:
+
+1. Konstruieren Sie alle Nicht-Signaturfelder, einschließlich des geschützten
+   signierten Zeitfelds je nach Dokumentart erforderlich.
+2. Wählen Sie die geschützte Zeit und den erwarteten Signaturschlüssel aus und
+   behalten Sie dabei die bei Großbuchstaben-`Z` Zeitstempelschreibweise, die
+   auch zu `signature.createdAt` wird.
+3. Erzeugen Sie RFC 8785 JCS Signierbytes aus dem gesamten Objekt mit dem
+   `signature`-Mitglied der obersten Ebene fehlt.
+4. Berechnen Sie den Signatur-Hash und die pure-Ed25519-Signatur über genau
+   diese Bytes. Codierung der Signatur als kanonische, nicht aufgefüllte
+   Base64-URL.
+5. Hängen Sie den vollständigen Signaturumschlag mit `Ed25519`, der ausgewählten
+   Schlüssel-ID, an. die byteidentische geschützte Zeit und der codierte
+   Signaturwert.
+6. Validieren Sie das endgültige Signed Document anhand seines vollständigen
+   normativen Schemas und denselben sechsstufigen Prüfer vor der
+   Veröffentlichung.
+
+Der Signatur-Hash ist unabhängig vom Zulassungsstatus und hat genau die Form,
+die durch
+[MWP-SDV-017](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-017)
+definiert ist. Bei den Stufennummern handelt es sich eher um semantische
+Klassifizierungen als um erforderliche Funktionsgrenzen, wie in
+[MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016).
+
+Führen Sie jede Implementierung gegen das lokale
+[Kryptografie-Konformitätspaket](../../../reference/conformance/cryptography/)
+aus, bevor Sie die Zulassung über das sechsstufige Ergebnis legen.

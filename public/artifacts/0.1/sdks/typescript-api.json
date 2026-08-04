@@ -1,0 +1,1524 @@
+{
+  "schemaVersion": 1,
+  "sdk": "typescript",
+  "name": "TypeScript",
+  "repository": "https://github.com/MissionWeaveProtocol/typescript-sdk",
+  "commit": "6d53ebfcf8350ae81d89fd818611b07f7373685c",
+  "package": "@missionweaveprotocol/sdk",
+  "toolchain": ["Node.js 20", "npm"],
+  "sourceFiles": [
+    "src/admission.ts",
+    "src/canonical-json.ts",
+    "src/conformance.ts",
+    "src/crypto.ts",
+    "src/frame-codec.ts",
+    "src/index.ts",
+    "src/json-types.ts",
+    "src/package-root.ts",
+    "src/rfc3339.ts",
+    "src/schema-catalog.ts",
+    "src/signed-document-codec.ts",
+    "src/strict-json.ts"
+  ],
+  "symbols": [
+    "AdmissionContextValue",
+    "AdmissionCurrentKeyResolver",
+    "AdmissionError",
+    "AdmissionLog",
+    "AdmissionLogError",
+    "AdmissionLookup",
+    "AdmissionReason",
+    "AdmissionService",
+    "AdmittedSignedDocument",
+    "AgentCard",
+    "Approval",
+    "Artifact",
+    "AuthenticatedAdmissionRecord",
+    "Command",
+    "ConformanceCaseResult",
+    "ConformanceReport",
+    "ContextPackage",
+    "Event",
+    "Evidence",
+    "ExpectedSigner",
+    "ExtensionProfile",
+    "FirstAdmissionRecord",
+    "FrameCodec",
+    "GroupSnapshot",
+    "JsonObject",
+    "JsonPrimitive",
+    "JsonValue",
+    "KeyRegistrySnapshot",
+    "KeyResolutionRequest",
+    "KeyResolver",
+    "KeyValidityRecord",
+    "NodeKey",
+    "PreparedFirstAdmission",
+    "Principal",
+    "PrincipalType",
+    "ProtocolSignature",
+    "RegistrySigningKeyBinding",
+    "ResolvedSigningKey",
+    "Rfc3339Instant",
+    "SchemaCatalog",
+    "SchemaName",
+    "SchemaValidationError",
+    "SdkMetadata",
+    "SignedDocument",
+    "SignedDocumentCodec",
+    "SignedDocumentKind",
+    "SignedDocumentVerificationError",
+    "SigningKey",
+    "StrictJsonSyntaxError",
+    "TrustedAdmissionContext",
+    "ValidationResult",
+    "VerificationAuditDetail",
+    "VerificationStage",
+    "VerificationWireCode",
+    "VerifiedSignedDocument",
+    "acceptedBy",
+    "actualValid",
+    "admissionRecordId",
+    "admitFirst",
+    "algorithm",
+    "appendOrReturnExisting",
+    "assertValid",
+    "auditDetail",
+    "authenticatedService",
+    "bindings",
+    "canonicalJsonBytes",
+    "canonicalizeJson",
+    "cases",
+    "completeness",
+    "constructor",
+    "decode",
+    "decodeBase64Url",
+    "document",
+    "documentKind",
+    "encode",
+    "encodeBase64Url",
+    "epochSecond",
+    "errors",
+    "expectedSigner",
+    "expectedValid",
+    "failed",
+    "fraction",
+    "id",
+    "invalidCases",
+    "isJsonObject",
+    "issue",
+    "keyId",
+    "kind",
+    "load",
+    "lookup",
+    "name",
+    "names",
+    "offset",
+    "organizationId",
+    "packageName",
+    "packageRoot",
+    "parseStrictJson",
+    "parseStrictJsonObject",
+    "passed",
+    "prepareFirstAdmission",
+    "principal",
+    "protectedTime",
+    "protocolVersion",
+    "publicKey",
+    "reason",
+    "receivedBytes",
+    "record",
+    "recordBytes",
+    "recordedAt",
+    "resolve",
+    "resolveCurrent",
+    "resolvedKey",
+    "resolvedPublicKeyBytes",
+    "revokedAt",
+    "revokedAtText",
+    "root",
+    "runConformance",
+    "schema",
+    "schemaName",
+    "schemaNames",
+    "sdkMetadata",
+    "sequence",
+    "sha256Hex",
+    "sha256Identifier",
+    "sign",
+    "signBytes",
+    "signDocument",
+    "signature",
+    "signatureBytes",
+    "signatureInput",
+    "signedDocumentBytes",
+    "signedDocumentHash",
+    "signingBytes",
+    "signingHash",
+    "stage",
+    "total",
+    "trustedAcceptedAt",
+    "type",
+    "valid",
+    "validCases",
+    "validFrom",
+    "validFromText",
+    "validUntil",
+    "validUntilText",
+    "validate",
+    "validityHistory",
+    "verified",
+    "verify",
+    "verifyBytes",
+    "verifyDocumentSignature",
+    "verifyHistoricalAdmission",
+    "wireCode",
+    "wireNamespace"
+  ],
+  "entries": [
+    {
+      "name": "AdmissionContextValue",
+      "qualifiedName": "AdmissionContextValue",
+      "kind": "interface",
+      "sourceFile": "src/admission.ts",
+      "line": 77
+    },
+    {
+      "name": "acceptedBy",
+      "qualifiedName": "AdmissionContextValue.acceptedBy",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 80
+    },
+    {
+      "name": "admissionRecordId",
+      "qualifiedName": "AdmissionContextValue.admissionRecordId",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 78
+    },
+    {
+      "name": "trustedAcceptedAt",
+      "qualifiedName": "AdmissionContextValue.trustedAcceptedAt",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 79
+    },
+    {
+      "name": "AdmissionCurrentKeyResolver",
+      "qualifiedName": "AdmissionCurrentKeyResolver",
+      "kind": "interface",
+      "sourceFile": "src/admission.ts",
+      "line": 90
+    },
+    {
+      "name": "resolveCurrent",
+      "qualifiedName": "AdmissionCurrentKeyResolver.resolveCurrent",
+      "kind": "method",
+      "sourceFile": "src/admission.ts",
+      "line": 91
+    },
+    {
+      "name": "AdmissionError",
+      "qualifiedName": "AdmissionError",
+      "kind": "class",
+      "sourceFile": "src/admission.ts",
+      "line": 50
+    },
+    {
+      "name": "auditDetail",
+      "qualifiedName": "AdmissionError.auditDetail",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 52
+    },
+    {
+      "name": "constructor",
+      "qualifiedName": "AdmissionError.constructor",
+      "kind": "constructor",
+      "sourceFile": "src/admission.ts",
+      "line": 57
+    },
+    {
+      "name": "wireCode",
+      "qualifiedName": "AdmissionError.wireCode",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 51
+    },
+    {
+      "name": "AdmissionLog",
+      "qualifiedName": "AdmissionLog",
+      "kind": "interface",
+      "sourceFile": "src/admission.ts",
+      "line": 116
+    },
+    {
+      "name": "appendOrReturnExisting",
+      "qualifiedName": "AdmissionLog.appendOrReturnExisting",
+      "kind": "method",
+      "sourceFile": "src/admission.ts",
+      "line": 119
+    },
+    {
+      "name": "lookup",
+      "qualifiedName": "AdmissionLog.lookup",
+      "kind": "method",
+      "sourceFile": "src/admission.ts",
+      "line": 117
+    },
+    {
+      "name": "AdmissionLogError",
+      "qualifiedName": "AdmissionLogError",
+      "kind": "class",
+      "sourceFile": "src/admission.ts",
+      "line": 64
+    },
+    {
+      "name": "constructor",
+      "qualifiedName": "AdmissionLogError.constructor",
+      "kind": "constructor",
+      "sourceFile": "src/admission.ts",
+      "line": 67
+    },
+    {
+      "name": "reason",
+      "qualifiedName": "AdmissionLogError.reason",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 65
+    },
+    {
+      "name": "AdmissionLookup",
+      "qualifiedName": "AdmissionLookup",
+      "kind": "type",
+      "sourceFile": "src/admission.ts",
+      "line": 107
+    },
+    {
+      "name": "AdmissionReason",
+      "qualifiedName": "AdmissionReason",
+      "kind": "type",
+      "sourceFile": "src/admission.ts",
+      "line": 21
+    },
+    {
+      "name": "AdmissionService",
+      "qualifiedName": "AdmissionService",
+      "kind": "class",
+      "sourceFile": "src/admission.ts",
+      "line": 199
+    },
+    {
+      "name": "admitFirst",
+      "qualifiedName": "AdmissionService.admitFirst",
+      "kind": "method",
+      "sourceFile": "src/admission.ts",
+      "line": 265
+    },
+    {
+      "name": "prepareFirstAdmission",
+      "qualifiedName": "AdmissionService.prepareFirstAdmission",
+      "kind": "method",
+      "sourceFile": "src/admission.ts",
+      "line": 203
+    },
+    {
+      "name": "verifyHistoricalAdmission",
+      "qualifiedName": "AdmissionService.verifyHistoricalAdmission",
+      "kind": "method",
+      "sourceFile": "src/admission.ts",
+      "line": 300
+    },
+    {
+      "name": "AdmittedSignedDocument",
+      "qualifiedName": "AdmittedSignedDocument",
+      "kind": "interface",
+      "sourceFile": "src/admission.ts",
+      "line": 144
+    },
+    {
+      "name": "record",
+      "qualifiedName": "AdmittedSignedDocument.record",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 146
+    },
+    {
+      "name": "recordBytes",
+      "qualifiedName": "AdmittedSignedDocument.recordBytes",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 147
+    },
+    {
+      "name": "verified",
+      "qualifiedName": "AdmittedSignedDocument.verified",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 145
+    },
+    {
+      "name": "AuthenticatedAdmissionRecord",
+      "qualifiedName": "AuthenticatedAdmissionRecord",
+      "kind": "interface",
+      "sourceFile": "src/admission.ts",
+      "line": 102
+    },
+    {
+      "name": "authenticatedService",
+      "qualifiedName": "AuthenticatedAdmissionRecord.authenticatedService",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 104
+    },
+    {
+      "name": "recordBytes",
+      "qualifiedName": "AuthenticatedAdmissionRecord.recordBytes",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 103
+    },
+    {
+      "name": "ConformanceCaseResult",
+      "qualifiedName": "ConformanceCaseResult",
+      "kind": "interface",
+      "sourceFile": "src/conformance.ts",
+      "line": 13
+    },
+    {
+      "name": "actualValid",
+      "qualifiedName": "ConformanceCaseResult.actualValid",
+      "kind": "property",
+      "sourceFile": "src/conformance.ts",
+      "line": 14
+    },
+    {
+      "name": "expectedValid",
+      "qualifiedName": "ConformanceCaseResult.expectedValid",
+      "kind": "property",
+      "sourceFile": "src/conformance.ts",
+      "line": 15
+    },
+    {
+      "name": "name",
+      "qualifiedName": "ConformanceCaseResult.name",
+      "kind": "property",
+      "sourceFile": "src/conformance.ts",
+      "line": 16
+    },
+    {
+      "name": "passed",
+      "qualifiedName": "ConformanceCaseResult.passed",
+      "kind": "property",
+      "sourceFile": "src/conformance.ts",
+      "line": 17
+    },
+    {
+      "name": "schema",
+      "qualifiedName": "ConformanceCaseResult.schema",
+      "kind": "property",
+      "sourceFile": "src/conformance.ts",
+      "line": 18
+    },
+    {
+      "name": "ConformanceReport",
+      "qualifiedName": "ConformanceReport",
+      "kind": "interface",
+      "sourceFile": "src/conformance.ts",
+      "line": 21
+    },
+    {
+      "name": "cases",
+      "qualifiedName": "ConformanceReport.cases",
+      "kind": "property",
+      "sourceFile": "src/conformance.ts",
+      "line": 22
+    },
+    {
+      "name": "failed",
+      "qualifiedName": "ConformanceReport.failed",
+      "kind": "property",
+      "sourceFile": "src/conformance.ts",
+      "line": 23
+    },
+    {
+      "name": "invalidCases",
+      "qualifiedName": "ConformanceReport.invalidCases",
+      "kind": "property",
+      "sourceFile": "src/conformance.ts",
+      "line": 24
+    },
+    {
+      "name": "passed",
+      "qualifiedName": "ConformanceReport.passed",
+      "kind": "property",
+      "sourceFile": "src/conformance.ts",
+      "line": 25
+    },
+    {
+      "name": "total",
+      "qualifiedName": "ConformanceReport.total",
+      "kind": "property",
+      "sourceFile": "src/conformance.ts",
+      "line": 26
+    },
+    {
+      "name": "validCases",
+      "qualifiedName": "ConformanceReport.validCases",
+      "kind": "property",
+      "sourceFile": "src/conformance.ts",
+      "line": 27
+    },
+    {
+      "name": "ExpectedSigner",
+      "qualifiedName": "ExpectedSigner",
+      "kind": "type",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 83
+    },
+    {
+      "name": "FirstAdmissionRecord",
+      "qualifiedName": "FirstAdmissionRecord",
+      "kind": "interface",
+      "sourceFile": "src/admission.ts",
+      "line": 126
+    },
+    {
+      "name": "acceptedBy",
+      "qualifiedName": "FirstAdmissionRecord.acceptedBy",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 135
+    },
+    {
+      "name": "admissionRecordId",
+      "qualifiedName": "FirstAdmissionRecord.admissionRecordId",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 128
+    },
+    {
+      "name": "documentKind",
+      "qualifiedName": "FirstAdmissionRecord.documentKind",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 130
+    },
+    {
+      "name": "keyId",
+      "qualifiedName": "FirstAdmissionRecord.keyId",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 132
+    },
+    {
+      "name": "organizationId",
+      "qualifiedName": "FirstAdmissionRecord.organizationId",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 129
+    },
+    {
+      "name": "principal",
+      "qualifiedName": "FirstAdmissionRecord.principal",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 133
+    },
+    {
+      "name": "protocolVersion",
+      "qualifiedName": "FirstAdmissionRecord.protocolVersion",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 127
+    },
+    {
+      "name": "signingHash",
+      "qualifiedName": "FirstAdmissionRecord.signingHash",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 131
+    },
+    {
+      "name": "trustedAcceptedAt",
+      "qualifiedName": "FirstAdmissionRecord.trustedAcceptedAt",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 134
+    },
+    {
+      "name": "FrameCodec",
+      "qualifiedName": "FrameCodec",
+      "kind": "class",
+      "sourceFile": "src/frame-codec.ts",
+      "line": 7
+    },
+    {
+      "name": "constructor",
+      "qualifiedName": "FrameCodec.constructor",
+      "kind": "constructor",
+      "sourceFile": "src/frame-codec.ts",
+      "line": 10
+    },
+    {
+      "name": "decode",
+      "qualifiedName": "FrameCodec.decode",
+      "kind": "method",
+      "sourceFile": "src/frame-codec.ts",
+      "line": 14
+    },
+    {
+      "name": "encode",
+      "qualifiedName": "FrameCodec.encode",
+      "kind": "method",
+      "sourceFile": "src/frame-codec.ts",
+      "line": 24
+    },
+    {
+      "name": "JsonObject",
+      "qualifiedName": "JsonObject",
+      "kind": "interface",
+      "sourceFile": "src/json-types.ts",
+      "line": 5
+    },
+    {
+      "name": "JsonPrimitive",
+      "qualifiedName": "JsonPrimitive",
+      "kind": "type",
+      "sourceFile": "src/json-types.ts",
+      "line": 1
+    },
+    {
+      "name": "JsonValue",
+      "qualifiedName": "JsonValue",
+      "kind": "type",
+      "sourceFile": "src/json-types.ts",
+      "line": 3
+    },
+    {
+      "name": "KeyRegistrySnapshot",
+      "qualifiedName": "KeyRegistrySnapshot",
+      "kind": "interface",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 77
+    },
+    {
+      "name": "bindings",
+      "qualifiedName": "KeyRegistrySnapshot.bindings",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 80
+    },
+    {
+      "name": "completeness",
+      "qualifiedName": "KeyRegistrySnapshot.completeness",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 78
+    },
+    {
+      "name": "organizationId",
+      "qualifiedName": "KeyRegistrySnapshot.organizationId",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 79
+    },
+    {
+      "name": "KeyResolutionRequest",
+      "qualifiedName": "KeyResolutionRequest",
+      "kind": "interface",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 87
+    },
+    {
+      "name": "expectedSigner",
+      "qualifiedName": "KeyResolutionRequest.expectedSigner",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 90
+    },
+    {
+      "name": "keyId",
+      "qualifiedName": "KeyResolutionRequest.keyId",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 89
+    },
+    {
+      "name": "kind",
+      "qualifiedName": "KeyResolutionRequest.kind",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 88
+    },
+    {
+      "name": "protectedTime",
+      "qualifiedName": "KeyResolutionRequest.protectedTime",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 91
+    },
+    {
+      "name": "KeyResolver",
+      "qualifiedName": "KeyResolver",
+      "kind": "interface",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 97
+    },
+    {
+      "name": "resolve",
+      "qualifiedName": "KeyResolver.resolve",
+      "kind": "method",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 98
+    },
+    {
+      "name": "KeyValidityRecord",
+      "qualifiedName": "KeyValidityRecord",
+      "kind": "interface",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 61
+    },
+    {
+      "name": "recordedAt",
+      "qualifiedName": "KeyValidityRecord.recordedAt",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 63
+    },
+    {
+      "name": "revokedAt",
+      "qualifiedName": "KeyValidityRecord.revokedAt",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 65
+    },
+    {
+      "name": "sequence",
+      "qualifiedName": "KeyValidityRecord.sequence",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 62
+    },
+    {
+      "name": "validUntil",
+      "qualifiedName": "KeyValidityRecord.validUntil",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 64
+    },
+    {
+      "name": "NodeKey",
+      "qualifiedName": "NodeKey",
+      "kind": "type",
+      "sourceFile": "src/crypto.ts",
+      "line": 12
+    },
+    {
+      "name": "PreparedFirstAdmission",
+      "qualifiedName": "PreparedFirstAdmission",
+      "kind": "interface",
+      "sourceFile": "src/admission.ts",
+      "line": 138
+    },
+    {
+      "name": "record",
+      "qualifiedName": "PreparedFirstAdmission.record",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 140
+    },
+    {
+      "name": "recordBytes",
+      "qualifiedName": "PreparedFirstAdmission.recordBytes",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 141
+    },
+    {
+      "name": "verified",
+      "qualifiedName": "PreparedFirstAdmission.verified",
+      "kind": "property",
+      "sourceFile": "src/admission.ts",
+      "line": 139
+    },
+    {
+      "name": "Principal",
+      "qualifiedName": "Principal",
+      "kind": "interface",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 56
+    },
+    {
+      "name": "id",
+      "qualifiedName": "Principal.id",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 58
+    },
+    {
+      "name": "type",
+      "qualifiedName": "Principal.type",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 57
+    },
+    {
+      "name": "PrincipalType",
+      "qualifiedName": "PrincipalType",
+      "kind": "type",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 54
+    },
+    {
+      "name": "ProtocolSignature",
+      "qualifiedName": "ProtocolSignature",
+      "kind": "type",
+      "sourceFile": "src/crypto.ts",
+      "line": 14
+    },
+    {
+      "name": "RegistrySigningKeyBinding",
+      "qualifiedName": "RegistrySigningKeyBinding",
+      "kind": "interface",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 68
+    },
+    {
+      "name": "algorithm",
+      "qualifiedName": "RegistrySigningKeyBinding.algorithm",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 71
+    },
+    {
+      "name": "keyId",
+      "qualifiedName": "RegistrySigningKeyBinding.keyId",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 69
+    },
+    {
+      "name": "principal",
+      "qualifiedName": "RegistrySigningKeyBinding.principal",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 70
+    },
+    {
+      "name": "publicKey",
+      "qualifiedName": "RegistrySigningKeyBinding.publicKey",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 72
+    },
+    {
+      "name": "validFrom",
+      "qualifiedName": "RegistrySigningKeyBinding.validFrom",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 73
+    },
+    {
+      "name": "validityHistory",
+      "qualifiedName": "RegistrySigningKeyBinding.validityHistory",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 74
+    },
+    {
+      "name": "ResolvedSigningKey",
+      "qualifiedName": "ResolvedSigningKey",
+      "kind": "interface",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 204
+    },
+    {
+      "name": "algorithm",
+      "qualifiedName": "ResolvedSigningKey.algorithm",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 205
+    },
+    {
+      "name": "keyId",
+      "qualifiedName": "ResolvedSigningKey.keyId",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 206
+    },
+    {
+      "name": "organizationId",
+      "qualifiedName": "ResolvedSigningKey.organizationId",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 207
+    },
+    {
+      "name": "principal",
+      "qualifiedName": "ResolvedSigningKey.principal",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 208
+    },
+    {
+      "name": "publicKey",
+      "qualifiedName": "ResolvedSigningKey.publicKey",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 209
+    },
+    {
+      "name": "revokedAt",
+      "qualifiedName": "ResolvedSigningKey.revokedAt",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 211
+    },
+    {
+      "name": "revokedAtText",
+      "qualifiedName": "ResolvedSigningKey.revokedAtText",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 210
+    },
+    {
+      "name": "validFrom",
+      "qualifiedName": "ResolvedSigningKey.validFrom",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 213
+    },
+    {
+      "name": "validFromText",
+      "qualifiedName": "ResolvedSigningKey.validFromText",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 212
+    },
+    {
+      "name": "validUntil",
+      "qualifiedName": "ResolvedSigningKey.validUntil",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 215
+    },
+    {
+      "name": "validUntilText",
+      "qualifiedName": "ResolvedSigningKey.validUntilText",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 214
+    },
+    {
+      "name": "Rfc3339Instant",
+      "qualifiedName": "Rfc3339Instant",
+      "kind": "interface",
+      "sourceFile": "src/rfc3339.ts",
+      "line": 4
+    },
+    {
+      "name": "epochSecond",
+      "qualifiedName": "Rfc3339Instant.epochSecond",
+      "kind": "property",
+      "sourceFile": "src/rfc3339.ts",
+      "line": 5
+    },
+    {
+      "name": "fraction",
+      "qualifiedName": "Rfc3339Instant.fraction",
+      "kind": "property",
+      "sourceFile": "src/rfc3339.ts",
+      "line": 6
+    },
+    {
+      "name": "SchemaCatalog",
+      "qualifiedName": "SchemaCatalog",
+      "kind": "class",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 71
+    },
+    {
+      "name": "assertValid",
+      "qualifiedName": "SchemaCatalog.assertValid",
+      "kind": "method",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 103
+    },
+    {
+      "name": "load",
+      "qualifiedName": "SchemaCatalog.load",
+      "kind": "method",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 79
+    },
+    {
+      "name": "names",
+      "qualifiedName": "SchemaCatalog.names",
+      "kind": "getter",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 89
+    },
+    {
+      "name": "root",
+      "qualifiedName": "SchemaCatalog.root",
+      "kind": "getter",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 85
+    },
+    {
+      "name": "validate",
+      "qualifiedName": "SchemaCatalog.validate",
+      "kind": "method",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 93
+    },
+    {
+      "name": "SchemaName",
+      "qualifiedName": "SchemaName",
+      "kind": "type",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 45
+    },
+    {
+      "name": "SchemaValidationError",
+      "qualifiedName": "SchemaValidationError",
+      "kind": "class",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 52
+    },
+    {
+      "name": "constructor",
+      "qualifiedName": "SchemaValidationError.constructor",
+      "kind": "constructor",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 56
+    },
+    {
+      "name": "errors",
+      "qualifiedName": "SchemaValidationError.errors",
+      "kind": "property",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 53
+    },
+    {
+      "name": "schemaName",
+      "qualifiedName": "SchemaValidationError.schemaName",
+      "kind": "property",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 54
+    },
+    {
+      "name": "SdkMetadata",
+      "qualifiedName": "SdkMetadata",
+      "kind": "interface",
+      "sourceFile": "src/index.ts",
+      "line": 20
+    },
+    {
+      "name": "packageName",
+      "qualifiedName": "SdkMetadata.packageName",
+      "kind": "property",
+      "sourceFile": "src/index.ts",
+      "line": 21
+    },
+    {
+      "name": "protocolVersion",
+      "qualifiedName": "SdkMetadata.protocolVersion",
+      "kind": "property",
+      "sourceFile": "src/index.ts",
+      "line": 22
+    },
+    {
+      "name": "wireNamespace",
+      "qualifiedName": "SdkMetadata.wireNamespace",
+      "kind": "property",
+      "sourceFile": "src/index.ts",
+      "line": 23
+    },
+    {
+      "name": "SignedDocument",
+      "qualifiedName": "SignedDocument",
+      "kind": "interface",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 136
+    },
+    {
+      "name": "signature",
+      "qualifiedName": "SignedDocument.signature",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 137
+    },
+    {
+      "name": "SignedDocumentCodec",
+      "qualifiedName": "SignedDocumentCodec",
+      "kind": "class",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 318
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "SignedDocumentCodec.sign",
+      "kind": "method",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 321
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "SignedDocumentCodec.verify",
+      "kind": "method",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 372
+    },
+    {
+      "name": "SignedDocumentKind",
+      "qualifiedName": "SignedDocumentKind",
+      "kind": "enum",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 36
+    },
+    {
+      "name": "AgentCard",
+      "qualifiedName": "SignedDocumentKind.AgentCard",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 37
+    },
+    {
+      "name": "Approval",
+      "qualifiedName": "SignedDocumentKind.Approval",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 38
+    },
+    {
+      "name": "Artifact",
+      "qualifiedName": "SignedDocumentKind.Artifact",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 39
+    },
+    {
+      "name": "Command",
+      "qualifiedName": "SignedDocumentKind.Command",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 40
+    },
+    {
+      "name": "ContextPackage",
+      "qualifiedName": "SignedDocumentKind.ContextPackage",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 41
+    },
+    {
+      "name": "Event",
+      "qualifiedName": "SignedDocumentKind.Event",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 42
+    },
+    {
+      "name": "Evidence",
+      "qualifiedName": "SignedDocumentKind.Evidence",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 43
+    },
+    {
+      "name": "ExtensionProfile",
+      "qualifiedName": "SignedDocumentKind.ExtensionProfile",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 44
+    },
+    {
+      "name": "GroupSnapshot",
+      "qualifiedName": "SignedDocumentKind.GroupSnapshot",
+      "kind": "enum-member",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 45
+    },
+    {
+      "name": "SignedDocumentVerificationError",
+      "qualifiedName": "SignedDocumentVerificationError",
+      "kind": "class",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 117
+    },
+    {
+      "name": "auditDetail",
+      "qualifiedName": "SignedDocumentVerificationError.auditDetail",
+      "kind": "getter",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 131
+    },
+    {
+      "name": "constructor",
+      "qualifiedName": "SignedDocumentVerificationError.constructor",
+      "kind": "constructor",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 121
+    },
+    {
+      "name": "wireCode",
+      "qualifiedName": "SignedDocumentVerificationError.wireCode",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 119
+    },
+    {
+      "name": "SigningKey",
+      "qualifiedName": "SigningKey",
+      "kind": "interface",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 48
+    },
+    {
+      "name": "algorithm",
+      "qualifiedName": "SigningKey.algorithm",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 49
+    },
+    {
+      "name": "keyId",
+      "qualifiedName": "SigningKey.keyId",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 50
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "SigningKey.sign",
+      "kind": "method",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 51
+    },
+    {
+      "name": "StrictJsonSyntaxError",
+      "qualifiedName": "StrictJsonSyntaxError",
+      "kind": "class",
+      "sourceFile": "src/strict-json.ts",
+      "line": 23
+    },
+    {
+      "name": "constructor",
+      "qualifiedName": "StrictJsonSyntaxError.constructor",
+      "kind": "constructor",
+      "sourceFile": "src/strict-json.ts",
+      "line": 26
+    },
+    {
+      "name": "offset",
+      "qualifiedName": "StrictJsonSyntaxError.offset",
+      "kind": "property",
+      "sourceFile": "src/strict-json.ts",
+      "line": 24
+    },
+    {
+      "name": "TrustedAdmissionContext",
+      "qualifiedName": "TrustedAdmissionContext",
+      "kind": "interface",
+      "sourceFile": "src/admission.ts",
+      "line": 83
+    },
+    {
+      "name": "issue",
+      "qualifiedName": "TrustedAdmissionContext.issue",
+      "kind": "method",
+      "sourceFile": "src/admission.ts",
+      "line": 84
+    },
+    {
+      "name": "ValidationResult",
+      "qualifiedName": "ValidationResult",
+      "kind": "interface",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 47
+    },
+    {
+      "name": "errors",
+      "qualifiedName": "ValidationResult.errors",
+      "kind": "property",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 48
+    },
+    {
+      "name": "valid",
+      "qualifiedName": "ValidationResult.valid",
+      "kind": "property",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 49
+    },
+    {
+      "name": "VerificationAuditDetail",
+      "qualifiedName": "VerificationAuditDetail",
+      "kind": "interface",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 112
+    },
+    {
+      "name": "reason",
+      "qualifiedName": "VerificationAuditDetail.reason",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 114
+    },
+    {
+      "name": "stage",
+      "qualifiedName": "VerificationAuditDetail.stage",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 113
+    },
+    {
+      "name": "VerificationStage",
+      "qualifiedName": "VerificationStage",
+      "kind": "type",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 101
+    },
+    {
+      "name": "VerificationWireCode",
+      "qualifiedName": "VerificationWireCode",
+      "kind": "type",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 109
+    },
+    {
+      "name": "VerifiedSignedDocument",
+      "qualifiedName": "VerifiedSignedDocument",
+      "kind": "interface",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 236
+    },
+    {
+      "name": "document",
+      "qualifiedName": "VerifiedSignedDocument.document",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 237
+    },
+    {
+      "name": "kind",
+      "qualifiedName": "VerifiedSignedDocument.kind",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 238
+    },
+    {
+      "name": "protectedTime",
+      "qualifiedName": "VerifiedSignedDocument.protectedTime",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 239
+    },
+    {
+      "name": "receivedBytes",
+      "qualifiedName": "VerifiedSignedDocument.receivedBytes",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 243
+    },
+    {
+      "name": "resolvedKey",
+      "qualifiedName": "VerifiedSignedDocument.resolvedKey",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 245
+    },
+    {
+      "name": "resolvedPublicKeyBytes",
+      "qualifiedName": "VerifiedSignedDocument.resolvedPublicKeyBytes",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 244
+    },
+    {
+      "name": "signature",
+      "qualifiedName": "VerifiedSignedDocument.signature",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 246
+    },
+    {
+      "name": "signatureBytes",
+      "qualifiedName": "VerifiedSignedDocument.signatureBytes",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 247
+    },
+    {
+      "name": "signedDocumentBytes",
+      "qualifiedName": "VerifiedSignedDocument.signedDocumentBytes",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 248
+    },
+    {
+      "name": "signedDocumentHash",
+      "qualifiedName": "VerifiedSignedDocument.signedDocumentHash",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 249
+    },
+    {
+      "name": "signingBytes",
+      "qualifiedName": "VerifiedSignedDocument.signingBytes",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 250
+    },
+    {
+      "name": "signingHash",
+      "qualifiedName": "VerifiedSignedDocument.signingHash",
+      "kind": "property",
+      "sourceFile": "src/signed-document-codec.ts",
+      "line": 251
+    },
+    {
+      "name": "canonicalJsonBytes",
+      "qualifiedName": "canonicalJsonBytes",
+      "kind": "function",
+      "sourceFile": "src/canonical-json.ts",
+      "line": 9
+    },
+    {
+      "name": "canonicalizeJson",
+      "qualifiedName": "canonicalizeJson",
+      "kind": "function",
+      "sourceFile": "src/canonical-json.ts",
+      "line": 5
+    },
+    {
+      "name": "decodeBase64Url",
+      "qualifiedName": "decodeBase64Url",
+      "kind": "function",
+      "sourceFile": "src/crypto.ts",
+      "line": 33
+    },
+    {
+      "name": "encodeBase64Url",
+      "qualifiedName": "encodeBase64Url",
+      "kind": "function",
+      "sourceFile": "src/crypto.ts",
+      "line": 29
+    },
+    {
+      "name": "isJsonObject",
+      "qualifiedName": "isJsonObject",
+      "kind": "function",
+      "sourceFile": "src/json-types.ts",
+      "line": 9
+    },
+    {
+      "name": "packageRoot",
+      "qualifiedName": "packageRoot",
+      "kind": "function",
+      "sourceFile": "src/package-root.ts",
+      "line": 5
+    },
+    {
+      "name": "parseStrictJson",
+      "qualifiedName": "parseStrictJson",
+      "kind": "function",
+      "sourceFile": "src/strict-json.ts",
+      "line": 33
+    },
+    {
+      "name": "parseStrictJsonObject",
+      "qualifiedName": "parseStrictJsonObject",
+      "kind": "function",
+      "sourceFile": "src/strict-json.ts",
+      "line": 38
+    },
+    {
+      "name": "protocolVersion",
+      "qualifiedName": "protocolVersion",
+      "kind": "const",
+      "sourceFile": "src/index.ts",
+      "line": 1
+    },
+    {
+      "name": "runConformance",
+      "qualifiedName": "runConformance",
+      "kind": "function",
+      "sourceFile": "src/conformance.ts",
+      "line": 30
+    },
+    {
+      "name": "schemaNames",
+      "qualifiedName": "schemaNames",
+      "kind": "const",
+      "sourceFile": "src/schema-catalog.ts",
+      "line": 20
+    },
+    {
+      "name": "sdkMetadata",
+      "qualifiedName": "sdkMetadata",
+      "kind": "function",
+      "sourceFile": "src/index.ts",
+      "line": 26
+    },
+    {
+      "name": "sha256Hex",
+      "qualifiedName": "sha256Hex",
+      "kind": "function",
+      "sourceFile": "src/crypto.ts",
+      "line": 21
+    },
+    {
+      "name": "sha256Identifier",
+      "qualifiedName": "sha256Identifier",
+      "kind": "function",
+      "sourceFile": "src/crypto.ts",
+      "line": 25
+    },
+    {
+      "name": "signBytes",
+      "qualifiedName": "signBytes",
+      "kind": "function",
+      "sourceFile": "src/crypto.ts",
+      "line": 44
+    },
+    {
+      "name": "signDocument",
+      "qualifiedName": "signDocument",
+      "kind": "function",
+      "sourceFile": "src/crypto.ts",
+      "line": 71
+    },
+    {
+      "name": "signatureInput",
+      "qualifiedName": "signatureInput",
+      "kind": "function",
+      "sourceFile": "src/crypto.ts",
+      "line": 56
+    },
+    {
+      "name": "verifyBytes",
+      "qualifiedName": "verifyBytes",
+      "kind": "function",
+      "sourceFile": "src/crypto.ts",
+      "line": 48
+    },
+    {
+      "name": "verifyDocumentSignature",
+      "qualifiedName": "verifyDocumentSignature",
+      "kind": "function",
+      "sourceFile": "src/crypto.ts",
+      "line": 85
+    },
+    {
+      "name": "wireNamespace",
+      "qualifiedName": "wireNamespace",
+      "kind": "const",
+      "sourceFile": "src/index.ts",
+      "line": 2
+    }
+  ]
+}

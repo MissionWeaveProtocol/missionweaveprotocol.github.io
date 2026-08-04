@@ -1,0 +1,41 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: MissionWeaveProtocol 0.1仕様
+description:
+  MissionWeaveProtocol 0.1 の完全なローカル規範仕様と固定ソース マップ。
+---
+
+import NormativeReleaseFacts from "../../../../../../components/NormativeReleaseFacts.astro";
+
+# MissionWeaveProtocol 0.1仕様
+
+この Web サイトは、**ドラフト標準 0.1.0**
+を 1 つの統一された標準リリースとして公開します。バージョン管理された散文、スキーマ、適合成果物、プロトコル ピン、および 6 つの SDK ピンが一緒にリリースされます。
+
+大文字で始まる要件用語の解釈は、BCP 14 に基づく
+[MWP-FND-001](./foundations/#mwp-fnd-001)
+によって定義されています。条項識別子は、このリリース内でも安定した参照のままです。
+
+<NormativeReleaseFacts />
+
+## ピン留めされたソース マップ
+
+このテーブルは、ピン留めされたすべてのプロトコル ソース セグメントをローカルの標準ページにマップします。セグメント間に意図的に残された空白のソース行は、文節マニフェストに記録されます。
+
+| オリジナルソースセクション                                     | 地域の規範ページ                                                                  | ピン留めされたソース行 | 条項の範囲                                                                                                                            |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------- | ---------------------: | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 前文と§§1–5                                                    | [Foundations](./foundations/)                                                     |                  1–184 | [MWP-FND-001](./foundations/#mwp-fnd-001)–[MWP-FND-024](./foundations/#mwp-fnd-024)                                                   |
+| §§6.1–6.3                                                      | [ID、Registry、およびセッション](./identity-registry-and-sessions/)               |                185–246 | [MWP-IDN-001](./identity-registry-and-sessions/#mwp-idn-001)–[MWP-IDN-009](./identity-registry-and-sessions/#mwp-idn-009)             |
+| §6.4 検証プロファイルと 6 つの段階                             | [署名された文書と信頼性の検証](./signed-documents-and-trust/)                     |                247–410 | [MWP-SDV-001](./signed-documents-and-trust/#mwp-sdv-001)–[MWP-SDV-017](./signed-documents-and-trust/#mwp-sdv-017)                     |
+| §6.4 初回アドミッションと履歴信頼                              | [初回アドミッションと履歴信頼](./first-admission-and-historical-trust/)           |                411–520 | [MWP-ADM-001](./first-admission-and-historical-trust/#mwp-adm-001)–[MWP-ADM-014](./first-admission-and-historical-trust/#mwp-adm-014) |
+| §6.4 診断と上位互換性                                          | [署名された文書と信頼性の検証](./signed-documents-and-trust/)                     |                521–536 | [MWP-SDV-018](./signed-documents-and-trust/#mwp-sdv-018)–[MWP-SDV-019](./signed-documents-and-trust/#mwp-sdv-019)                     |
+| §§7–9 Mission、Group、Membership、および会話                   | [ミッション、グループ、Membership、および会話](./missions-groups-and-membership/) |                538–691 | [MWP-MSN-001](./missions-groups-and-membership/#mwp-msn-001)–[MWP-MSN-023](./missions-groups-and-membership/#mwp-msn-023)             |
+| §§10–11 作業項目、スケジューリング、実行、およびリカバリ       | [作業、スケジュール設定、および回復](./work-scheduling-and-recovery/)             |                692–869 | [MWP-WRK-001](./work-scheduling-and-recovery/#mwp-wrk-001)–[MWP-WRK-022](./work-scheduling-and-recovery/#mwp-wrk-022)                 |
+| §12 認可、予算、副作用                                         | [認可、予算、副作用](./authorization-and-budgets/)                                |                870–910 | [MWP-AUT-001](./authorization-and-budgets/#mwp-aut-001)–[MWP-AUT-006](./authorization-and-budgets/#mwp-aut-006)                       |
+| §13 アーティファクト、Evidence、およびコンテキスト パッケージ  | [作業、スケジュール設定、および回復](./work-scheduling-and-recovery/)             |                911–950 | [MWP-WRK-023](./work-scheduling-and-recovery/#mwp-wrk-023)–[MWP-WRK-028](./work-scheduling-and-recovery/#mwp-wrk-028)                 |
+| §14 親と子のミッション                                         | [ミッション、グループ、Membership、および会話](./missions-groups-and-membership/) |                951–976 | [MWP-MSN-024](./missions-groups-and-membership/#mwp-msn-024)–[MWP-MSN-026](./missions-groups-and-membership/#mwp-msn-026)             |
+| §15 コマンド、イベント、および同時実行性                       | [コマンド、イベント、および順序](./commands-events-and-ordering/)                 |               977–1098 | [MWP-EVT-001](./commands-events-and-ordering/#mwp-evt-001)–[MWP-EVT-007](./commands-events-and-ordering/#mwp-evt-007)                 |
+| §16 配信、再生、確認                                           | [作業、スケジュール設定、および回復](./work-scheduling-and-recovery/)             |              1099–1117 | [MWP-WRK-029](./work-scheduling-and-recovery/#mwp-wrk-029)–[MWP-WRK-031](./work-scheduling-and-recovery/#mwp-wrk-031)                 |
+| §17 WebSocket バインディング                                   | [コマンド、イベント、および順序](./commands-events-and-ordering/)                 |              1118–1159 | [MWP-EVT-008](./commands-events-and-ordering/#mwp-evt-008)–[MWP-EVT-012](./commands-events-and-ordering/#mwp-evt-012)                 |
+| §§18–23 拡張機能、エラー、制御、互換性、準拠、およびライセンス | [拡張機能、エラー、コントロール、および適合性](./errors-extensions-and-security/) |              1160–1343 | [MWP-EXT-001](./errors-extensions-and-security/#mwp-ext-001)–[MWP-EXT-016](./errors-extensions-and-security/#mwp-ext-016)             |

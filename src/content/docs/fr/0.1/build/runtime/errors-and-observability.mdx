@@ -1,0 +1,128 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Erreurs et observabilité
+description: >-
+  Erreurs sécurisées, décisions de nouvelle tentative, diagnostics de
+  vérification protégés, enregistrements d'audit à accès contrôlé, mesures et
+  limites de traçage.
+---
+
+# Erreurs et observabilité
+
+L'erreur filaire est un résultat de protocole stable, et non un vidage
+d'exceptions internes. Les erreurs sont conformes au schéma d'erreur local,
+indiquent si la nouvelle tentative est sûre et peuvent identifier la trame ou
+l'ID d'action associé sans exposer de données non autorisées
+([MWP-EXT-004](../../../reference/specification/errors-extensions-and-security/#mwp-ext-004)).
+
+## Classer au bon calque
+
+| Couche                                                               | Résultat public                                                      |
+| -------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| JSON non valide, membres en double ou valeur JCS impossible          | `PROTOCOL_VIOLATION`                                                 |
+| schéma complet ou échec de l'enveloppe requise                       | `SCHEMA_VALIDATION_FAILED`                                           |
+| échec des étapes cryptographiques 3, 4 ou 6                          | `AUTH_INVALID_SIGNATURE`                                             |
+| Admission ou échec de fraîcheur Command                              | `AUTH_INVALID_SIGNATURE`                                             |
+| autorisation manquante ou éligibilité à la politique                 | `AUTH_FORBIDDEN`                                                     |
+| Session obsolète, Membership, Coordinator, propriété ou état du bail | le code de clôture stable correspondant                              |
+| inadéquation des révisions globales actuelles                        | `REVISION_CONFLICT`                                                  |
+| limite de pression acceptée                                          | `BACKPRESSURE` ou `RATE_LIMITED` avec conseils de nouvelle tentative |
+
+Les échecs cryptographiques et d’admission s’effondrent délibérément sur le fil.
+Le Organization conserve la première étape sémantique défaillante et la raison
+spécifique uniquement dans un enregistrement d'audit protégé et à accès contrôlé
+([MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)).
+Les numéros d'étape sont des classifications sémantiques plutôt que des limites
+de fonctions internes requises
+([MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016)).
+Chaque échec après l'achèvement des six étapes du chemin d'admission utilise
+l'étape protégée `admission` et le même code public `AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).
+
+## Réessayer les décisions
+
+Le comportement des nouvelles tentatives dépend du code stable et de la validité
+du contenu protégé :
+
+- une nouvelle tentative Command acceptée inchangée conserve l'ID d'action
+  d'origine et signée contenu ;
+- `AUTH_INVALID_SIGNATURE` n'est pas réessayé sans modification jusqu'à ce que
+  sa cause soit résolue. corrigé;
+- la fraîcheur Command expirée nécessite un nouveau Command, ID d'action, temps
+  protégé, et signature ;
+- `ACTION_ID_COLLISION` nécessite toujours un nouvel ID d'action et un contenu
+  signé ; et
+- les erreurs de clôture obsolètes nécessitent les époques faisant autorité
+  actuelles ainsi qu'un nouveau Command et signature.
+
+Les règles complètes sont
+[MWP-EXT-005](../../../reference/specification/errors-extensions-and-security/#mwp-ext-005)).
+Les délais d'attente de transport sans réponse faisant autorité sont
+indéterminés : interrogez ou rejouez par identité stable avant de décider
+d'envoyer ou non une nouvelle transition.
+
+## Dossier d'audit protégé
+
+Le Organization conserve la première étape sémantique défaillante et sa raison
+spécifique dans un enregistrement d'audit protégé et à accès contrôlé, comme
+l'exige la norme
+[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018).
+
+Ne placez pas de secrets, de jetons de capacité, de matériel de clé privée,
+d'informations d'identification brutes, d'existence Group non autorisée ou de
+distinctions d'échec de confiance protégées dans la réponse filaire. Les jetons
+et les informations d'identification sont également exclus des messages, des
+cartes Agent, des packages de contexte, des artefacts et des événements
+([MWP-AUT-002](../../../reference/specification/authorization-and-budgets/#mwp-aut-002)).
+
+Les preuves d'audit couvrent les décisions, les entrées, les bloqueurs et les
+résultats sans nécessiter de chaîne de pensée privée, d'invites cachées ou de
+mémoire interne brute
+([MWP-FND-022](../../../reference/specification/foundations/#mwp-fnd-022)).
+
+## Échecs sensibles aux révisions
+
+Ne considérez pas le comportement alternatif de l'octet de signature comme un
+chemin de récupération de compatibilité. Une révision qui protège une partie
+différente de l'enveloppe de signature modifie les octets de signature filaire
+et ne peut pas être générée ou acceptée silencieusement en tant que v0.1
+([MWP-SDV-019](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-019)).
+
+:::note[Implementation note]
+
+Utilisez des types de diagnostic d'erreur publique et protégés distincts afin
+que le code de sérialisation ne puisse pas exposer accidentellement une raison
+interne. Les journaux et les traces doivent faire référence à des identifiants
+et des hachages stables plutôt que d'intégrer des documents de protocole
+complets.
+
+Pour un auditeur agréé, les champs structurés utiles comprennent :
+
+- la première étape sémantique défaillante, la raison interne stable et
+  l'adaptateur source ;
+- version exacte, schéma, profil et version d'implémentation ;
+- autorisé Organization, Group, acteur, ID d'action, ID de corrélation et
+  signature références de hachage ;
+- révision Registry pertinente ou identité du résultat Admission Log ; et
+- si l'État faisant autorité a changé.
+
+Les commandes portent déjà une identité d'action et de corrélation stable
+([MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001))
+et les événements acceptés conservent un contexte de cause, d'acteur, de
+corrélation, de séquence et de révision immuable
+([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)).
+Préférez ces références à une identité de traçage sans rapport.
+
+Les mesures utiles incluent les commandes acceptées et rejetées par code public,
+le premier échec de l'étape protégée dans la télémétrie restreinte, le décalage
+de relecture par Group, le nombre d'écarts de curseur, le nombre de doublons
+Event, le nombre de rejets de bail et de budget, la durée de la contre-pression,
+les résultats de l'adaptateur d'admission et la latence de transition de bout en
+bout. Définissez la cardinalité limitée avant d'attacher les identifiants
+Organization, Group, d'acteur, d'action, de clé ou de hachage de signature.
+
+:::
+
+Terminez par [Conformité et mises à niveau](../conformance-and-upgrades/) avant
+de réclamer la prise en charge d'une version.

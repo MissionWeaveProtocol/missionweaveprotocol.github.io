@@ -1,0 +1,254 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-EVT
+title: "Commands, Events, and ordering"
+description:
+  "Command and Event envelopes, concurrency, Group order, WebSocket transport,
+  and canonical wire encoding."
+---
+
+import NormativeClause from "../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../components/InformativeBlock.astro";
+
+## 15. Commands, Events, and concurrency
+
+### 15.1 Commands
+
+<NormativeClause id="MWP-EVT-001" level={["MUST","MUST NOT"]}>
+
+A Command is a signed request for one structured state transition. Every Command
+envelope MUST contain a stable Action ID, protocol version, actor, kind,
+payload, correlation ID, issue time, and signature. A Group-scoped Command MUST
+contain its Group ID. A state-changing Agent Command MUST additionally contain
+the current Session Epoch and Membership Epoch. A human Command in an existing
+Group MUST contain the current Membership Epoch and MUST NOT contain an Agent
+Session Epoch. An Organization-service Command MUST NOT invent Agent Session or
+Membership Epochs.
+
+</NormativeClause>
+
+`mission.create` and `mission.create_follow_up` carry the ID of the Group being
+created but omit Membership and Session Epochs because the new Group Membership
+does not yet exist and human Commands do not use Agent sessions. A control plane
+may authenticate, relay, and validate `mission.create`, but the signed Command
+actor and resulting root MissionOwner remain that human; the control plane does
+not become the MissionOwner. The Organization-owned
+`ext.missionweaveprotocol.registry.agent_card_register` and
+`ext.missionweaveprotocol.identity.session_open` bootstrap Commands omit Group
+ID and all three role/session epochs.
+
+<NormativeClause id="MWP-EVT-002" level={["MUST","SHOULD"]}>
+
+An Agent Command whose authority derives from the current Coordinator lease MUST
+contain the current Coordinator Epoch. This is required for
+`mission.renew_coordinator`, `mission.submit_for_approval`,
+`mission.create_child`, `membership.grant_delegation`, and `work.accept_result`,
+and for an Agent-issued `mission.terminate`. A service-issued
+`mission.terminate` is instead authorized by Organization policy and does not
+carry a Coordinator Epoch. A Command SHOULD contain the expected aggregate
+revision when modifying existing structured state. A Command using a one-shot
+cooperation escalation MUST also contain `cooperationOverrideGrantId`.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EVT-003" level={["MUST","MUST NOT"]}>
+
+The same `(actor ID, Action ID)` with byte-equivalent canonical signed content
+MUST return the original receipt and MUST NOT append a second state transition.
+Reuse of the same Action ID with different canonical content MUST fail with
+`ACTION_ID_COLLISION`.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EVT-004" level="MUST">
+
+The Group Authority MUST authenticate the actor; validate Session and Membership
+Epochs, schema, current aggregate revision, role, delegation, budget, policy,
+and lease; and either reject the Command or append the resulting Event(s)
+atomically within that Group.
+
+</NormativeClause>
+
+<span id="core-command-kinds"></span>
+
+Core Command kinds are:
+
+```text
+mission.create                 mission.assign_coordinator
+mission.renew_coordinator      mission.submit_for_approval
+mission.approve                mission.request_changes
+mission.cancel                 mission.terminate
+mission.create_child           mission.create_follow_up
+membership.change             membership.end
+membership.grant_delegation
+message.post                   message.correct
+message.retract                message.redact
+work.propose                   work.authorize
+work.offer                     work.accept_offer
+work.start                     work.checkpoint
+work.block                     work.unblock
+work.submit                    work.accept_result
+work.fail                      work.cancel
+artifact.publish               approval.grant_execution
+policy.grant_cooperation_override
+```
+
+The reference core additionally defines Organization-owned
+`ext.missionweaveprotocol.*` Commands for Agent Card registration, Session
+activation, dependency insertion, Execution Lease renewal, authoritative
+resource-usage recording, and Group archival. A future Extension Profile may
+standardize convenience Commands such as explicit offer decline, clarification,
+or Mission pause, but those names are not v0.1 core transitions.
+
+### 15.2 Events and Group order
+
+<NormativeClause id="MWP-EVT-005" level={["MUST","MUST NOT"]}>
+
+An Event is an immutable accepted fact. A Group Event envelope MUST contain
+Event ID, Group ID, strictly increasing Group sequence, aggregate revision,
+kind, actor, cause, correlation ID, occurrence time, payload, and Group
+Authority signature. The Organization-scoped
+`ext.missionweaveprotocol.registry.agent_card_registered` and
+`ext.missionweaveprotocol.identity.session_opened` facts contain the common
+Event identity, actor, cause, correlation, payload, time, accepting authority,
+and signature fields, but MUST NOT contain Group ID, Group sequence, or Group
+aggregate revision.
+
+</NormativeClause>
+
+The Group Authority assigns one monotonic sequence to every durable Group Event.
+This sequence supplies deterministic display, recovery, and audit order.
+Ordinary Messages may be logically concurrent even though the service assigns
+display order. Structured transitions rely on the Event order and aggregate
+revisions.
+
+<span id="core-event-kinds"></span>
+
+Core Event kinds are the past-tense facts corresponding to core Commands,
+including:
+
+```text
+mission.created                 mission.coordinator.assigned
+mission.coordinator.renewed     mission.submitted_for_approval
+mission.approved                mission.changes_requested
+mission.cancelled               mission.terminated
+mission.child.created           mission.follow_up.created
+membership.changed              membership.ended
+membership.delegation.granted
+message.posted                  message.corrected
+message.retracted               message.redacted
+work.proposed                   work.authorized
+work.offer.created              work.offer.accepted
+work.contract.revised           work.started
+work.progressed                 work.checkpointed
+work.blocked                    work.unblocked
+work.submitted                  work.result.accepted
+work.failed                     work.cancelled
+artifact.published              approval.execution.granted
+policy.cooperation_override.granted
+group.snapshot.created          group.archived
+```
+
+`work.contract.revised` and `work.progressed` are core WorkItem facts emitted by
+the reference Organization-owned dependency-insertion and
+Execution-Lease-renewal Commands. Agent Card and Session activation facts retain
+their `ext.missionweaveprotocol.*` Event kinds. `group.snapshot.created` and
+`group.archived` are core archival facts emitted atomically by the
+Organization-owned `ext.missionweaveprotocol.core.group_archive` Command after
+its signed snapshot and policy-log linkage validate.
+
+<NormativeClause id="MWP-EVT-006" level="MAY">
+
+Automatic Events MAY be caused by an accepted Command, prior Event, timer, or
+policy decision. Events from different Groups have no defined order.
+
+</NormativeClause>
+
+### 15.3 Optimistic concurrency
+
+<NormativeClause id="MWP-EVT-007" level={["SHOULD","MUST","MUST NOT"]}>
+
+Structured aggregate Commands SHOULD provide `expectedRevision`. If it does not
+equal the current revision, the Group Authority MUST reject the Command with
+`REVISION_CONFLICT` and MUST NOT partially apply it. Atomic first-accept
+ownership, lease renewal, Membership change, and Approval always require
+compare-and-set processing even if the wire field is omitted by a privileged
+internal actor.
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+The next block resumes a later pinned source segment. See the
+[specification source map](./) for the intervening local page and exact line
+ranges.
+
+</InformativeBlock>
+
+## 17. WebSocket binding
+
+### 17.1 Connection
+
+<NormativeClause id="MWP-EVT-008" level={["MUST","MUST NOT"]}>
+
+MissionWeaveProtocol 0.1 servers MUST provide WebSocket over TLS 1.3 (`wss`). A
+single authenticated connection multiplexes all Groups used by one Agent. Each
+WebSocket message MUST contain exactly one UTF-8 JSON text frame conforming to
+`schemas/websocket-frame.schema.json`. Binary WebSocket messages MUST NOT carry
+MissionWeaveProtocol objects or Artifact content in v0.1.
+
+</NormativeClause>
+
+The core frame types are `HELLO`, `SUBSCRIBE`, `COMMAND`, `EVENT`, `ACK`,
+`PING`, and `ERROR`. Partial Message streaming frames are not defined.
+
+### 17.2 Subscriptions
+
+<NormativeClause id="MWP-EVT-009" level={["MUST","MUST NOT"]}>
+
+After authentication, a client sends `SUBSCRIBE` with Group IDs, per-Group
+replay positions, and optional attention filters. A filter changes live
+delivery, not authorization or durable history. The server MUST independently
+enforce Membership for every Group and MUST NOT reveal whether an unauthorized
+Group exists.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EVT-010" level={["MAY","MUST"]}>
+
+One connection MAY interleave Events from multiple Groups. Sequence is
+guaranteed only within each Group. A receiver MUST route by Group ID before
+applying sequence logic.
+
+</NormativeClause>
+
+### 17.3 Flow control and liveness
+
+<NormativeClause id="MWP-EVT-011" level={["MAY","MUST","SHOULD"]}>
+
+`ACK` supplies durable progress. `PING` supplies liveness and MAY carry a
+Presence Record; the peer echoes its nonce in a reply `PING`. Servers MUST apply
+bounded buffering and per-Group backpressure. When a limit is reached they
+SHOULD pause that Group and emit `BACKPRESSURE` with retry guidance rather than
+disconnecting unrelated Groups.
+
+</NormativeClause>
+
+### 17.4 Canonical encoding
+
+<NormativeClause id="MWP-EVT-012" level="MUST">
+
+Wire JSON need not arrive in canonical member order, but every hash, identifier
+derived from content, or signature MUST use RFC 8785 JCS bytes. Duplicate object
+member names MUST be rejected before schema validation. Numbers and strings MUST
+satisfy the finite-binary64 and I-JSON rules in
+[Section 2](../foundations/#mwp-fnd-006); conforming implementations MUST
+produce the same JCS bytes for the same JSON value.
+
+</NormativeClause>
+
+Large content is published as an Artifact and referenced by URI and content
+hash. Unknown core properties are rejected by v0.1 schemas. Unknown noncritical
+Extension Profile data is stored and relayed unchanged. Unknown critical
+extensions cause `UNKNOWN_CRITICAL_EXTENSION`.

@@ -1,0 +1,23 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: TypeScript 公開 API インベントリ
+description:
+  サポートされているすべての TypeScript パッケージ ルート宣言は、文書化された
+  SDK コミットの正確なソース ファイルと行に解決されます。
+---
+
+import SdkApiInventory from "../../../../../../../components/SdkApiInventory.astro";
+
+# TypeScript 公開 API インベントリ
+
+この正確なコミット インベントリは、`6d53ebfcf8350ae81d89fd818611b07f7373685c`
+にある実際のパッケージ ルート エクスポート宣言から生成されます。スターのエクスポートには、その公開宣言が含まれます。選択エクスポートには、名前付きルート サーフェスのみが含まれます。通常の輸入および国内専用申告は除きます。
+
+インベントリは、名前付けと正確なソースの出所参照であり、ローカルの
+[ランタイム セマンティクス](../runtime/) または
+[アドミッション呼び出しフロー](../admission/) の代替ではありません。パッケージは
+`.` と `./package.json`
+のみをエクスポートします。ここにリストされているソース モジュールは、独立してサポートされているパッケージ サブパスではありません。
+
+<SdkApiInventory sdk="typescript" />

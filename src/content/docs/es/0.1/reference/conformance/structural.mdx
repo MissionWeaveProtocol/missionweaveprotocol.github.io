@@ -1,0 +1,38 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Conformidad estructural
+description: >-
+  Todos los vectores estructurales MissionWeaveProtocol 0.1 esperados válidos y
+  esperados no válidos.
+---
+
+import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
+import StructuralVectorCatalog from "../../../../../../components/StructuralVectorCatalog.astro";
+import release from "../../../../../../data/normative/0.1/release-source.json";
+
+# Conformidad estructural
+
+El manifiesto estructural contiene casos **{release.structural.total}**:
+**{release.structural.valid}** esperado-válido y
+**{release.structural.invalid}** esperado-inválido. Cada entrada identifica un
+artefacto de esquema, un artefacto de instancia y el resultado de validez
+esperado.
+
+- <ArtifactLink path="protocol/conformance/manifest.json">
+    Manifiesto estructural
+  </ArtifactLink>
+- <ArtifactLink path="protocol/conformance/README.md">
+    Semántica del manifiesto local
+  </ArtifactLink>
+
+Una implementación ejecuta el manifiesto completo con el esquema local exacto y
+los bytes de instancia. Un resultado coincidente demuestra únicamente
+conformidad con el esquema estructural. No demuestra comportamiento de máquina
+de estados, ordenamiento, autorización, arrendamiento, presupuesto,
+reproducción, criptografía o admisión.
+
+Las siguientes tablas son los directorios de vectores locales navegables
+esperados válidos y esperados no válidos.
+
+<StructuralVectorCatalog />

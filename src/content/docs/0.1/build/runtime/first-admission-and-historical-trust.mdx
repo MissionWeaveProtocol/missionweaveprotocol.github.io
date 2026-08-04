@@ -1,0 +1,147 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "First Admission and Historical Trust"
+description:
+  "How a runtime layers authenticated Admission Log outcomes, atomic append,
+  returned-record validation, and historical replay above cryptography."
+---
+
+# First Admission and Historical Trust
+
+Admission is a separate semantic layer after six-stage cryptographic
+verification. It does not change signing bytes, signing hashes, key resolution,
+or the signature result
+([MWP-ADM-005](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+Its prerequisite is a completed six-stage result
+([MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015))
+with an Admission-independent signing hash
+([MWP-SDV-017](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-017))
+and the correct current or historical Registry-evidence contract
+([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)).
+
+## Required interfaces
+
+The Admission layer depends on these distinct evidence and authority boundaries:
+
+:::note[Implementation note]
+
+Represent each boundary with a typed interface:
+
+- current Registry evidence for a new first-admission decision;
+- authoritative historical Registry evidence for replay;
+- an authenticated Admission Log lookup;
+- one atomic append-or-return-existing operation; and
+- Organization-trusted acceptance context used only after authoritative absence.
+
+:::
+
+The Admission Log logical key is `(organizationId, signingHash)`. It must
+authenticate the accepting service, distinguish found from authoritative
+absence, preserve append-only integrity, and fail closed for unavailable,
+indeterminate, unauthenticated, integrity-failed, conflicting, or failed-commit
+outcomes
+([MWP-ADM-003](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).
+A caller-supplied trust boolean is not one of those outcomes.
+
+At most one authoritative record exists for a logical key. An identical valid
+record found on retry is idempotent success, while conflicting document kind,
+key ID, or Principal is rejected rather than replaced
+([MWP-ADM-004](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-004)).
+
+## First-admission algorithm
+
+```text
+six-stage cryptographic verification
+→ authoritative Admission Log lookup
+→ found record validation OR authoritative absence
+→ trusted context and candidate preparation
+→ atomic append-or-return-existing
+→ returned record validation
+→ admitted result
+```
+
+Only authoritative absence permits trusted context acquisition and candidate
+preparation. The append may return the local candidate or a concurrent winner,
+and the returned record is always validated before success
+([MWP-ADM-006](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006)).
+
+The First-Admission Record is a separate unsigned nine-field object. It does not
+authenticate itself and cannot contain a `signature`
+([MWP-ADM-001](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001)).
+Retain the lexical spelling of `trustedAcceptedAt`; compare it as an RFC 3339
+instant without requiring the uppercase-`Z` spelling used by protected document
+times
+([MWP-ADM-002](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-002)).
+
+Candidate preparation does not append an Event, execute a transition, or imply
+success. A concurrent winner may return a different record ID or trusted time,
+but only validated returned bytes can succeed
+([MWP-ADM-007](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-007)).
+
+## Returned-record validation
+
+Record validation:
+
+1. strictly parses exactly one UTF-8 JSON value;
+2. applies the normative First-Admission Record Schema;
+3. compares `organizationId`, `documentKind`, `signingHash`, `keyId`, and
+   `principal` exactly with the six-stage result;
+4. compares `acceptedBy` exactly with the service identity authenticated by the
+   Admission Log adapter; and
+5. checks `trustedAcceptedAt` independently against the selected key's retained
+   half-open validity interval.
+
+The exact binding rules are
+[MWP-ADM-009](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009),
+and the trusted-time interval rule is
+[MWP-ADM-010](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010).
+Validating only candidate bytes is never sufficient. A Signed Event cannot serve
+as its own First-Admission Record; a later Event may only publish or reference a
+separate record
+([MWP-ADM-011](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-011)).
+
+## Historical replay
+
+```text
+six-stage cryptographic verification with authoritative historical Registry evidence
+→ required found record
+→ record validation
+→ no trusted context or append
+```
+
+Replay cannot create a missing admission, issue fresh trusted context, or treat
+an old document as newly admitted
+([MWP-ADM-008](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)).
+
+## Boundaries after Admission
+
+An admitted result still does not establish Command freshness or signer
+authorization. A newly presented Command has a separate freshness and clock-skew
+check
+([MWP-ADM-013](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)),
+and the relevant authority separately validates the signer's role and policy at
+the protected and trusted acceptance times
+([MWP-ADM-014](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)).
+
+Every post-cryptographic Admission failure retains protected stage `admission`
+and maps on the wire to `AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).
+
+:::note[Implementation note]
+
+Keep current-key resolution, historical-key resolution, Admission Log access,
+and trusted-context acquisition as distinct typed adapters even when one service
+implements several of them. This prevents a cache miss, transport error, or
+caller boolean from being misrepresented as authoritative absence.
+
+The adapter API should return authenticated service identity together with found
+or appended bytes so record validation cannot accidentally trust an `acceptedBy`
+field taken from the record itself.
+
+:::
+
+Use the local
+[Admission conformance bundle](../../../reference/conformance/admission/) to
+test both first admission and historical replay, including failing adapter
+outcomes.

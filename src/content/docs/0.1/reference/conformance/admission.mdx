@@ -1,0 +1,47 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "First Admission and Historical Trust conformance"
+description:
+  "The complete local Admission evidence bundle layered above six-stage
+  verification."
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import BundleArtifactCatalog from "../../../../../components/BundleArtifactCatalog.astro";
+import release from "../../../../../data/normative/0.1/release-source.json";
+
+# First Admission and Historical Trust conformance
+
+The profile <code>{release.admission.profile}</code> binds
+**{release.admission.artifacts} artifacts**, **{release.admission.cases}
+cases**, and **{release.admission.evaluations} evaluations**. Exactly
+**{release.admission.complete}** evaluations complete and
+**{release.admission.rejected}** are rejected. Its digest is
+
+<code>{release.admission.digest}</code> and it pins the unchanged cryptography
+digest <code>{release.admission.cryptographyDigest}</code>.
+
+- <ArtifactLink path="protocol/admission/manifest.json">
+    Admission manifest
+  </ArtifactLink>
+- <ArtifactLink path="protocol/admission/manifest.schema.json">
+    Manifest schema
+  </ArtifactLink>
+- <ArtifactLink path="protocol/admission/README.md">
+    Local bundle semantics
+  </ArtifactLink>
+
+Every evaluation first repeats the same six-stage cryptographic verification,
+then exercises either first admission or historical replay. The normative
+orchestration and failure mapping are on the
+[First Admission and Historical Trust specification page](../../specification/first-admission-and-historical-trust/).
+
+## Scope exclusions
+
+This bundle does not demonstrate Command freshness or clock-skew enforcement,
+signer authorization, state-machine transitions, Event creation, a portable
+Admission Log proof format, or deployment-specific authorization and retention
+policy. Those concerns require separate evidence.
+
+<BundleArtifactCatalog bundle="admission" />

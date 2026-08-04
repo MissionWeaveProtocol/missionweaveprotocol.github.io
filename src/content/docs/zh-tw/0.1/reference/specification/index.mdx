@@ -1,0 +1,39 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: MissionWeaveProtocol 0.1 規範
+description: MissionWeaveProtocol 0.1 的完整本地規範規格和固定來源映射。
+---
+
+import NormativeReleaseFacts from "../../../../../../components/NormativeReleaseFacts.astro";
+
+# MissionWeaveProtocol 0.1 規範
+
+本網站將**標準草案 0.1.0**
+作為一個統一的規範版本發布。版本化的散文、模式、一致性工件、協定固定版本和六個 SDK 固定版本一起發布。
+
+大寫要求術語的解釋由 BCP 14 下的 [MWP-FND-001](./foundations/#mwp-fnd-001)
+定義。條款標識符在此版本中保持穩定的引用。
+
+<NormativeReleaseFacts />
+
+## 固定源地圖
+
+此表將每個固定協定來源段對應到其本機規範頁面。故意在段之間留下的空白原始碼行記錄在子句清單中。
+
+| 原始出處部分                                   | 地方規範頁面                                                           | 固定原始碼行 | 子句範圍                                                                                                                                      |
+| ---------------------------------------------- | ---------------------------------------------------------------------- | -----------: | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| 序言與 §§1–5                                   | [基金會](./foundations/)                                               |        1–184 | [MWP-FND-001](./foundations/#mwp-fnd-001)–[MWP-FND-024](./foundations/#mwp-fnd-024)                                                           |
+| §§6.1–6.3                                      | [身份， Registry，和會話](./identity-registry-and-sessions/)           |      185–246 | 185–246 [MWP-IDN-001](./identity-registry-and-sessions/#mwp-idn-001)–[MWP-IDN-009](./identity-registry-and-sessions/#mwp-idn-009)             |
+| §6.4 驗證概況和六個階段                        | [簽署文件和信任驗證](./signed-documents-and-trust/)                    |      247–410 | 247–410 [MWP-SDV-001](./signed-documents-and-trust/#mwp-sdv-001)–[MWP-SDV-017](./signed-documents-and-trust/#mwp-sdv-017)                     |
+| §6.4 首次準入與歷史信任                        | [首次準入與歷史信任](./first-admission-and-historical-trust/)          |      411–520 | 411–520 [MWP-ADM-001](./first-admission-and-historical-trust/#mwp-adm-001)–[MWP-ADM-014](./first-admission-and-historical-trust/#mwp-adm-014) |
+| §6.4 診斷與前向相容性                          | [簽署文件和信任驗證](./signed-documents-and-trust/)                    |      521–536 | [MWP-SDV-018](./signed-documents-and-trust/#mwp-sdv-018)–[MWP-SDV-019](./signed-documents-and-trust/#mwp-sdv-019)                             |
+| §§7–9 Mission, Group, Membership, 和對話       | [代表團、團體、 Membership、和對話](./missions-groups-and-membership/) |      538–691 | [MWP-MSN-001](./missions-groups-and-membership/#mwp-msn-001)–[MWP-MSN-023](./missions-groups-and-membership/#mwp-msn-023)                     |
+| §§10–11 工作項目、排程、執行與復原             | [工作、日程安排與復原](./work-scheduling-and-recovery/)                |      692–869 | [MWP-WRK-001](./work-scheduling-and-recovery/#mwp-wrk-001)–[MWP-WRK-022](./work-scheduling-and-recovery/#mwp-wrk-022)                         |
+| §12 授權、預算與副作用                         | [授權、預算與副作用](./authorization-and-budgets/)                     |      870–910 | [MWP-AUT-001](./authorization-and-budgets/#mwp-aut-001)–[MWP-AUT-006](./authorization-and-budgets/#mwp-aut-006)                               |
+| §13 工件， Evidence和上下文包                  | [工作、日程安排和恢復](./work-scheduling-and-recovery/)                |      911–950 | [MWP-WRK-023](./work-scheduling-and-recovery/#mwp-wrk-023)–[MWP-WRK-028](./work-scheduling-and-recovery/#mwp-wrk-028)                         |
+| §14 家長與孩子的使命                           | [代表團、團體、 Membership、和對話](./missions-groups-and-membership/) |      951–976 | [MWP-MSN-024](./missions-groups-and-membership/#mwp-msn-024)–[MWP-MSN-026](./missions-groups-and-membership/#mwp-msn-026)                     |
+| §15 命令、事件和並發                           | [命令、事件和排序](./commands-events-and-ordering/)                    |     977–1098 | [MWP-EVT-001](./commands-events-and-ordering/#mwp-evt-001)–[MWP-EVT-007](./commands-events-and-ordering/#mwp-evt-007)                         |
+| §16 传送、重播和确认                           | [工作、日程安排和恢复](./work-scheduling-and-recovery/)                |    1099–1117 | [MWP-WRK-029](./work-scheduling-and-recovery/#mwp-wrk-029)–[MWP-WRK-031](./work-scheduling-and-recovery/#mwp-wrk-031)                         |
+| §17 WebSocket 綁定                             | [命令、事件和排序](./commands-events-and-ordering/)                    |    1118–1159 | [MWP-EVT-008](./commands-events-and-ordering/#mwp-evt-008)–[MWP-EVT-012](./commands-events-and-ordering/#mwp-evt-012)                         |
+| §§18–23 擴充、錯誤、控制、相容性、一致性與授權 | [擴充、錯誤、控制與一致性](./errors-extensions-and-security/)          |    1160–1343 | [MWP-EXT-001](./errors-extensions-and-security/#mwp-ext-001)–[MWP-EXT-016](./errors-extensions-and-security/#mwp-ext-016)                     |

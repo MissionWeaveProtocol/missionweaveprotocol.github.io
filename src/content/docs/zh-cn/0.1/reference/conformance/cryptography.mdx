@@ -1,0 +1,49 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 密码学一致性
+description: 完整的本地 Signed Document 验证配置文件证据包。
+---
+
+import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
+import BundleArtifactCatalog from "../../../../../../components/BundleArtifactCatalog.astro";
+import release from "../../../../../../data/normative/0.1/release-source.json";
+
+# 密码学一致性
+
+配置文件 <code>{release.cryptography.profile}</code> 绑定
+**{release.cryptography.artifacts} 工件**、**{release.cryptography.cases} 案例**和
+**{release.cryptography.evaluations} 评估**。确切地说
+**{release.cryptography.complete}** 评估已完成并且
+**{release.cryptography.rejected}** 被拒绝。其 RFC 8785 绑定摘要是
+
+<code>{release.cryptography.digest}</code>。
+
+- <ArtifactLink path="protocol/cryptography/manifest.json">
+    密码学清单
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/manifest.schema.json">
+    清单架构
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/README.md">
+    本地捆绑语义
+  </ArtifactLink>
+
+## 六个语义阶段
+
+每个签名文档评估都使用以下有序分类：
+
+1. 严格解析 UTF-8 JSON；
+2. 执行规范 JSON Schema 验证；
+3. 验证签名信封和受保护时间；
+4. 解析签名密钥并验证有效性；
+5. 执行 RFC 8785 规范化并生成签名哈希；
+6. 验证 Ed25519 签名。
+
+相应的规范规则发布在[签名文档和trust](../../specification/signed-documents-and-trust/)页面中。
+`complete` 表示该评估的所有六个阶段均已完成。
+
+通过此捆绑包并不能证明 First-Admission
+Record 验证、历史信任验证、Command 新鲜度或时钟偏差强制执行，或适用角色和策略下的签名者授权。
+
+<BundleArtifactCatalog bundle="cryptography" />

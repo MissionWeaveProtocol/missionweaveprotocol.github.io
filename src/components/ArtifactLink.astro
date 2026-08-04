@@ -1,0 +1,22 @@
+---
+interface Props {
+  path: string;
+  download?: boolean;
+}
+
+const { path, download = false } = Astro.props as Props;
+const segments = path.split("/");
+if (
+  path.length === 0 ||
+  path.startsWith("/") ||
+  path.includes("\\") ||
+  segments.some((segment) => ["", ".", ".."].includes(segment))
+) {
+  throw new Error(
+    `ArtifactLink rejected path traversal or unsafe path: ${path}`,
+  );
+}
+const href = `${import.meta.env.BASE_URL}artifacts/0.1/${path}`;
+---
+
+<a href={href} download={download || undefined}><slot /></a>

@@ -1,0 +1,67 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Go SDK
+description:
+  MissionWeaveProtocol 0.1 の完全に固定された Go ランタイム
+  リファレンスをインストールして操作します。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Go SDK
+
+`github.com/missionweaveprotocol/go-sdk`
+は、公式の Go 実装モジュールです。このリファレンスでは、`80c39852e8a2053ac761b8d53d62483264f803f1`
+と Go
+1.24 の正確なコミットについて説明します。別のコミットまたはモジュールのビルドは、文書化された別の実装入力です。
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="go"
+  command={`go get github.com/missionweaveprotocol/go-sdk@80c39852e8a2053ac761b8d53d62483264f803f1`}
+  verifyCommand={`go list -m -f '{{.Path}} {{.Version}}' github.com/missionweaveprotocol/go-sdk
+go run github.com/missionweaveprotocol/go-sdk/cmd/missionweaveprotocol-conformance@80c39852e8a2053ac761b8d53d62483264f803f1 -h`}
+>
+  <p slot="notes">
+    Go は、文書化されたソース ID を保持しながら、モジュール
+    バージョンへのコミットを解決します。プロキシまたはベンダーのコピーは、そのバイトと来歴が正確なコミットに対応し、パッケージ化されたプロトコル
+    バンドルが同じダイジェスト チェックに合格する場合にのみ受け入れられます。
+  </p>
+</SdkInstall>
+
+:::
+
+`missionweaveprotocol-conformance`
+コマンドは、サポートされているパッケージ化されたスキーマおよびベクター サーフェスを実行します。デプロイメント権限、Admission
+Log 耐久性、ネットワーク セキュリティ、実稼働の準備状態は確立されません。
+
+## このリファレンスを使用してください
+
+<CardGrid>
+  <LinkCard
+    title="完全なランタイム"
+    description="エクスポートされたすべてのパッケージには、Go 実行境界、適合エントリ ポイント、および明示的な非実装が関係します。"
+    href="./runtime/"
+  />
+  <LinkCard
+    title="初回アドミッションと履歴信頼"
+    description="型付きの current-Registry、trusted-context、および Admission Log インターフェイスと 1 つの実行可能な例。"
+    href="./admission/"
+  />
+  <LinkCard
+    title="正確なパブリック API"
+    description="エクスポートされたすべての Go 宣言は、その正確なソース行に解決されます。"
+    href="./api/"
+  />
+</CardGrid>
+
+## 文書化されたコミットでのサポート
+
+<SdkRuntimeMatrix sdk="go" />
+
+このマトリックスは、パッケージの実装と展開が所有する権限を区別します。モジュールをインポートしても、現在の Registry サービス、認証されたアトミック Admission
+Log、ホストされたゲートウェイ、または永続的なランタイム永続性は提供されません。

@@ -1,0 +1,101 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 検証、正規化、署名
+description:
+  標準的な
+  strict-JSON、スキーマ、JCS、Registry、署名、およびすべてのランタイムで共有される
+  6 段​​階の検証パイプライン。
+---
+
+# 検証、正規化、署名
+
+Signed
+Document 処理は、順序付けされたセマンティック パイプラインです。内部機能の境界は異なる場合がありますが、受け入れと診断の分類は標準的な段階の順序を維持する必要があります。
+
+6 つのステージ全体で、共通の JSON とタイムスタンプ プロファイル ([MWP-FND-004](../../../reference/specification/foundations/#mwp-fnd-004)) を適用し、タイムスタンプの語彙テキスト ([MWP-FND-005](../../../reference/specification/foundations/#mwp-fnd-005)) を保持し、正規の Base64URL、ハッシュ、安全性を要求します。整数 ([MWP-FND-007](../../../reference/specification/foundations/#mwp-fnd-007))、およびすべての標準スキーマ形式アサーション ([MWP-FND-009](../../../reference/specification/foundations/#mwp-fnd-009)) を有効にします。同じ正規ワイヤ ルールが、すべてのコンテンツ派生ハッシュと署名に適用されます ([MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012))。
+
+## 6 段階の検証
+
+制御シーケンスは
+[MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015):] です。
+
+1. 厳密に 1 つの UTF-8
+   JSON 値を解析します。バイトオーダーマークを拒否します。後続データ、無効な UTF-8、およびデコードされたメンバー名の重複。
+2. 完全な文書をその規範的なスキーマに照らして検証します。
+3. 署名エンベロープ、保護時間、予期される署名者ルールを検証し、厳密な Ed25519 署名エンコーディング。
+4. Organization をスコープとする Registry の完全な証拠を検証し、キーを解決し、Principal、保持されたキー履歴に対して保護された署名時間をテストします。
+5. 最上位の `signature` メンバーを正確に省略し、RFC 8785
+   JCS バイトを生成します。
+6. それらの正確なバイトに対して純粋な Ed25519 署名を検証します。
+
+ベリファイアは最初の失敗したステージで停止し、6 つのステージすべてが完了する前にアクターを承認したり、Event を追加したり、状態遷移を実行したりしません。
+
+## ロスレス JSON および JCS
+
+JCS 入力は、RFC
+8785 および I-JSON データ モデルに制限されます。数値は、必要な最短ラウンドトリップ形式でシリアル化された有限の IEEE
+754
+binary64 値です。ペアになっていない Unicode サロゲートとそのドメイン外の値は、正規バイトが発行される前に失敗します ([MWP-FND-006](../../../reference/specification/foundations/#mwp-fnd-006))。
+
+解析またはスキーマ検証の代わりに受信ワイヤ JSON を正規化しないでください。正規化はステージ 5 であり、ステージ分類を制御する以前のセマンティック チェックをすべて行った後で受信した値に基づいて動作します。
+
+## Ed25519 の厳密な受け入れ
+
+プロバイダーのインポートの成功は受け入れルールではありません。検証者:
+
+- `Renc`
+  を正規にデコードし、素数次数サブグループのメンバーシップを必要とし、受け入れます
+  `0 <= S < L`
+  のみであり、範囲外のスカラーは削減されません ([MWP-SDV-003](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-003))。
+- Principal に対する不変キー ID、アルゴリズム、および公開キー バインディングを強制します。Organization 全体の再利用なしおよびエイリアスなしの不変条件 ([MWP-SDV-004](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-004));
+- 32 バイトの公開キーを正規の非 ID として厳密にデコードします。素数 Edwards25519 ポイント ([MWP-SDV-005](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-005));そして
+- 正確なステージ 5 バイトにわたって純粋な Ed25519 検証式をチェックします ([MWP-SDV-006](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-006))。
+
+Registry は、結合の一意性と不在の主張を証明するのに十分なインデックスと履歴を保持します ([MWP-SDV-007](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-007))。
+
+## 保護された時間と予想される署名者
+
+各 Signed
+Document スキーマは、1 つの保護された署名時間フィールドと 1 つの予期される署名者にマップされます。正確な署名者は
+[MWP-SDV-001](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)
+で選択されます。保護された時刻と `signature.createdAt` は大文字の `Z`
+を使用し、バイトごとに同一である必要があり、比較する前に修復または正規化することはできません ([MWP-SDV-002](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-002))。
+
+## Registry に基づく鍵解決
+
+ステージ 4 は、選択されたキーの検索よりも範囲が広いです。
+
+- 証拠は 1 つの Organization と 1 つの一貫性のあるものに限定されます。権威のある Registry リビジョン。
+- Organization 全体で再利用しないために必要なすべてのバインディングおよび保持された履歴項目、エイリアスがなく、完全性の主張は選択前に検証されます ([MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008))。
+- 導入アダプターは、リビジョンの適用性、完全性、および過去の報道やそれができないレポート ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010));そして
+- 保護された時間は、ハーフオープン
+  `validFrom`、`validUntil`、およびインスタントとしての `revokedAt`
+  境界 ([MWP-SDV-014](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-014))。
+
+利用できない証拠、不完全なカバレッジ、信頼できる未知のキー、無効で無関係なバインディング、無効な選択されたキーはすべて、ステージ 4 でフェールクローズされます。 Evidence は完全なスナップショットまたは信頼できるインデックスとクエリから取得される可能性がありますが、部分的なキャッシュは Organization 全体の証明の代わりにはなりません。 ([MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009))。不明なキーは、完全性が確立された後にのみ権限を持ちます ([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011))。
+
+有効性履歴は追加専用であるか、明示的にバージョン管理されています。その最初の有効な
+`validUntil` および `revokedAt`
+境界は、履歴検証のために保持されます ([MWP-SDV-012](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-012))。選択したキーのバインドされた Principal は、予期される署名者 ([MWP-SDV-013](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-013)) と正確に一致する必要があります。
+
+## 署名と署名ハッシュ
+
+署名者は、検証者が再構築するのと同じ保護された値を構築します。
+
+1. 保護された署名時間フィールドを含む、すべての非署名フィールドを構築します。文書の種類によって必要となります。
+2. 保護される時間と予想される署名キーを選択します。uppercase-`Z`
+   タイムスタンプのスペルは `signature.createdAt` になります。
+3. 完全なオブジェクトから RFC 8785 JCS 署名バイトを生成します。最上位の
+   `signature` メンバーがありません。
+4. それらの正確なバイトに対して署名ハッシュと pure-Ed25519 署名を計算します。署名を正規のパディングされていないbase64urlとしてエンコードします。
+5. `Ed25519`、選択したキー ID を含む完全な署名エンベロープを添付します。バイト同一の保護時間、およびエンコードされた署名値。
+6. 最終的な Signed
+   Document を完全な標準スキーマと照合して検証し、公開前に同じ 6 段階の検証を行います。
+
+署名ハッシュはアドミッション状態とは独立しており、[MWP-SDV-017](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-017).
+[MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016).
+
+Admission を 6 段階の結果の上に階層化する前に、ローカルの
+[暗号適合性バンドル](../../../reference/conformance/cryptography/)
+に対してすべての実装を実行します。

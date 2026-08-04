@@ -1,0 +1,92 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Go运行时参考
+description: 精确固定的 Go SDK 的完整导出包表面和运行时边界。
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Go 运行时参考
+
+本页涵盖了由 [确切的 API inventory](../api/)
+表示的完整 Go 包。共享协议行为仍然由本地[运行时参考](../../../runtime/architecture-and-bootstrap/)和[参考子句](../../../../reference/specification/)定义。下面的名称定义了固定模块如何公开该行为。
+
+<SupportStatus status="implemented" /> 适用于下面列出的导出包 API
+和进程内编解码器。
+
+<SupportStatus status="deployment-adapter-required" /> 适用于当前 Registry
+权威性、可信准入上下文、经过身份验证的原子日志访问以及部署提供的其他外部服务。
+
+<SupportStatus status="not-implemented" />
+表示精确固定的模块没有相应的导出运行时。
+
+## 导入和执行模型
+
+将单个包导入为
+`missionweaveprotocol "github.com/missionweaveprotocol/go-sdk"`。该模块需要 Go
+1.24。公共名称遵循 Go 导出规则；未导出的帮助程序和实现适配器不是应用程序契约。
+
+该模块使用 JSON、加密、嵌入和 I/O 的标准库，以及其声明的架构和 RFC
+8785 依赖项。单独安装软件包不会启动进程或创建权限。
+
+## 完整的源码图
+
+| 运行时关注         | 公共源文件                                                                                       | 固定提交的合同                                                                          |
+| ------------------ | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| 包装标识和文档     | `doc.go`                                                                                         | 包级范围和支持的实现边界。                                                              |
+| 严格的JSON和时间值 | `json.go`、`rfc3339.go`                                                                          | 严格的 JSON 解码和导出的 RFC 3339 即时比较表面用于验证和准入。                          |
+| 架构目录           | `schema.go`                                                                                      | 2020-12 草案 架构加载、验证和精确打包的架构访问。                                       |
+| 规范 JSON          | `canonical.go`                                                                                   | RFC 8785 规范化和规范字节生成。                                                         |
+| 签署和签署文件     | `signing.go`、`signed_document_codec.go`、`signed_document_verification.go`、`ed25519_strict.go` | Ed25519个助手，九个签名文档配置文件，完整的Registry解析，严格的点检查和六阶段验证证据。 |
+| 框架               | `frame.go`                                                                                       | 支持的 WebSocket 帧值的解析和编码操作。这是编解码器，而不是托管网关服务。               |
+| 一致性和捆绑       | `conformance.go`、`bundle.go`                                                                    | 嵌入式捆绑标识、摘要验证、清单执行和命令支持。                                          |
+| 首次准入           | `admission.go`                                                                                   | 首次准入和历史信任与成功验证以上的类型化部署适配器。                                    |
+
+## 验证和密码学
+
+`DecodeJSON` 强制执行受支持的严格 JSON 数据模型，`SchemaCatalog`
+验证确切的嵌入式草案 2020-12 架构集。 `CanonicalizeJSON` 和
+`MarshalCanonicalJSON` 生成 RFC
+8785 字节。这些是单独的门：模式成功并不意味着规范或签名的证据。
+
+`SignedDocumentCodec.Sign`
+选择显式文档类型，验证受保护时间，规范化无符号投影，调用
+`SigningKey`，检查 Ed25519 编码，附加信封并验证结果。 `Verify`
+消耗原始字节并按顺序运行解析、模式、签名信封、密钥解析、规范化和签名阶段。返回的
+`VerifiedSignedDocument`
+公开了防御字节副本、签名和完整哈希值、受保护时间、签名证据和解析的密钥。
+
+`KeyResolver`
+必须返回完整的 Organization 范围的 Registry 证据。选定的密钥、映射条目或调用者提供的信任标志是不够的。
+
+## 框架、捆绑包和一致性
+
+框架函数解析和编码值，但不打开套接字、验证会话、保留游标、安排工作或应用权威转换。这些是部署或更高级别的运行时职责。
+
+`VerifyProtocolBundle`、`VerifyCryptographyBundle` 和 `VerifyAdmissionBundle`
+将每个嵌入工件集绑定到其记录的身份。 `RunEmbeddedConformance`
+执行嵌入的结构向量。当 SDK 提交、协议 pin、架构集、加密包、准入包或部署适配器更改时再次运行这些。通过它们仅证明了经过测试的封装表面。
+
+## 首次准入
+
+`NewAdmissionService` 构造精确模式服务。 `PrepareFirstAdmission`、`AdmitFirst`
+和 `VerifyHistoricalAdmission` 是可能返回适配器或验证错误的同步 Go 调用。
+`AdmissionCurrentKeyResolver`、`TrustedAdmissionContext` 和 `AdmissionLog`
+仍然是部署接口。继续[Go准入参考](../admission/)，了解确切的结果、原子性要求和历史路径。
+
+## 明确的可用性边界
+
+<SupportStatus status="not-implemented" /> **Mission 编排** — 不导出高级 Mission
+状态机或编排外观。
+
+<SupportStatus status="not-implemented" /> **Worker 调度程序** — 不导出 Worker
+队列、调度程序、租用运行程序或恢复循环。
+
+<SupportStatus status="not-implemented" /> **托管网关服务** —
+该模块提供帧编解码器，而不是具有传输、会话、TLS、路由或反压所有权的网关服务。
+
+<SupportStatus status="not-implemented" /> **权威持久性运行时** —
+不导出数据库支持的或 Agent 本地持久性运行时。
+
+这些未实现项是受支持运行时合同的一部分。应用程序不得从共享协议名称推断 Python 参考运行时能力。

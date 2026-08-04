@@ -1,0 +1,30 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 構造適合性
+description: 有効と予想されるすべての MissionWeaveProtocol 0.1 構造ベクトル。
+---
+
+import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
+import StructuralVectorCatalog from "../../../../../../components/StructuralVectorCatalog.astro";
+import release from "../../../../../../data/normative/0.1/release-source.json";
+
+# 構造適合性
+
+構造マニフェストには、**{release.structural.total}**
+のケース (**{release.structural.valid}** Expected-valid および
+**{release.structural.invalid}**
+Expected-invalid) が含まれています。各エントリは、1 つのスキーマ アーティファクト、1 つのインスタンス アーティファクト、および予期される妥当性結果を識別します。
+
+- <ArtifactLink path="protocol/conformance/manifest.json">
+    構造マニフェスト
+  </ArtifactLink>
+- <ArtifactLink path="protocol/conformance/README.md">
+    ローカルマニフェストセマンティクス
+  </ArtifactLink>
+
+実装では、正確なローカル スキーマとインスタンス バイトに対して完全なマニフェストが実行されます。一致する結果は、構造スキーマの適合のみを示します。ステート マシン、順序付け、認可、リース、予算、再生、暗号、またはアドミッションの動作は示しません。
+
+次の表は、参照可能なローカルの有効なベクトル ディレクトリと無効なベクトル ディレクトリを示しています。
+
+<StructuralVectorCatalog />

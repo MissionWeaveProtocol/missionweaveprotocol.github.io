@@ -1,0 +1,232 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-EXT
+title: 擴充、錯誤、控制和一致性
+description: 擴展設定檔、錯誤代碼、安全控制、相容性、一致性、概念驗證要求和許可。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 18. 擴充設定文件
+
+<NormativeClause id="MWP-EXT-001" level={["MAY","MUST"]}>
+
+開發商 MAY 透過定義自訂命令、事件和數據 Organization- 核准的擴充設定檔。每個設定檔 MUST 聲明全域唯一的設定檔 URI、語意版本、模式 URI 和雜湊、所需的功能、關鍵性和 Organization 批准簽名。一個 Group 固定它使用的受支援的設定檔的主要版本。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-002" level={["MUST","MAY"]}>
+
+擴充種類 MUST 使用 `ext.<organization>.<profile>.<name>`
+由設定檔定義的命名空間。未知的非關鍵擴展 MAY 無需解釋即可保留和轉發。一個 Agent
+MUST 拒絕參與依賴於未知關鍵配置檔案的過渡。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-003" level="MUST NOT">
+
+一個 Extension Profile MUST NOT 推翻或削弱身份， Membership,
+Event 順序、冪等性、Session Epoch、Ownership
+Epoch、租約、預算、Approval、Artifact 出處,
+Mission 隔離，或訊息從不授權操作的規則。
+
+</NormativeClause>
+
+## 19. 錯誤
+
+<NormativeClause id="MWP-EXT-004" level={["MUST","SHOULD"]}>
+
+錯誤 MUST 符合
+`schemas/error.schema.json`。錯誤回應 MUST 可由機器讀取，MUST 說明重試是否安全，並且 SHOULD 在不洩漏未授權資料的前提下識別相關 frame 或 Action
+ID。核心錯誤碼為：
+
+| 程式碼                       | 意義                                                                    |
+| ---------------------------- | ----------------------------------------------------------------------- |
+| `UNSUPPORTED_VERSION`        | 沒有相容的協定版本                                                      |
+| `AUTH_REQUIRED`              | 缺少身份驗證                                                            |
+| `AUTH_INVALID_SIGNATURE`     | Signed Document 簽章、key 有效性、Admission proof 或 freshness 檢查失敗 |
+| `AUTH_STALE_SESSION`         | Session Epoch 已被 fencing                                              |
+| `AUTH_STALE_COORDINATOR`     | Coordinator Epoch 已被 fencing                                          |
+| `AUTH_FORBIDDEN`             | Actor 缺少權限或不符合政策資格                                          |
+| `GROUP_NOT_FOUND`            | Group 不存在或故意未公開                                                |
+| `MEMBERSHIP_REQUIRED`        | 沒有適用的 Membership                                                   |
+| `MEMBERSHIP_STALE`           | Membership Epoch 已被圍籬                                               |
+| `SCHEMA_VALIDATION_FAILED`   | 物件不符合其架構                                                        |
+| `INVALID_COMMAND`            | Command 格式良好，但語意無效                                            |
+| `INVALID_STATE_TRANSITION`   | 聚合狀態禁止轉換                                                        |
+| `REVISION_CONFLICT`          | 預期修訂版不符                                                          |
+| `ACTION_ID_COLLISION`        | 穩定的 Action ID 被不同內容重複使用                                     |
+| `UNKNOWN_CRITICAL_EXTENSION` | 無法解釋所需的副檔名                                                    |
+| `WORK_CONTRACT_INCOMPLETE`   | 缺乏所需的工作合約資訊                                                  |
+| `WORK_OFFER_EXPIRED`         | 優惠不再有效                                                            |
+| `WORK_ALREADY_OWNED`         | 另一位候選人贏得了獨家所有權                                            |
+| `WORK_LEASE_EXPIRED`         | 所需的租約不再有效                                                      |
+| `WORK_STALE_OWNERSHIP`       | Ownership Epoch 已被 fencing                                            |
+| `APPROVAL_REQUIRED`          | 政策關卡尚未滿足                                                        |
+| `BUDGET_EXCEEDED`            | Mission 或 WorkItem 硬預算已用完                                        |
+| `RATE_LIMITED`               | 已達到策略率或遞歸閾值                                                  |
+| `BACKPRESSURE`               | 接收器目前無法接受更多流量                                              |
+| `CURSOR_TOO_OLD`             | 線上重播不再包含請求的位置                                              |
+| `PROTOCOL_VIOLATION`         | 對端違反訊框規則或核心不變條件                                          |
+| `INTERNAL_ERROR`             | Authority 發生故障，但未接受該轉換                                      |
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-005" level={["MUST","MUST NOT","MAY"]}>
+
+未變更的 Command 重試 MUST 保留原始 Action
+ID 與簽章內容。`AUTH_INVALID_SIGNATURE` 在原因修正之前 MUST
+NOT 以原內容重試。對簽章信封、權威 key 或 Admission 狀態進行本機修正後，只要所有受保護內容仍然有效，發送端 MAY 使用原始 Action
+ID 重試。如果 Command
+freshness 已過期，發送端 MUST 改為建立新的 Command，並使用新的 Action ID、目前的
+`issuedAt`、與之相符的 `signature.createdAt` 和新簽章。 `ACTION_ID_COLLISION`
+要求建立具有新 Action
+ID 的新 Command。過時的 fencing 錯誤要求使用目前的權威 Epoch，並建立具有新 Action
+ID 與簽章的新 Command。
+
+</NormativeClause>
+
+## 20. 速率、遞迴與失控控制
+
+<NormativeClause id="MWP-EXT-006" level={["MUST","SHOULD"]}>
+
+Organization 政策 MUST 支援限制 Message 提案率、未解決的澄清輪次、活動和排隊的工作項目、授權深度、代幣/時間/財務預算以及循環或重複分解。這些控制 SHOULD 使用軟閾值， Coordinator 通知和明確的升級而不是固定的低協議上限。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-007" level={["MUST","MUST NOT"]}>
+
+一個實現 MUST 拒絕循環委託或 Mission 祖先。當合法工作需要更多深度、預算或速率時， Coordinator 可能會要求政策或 MissionOwner 批准並在授予後繼續。政策限制 MUST
+NOT 默默地放棄接受的工作。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-008" level="MUST">
+
+合作限制升級 MUST 由持久的、一次性的**合作覆蓋授權**表示，而不是由注入的布林值、本地回調結果或可重用的豁免表示。補助金 MUST 綁定一個 Mission,
+Group、保單名稱、受益人 Principal， 目標 Command 種類、目標操作 ID、原因、核准者、授予時間及到期時間。只有 MissionOwner 或授權的 Organization 政策行動者可以發布它。目標 Command
+MUST 在其中引用授權 ID `cooperationOverrideGrantId` 信封成員。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-009" level="MUST">
+
+在接受目標轉換之前， Group Authority
+MUST 驗證引用的贈款是否存在、未過期且未使用，並且與 Command的 Mission,
+Group、參與者、種類、操作 ID 和超越的策略。它 MUST 僅當目標轉換被接受時才以原子方式消耗授權。發行與消費兼具 MUST 被附加到權威的策略日誌中，消耗量與接受的 Event。相同接受的冪等重試 Command 返回其先前的 Event;任何其他嘗試使用補助金的行為 MUST 失敗。
+
+</NormativeClause>
+
+## 21. 架構和版本相容性
+
+<NormativeClause id="MWP-EXT-010" level="MUST">
+
+所有 v0.1 模式都使用 JSON 架構草案 2020-12。核心物件集
+`additionalProperties: false`;可擴展性僅透過明確發生 `extensions`
+會員和批准的個人資料。實施 MUST 在可能的情況下，為規範中繼保留一個未知的非關鍵擴展位元組。
+
+</NormativeClause>
+
+電匯 `protocolVersion` 是
+`0.1`。向後相容的架構澄清增加了規範補丁版本，而無需更改線路版本。改變核心語意或必填欄位的變更需要新的線路次要或主要版本以及握手協商。
+
+這 22 個規範模式是：
+
+- `common.schema.json`
+- `websocket-frame.schema.json`
+- `command.schema.json`
+- `event.schema.json`
+- `agent-card.schema.json`
+- `presence-record.schema.json`
+- `mission.schema.json`
+- `group.schema.json`
+- `membership.schema.json`
+- `conversation.schema.json` 和 `message.schema.json`
+- `work-contract.schema.json` 和 `work-item.schema.json`
+- `artifact.schema.json` 和 `evidence.schema.json`
+- `lease.schema.json`
+- `approval.schema.json`
+- `context-package.schema.json`
+- `group-snapshot.schema.json`
+- `extension-profile.schema.json`
+- `first-admission-record.schema.json`
+- `error.schema.json`
+
+## 22. 一致性與所需的概念證明
+
+只有在滿足以下條件時，實作才符合 MissionWeaveProtocol 0.1：
+
+- 根據規範模式驗證每個持久性物件；
+- 透過 `conformance/manifest.json`
+  中的所有 58 個結構向量，其中包括 27 個預期有效和 31 份預期無效文件；
+- 透過 `cryptography/manifest.json` 中的所有評估，涵蓋所有九個 Signed
+  Document 驗證設定檔中的模式設定檔及其規範簽名字節、雜湊值、金鑰綁定和簽章；
+- 透過獨立 `admission/manifest.json`
+  中的全部 30 項評估行為捆綁，涵蓋五個案例的首次入院和歷史重播；
+- 強制執行所有 Mission 和 WorkItem 轉換；
+- 示範重播、重複資料刪除、樂觀並發和防護；
+- 示範授權和 Message/非授權不變式；和
+- 透過故障復原測試而不接受陳舊或重複的一面影響。
+
+<NormativeClause id="MWP-EXT-011" level="MUST">
+
+對於密碼學包， `manifest.fixtureSchemas`
+確定規範 Registry-fixture 和僅測試簽章金鑰fixture 模式。一個跑步者 MUST 在應用聲明的語意階段之前，根據指定的模式驗證每個裝置。驗證
+`artifactDigest`, 一名跑步者 MUST 完全刪除頂層 `artifactDigest`
+成員，將剩餘的清單序列化為 RFC 8785
+JCS，對這些位元組進行雜湊處理 SHA-256，並比較 `sha256:`
+接下來是 64 個小寫十六進位摘要數字。每個聲明的工件雜湊值都適用於確切的檔案位元組。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-012" level="MUST">
+
+對於準入套餐， `manifest.fixtureSchemas` 識別 First-Admission
+Record 和 Registry 夾具架構，以及 `manifest.cryptography.artifactDigest`
+固定每次評估使用的未更改的加密包。它是 `artifactDigest`
+使用相同的頂級成員刪除進行計算， RFC 8785
+JCS， 和 SHA-256 程式.一個跑步者 MUST 在執行聲明的適配器結果之前，請驗證所有聲明的準入工件位元組和雜湊、固定的加密摘要以及每個引用的檔案。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-013" level="MUST" exclusions={["command-freshness","signer-authorization","portable-log-proof-verification","state-machine-acceptance"]}>
+
+透過 `missionweaveprotocol-conformance`
+或儲存庫的 Schema 向量只會證明 Schema 與向量的一致性。這是完整協定一致性的必要但不充分證據。透過
+`cryptography/manifest.json`
+只會證明[第 6.4 節](../signed-documents-and-trust/#mwp-sdv-015)
+中的六個密碼學驗證階段。透過 `admission/manifest.json`
+還會證明其宣告的 First-Admission
+Record 與歷史重播評估，但不會證明 Command 新鮮度與時鐘偏差強制、適用角色與政策下的簽署者授權，也不會證明可攜式的已部署 Admission
+Log 證明格式。實作 MUST 分別證明這些要求。只有當自動化的正面與負面證據涵蓋
+[上文](../commands-events-and-ordering/#core-command-kinds)中的每個核心 Command 與 Event 種類，以及[第 7.1 節](../missions-groups-and-membership/#mission-transition-table)
+和[第 10.2 節](../work-scheduling-and-recovery/#workitem-transition-table)中的每個轉換列時，參考實作 MUST 宣告完全符合 MissionWeaveProtocol
+0.1；否則，MUST 明確報告範圍較窄的已驗證子集。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-014" level="MUST">
+
+v0.1 參考概念驗證 MUST 使用 Python 並運行兩個並發軟體開發任務，至少有一個共享任務 Worker。至少一個 Mission
+MUST 練習需求分析、實施、測試、程式碼審查、整合和人力 Approval 作為單獨的圖形階段。概念證明 MUST 展現出獨特的個性Group 佇列、全域加權公平調度、上下文和憑證隔離、多個執行槽、安全檢查點搶佔、 Coordinator 審查和人類 Approval 介面.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-015" level="MUST">
+
+它的失敗套件 MUST 注入重複項 Event 送貨， Worker 重新啟動和佇列重建， Coordinator 故障和紀元替換，臨時的 Group 斷線、租約到期以及 WorkItem 重新分配、高優先級到達和人員變更請求。這 Python 實現是參考實現，不是規範規範。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-016" level={["MUST","MUST NOT"]}>
+
+概念證明 MUST 保留在一項 Organization 和一項邏輯 Group 服務中。 MUST
+NOT 需要聯合、實體對等路由、分散式共識、Group 端對端加密或自訂擴充設定檔來證明核心一致性。
+
+</NormativeClause>
+
+## 23. 許可
+
+規格、模式、一致性套件和參考實作均根據 Apache License
+2.0 授權。該許可證不授予商標權。

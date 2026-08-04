@@ -1,6 +1,10 @@
 import sitemap from "@astrojs/sitemap";
 import starlight from "@astrojs/starlight";
 import { defineConfig } from "astro/config";
+import {
+  buildNormativeRedirects,
+  buildNormativeSidebar,
+} from "./scripts/lib/normative-routes.mjs";
 
 const configuredBase = process.env.SITE_BASE;
 const base =
@@ -8,11 +12,11 @@ const base =
 const site = process.env.SITE_URL ?? "https://missionweaveprotocol.github.io";
 const withBase = (path) => `${base === "/" ? "" : base}${path}`;
 const absoluteAsset = (path) => new URL(withBase(path), site).href;
-
 export default defineConfig({
   site,
   base,
   trailingSlash: "always",
+  redirects: buildNormativeRedirects(),
   integrations: [
     starlight({
       title: {
@@ -44,208 +48,7 @@ export default defineConfig({
         de: { label: "Deutsch", lang: "de" },
       },
       defaultLocale: "root",
-      sidebar: [
-        {
-          label: "Learn",
-          translations: {
-            "zh-CN": "学习",
-            "zh-TW": "學習",
-            ja: "学ぶ",
-            es: "Aprender",
-            fr: "Apprendre",
-            de: "Lernen",
-          },
-          items: [
-            {
-              label: "MissionWeaveProtocol 0.1",
-              slug: "docs/0.1",
-              badge: {
-                text: {
-                  en: "Draft",
-                  "zh-CN": "草案",
-                  "zh-TW": "草案",
-                  ja: "ドラフト",
-                  es: "Borrador",
-                  fr: "Brouillon",
-                  de: "Entwurf",
-                },
-                variant: "caution",
-              },
-            },
-            {
-              label: "Core model",
-              translations: {
-                "zh-CN": "核心模型",
-                "zh-TW": "核心模型",
-                ja: "コアモデル",
-                es: "Modelo central",
-                fr: "Modèle central",
-                de: "Kernmodell",
-              },
-              slug: "docs/0.1/core-model",
-            },
-            {
-              label: "Work lifecycle",
-              translations: {
-                "zh-CN": "工作生命周期",
-                "zh-TW": "工作生命週期",
-                ja: "作業ライフサイクル",
-                es: "Ciclo de trabajo",
-                fr: "Cycle de vie du travail",
-                de: "Arbeitslebenszyklus",
-              },
-              slug: "docs/0.1/work-lifecycle",
-            },
-            {
-              label: "Multi-Group scheduling",
-              translations: {
-                "zh-CN": "多 Group 调度",
-                "zh-TW": "多 Group 排程",
-                ja: "複数 Group のスケジューリング",
-                es: "Planificación entre múltiples Group",
-                fr: "Planification multi-Group",
-                de: "Planung über mehrere Group",
-              },
-              slug: "docs/0.1/scheduling",
-            },
-            {
-              label: "Trust and authority",
-              translations: {
-                "zh-CN": "信任与权限",
-                "zh-TW": "信任與權限",
-                ja: "信頼と権限",
-                es: "Confianza y autoridad",
-                fr: "Confiance et autorité",
-                de: "Vertrauen und Autorität",
-              },
-              slug: "docs/0.1/trust-and-authority",
-            },
-            {
-              label: "Child Missions",
-              translations: {
-                "zh-CN": "子任务",
-                "zh-TW": "子任务",
-                ja: "サブタスク",
-                es: "Subtarea",
-                fr: "Sous-tâche",
-                de: "Unteraufgabe",
-              },
-              slug: "docs/0.1/child-missions",
-            },
-          ],
-        },
-        {
-          label: "Build",
-          translations: {
-            "zh-CN": "构建",
-            "zh-TW": "建置",
-            ja: "構築",
-            es: "Desarrollo",
-            fr: "Construire",
-            de: "Entwickeln",
-          },
-          items: [
-            {
-              label: "SDKs",
-              translations: {
-                "zh-CN": "SDK",
-                "zh-TW": "SDK",
-                ja: "SDK",
-                es: "SDK",
-                fr: "SDK",
-                de: "SDK",
-              },
-              slug: "sdk",
-            },
-            { label: "Python SDK", slug: "sdk/python" },
-          ],
-        },
-        {
-          label: "Reference",
-          translations: {
-            "zh-CN": "参考",
-            "zh-TW": "參考",
-            ja: "リファレンス",
-            es: "Referencia",
-            fr: "Référence",
-            de: "Referenz",
-          },
-          items: [
-            {
-              label: "Specification",
-              translations: {
-                "zh-CN": "规范",
-                "zh-TW": "規格",
-                ja: "仕様",
-                es: "Especificación",
-                fr: "Spécification",
-                de: "Spezifikation",
-              },
-              slug: "reference/specification",
-              badge: { text: "0.1", variant: "caution" },
-            },
-            {
-              label: "Terminology",
-              translations: {
-                "zh-CN": "术语",
-                "zh-TW": "術語",
-                ja: "用語",
-                es: "Terminología",
-                fr: "Terminologie",
-                de: "Terminologie",
-              },
-              slug: "reference/terminology",
-            },
-            {
-              label: "JSON Schemas",
-              translations: {
-                "zh-TW": "JSON Schema",
-                es: "Esquemas JSON",
-                fr: "Schémas JSON",
-                de: "JSON-Schemata",
-              },
-              slug: "reference/schemas",
-            },
-            {
-              label: "Conformance",
-              translations: {
-                "zh-CN": "符合性",
-                "zh-TW": "符合性",
-                ja: "適合性",
-                es: "Conformidad",
-                fr: "Conformité",
-                de: "Konformität",
-              },
-              slug: "reference/conformance",
-            },
-          ],
-        },
-        {
-          label: "Community",
-          translations: {
-            "zh-CN": "社区",
-            "zh-TW": "社群",
-            ja: "コミュニティ",
-            es: "Comunidad",
-            fr: "Communauté",
-            de: "Community",
-          },
-          items: [
-            {
-              label: "Contribute and report",
-              translations: {
-                "zh-CN": "贡献与报告",
-                "zh-TW": "貢獻與回報",
-                ja: "貢献と報告",
-                es: "Contribuir e informar",
-                fr: "Contribuer et signaler",
-                de: "Mitwirken und melden",
-              },
-              slug: "community",
-            },
-          ],
-        },
-      ],
+      sidebar: buildNormativeSidebar(),
       social: [
         {
           icon: "github",

@@ -1,0 +1,127 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Types de protocoles
+description: >-
+  Comment le fil JSON, les profils scalaires, les types de langage générés, les
+  objets durables, les commandes, les événements et l'état sémantique
+  s'articulent.
+---
+
+# Types de protocoles
+
+Traitez un objet de protocole comme plus qu'une classe désérialisée. Un runtime
+conforme préserve quatre couches distinctes :
+
+```text
+octets UTF-8 reçus
+→ valeur JSON analysée sans perte
+→ objet de protocole valide selon le Schema
+→ état faisant autorité ou projection locale acceptés sémantiquement
+```
+
+Sauter une couche crée des bogues de normalisation, d’ordre de validation ou
+d’autorité.
+
+## Profils scalaires
+
+Tous les objets de protocole sont JSON, les objets durables sont conformes aux
+schémas normatifs locaux et les horodatages de protocole utilisent RFC 3339 avec
+des règles déterministes supplémentaires où la vérification Signed Document
+s'applique
+([MWP-FND-004](../../../reference/specification/foundations/#mwp-fnd-004)).
+
+- Conserver l'orthographe de l'horodatage séparément de l'instant analysé. Ne
+  réécrivez pas avant le hachage ou la vérification
+  ([MWP-FND-005](../../../reference/specification/foundations/#mwp-fnd-005)).
+- Décoder l'url base64 de manière canonique sans remplissage, utiliser des
+  minuscules `sha256:<64 hex digits>` hache et conserve les séquences, les
+  révisions, les époques et les budgets dans une plage entière sûre non négative
+  JSON
+  ([MWP-FND-007](../../../reference/specification/foundations/#mwp-fnd-007)).
+- Valider les identifiants en tant qu'URI RFC 3986 absolus complets et comparer
+  leurs octets conservés sans inventer la normalisation côté destinataire
+  ([MWP-FND-008](../../../reference/specification/foundations/#mwp-fnd-008)).
+- Activez chaque mot-clé du schéma `format` en tant qu'assertion, y compris
+  `uri` et `date-time`
+  ([MWP-FND-009](../../../reference/specification/foundations/#mwp-fnd-009)).
+
+## Types de schéma et types sémantiques
+
+Les types de langage générés sont des projections utiles des schémas JSON, mais
+ils ne remplacent pas la validation. Les schémas v0.1 utilisent la version
+préliminaire 2020-12, rejettent les propriétés de base inconnues et admettent
+l'extensibilité uniquement via les membres d'extension déclarés et les profils
+approuvés
+([MWP-EXT-010](../../../reference/specification/errors-extensions-and-security/#mwp-ext-010)).
+
+Gardez ces catégories séparées :
+
+| Catégorie             | Exemples                                                                                | Limite d'acceptation                                                                 |
+| --------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Scalaire              | identifiant, horodatage, hachage, base64url, entier sécurisé                            | validation lexicale et de profil de valeurs                                          |
+| Document durable      | Mission, WorkItem, Artifact, Evidence, Agent Card                                       | JSON strict et Schema normatif complet                                               |
+| Signed Document       | Command, Event, Approval, Agent Card, Artifact manifeste                                | Schéma et vérification en six étapes                                                 |
+| État faisant autorité | révision globale, Membership, propriété, location, grand livre budgétaire               | transition actuelle Organization ou Group Authority                                  |
+| Projection locale     | Curseur, boîte de réception, boîte d'envoi, file d'attente per-Group, point de contrôle | reconstructible à partir d'événements faisant autorité et de travaux locaux durables |
+
+Chaque type Signed Document sélectionne une heure protégée et un signataire
+attendu sous
+[MWP-SDV-001](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-001).
+Le First-Admission Record est un objet distinct à neuf champs non signé et ne
+peut pas authentifier ses propres octets
+([MWP-ADM-001](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001)).
+
+## Commandes et événements
+
+Un Command est une demande signée pour une transition structurée. Son enveloppe
+lie l'ID d'action stable, la version, l'acteur, le type, la charge utile, la
+corrélation, l'heure d'émission et les champs Group et époque applicables
+([MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001)).
+Un objet Command valide n'est donc pas encore une transition acceptée.
+
+Un Event est un fait accepté immuable. Les événements Group contiennent la
+séquence monotone Group et la révision globale attribuée par Group Authority ;
+les deux types d'amorçage Organization de portée Event omettent les champs de
+commande Group
+([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)).
+
+## Préserver les preuves nécessaires aux étapes ultérieures
+
+Un décodeur doit conserver suffisamment d’informations pour :
+
+- rejeter les noms de membres décodés en double avant la validation du schéma ;
+- comparer le texte d'horodatage protégé octet par octet ;
+- appliquer le modèle de données binaire64 et Unicode RFC 8785 ;
+- omettre exactement le membre `signature` de niveau supérieur lors de la
+  production d'octets de signature ;
+- distinguer les données absentes des données faisant autorité indisponibles ou
+  indéterminées preuves; et
+- signaler la première étape sémantique défaillante sans exposer les détails
+  protégés sur le fil.
+
+Le rejet des noms en double et les octets canoniques dérivés du contenu suivent
+[MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012).
+Les entrées de vérification ordonnées et l'analyse complète de l'étape 4
+Registry suivent
+[MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015),
+y compris la validation complète des preuves avant la recherche de clé
+sélectionnée sous
+[MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008).
+Un cache partiel ne peut pas remplacer une complétude faisant autorité
+([MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009)) ;
+l'adaptateur doit établir la révision, l'exhaustivité et la couverture
+historique applicables ou signaler qu'il ne le peut pas
+([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)),
+et une clé inconnue ne fait autorité qu'une fois que cette exhaustivité est
+établie
+([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011)).
+La rétention sans perte préserve la classification des étapes normatives sous
+[MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016),
+tandis que la gestion des diagnostics protégés et la limite de défaillance de
+sécurité filaire suivent
+[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018).
+
+Parcourez les types locaux exacts dans le
+[JSON Schema catalog](../../../reference/schemas/). Implémentez ensuite
+[Validation, canonisation et signature](../validation-canonicalization-and-signing/).

@@ -1,19 +1,23 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import localePolicy from "../src/data/normative/0.1/locale-policy.json" with { type: "json" };
+import { navigationManifest } from "./lib/normative-routes.mjs";
 
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 const contentRoot = path.join(repositoryRoot, "src/content/docs");
-const config = await readFile(
-  path.join(repositoryRoot, "astro.config.mjs"),
-  "utf8",
-);
 const failures = [];
 const normalizeWhitespace = (value) => value.replace(/\s+/gu, " ").trim();
 const contentExtensions = new Set([".md", ".mdx"]);
 
+function withoutLiteralCode(contents) {
+  return contents
+    .replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/gu, " ")
+    .replace(/`[^`\n]*`/gu, " ");
+}
+
 function withoutAllowedDefinitions(contents, firstForms) {
-  let result = normalizeWhitespace(contents);
+  let result = normalizeWhitespace(withoutLiteralCode(contents));
   for (const form of firstForms) {
     result = result.replaceAll(form, "");
   }
@@ -51,74 +55,82 @@ const sharedDiagramEnglish = [
   "for the parent WorkItem",
 ];
 
-const localeRules = [
-  {
-    locale: "zh-CN",
-    directory: "zh-cn",
-    term: "子任务",
-    firstForms: ["子任务（Child Mission）"],
-    navigation: '"zh-CN": "子任务"',
-    forbidden: [/子\s*Mission/gu, /子使命/gu, /子任務/gu],
-    childRequirements: ["子任务内的工作项", "不是 WorkItem"],
-  },
-  {
-    locale: "zh-TW",
-    directory: "zh-tw",
-    term: "子任务",
-    firstForms: ["子任务（Child Mission）"],
-    navigation: '"zh-TW": "子任务"',
-    forbidden: [/子\s*Mission/gu, /子使命/gu, /子任務/gu],
-    childRequirements: ["子任务內的工作項", "不是 WorkItem"],
-  },
-  {
-    locale: "ja",
-    directory: "ja",
-    term: "サブタスク",
-    firstForms: ["サブタスク（Child Mission）"],
-    navigation: 'ja: "サブタスク"',
-    forbidden: [/子\s*Mission/gu, /子ミッション/gu, /サブミッション/gu],
-    childRequirements: ["サブタスク内の WorkItem", "WorkItem ではありません"],
-  },
-  {
-    locale: "es",
-    directory: "es",
-    term: "subtarea",
-    firstForms: ["subtarea (Child Mission)"],
-    navigation: 'es: "Subtarea"',
-    forbidden: [
-      /(?:Missions?|Misi(?:[oó]n|ones)) secundaria(?:s)?/giu,
-      /(?:Missions?|Misi(?:[oó]n|ones)) hija(?:s)?/giu,
-      /submisi(?:ón|ones)/giu,
-    ],
-    childRequirements: ["WorkItem de la subtarea", "no es un WorkItem"],
-  },
-  {
-    locale: "fr",
-    directory: "fr",
-    term: "sous-tâche",
-    firstForms: ["sous-tâche (Child Mission)"],
-    navigation: 'fr: "Sous-tâche"',
-    forbidden: [
-      /Mission(?:s)? enfant(?:s)?/giu,
-      /sous-missions?/giu,
-      /missions? filles?/giu,
-    ],
-    childRequirements: ["WorkItem de la sous-tâche", "pas un WorkItem"],
-  },
-  {
-    locale: "de",
-    directory: "de",
-    term: "Unteraufgabe",
-    firstForms: ["Unteraufgabe (Child Mission)"],
-    navigation: 'de: "Unteraufgabe"',
-    forbidden: [
-      /untergeordnet\p{L}*\s+Mission\p{L}*/giu,
-      /Kindmission(?:en)?/giu,
-      /Teilmission(?:en)?/giu,
-    ],
-    childRequirements: ["WorkItem der Unteraufgabe", "kein WorkItem"],
-  },
-];
+const localeRuleDetails = new Map([
+  [
+    "zh-cn",
+    {
+      forbidden: [/子\s*Mission/gu, /子使命/gu, /子任務/gu],
+      childRequirements: ["子任务内的 WorkItem", "子任务不是 WorkItem"],
+    },
+  ],
+  [
+    "zh-tw",
+    {
+      forbidden: [/子\s*Mission/gu, /子使命/gu, /子任務/gu],
+      childRequirements: ["子任务內的 WorkItem", "子任务不是 WorkItem"],
+    },
+  ],
+  [
+    "ja",
+    {
+      forbidden: [/子\s*Mission/gu, /子ミッション/gu, /サブミッション/gu],
+      childRequirements: [
+        "サブタスク内の WorkItem",
+        "サブタスクは WorkItem ではありません",
+      ],
+    },
+  ],
+  [
+    "es",
+    {
+      forbidden: [
+        /(?:Missions?|Misi(?:[oó]n|ones)) secundaria(?:s)?/giu,
+        /(?:Missions?|Misi(?:[oó]n|ones)) hija(?:s)?/giu,
+        /submisi(?:ón|ones)/giu,
+      ],
+      childRequirements: [
+        "WorkItems y Evidence de la subtarea",
+        "La subtarea no es un WorkItem",
+      ],
+    },
+  ],
+  [
+    "fr",
+    {
+      forbidden: [
+        /Mission(?:s)? enfant(?:s)?/giu,
+        /sous-missions?/giu,
+        /missions? filles?/giu,
+      ],
+      childRequirements: [
+        "WorkItems et Evidence de la sous-tâche",
+        "La sous-tâche n'est pas un WorkItem",
+      ],
+    },
+  ],
+  [
+    "de",
+    {
+      forbidden: [
+        /untergeordnet\p{L}*\s+Mission\p{L}*/giu,
+        /Kindmission(?:en)?/giu,
+        /Teilmission(?:en)?/giu,
+      ],
+      childRequirements: [
+        "WorkItems und Evidence der Unteraufgabe",
+        "Die Unteraufgabe ist kein WorkItem",
+      ],
+    },
+  ],
+]);
+
+const localeRules = localePolicy.locales.map((locale) => ({
+  locale: locale.tag,
+  directory: locale.directory,
+  term: locale.childMissionTerm,
+  firstForms: [locale.childMissionFirstUse],
+  ...localeRuleDetails.get(locale.directory),
+}));
 
 const homeStoryLocaleMarkers = [
   { locale: "zh-CN", marker: '  "zh-CN": {' },
@@ -163,21 +175,34 @@ function extractHomeStoryLocaleBlock(source, locale) {
 }
 
 const requiredPaths = [
-  "docs/0.1/child-missions.md",
-  "docs/0.1/index.mdx",
-  "docs/0.1/core-model.md",
-  "reference/terminology.md",
-  "sdk/python/index.md",
+  "0.1/learn/child-missions.mdx",
+  "0.1/learn/index.mdx",
+  "0.1/learn/core-model.mdx",
+  "0.1/reference/terminology.mdx",
 ];
+const termRequiredPaths = requiredPaths.filter(
+  (relativePath) => relativePath !== "0.1/reference/terminology.mdx",
+);
 const allContentFiles = await collectContentFiles(contentRoot);
 const localizedContentPathCount = allContentFiles.filter((file) =>
   file.startsWith(`${localeRules[0].directory}/`),
 ).length;
 
 for (const rule of localeRules) {
-  if (!config.includes(rule.navigation)) {
+  const learnGroup = navigationManifest.groups.find(
+    (group) => group.id === "learn",
+  );
+  const childMissionNavigation = learnGroup?.items.find(
+    (item) => item.route === "learn-child-missions",
+  );
+  const localizedNavigationLabel =
+    childMissionNavigation?.labels?.[rule.directory];
+  if (
+    localizedNavigationLabel?.toLocaleLowerCase(rule.locale) !==
+    rule.term.toLocaleLowerCase(rule.locale)
+  ) {
     failures.push(
-      `astro.config.mjs: missing ${rule.locale} navigation label ${rule.term}`,
+      `navigation.json: missing ${rule.locale} navigation label ${rule.term}`,
     );
   }
 
@@ -212,6 +237,11 @@ for (const rule of localeRules) {
       );
       continue;
     }
+  }
+
+  for (const relativePath of termRequiredPaths) {
+    const localizedBody = localizedByPath.get(relativePath);
+    if (localizedBody === undefined) continue;
     const { contents, file } = localizedBody;
 
     if (
@@ -225,10 +255,7 @@ for (const rule of localeRules) {
     }
   }
 
-  for (const requiredDefinition of [
-    "docs/0.1/child-missions.md",
-    "reference/terminology.md",
-  ]) {
+  for (const requiredDefinition of ["0.1/learn/child-missions.mdx"]) {
     const body = normalizeWhitespace(
       localizedByPath.get(requiredDefinition)?.contents ?? "",
     );
@@ -262,19 +289,19 @@ for (const rule of localeRules) {
   }
 
   const childPage = normalizeWhitespace(
-    localizedByPath.get("docs/0.1/child-missions.md")?.contents ?? "",
+    localizedByPath.get("0.1/learn/child-missions.mdx")?.contents ?? "",
   );
   for (const phrase of sharedDiagramEnglish) {
     if (childPage?.includes(phrase)) {
       failures.push(
-        `${rule.directory}/docs/0.1/child-missions.md: untranslated diagram text ${phrase}`,
+        `${rule.directory}/0.1/learn/child-missions.mdx: untranslated diagram text ${phrase}`,
       );
     }
   }
   for (const phrase of rule.childRequirements) {
     if (!childPage?.includes(phrase)) {
       failures.push(
-        `${rule.directory}/docs/0.1/child-missions.md: missing ${phrase}`,
+        `${rule.directory}/0.1/learn/child-missions.mdx: missing ${phrase}`,
       );
     }
   }
@@ -315,7 +342,7 @@ const zhCnHome = await readFile(
   "utf8",
 );
 const zhTwReview = await readFile(
-  path.join(contentRoot, "zh-tw/docs/0.1/work-lifecycle.md"),
+  path.join(contentRoot, "zh-tw/0.1/learn/work-lifecycle.mdx"),
   "utf8",
 );
 
@@ -326,9 +353,15 @@ for (const phrase of ["将工作接收到", "將工作接收到"]) {
     );
   }
 }
-if (!config.includes('"zh-CN": "符合性"')) {
+const referenceGroup = navigationManifest.groups.find(
+  (group) => group.id === "reference",
+);
+const conformanceGroup = referenceGroup?.items.find(
+  (item) => item.id === "conformance",
+);
+if (conformanceGroup?.labels?.["zh-cn"] !== "符合性") {
   failures.push(
-    "astro.config.mjs: Simplified Chinese conformance label must be 符合性",
+    "navigation.json: Simplified Chinese conformance label must be 符合性",
   );
 }
 if (zhCnHome.includes("人类审批")) {
@@ -338,7 +371,7 @@ if (zhCnHome.includes("人类审批")) {
 }
 if (zhTwReview.includes("評審")) {
   failures.push(
-    "src/content/docs/zh-tw/docs/0.1/work-lifecycle.md: use 審查 rather than 評審",
+    "src/content/docs/zh-tw/0.1/learn/work-lifecycle.mdx: use 審查 rather than 評審",
   );
 }
 

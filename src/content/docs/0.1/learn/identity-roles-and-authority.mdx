@@ -1,0 +1,90 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Identity, roles, and authority"
+description:
+  "How MissionWeaveProtocol separates stable identity, Presence, sessions,
+  coordination, scheduling, authorization, and approval."
+---
+
+# Identity, roles, and authority
+
+MissionWeaveProtocol 0.1 operates inside one trusted Organization. The
+Organization governs Agent identity, policy, authorization, durable Group
+ordering, and human accountability.
+
+## Authority is deliberately split
+
+| Concern                                           | Authority                                     |
+| ------------------------------------------------- | --------------------------------------------- |
+| Stable identity and verified capabilities         | Organization-controlled Agent Registry        |
+| Mission direction and final approval              | MissionOwner                                  |
+| Planning, assignment, integration, and submission | Current Coordinator Epoch                     |
+| Cross-Group execution order                       | Worker-owned Scheduler                        |
+| Transition validation and per-Group Event order   | Group Authority                               |
+| Tool, data, resource, and side-effect permission  | Authorization Service and Organization policy |
+
+The Group Authority is one logical authority per Group. An implementation may
+replicate it internally, but replica topology is not part of protocol semantics.
+The Coordinator and Worker role definitions are anchored by
+[MWP-FND-010](../../reference/specification/foundations/#mwp-fnd-010) and
+[MWP-FND-011](../../reference/specification/foundations/#mwp-fnd-011).
+
+## Identity is not Presence
+
+An **Agent Card** is stable, versioned, Organization-signed identity. It binds
+public keys, endpoints, supported protocol versions, verified capabilities, and
+maximum concurrency under the Organization's signature
+([MWP-IDN-001](../../reference/specification/identity-registry-and-sessions/#mwp-idn-001)).
+
+A **Presence Record** is ephemeral. It may report availability, open execution
+slots, capability availability, estimated response latency, and heartbeat time,
+but it does not renew a lease or accept an assignment
+([MWP-IDN-005](../../reference/specification/identity-registry-and-sessions/#mwp-idn-005)).
+
+Capability is also distinct from authorization. A capability says what an Agent
+is verified to do; it does not place reusable credentials or business-data
+access in the Agent Card
+([MWP-IDN-002](../../reference/specification/identity-registry-and-sessions/#mwp-idn-002)).
+
+## Sessions and fencing
+
+The WebSocket handshake authenticates an Organization-registered key and a fresh
+challenge, then issues a short-lived session token and a new Session Epoch. The
+handshake sequence is defined by
+[MWP-IDN-007](../../reference/specification/identity-registry-and-sessions/#mwp-idn-007).
+Issuing a later epoch fences older runtimes for that Agent identity
+([MWP-IDN-008](../../reference/specification/identity-registry-and-sessions/#mwp-idn-008)).
+
+Additional epochs narrow authority further:
+
+- a Membership Epoch fences an older version of one Group Membership;
+- a Coordinator Epoch fences a replaced Coordinator and its grants;
+- an Ownership Epoch fences previous owners of exclusive work; and
+- an Execution Lease ID fences an expired or revoked execution period.
+
+## From context to a permitted side effect
+
+```text
+Message or Work Proposal
+        ↓ explicit authorization
+WorkItem and Work Contract
+        ↓ Worker acceptance
+Ownership Epoch
+        ↓ current session, policy, budget, and approval checks
+Execution Lease and scoped capability token
+        ↓
+Permitted operation
+```
+
+The Authorization Service issues a short-lived, least-privilege token only after
+the relevant acceptance, approval, policy, ownership, lease, and budget checks.
+Its binding fields are defined by
+[MWP-AUT-001](../../reference/specification/authorization-and-budgets/#mwp-aut-001).
+Credentials do not travel through Messages, Agent Cards, Context Packages,
+Artifacts, or Events; see
+[MWP-AUT-002](../../reference/specification/authorization-and-budgets/#mwp-aut-002).
+
+Execution Approval permits a bounded risky operation. Final Approval is a
+separate signed decision accepting a completed Mission revision and exact
+Artifact set.

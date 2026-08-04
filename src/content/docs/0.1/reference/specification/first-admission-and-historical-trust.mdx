@@ -1,0 +1,194 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-ADM
+title: "First Admission and Historical Trust"
+description:
+  "The authoritative Admission Log contract, first-admission flow, historical
+  replay, and failure mapping."
+---
+
+import NormativeClause from "../../../../../components/NormativeClause.astro";
+
+<NormativeClause id="MWP-ADM-001" level={["MUST","MUST NOT"]}>
+
+A **First-Admission Record** is authoritative append metadata outside the Signed
+Document Verification Profile. It MUST conform to
+`schemas/first-admission-record.schema.json` and contain exactly these nine
+required fields: `protocolVersion`, `admissionRecordId`, `organizationId`,
+`documentKind`, `signingHash`, `keyId`, `principal`, `trustedAcceptedAt`, and
+`acceptedBy`. `trustedAcceptedAt` is the Organization-assigned trusted
+acceptance instant. The record is not a Signed Document, MUST NOT contain a
+`signature`, does not authenticate itself, and MUST NOT be accepted on the basis
+of its own bytes alone.
+
+</NormativeClause>
+
+The field constraints are:
+
+| Field               | Constraint                                                                                                                               |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `protocolVersion`   | the v0.1 `protocolVersion` constant                                                                                                      |
+| `admissionRecordId` | absolute protocol identifier                                                                                                             |
+| `organizationId`    | absolute protocol identifier                                                                                                             |
+| `documentKind`      | one of `agent-card`, `approval`, `artifact`, `command`, `context-package`, `event`, `evidence`, `extension-profile`, or `group-snapshot` |
+| `signingHash`       | `sha256:` followed by 64 lower-case hexadecimal digits                                                                                   |
+| `keyId`             | absolute protocol identifier                                                                                                             |
+| `principal`         | exact common actor shape                                                                                                                 |
+| `trustedAcceptedAt` | RFC 3339 under the protocol timestamp profile                                                                                            |
+| `acceptedBy`        | common actor shape with `type: service`                                                                                                  |
+
+<NormativeClause id="MWP-ADM-002" level="MUST">
+
+The lexical spelling of `trustedAcceptedAt` MUST be retained. Unlike the two
+protected Signed Document timestamps, it is not required to use uppercase `Z`;
+it is compared as an exact instant.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]} exclusions={["caller-provided-trust-booleans"]}>
+
+Within one Organization's Admission Log, the logical lookup and append key is
+`(organizationId, signingHash)`. The log MUST authenticate the accepting
+service, restrict writes to Organization-authorized services, preserve
+append-only integrity, support an authoritative lookup that distinguishes found
+from authoritative absence, and provide one atomic append-or-return-existing
+operation for that logical key. Unavailable, indeterminate, unauthenticated,
+integrity-failed, conflicting, or failed-commit outcomes MUST fail closed. A
+caller-supplied trust, authentication, or integrity boolean MUST NOT replace the
+adapter's typed result.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-004" level={["MUST NOT","MUST"]}>
+
+At most one authoritative record may exist for one logical key. One
+`admissionRecordId` MUST NOT identify records under different logical keys. A
+valid compatible record found on retry is an idempotent success and MUST be
+returned without append. A record under the same logical key with a different
+document kind, key ID, or Principal is a conflict and MUST NOT be replaced,
+repaired, or silently reconciled.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-005" level="MUST">
+
+Admission is a separate semantic layer after the six cryptographic stages. Its
+protected diagnostic stage is `admission`; it is not a seventh cryptographic
+stage and does not alter the signing bytes, signing hash, key resolution, or
+signature result. Every admission or historical-trust path MUST first complete
+all six stages and retain the resulting Organization, document kind, signing
+hash, resolved key ID, bound Principal, and effective key-validity interval.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-006" level="MUST">
+
+For first admission, the Registry evidence supplied to stage 4 MUST be current
+and applicable to a new admission decision
+[as required above](../signed-documents-and-trust/#mwp-sdv-010). After six-stage
+verification, the implementation MUST look up `(organizationId, signingHash)`. A
+found record MUST be validated as described below. Only an authoritative absence
+permits the implementation to obtain trusted acceptance context, prepare a
+candidate First-Admission Record, and call append-or-return-existing. First
+admission is not complete until the authenticated record returned by that
+operation, whether newly committed or concurrently existing, has itself been
+validated. Validating only the candidate bytes is not sufficient.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]} exclusions={["state-machine-acceptance"]}>
+
+Candidate preparation MUST NOT append an Event, execute a state transition, or
+imply that admission succeeded. A concurrent winner's returned
+`admissionRecordId` or `trustedAcceptedAt` MAY differ from the losing candidate,
+but the returned record is accepted only when every binding and interval rule
+below succeeds.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-008" level={["MUST","MUST NOT"]}>
+
+Historical replay MUST rerun the six cryptographic stages with authoritative
+historical Registry evidence containing the complete retained validity history
+needed for the protected signed time. It MUST then require a found
+First-Admission Record and validate it. Historical replay MUST NOT issue new
+trusted acceptance context, append a missing record, or treat the document as a
+new admission. A later expiry or revocation does not by itself invalidate an
+anchored historical signature when both the protected signed time and
+`trustedAcceptedAt` were within the selected key's interval.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-009" level={["MUST","MUST NOT"]}>
+
+Record validation MUST strictly parse exactly one UTF-8 JSON value, apply the
+normative Schema, and require exact equality between the record and six-stage
+evidence for `organizationId`, `documentKind`, `signingHash`, `keyId`, and
+`principal`. The record's `acceptedBy` MUST exactly equal the service identity
+authenticated by the Admission Log result. A record for the same unsigned
+content under another Organization, document kind, key ID, or Principal MUST NOT
+be reused. The record's append-only integrity and authenticated service identity
+are deployment assertions of the successful Admission Log adapter result; the
+record does not prove either property by itself.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-010" level="MUST NOT">
+
+For trusted acceptance instant `t`, admission is valid only when
+`validFrom <= t`, `validUntil` is absent or `t < validUntil`, and `revokedAt` is
+absent or `t < revokedAt`. These are the same half-open boundaries used for the
+protected signed time, evaluated independently at `trustedAcceptedAt`, using the
+earliest effective retained `validUntil` and `revokedAt` boundaries. A newly
+presented document MUST NOT be accepted solely because its signer backdated the
+protected time to precede expiry or revocation.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-011" level={["MUST NOT","MAY"]}>
+
+For a Signed Event, that Event document MUST NOT serve as its own
+First-Admission Record through either lookup or append-or-return-existing, and
+its signature MUST NOT be treated as authenticating the record or its admission
+anchor. A later Signed Event MAY publish or reference a separate record; its
+signature authenticates only the Event's reference.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-012" level="MUST">
+
+Every failure after six-stage completion in lookup, candidate preparation,
+trusted-time interval validation, append-or-return-existing, returned-record
+parsing, Schema validation, binding, authenticated-service comparison, or Event
+self-anchoring MUST map on the wire to `AUTH_INVALID_SIGNATURE`. The protected
+audit diagnostic MUST retain stage `admission` and a stable reason without
+revealing that reason to the untrusted caller.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-013" level="MUST" exclusions={["command-freshness","signer-authorization"]}>
+
+A newly presented Command MUST additionally satisfy an Organization-defined,
+bounded freshness and clock-skew window for `issuedAt`. That freshness check and
+signer authorization under applicable role and policy remain separate from
+First-Admission Record validation.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-014" level="MUST" exclusions={["signer-authorization","state-machine-acceptance"]}>
+
+Cryptographic verification authenticates the Principal bound to the key; it does
+not grant that Principal protocol authority. Before accepting a state
+transition, the relevant Organization or Group Authority MUST verify the
+signer's role and authorization using authoritative policy and state applicable
+at the protected signed time and, for first admission, the trusted acceptance
+time. In particular, `acceptedBy` MUST be an authorized Group Authority or
+Organization Event service, an Agent Card issuer MUST be authorized for its
+Organization, an Extension Profile approver and Approval approver MUST satisfy
+Organization policy, and a Group Snapshot creator MUST be an authorized archival
+service. This authorization check occurs only after all six cryptographic stages
+and any applicable first-admission or historical-trust validation succeed;
+failure is `AUTH_FORBIDDEN`.
+
+</NormativeClause>

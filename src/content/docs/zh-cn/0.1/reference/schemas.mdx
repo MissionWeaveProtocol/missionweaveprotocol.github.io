@@ -1,0 +1,25 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: JSON 架构目录
+description: 在本地浏览每个规范的 MissionWeaveProtocol 0.1 JSON 架构。
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import SchemaCatalog from "../../../../../components/SchemaCatalog.astro";
+import release from "../../../../../data/normative/0.1/release-source.json";
+
+# JSON 架构目录
+
+MissionWeaveProtocol 0.1 发布 **{release.schemas.count}**
+规范 JSON 架构草案 2020-12 文件。下面的文件是确切的本地发布工件。他们共享的验证笔记可在
+
+<ArtifactLink path="protocol/schemas/README.md">
+  <code>schemas/README.md</code> 工件
+</ArtifactLink>
+。
+
+模式验证是基于断言的，包括每个声明的
+`format`。完整的本地规则是[MWP-FND-009](../specification/foundations/#mwp-fnd-009)。通过这些模式仅证明结构形状；它不会取代行为、密码或准入要求。
+
+<SchemaCatalog />

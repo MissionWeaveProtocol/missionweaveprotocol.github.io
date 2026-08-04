@@ -1,0 +1,353 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-FND
+title: Fondations
+description: >-
+  Objectif, conventions, terminologie, invariants, architecture et fondements de
+  la persistance pour MissionWeaveProtocol 0.1.
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+# MissionWeaveProtocol 0.1
+
+Statut : Projet de norme, version `0.1.0`.
+
+<NormativeClause id="MWP-FND-001" level={["MUST","MUST NOT","REQUIRED","SHALL","SHALL NOT","SHOULD","SHOULD NOT","RECOMMENDED","NOT RECOMMENDED","MAY","OPTIONAL"]}>
+
+Ce document définit la version 0.1 de MissionWeaveProtocol. Les mots clés
+**MUST**, **MUST NOT**, **REQUIRED**, **SHALL**, **SHALL NOT**, **SHOULD**,
+**SHOULD NOT**, **RECOMMENDED**, **NOT RECOMMENDED**, **MAY** et **OPTIONAL**
+dans ce document doivent être interprétés comme décrit par le BCP 14 lorsque, et
+uniquement lorsque, ils apparaissent en majuscules comme indiqué ici.
+
+</NormativeClause>
+
+## 1. Objectif et portée
+
+MissionWeaveProtocol est un protocole de coopération orienté groupe pour les
+agents autonomes fonctionnant au sein d'un Organization de confiance. Il permet
+à un Agent de participer simultanément à de nombreux groupes Mission, d'échanger
+des messages durables avec des pairs, d'accepter des éléments de travail
+explicites dans des files d'attente par Group, de planifier ces éléments de
+travail dans plusieurs groupes, de publier des artefacts vérifiables et
+d'obtenir l'approbation humaine des missions terminées.
+
+<NormativeClause id="MWP-FND-002" level="MAY">
+
+MissionWeaveProtocol n'est pas Agent-to-Agent RPC. Les agents sont des pairs
+dans la conversation et MAY lancent des messages ou des propositions WorkItem à
+tout moment. L'autorité structurée est néanmoins explicite : un Message
+n'autorise jamais un effet secondaire, et l'infrastructure de l'organisation
+valide toutes les commandes qui changent l'état de Mission.
+
+</NormativeClause>
+
+MissionWeaveProtocol 0.1 standardise :
+
+- Identité Agent, cartes Agent, enregistrements de présence et clôture
+  d'exécution ;
+- un historique Group temporaire et un historique Event monotone par Mission ;
+- un Coordinator remplaçable et un MissionOwner humain ;
+- Membership, conversations, messages, éléments de travail, contrats de travail,
+  artefacts, Evidence, packages de contexte, baux, budgets et approbations ;
+- Commandes durables, événements immuables, relecture, accusés de réception et
+  idempotence ;
+- files d'attente Group Worker et signaux de planification croisés Group
+  préservant la confidentialité ;
+- sous-tâches récursives pour la décomposition complexe ;
+- JSON canonique sur une liaison WebSocket-over-TLS authentifiée ; et
+- Profils d'extension gouvernés.
+
+MissionWeaveProtocol 0.1 ne définit délibérément pas la fédération
+inter-organisations, le routage physique peer-to-peer, le chiffrement de bout en
+bout Group, le consensus distribué, les invites de modèle, le raisonnement de
+modèle privé, une base de connaissances API, un magasin d'objets Artifact API,
+ou la mise en œuvre des services de politique et d'autorisation de Organization.
+
+## 2. Références normatives et conventions de données
+
+<NormativeClause id="MWP-FND-003" level="MUST">
+
+Les implémentations MUST suivent ces spécifications externes lorsqu'elles sont
+référencées :
+
+- RFC 2119 et RFC 8174 (BCP 14), langage normatif ;
+- RFC 3339, horodatages ;
+- RFC 4648 sections 3.2, 3.5 et 5, base64url canonique non complétée ;
+- RFC 6455, WebSocket ;
+- RFC 7493, Internet JSON (I-JSON) ;
+- RFC 8446, TLS 1.3 ;
+- Schéma de canonisation RFC 8785, JSON (JCS) ;
+- RFC 8032, Ed25519 ;
+- JSON Projet de schéma 2020-12 ; et
+- Principes RFC 9457 pour les erreurs de protocole structuré, le cas échéant.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-004" level="MUST">
+
+Tous les objets de protocole MUST soient valides JSON. Les objets de protocole
+durables MUST sont conformes aux schémas JSON dans `schemas/`, et chaque
+horodatage de protocole MUST est un RFC 3339 `date-time`. MissionWeaveProtocol
+0.1 utilise un profil d'horodatage déterministe pour le profil de vérification
+Signed Document. Chaque horodatage d'un Signed Document couvert par la
+[Section 6.4](../signed-documents-and-trust/), et chaque Registry ou horodatage
+d'acceptation de confiance utilisé pour vérifier ce document, MUST satisfait aux
+règles supplémentaires suivantes :
+
+- l'année civile est comprise dans la plage inclusive `0001` à `9999` et le La
+  date grégorienne est valide ;
+- le second est dans la plage inclusive `00` à `59` ; orthographe des secondes
+  intercalaires ne sont pas pris en charge dans la v0.1 ;
+- une fraction de seconde facultative contient un ou plusieurs chiffres ASCII,
+  qui sont tous participer à une comparaison instantanée sans troncature ni
+  arrondi ; et
+- L'orthographe RFC 3339 inconnue-local-offset `-00:00` n'est pas autorisée.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-005" level={["MUST","MUST NOT"]}>
+
+Le séparateur `T`, le désignateur `Z` et la plage de décalage numérique complète
+RFC 3339 restent valides, à moins qu'une règle ultérieure n'exige une
+orthographe plus étroite. La validation générique du schéma JSON `date-time` est
+nécessaire mais pas suffisante pour établir ce profil d'horodatage. Une
+implémentation MUST conserve le texte d'horodatage sérialisé indépendamment de
+son instant analysé et MUST NOT le réécrit avant le hachage ou la vérification
+de la signature. Une fraction de seconde absente vaut zéro et les chiffres zéro
+finaux ne changent pas l'instant représenté.
+[La section 6.4](../signed-documents-and-trust/#mwp-sdv-002) exige en outre que
+l'heure signée protégée et `signature.createdAt` utilisent le suffixe majuscule
+`Z` et soient identiques octet par octet.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-006" level={["MUST","MUST NOT"]}>
+
+L'entrée JCS MUST suit le modèle de données RFC 8785 et I-JSON. Les numéros JSON
+MUST doivent être interprétés comme des valeurs binaires64 IEEE 754 finies et
+sérialisés avec le formulaire aller-retour le plus court RFC 8785 ECMAScript.
+Une implémentation utilisant des nombres à précision arbitraire MUST applique la
+même conversion binaire64 correctement arrondie et MUST NOT préserve une
+précision supplémentaire spécifique à l'hôte dans les octets de signature. Une
+valeur en dehors du domaine binaire64 fini ou une chaîne contenant un substitut
+Unicode non apparié MUST doit être rejetée en tant qu'échec du modèle de données
+JCS avant l'émission des octets canoniques.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-007" level="MUST">
+
+Une valeur base64url MUST utilise l'alphabet sécurisé pour les URL RFC 4648,
+omet le remplissage `=` et n'utilise aucun bit de remplissage inutilisé. Un
+décodeur MUST rejette une orthographe non canonique même lorsqu'il décode les
+octets attendus. Un hachage de contenu dans la version 0.1 MUST utilise
+l'hexadécimal minuscule SHA-256 et le formulaire `sha256:<64 hex digits>`. Les
+entiers utilisés pour les séquences, les révisions, les époques et les budgets
+MUST doivent être des entiers sûrs non négatifs JSON ; Group Les séquences Event
+commencent à 1.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-008" level={["MUST","SHOULD","MUST NOT"]}>
+
+Un identifiant MUST doit être globalement unique au sein du type de
+l'identifiant et MUST doit être sérialisé en tant qu'URI RFC 3986 absolu, et non
+en tant qu'orthographe IRI uniquement. Les caractères non ASCII MUST sont codés
+en pourcentage UTF-8 et la validation MUST consomme la chaîne complète ; Les
+espaces, les caractères de contrôle et les terminateurs de ligne de fin ne sont
+pas valides. Les identifiants UUID SHOULD utilisent le formulaire `urn:uuid:`
+minuscule. Les implémentations MUST comparent les identifiants octet par octet
+après les règles de normalisation d'URI choisies par le Organization émetteur ;
+les destinataires MUST NOT inventent une normalisation supplémentaire.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-009" level="MUST">
+
+Chaque mot-clé `format` dans les schémas normatifs est une exigence d'assertion.
+Les implémentations MUST permettent la validation du format Draft 2020-12, y
+compris `uri` et `date-time`, plutôt que de traiter ces mots-clés comme des
+annotations.
+
+</NormativeClause>
+
+## 3. Termes et rôles
+
+Le glossaire de domaine dans <a
+href={`${import.meta.env.BASE_URL}artifacts/0.1/protocol/CONTEXT.md`}><code>../CONTEXT.md</code></a>
+est normatif. Les règles de rôle suivantes affinent ce vocabulaire :
+
+- Un **Organization** est la seule limite de confiance et de gouvernance dans la
+  v0.1.
+- Un **Agent** est une identité stable avec au plus une session d'exécution
+  active. La mise à l'échelle horizontale est représentée par des identités
+  Agent enregistrées séparément.
+- Un **MissionOwner** est le membre Group responsable des directives, de
+  l'approbation, et annulation normale. Il s'agit d'un humain pour une racine
+  Mission. Pour un enfant Mission, le parent Coordinator remplit ce rôle sous la
+  responsabilité de l'humain racine.
+
+<NormativeClause id="MWP-FND-010" level="MAY">
+
+- Un **Coordinator** est un Agent titulaire d'un bail de rôle renouvelable.
+  Exactement un Coordinator époque MAY être actif pour un Mission à la fois.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-011" level="MAY">
+
+- Un **Worker** est un Agent qui accepte les WorkItems dans sa propre
+  planification. files d'attente. Le même Agent MAY soit un Worker dans de
+  nombreux groupes.
+
+</NormativeClause>
+
+- Une **Group Authority** est une infrastructure Organization qui authentifie
+  sessions, valide Membership et la stratégie, sérialise les transitions
+  structurées et ajoute des événements. Ce n'est pas un gestionnaire sémantique
+  et ne décide pas ce que les agents doivent dire ni comment ils doivent
+  raisonner.
+
+<NormativeClause id="MWP-FND-012" level={["MAY","MUST NOT"]}>
+
+Le Group Authority est une autorité logique par Group. Une implémentation MAY la
+réplique en interne, mais le consensus, l'élection du leader et la topologie de
+réplication MUST NOT sont exposés en tant que sémantique MissionWeaveProtocol.
+Ce choix offre une propriété exclusive déterministe sans obliger les agents à
+résoudre socialement l'exécution du cerveau divisé.
+
+</NormativeClause>
+
+## 4. Invariants fondamentaux
+
+<NormativeClause id="MWP-FND-013" level="MUST">
+
+Une implémentation conforme MUST préserve tous les invariants suivants :
+
+</NormativeClause>
+
+1. **Un Mission, un Group.** Chaque Mission possède exactement un Group
+   principal et chaque Group principal appartient à exactement un Mission.
+
+<NormativeClause id="MWP-FND-014" level="MUST NOT">
+
+2. **La conversation n'est pas une autorité.** Un Message, une mention, un
+   résumé, Context Package ou une sortie de modèle MUST NOT autorise à lui seul
+   un appel d'outil, une entreprise. action, affectation WorkItem, dépense
+   budgétaire ou octroi d'autorisation.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-015" level="MUST">
+
+3. **Autorité d'exécution structurée.** Une action consécutive MUST soit
+   connectée à un WorkItem accepté, à l'époque de propriété actuelle, à un bail
+   d'exécution valide, à l'approbation de la politique applicable et à un jeton
+   de capacité étendu.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-016" level="MUST">
+
+4. **Un runtime actif.** Un Agent Command MUST à changement d'état transporte le
+   courant Session Epoch. Une époque inférieure MUST sera rejetée même si son
+   WebSocket reste connecté.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-017" level={["MAY","MUST NOT"]}>
+
+5. **Les travaux exclusifs sont clôturés.** Il existe au plus une époque de
+   propriété actuelle pour un WorkItem exclusif. Les résultats d'une époque
+   obsolète MAY doivent être conservés comme Evidence ne faisant pas autorité,
+   mais MUST NOT complète le WorkItem.
+
+</NormativeClause>
+
+6. **Historique en ajout uniquement.** Les événements acceptés et les messages
+   validés sont immuable. La correction, la rétractation, la rédaction, la
+   révocation et la remédiation sont de nouveaux événements.
+7. **Commande par Group uniquement.** Chaque Group possède une séquence monotone
+   Event. MissionWeaveProtocol ne définit aucun ordre global ni transaction
+   atomique entre les groupes.
+
+<NormativeClause id="MWP-FND-018" level={["MAY","MUST"]}>
+
+8. **Livraison au moins une fois.** Les événements MAY doivent être livrés
+   plusieurs fois. Stable les identifiants et le traitement idempotent MUST
+   rendent chaque transition d'état acceptée observable une seule fois.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-019" level="MUST">
+
+9. **Isolement Mission.** Contenu Mission, informations d'identification, état
+   intermédiaire et La mémoire Agent a une portée Group par défaut. La
+   divulgation croisée Group MUST soit explicite et autorisée.
+
+</NormativeClause>
+
+10. **Approbation finale humaine.** Une racine Mission n'est terminée qu'après
+    son MissionOwner approuve une révision Mission exacte et un ensemble
+    Artifact. L'examen Coordinator n'est pas définitif Approval humain.
+
+<NormativeClause id="MWP-FND-020" level="MUST NOT">
+
+11. **Les budgets et les autorisations sont réduits à la baisse.** WorkItem et
+    child-Mission les budgets, les capacités et les autorisations de ressources
+    MUST NOT dépassent leurs autorisations parent.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-021" level="MUST">
+
+12. **Pas de canal latéral privé Mission.** Communication Agent liée à Mission
+    MUST soit enregistré dans le Mission Group ou dans une conversation liée et
+    contrôlée par accès visible par Coordinator et MissionOwner.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-022" level={["MUST","MUST NOT"]}>
+
+13. **Aucune exigence de raisonnement privé.** Les agents MUST publient des
+    décisions, des entrées, les preuves, les obstacles et les résultats
+    nécessaires à l'audit ; ils doivent MUST NOT publier une chaîne de pensée
+    privée, des invites cachées ou de la mémoire interne brute.
+
+</NormativeClause>
+
+## 5. Architecture du système
+
+Un déploiement MissionWeaveProtocol contient au moins :
+
+- un Organization Agent Registry contrôlé ;
+- un magasin Group Authority et Group Event durable ;
+- un service d'autorisation qui évalue la politique et émet des jetons de
+  capacité ;
+- un ou plusieurs Agents programmés indépendamment ;
+- Stockage Artifact adressé par hachage de contenu ; et
+- une interface humaine pour les directives Mission, la surveillance,
+  l'intervention et Approval.
+
+<NormativeClause id="MWP-FND-023" level="MUST NOT">
+
+L'état faisant autorité comprend les missions, les adhésions, les éléments de
+travail, les époques de propriété et de location, les reçus de déduplication,
+les approbations et les événements Group. Les curseurs Agent-local, les files
+d'attente par Group, les points de contrôle, les boîtes d'envoi, les boîtes de
+réception et l'état du planificateur sont des projections reconstructibles. La
+perte de la base de données locale d'un Agent MUST NOT modifier l'état Mission
+faisant autorité.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-024" level="RECOMMENDED">
+
+PostgreSQL et Agent-local SQLite sont RECOMMENDED pour l'implémentation de
+référence v0.1, et le stockage d'objets adressé par contenu est RECOMMENDED pour
+les artefacts. Ces produits ne sont pas des exigences de protocole filaire.
+
+</NormativeClause>

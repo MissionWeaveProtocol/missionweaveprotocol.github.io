@@ -1,0 +1,310 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-SDV
+title: "Signed Documents and trust verification"
+description:
+  "The Signed Document Verification Profile, Registry evidence contract,
+  semantic stages, and protected diagnostics."
+---
+
+import NormativeClause from "../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../components/InformativeBlock.astro";
+
+### 6.4 Signed Document Verification Profile
+
+A **Signed Document** is a durable protocol object whose schema requires a
+top-level `signature`. The v0.1 **Signed Document Verification Profile** binds
+each such schema to one protected signed-time field and one expected signer:
+
+| Signed Document   | Protected signed time | Expected signer                                                                     |
+| ----------------- | --------------------- | ----------------------------------------------------------------------------------- |
+| Agent Card        | `issuedAt`            | Organization service Principal authorized to issue Agent Cards for `organizationId` |
+| Approval          | `occurredAt`          | `approver`                                                                          |
+| Artifact manifest | `createdAt`           | Agent identified by `producer.agentId`                                              |
+| Command           | `issuedAt`            | `actor`                                                                             |
+| Context Package   | `generatedAt`         | `generatedBy`                                                                       |
+| Event             | `occurredAt`          | `acceptedBy`                                                                        |
+| Evidence          | `createdAt`           | `generatedBy`                                                                       |
+| Extension Profile | `approvedAt`          | `approvedBy`                                                                        |
+| Group Snapshot    | `createdAt`           | `createdBy`                                                                         |
+
+<NormativeClause id="MWP-SDV-001" level="MUST">
+
+For every row except Agent Card, the expected signer is the exact Principal
+identified by the listed field. For an Agent Card, the signing-key record MUST
+identify an Organization service Principal; its authorization to issue Agent
+Cards for `organizationId` is checked after cryptographic verification.
+
+</NormativeClause>
+
+Unless an Extension Profile specifies an additional signature, a v0.1 signature
+covers the JCS canonical form of the complete object with its top-level
+`signature` member omitted. Only that top-level member is omitted; nested
+members named `signature` remain protected. The Command signature therefore
+covers at least its Action ID, actor, applicable Session, Membership, and
+Coordinator Epochs, Group ID when present, kind, payload, correlation ID,
+protected signed time, and extensions. An Event signature is made by the
+accepting authority and covers its Event ID, Group sequence when present, cause,
+actor, payload, and protected signed time.
+
+<NormativeClause id="MWP-SDV-002" level={["MUST","MUST NOT"]}>
+
+Because the whole top-level signature envelope is omitted from the v0.1 signing
+input, a verifier MUST bind the envelope back to the protected content. The
+`signature.algorithm` MUST be `Ed25519`. The protected signed time and
+`signature.createdAt` MUST both be RFC 3339 UTC values using the uppercase `Z`
+suffix and MUST be byte-for-byte identical. A verifier MUST NOT repair,
+normalize, or substitute either value before comparing or verifying the Signed
+Document.
+
+</NormativeClause>
+
+MissionWeaveProtocol 0.1 uses pure Ed25519 as defined by RFC 8032, not
+Ed25519ctx or Ed25519ph. Let
+`L = 2^252 + 27742317777372353535851937790883648493` be the prime order of the
+Ed25519 base point `B`, and let `I` be the Edwards25519 identity point.
+
+<NormativeClause id="MWP-SDV-003" level={["MUST","MUST NOT"]}>
+
+After decoding a 64-byte Ed25519 signature as `Renc || Senc`, a verifier MUST
+canonically decode `Renc` as an Edwards25519 point and require `[L]R` to equal
+the identity. The identity point is permitted for `R`. The verifier MUST
+interpret `Senc` as an unsigned little-endian integer, require `0 <= S < L`, and
+MUST NOT reduce an out-of-range value modulo `L`. Noncanonical, off-curve,
+non-identity small-order, or mixed-order `R` encodings and out-of-range `S`
+values MUST fail stage 3.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-004" level={["MUST NOT","MUST"]}>
+
+A key ID MUST NOT be reused. The Agent Registry MUST provide signing-key
+bindings for every Principal type that can be an expected signer; only Agent
+Principals require Agent Cards. The binding of one key ID to exactly one
+Principal, one algorithm, and one public key is immutable. Within one
+Organization, the same public key MUST NOT be registered under another Principal
+or key ID, and the same Principal, algorithm, and public-key tuple MUST NOT have
+a key-ID alias. Repeated declarations of an identical binding across Agent Card
+or Registry versions are the same logical binding, not reuse or aliasing.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-005" level={["MUST","MUST NOT"]}>
+
+Before accepting an Ed25519 binding, the Registry MUST strictly decode the
+32-byte public key as the compressed Edwards25519 point encoding defined by
+RFC 8032. The encoding MUST be canonical, MUST decode to a point on the curve,
+MUST NOT be the identity point, and MUST be in the prime-order subgroup: for
+subgroup order `L`, `[L]A` MUST equal the identity. A length check, small-order
+blacklist, or successful import into a general-purpose cryptography backend is
+not sufficient. Noncanonical encodings, negative-zero encodings, small-order
+points, and mixed-order points MUST be rejected before the immutable binding and
+Organization-wide uniqueness checks are applied.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-006" level="MUST">
+
+After the stage-3 signature encoding checks and stage-4 public-key checks
+succeed, stage 6 MUST require the pure-Ed25519 equation `[S]B = R + [k]A`, where
+`k` is SHA-512 over `Renc || Aenc || M`, interpreted little-endian and reduced
+modulo `L`, and `M` is the exact signing byte sequence produced at stage 5.
+Because both `A` and `R` are in the prime-order subgroup, a provider that
+evaluates the equivalent RFC 8032 cofactored equation has the same acceptance
+result.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-007" level="MUST">
+
+The Registry MUST enforce these invariants across the Organization before
+accepting any binding and MUST retain sufficient indexes and history to
+establish both key-ID uniqueness and the absence of public-key or tuple aliases.
+Key resolution MUST fail closed when the Registry cannot establish those
+invariants for the resolved binding.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-008" level="MUST">
+
+For one Signed Document verification, the Registry evidence used at stage 4 MUST
+be scoped to exactly one Organization and MUST represent one coherent
+authoritative Registry revision applicable to the verification decision. It MUST
+be sufficient to establish the immutable binding and Organization-wide
+uniqueness invariants for all signing-key bindings and the complete retained
+validity history needed by this profile. The implementation MUST validate the
+evidence before using `signature.keyId` to select a Registry record; an invalid
+unrelated binding or history record MUST cause stage 4 to fail.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-009" level={["MAY","MUST NOT"]}>
+
+An implementation MAY establish these properties from a complete Registry
+snapshot or from authoritative indexes and historical queries that prove the
+same Organization-wide absence, uniqueness, and history claims. A key-filtered
+projection, partial cache, incomplete page set, or otherwise unspecified
+coverage MUST NOT be accepted unless the implementation can establish the same
+claims from authoritative state. The requested key ID is routing context only
+and MUST NOT be treated as permission to omit evidence needed for the
+Organization-wide checks.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-010" level={["MUST","MUST NOT"]}>
+
+The key-resolution adapter is a trusted deployment seam in v0.1. When it
+supplies Registry evidence to a verifier, it MUST establish the required
+Organization scope, applicable authoritative revision, evidence completeness,
+and historical coverage or report that it cannot. A superseded Registry state
+MUST NOT be presented as current evidence for a new verification or
+first-admission decision. The Organization MUST define how the adapter
+establishes revision currency or applicability. MissionWeaveProtocol 0.1 does
+not standardize revision identifiers, a portable Agent Registry snapshot wire
+artifact, transport, freshness mechanism, or cryptographic completeness proof.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-011" level={["MUST","MAY"]}>
+
+An authoritative unknown-key conclusion MUST be made only after the required
+completeness has been established for the applicable authoritative revision.
+Inability to establish completeness, unavailable Registry evidence, and an
+authoritatively absent key all fail stage 4. An implementation MAY retain
+distinct protected diagnostics for those conditions, but they MUST remain
+indistinguishable on the wire as required below.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-012" level={["MUST","MAY","MUST NOT"]}>
+
+Key-validity status is historical state, not part of the immutable identity
+binding. The Registry MUST preserve the original `validFrom` and every change to
+`validUntil` or `revokedAt` through append-only or explicitly versioned
+validity-status records. The first registered `validFrom` is immutable. A
+`validUntil` or `revokedAt` boundary MAY be added or moved earlier, but MUST NOT
+be cleared or moved later. Its effective value is the earliest non-absent value
+in Registry history. Extending validity requires new key material under a new
+key ID. The Registry MUST NOT rewrite or discard an earlier status record on
+which historical verification may depend.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-013" level="MUST">
+
+The signer rule from the table and `signature.keyId` together select the
+Registry record. Its bound Principal MUST equal the exact Principal named by the
+document or be an Organization service Principal for an Agent Card. Resolving
+the same key ID under another Principal or to different key material MUST fail.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-014" level="MUST">
+
+For protected signed time `t`, a key is valid only when `validFrom <= t`,
+`validUntil` is absent or `t < validUntil`, and `revokedAt` is absent or
+`t < revokedAt`. A key whose `revokedAt` is equal to or earlier than `t` MUST be
+rejected. Registry validity timestamps MUST conform to the MissionWeaveProtocol
+timestamp profile and be compared as instants, not lexically; the byte-equality
+rule for the two protected document timestamps does not apply to Registry
+interval fields. Durable signature verification MUST evaluate this interval at
+the protected signed time.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-015" level={["MUST","MUST NOT"]}>
+
+Verification MUST stop at the first failing stage and MUST NOT perform
+authorization, append an Event, or execute a transition before every stage
+succeeds:
+
+1. strictly parse exactly one UTF-8 JSON value and reject invalid UTF-8, a
+   byte-order mark, trailing data, and duplicate decoded object member names;
+2. validate the complete Signed Document against its normative schema, including
+   the required signature envelope and supported algorithm;
+3. apply this Verification Profile, including protected-time UTC-`Z` form
+   validation, exact `createdAt` equality without transformation,
+   expected-signer rule selection, canonical unpadded base64url decoding of
+   `signature.value`, and strict `Renc` and `Senc` validation of a 64-byte
+   Ed25519 signature;
+4. obtain complete Organization-scoped Registry evidence, validate every binding
+   needed to establish the immutable signing-key binding, Organization-wide
+   no-reuse and no-alias invariants, and complete retained validity history,
+   then select the pinned key under the expected signer and validate its
+   protected-time interval, including canonical unpadded base64url decoding and
+   strict point validation of its 32-byte Ed25519 public key;
+5. omit exactly the top-level `signature` member, reject values outside the RFC
+   8785 and I-JSON data model defined in
+   [Section 2](../foundations/#mwp-fnd-006), and produce JCS signing bytes from
+   the received values without timestamp or number transformation beyond the
+   required RFC 8785 binary64 serialization; and
+6. verify the Ed25519 signature over those bytes.
+
+</NormativeClause>
+
+Failure of the base timestamp profile for a Schema-declared document timestamp
+is a stage-2 failure. Failure of the additional protected-time UTC-`Z` or
+byte-equality rule is stage 3. A malformed Registry validity timestamp is a
+stage-4 failure.
+
+<NormativeClause id="MWP-SDV-016" level={["MAY","MUST","SHOULD"]}>
+
+These numbers define normative semantic stages and error classification, not
+required internal function boundaries. An implementation MAY detect a
+later-stage condition while parsing, but MUST retain enough lossless structure
+to evaluate all earlier semantic stages and MUST classify the condition at its
+normative stage. In particular, a syntactically valid JSON number outside the
+finite binary64 domain or a decoded string containing an unpaired surrogate is a
+stage-5 JCS data-model failure, not a stage-1 JSON syntax failure. A conformance
+vector that asserts one failure stage SHOULD isolate that failure so every
+implementation can report the intended diagnostic without ambiguity from another
+deliberately invalid field.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-017" level="MUST NOT">
+
+The **signing hash** is
+`sha256:<lowercase hex SHA-256 of the exact stage-5 JCS signing bytes>`. The six
+stages above constitute cryptographic verification and MUST NOT require
+admission state. A cryptographically verified result may therefore exist before
+separate first-admission or historical-trust validation by the accepting
+Organization.
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+The next block resumes a later pinned source segment. See the
+[specification source map](./) for the intervening local page and exact line
+ranges.
+
+</InformativeBlock>
+
+<NormativeClause id="MWP-SDV-018" level={["MUST NOT","MUST"]}>
+
+Invalid JSON, duplicate members, or a value that cannot enter the JCS data model
+is a `PROTOCOL_VIOLATION`. Schema, required-envelope, or unsupported-algorithm
+failure is `SCHEMA_VALIDATION_FAILED`. Failure in cryptographic stage 3, 4, or
+6, at semantic stage `admission`, or in Command-freshness checks is
+`AUTH_INVALID_SIGNATURE`; examples include a time-binding mismatch, schema-valid
+base64url with nonzero unused pad bits, unknown or wrongly bound key, invalid
+key interval, noncanonical or non-prime-order public key, malformed decoded key
+or signature length, or cryptographic mismatch. A wire response MUST NOT reveal
+which key-resolution, admission, or cryptographic check failed. The Organization
+MUST retain the first failing semantic stage and its specific diagnostic reason
+in a protected, access-controlled audit record according to applicable retention
+policy. A Group-scoped failure MUST be referenceable from the Policy Log by
+authorized auditors without exposing that diagnostic to the untrusted caller.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-019" level="MUST NOT">
+
+A future protocol revision may protect signature metadata by omitting only
+`signature.value` instead of the complete top-level `signature` member. That
+changes canonical signing bytes and is a breaking wire-signature revision. It
+MUST NOT be introduced, generated, or accepted silently as v0.1 behavior.
+
+</NormativeClause>

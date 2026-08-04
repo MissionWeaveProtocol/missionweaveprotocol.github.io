@@ -1,0 +1,98 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Première admission et confiance historique
+description: >-
+  Les flux de recherche faisant autorité, d’ajout atomique, de validation des
+  enregistrements renvoyés et de relecture historique se situent au-dessus de la
+  vérification en six étapes.
+---
+
+# Première admission et confiance historique
+
+La vérification cryptographique prouve des octets protégés et un Principal lié à
+une clé. La première admission ajoute un instant d'acceptation fiable attribué
+par Organization et un enregistrement d'ajout uniquement faisant autorité. La
+couche Admission reste distincte des six étapes cryptographiques
+([MWP-ADM-005](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+
+## Admission Log contrat
+
+La clé logique est `(organizationId, signingHash)`. Le Admission Log authentifie
+son service d'acceptation, distingue un enregistrement trouvé d'une absence
+faisant autorité, préserve l'intégrité de l'ajout uniquement et expose une
+opération atomique d'ajout ou de retour existante. Les résultats typés échouent
+en mode fermé ; un indicateur de confiance de l'appelant ne peut pas les
+remplacer
+([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).
+
+La forme exacte de l'enregistrement à neuf champs, l'interdiction d'un membre
+`signature` et la limite de non-auto-authentification sont définies par
+[MWP-ADM-001](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001).
+Son artefact local exact est indexé dans le
+[JSON Schema catalog](../../reference/schemas/), et l'ensemble complet des
+preuves de première admission et de relecture est publié sous
+[Conformance d'admission](../../reference/conformance/admission/).
+
+## Flux de première admission
+
+La séquence visible par le lecteur est exactement :
+
+```text
+vérification cryptographique en six étapes
+→ recherche faisant autorité dans Admission Log
+→ validation de l’enregistrement trouvé ou absence faisant autorité
+→ préparation du contexte de confiance et de l’enregistrement candidat
+→ ajout atomique ou renvoi de l’enregistrement existant
+→ validation de l’enregistrement renvoyé
+→ résultat admis
+```
+
+Le point de branchement est important. Un enregistrement trouvé va directement à
+la validation de l'enregistrement. Seule une absence faisant autorité permet un
+contexte fiable et une préparation des candidats. L'ajout atomique peut renvoyer
+le candidat local ou un enregistrement validé simultanément, et l'enregistrement
+renvoyé est toujours validé avant le succès. Les octets candidats à eux seuls
+n’établissent jamais l’admission. Cette orchestration est définie par
+[MWP-ADM-006](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).
+
+La préparation du candidat n’ajoute pas non plus de Event et n’implique pas de
+transition d’état
+([MWP-ADM-007](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-007)).
+
+## Validation des enregistrements retournés
+
+Le First-Admission Record renvoyé est analysé comme une valeur UTF-8 JSON
+stricte, validée par rapport au schéma local et comparée au résultat en six
+étapes pour Organization, le type de document, le hachage de signature, l'ID de
+clé et Principal. Son identité `acceptedBy` correspond au service authentifié
+par le résultat de l'adaptateur
+([MWP-ADM-009](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)).
+
+L'instant d'acceptation fiable est testé indépendamment par rapport au même
+intervalle de clé sélectionné utilisé pour l'heure signée protégée
+([MWP-ADM-010](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)).
+
+Les échecs après l'achèvement de six étapes conservent l'étape de diagnostic
+protégée `admission` et sont mappés sur le fil à `AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).
+
+## Relecture historique
+
+La relecture historique suit un chemin plus étroit :
+
+```text
+vérification cryptographique en six étapes
+→ un enregistrement trouvé est requis
+→ validation de l’enregistrement
+→ aucun contexte de confiance ni ajout
+```
+
+Les six étapes utilisent des preuves historiques Registry faisant autorité
+contenant l'historique de validité conservé nécessaire pour l'heure signée
+protégée. La relecture nécessite un enregistrement existant, le valide et ne
+crée jamais de nouvelle admission ni n'émet de contexte de candidat de confiance
+([MWP-ADM-008](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)).
+
+L'admission reste distincte de la fraîcheur Command et de l'autorisation du
+signataire ; la page suivante rend ces limites explicites.

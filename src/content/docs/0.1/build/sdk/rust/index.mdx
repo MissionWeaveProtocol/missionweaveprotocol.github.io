@@ -1,0 +1,76 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Rust SDK"
+description:
+  "Install and navigate the complete exact-pinned Rust runtime reference for
+  MissionWeaveProtocol 0.1."
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Rust SDK
+
+`missionweaveprotocol` is the official Rust crate. This reference describes
+exact commit `2727f8777737265d98dde4ceaca306612ef54c52`, crate version `0.1.0`,
+Rust 1.85 or newer, and edition 2024. The documented pin is not published on
+crates.io; a different Git revision or package archive is a different
+implementation input.
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="rust"
+  command={`git clone https://github.com/MissionWeaveProtocol/rust-sdk.git missionweaveprotocol-rust-sdk
+cd missionweaveprotocol-rust-sdk
+git checkout --detach 2727f8777737265d98dde4ceaca306612ef54c52
+cargo test --locked --all-features
+cargo package --locked`}
+  verifyCommand={`cargo run --locked --quiet --bin missionweaveprotocol-conformance
+cargo install --locked --path . --bin missionweaveprotocol-conformance
+missionweaveprotocol-conformance --verbose`}
+>
+  <p slot="notes">
+    Applications bind the library with a Cargo Git dependency whose
+    <code>rev</code> is the exact commit above. A vendored or packaged copy is
+    acceptable only when its provenance resolves to the same bytes and its
+    embedded protocol bundles pass the documented verification calls.
+  </p>
+</SdkInstall>
+
+:::
+
+The `missionweaveprotocol-conformance` binary accepts optional `--verbose`. It
+runs the embedded structural Schema vectors; it does not establish Registry
+currency, Admission Log durability, network security, or production readiness.
+
+## Use this reference
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every crate-root re-export, codec, bundle verifier, CLI boundary, and explicit non-implementation."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, trusted-context, and Admission Log traits with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="Every public crate-root declaration resolved to its exact source line."
+    href="./api/"
+  />
+</CardGrid>
+
+## Support at the documented commit
+
+<SdkRuntimeMatrix sdk="rust" />
+
+The crate supplies in-process protocol behavior, not deployment authority.
+Applications still provide authenticated current and historical Registry
+evidence, trusted Admission context, and an authoritative append-only Admission
+Log.

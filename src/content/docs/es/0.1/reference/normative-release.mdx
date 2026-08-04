@@ -1,0 +1,40 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Identidad de publicación normativa
+description:
+  Entradas confirmadas y campos de identidad generados para MissionWeaveProtocol
+  0.1.
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import NormativeReleaseFacts from "../../../../../components/NormativeReleaseFacts.astro";
+
+# Identidad de lanzamiento normativo
+
+MissionWeaveProtocol 0.1 se lanza como un sitio web, un paquete de artefactos de
+protocolo y seis pines SDK exactos. El `release-source.json` confirmado registra
+cada entrada no autorreferencial: protocolo y confirmaciones SDK, recuentos de
+versiones, identidades de perfil, resúmenes, configuraciones regionales y el
+algoritmo de resumen de árbol integrado.
+
+el publico
+
+<ArtifactLink path="normative-release.json">
+  <code>liberación-normativa.json</code>
+</ArtifactLink>
+se genera durante la construcción de producción. Copia todos los campos de
+origen de la versión confirmada y agrega:
+
+- `websiteCommit`, el sitio web exacto Git commit;
+- `buildIdentity`, ya sea el par de ejecución/intento de GitHub o la
+  confirmación local identidad; y
+- `contentDigests`, un resumen del árbol HTML creado para cada configuración
+  regional.
+
+El manifiesto generado no se confirma porque un archivo confirmado no puede
+contener verdaderamente la identidad Git de la confirmación que se contiene a sí
+mismo. La verificación de liberación reconstruye los campos generados y compara
+cada campo confirmado con `release-source.json`.
+
+<NormativeReleaseFacts />

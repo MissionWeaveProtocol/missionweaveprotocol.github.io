@@ -1,0 +1,125 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Arquitectura y arranque
+description: >-
+  Cómo ensamblar los límites de confianza normativos e iniciar un tiempo de
+  ejecución desde una versión exacta MissionWeaveProtocol 0.1.
+---
+
+# Arquitectura y arranque
+
+Un tiempo de ejecución comienza con confianza explícita y límites estatales.
+MissionWeaveProtocol no es RPC Agent-a-Agent
+([MWP-FND-002](../../../reference/specification/foundations/#mwp-fnd-002)). Los
+mensajes y la salida del modelo no pueden autorizar efectos secundarios
+([MWP-FND-014](../../../reference/specification/foundations/#mwp-fnd-014)); la
+acción consecuente está conectada al trabajo aceptado, la barrera actual, la
+política y un token de capacidad con alcance
+([MWP-FND-015](../../../reference/specification/foundations/#mwp-fnd-015)).
+
+## Responsabilidades del tiempo de ejecución lógica
+
+| Responsabilidad             | Función de protocolo                                                                                                             |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Agent Registry              | Publica la identidad, las capacidades, los puntos finales, las claves de firma y el historial Organization gobernados por Agent. |
+| Verificador Signed Document | Produce el resultado criptográfico de seis etapas a partir de bytes de documento exactos y evidencia autorizada Registry.        |
+| Servicio de admisión        | Obtiene resultados Admission Log autenticados y genera resultados de primera admisión o de confianza histórica.                  |
+| Group Authority             | Autentica actores, valida el estado y la política actuales, serializa las transiciones aceptadas y agrega eventos Group.         |
+| Servicio de autorización    | Emite tokens de capacidad de corta duración vinculados al trabajo, épocas, arrendamientos, políticas y presupuestos aceptados.   |
+| Agent tiempo de ejecución   | Mantiene proyecciones locales con alcance Group, consume eventos, programa trabajos aceptados y produce artefactos y Evidence.   |
+
+Group Authority es una autoridad lógica por Group. La replicación puede ser una
+opción de implementación interna, pero el consenso y la topología de réplica no
+son semántica de protocolo
+([MWP-FND-012](../../../reference/specification/foundations/#mwp-fnd-012)).
+
+El Agent Card emitido por Organization es la identidad estable y la raíz de
+capacidad; La capacidad autodeclarada no es suficiente
+([MWP-IDN-001](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-001)).
+Cada implementación también debe preservar el conjunto invariante completo,
+incluida la conversación/no autoridad, la delimitación, el historial de solo
+agregar, la entrega al menos una vez, el aislamiento Mission y la reducción de
+presupuestos
+([MWP-FND-013](../../../reference/specification/foundations/#mwp-fnd-013)). El
+contenido Mission, las credenciales, el estado intermedio y la memoria Agent
+permanecen dentro del ámbito Group a menos que la divulgación sea explícita y
+esté autorizada
+([MWP-FND-019](../../../reference/specification/foundations/#mwp-fnd-019)).
+
+## Orden de arranque
+
+1. **Seleccione una versión exacta.** Cargue las entradas de la versión
+   confirmada y verifique la identidad de lanzamiento del sitio web generado
+   antes de aceptar artefactos locales.
+2. **Cargar esquemas y validadores escalares.** Registrar formato Borrador
+   2020-12 aserciones, manejo estricto de JSON, marca de tiempo, URI, base64url,
+   comportamiento JCS y Ed25519 antes de decodificar el tráfico del protocolo.
+3. **Verifique los requisitos previos de confianza.** Rechace la preparación a
+   menos que el tiempo de ejecución pueda establecer la evidencia Registry
+   actual o histórica aplicable
+   ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010))
+   y los resultados Admission Log autenticados
+   ([MWP-ADM-003](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).
+   La evidencia no disponible o indeterminada no constituye una ausencia
+   autorizada.
+4. **Abrir estado duradero.** Recuperar el estado de servicio autorizado y
+   Agent-local proyecciones sin confundirlas. La cola local o la pérdida del
+   cursor no deben alterar la verdad de Mission
+   ([MWP-FND-023](../../../reference/specification/foundations/#mwp-fnd-023)).
+5. **Establece la identidad del tiempo de ejecución.** Completa el nuevo desafío
+   HELLO Exchange y obtenga el nuevo Session Epoch antes de emitir los comandos
+   Agent
+   ([MWP-IDN-007](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-007)).
+   Un Session Epoch posterior protege cada tiempo de ejecución anterior para esa
+   identidad Agent
+   ([MWP-IDN-008](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-008)).
+   Los comandos duraderos y los manifiestos Artifact permanecen firmados
+   individualmente incluso en una sesión autenticada
+   ([MWP-IDN-009](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-009)).
+6. **Suscríbete y reproduce.** Reanuda cada Group autorizado desde su duradero
+   Cursor contiguo, ruta por ID Group y cerrar cualquier espacio en la secuencia
+   antes del procesamiento en vivo.
+7. **Habilitar transiciones de estado.** Un Group Authority acepta un Command
+   solo después autenticar al actor y validar esquema, épocas, revisión, rol,
+   delegación, presupuesto, política y arrendamiento de forma atómica
+   ([MWP-EVT-004](../../../reference/specification/commands-events-and-ordering/#mwp-evt-004)).
+8. **Habilitar los efectos secundarios al final.** Emitir tokens de capacidad
+   con privilegios mínimos únicamente después de la aceptación WorkItem y las
+   aprobaciones requeridas, con vinculaciones que no sean más amplias ni de
+   mayor duración que el contrato de arrendamiento de ejecución actual
+   ([MWP-AUT-001](../../../reference/specification/authorization-and-budgets/#mwp-aut-001)).
+
+## Inicio cerrado por error
+
+No marque un tiempo de ejecución como listo cuando su catálogo de esquemas,
+identidad de versión exacta, evidencia Registry, adaptador de admisión, estado
+duradero o Session Epoch sean indeterminados. Un tiempo de ejecución degradado
+puede permanecer disponible para diagnósticos, pero no debe aceptar transiciones
+de estado cuyos requisitos previos no estén probados.
+
+:::note[Implementation note]
+
+Las responsabilidades lógicas pueden ejecutarse en un proceso o en muchos
+servicios. Una implementación pequeña puede combinar verificación, admisión,
+Group Authority y transporte; una implementación más grande puede aislarlos
+detrás de adaptadores autenticados. La topología del proceso, la elección del
+líder, los productos de bases de datos, el diseño de la caché y el
+descubrimiento de servicios son opciones de implementación, siempre que
+preserven la misma autoridad lógica y límites de atomicidad.
+
+Inicialice adaptadores de tipos distintos para Organization Registry, resolución
+de clave actual e histórica, acceso Admission Log y contexto de aceptación
+confiable, incluso cuando un servicio implemente varios de ellos. Esto mantiene
+los errores de transporte, los errores de caché y la constatación autoritativa
+de ausencia como resultados diferentes.
+
+Mantenga un estado de preparación explícito por dependencia en lugar de contraer
+cada error en un único booleano `healthy`. Eso hace posible distinguir un tiempo
+de ejecución de recuperación de solo lectura de uno autorizado para aceptar
+comandos.
+
+:::
+
+Continúe con [Tipos de protocolo](../protocol-types/) antes de implementar
+códecs o modelos de lenguaje generados.

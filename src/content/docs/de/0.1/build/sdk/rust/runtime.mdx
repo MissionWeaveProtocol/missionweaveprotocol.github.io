@@ -1,0 +1,129 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Rust Laufzeitreferenz
+description: >-
+  Die vollständige Crate-Root-Oberfläche und Laufzeitgrenzen des exakt
+  angehefteten Rust SDK.
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Rust Laufzeitreferenz
+
+Diese Seite deckt die gesamte Crate-Root-Oberfläche ab, die durch das
+[exakte API Inventar](../api/) dargestellt wird. Das Verhalten des gemeinsam
+genutzten Protokolls bleibt durch die lokalen
+[Laufzeitreferenz](../../../runtime/architecture-and-bootstrap/) und
+[Referenzklauseln](../../../../reference/specification/) definiert. Die
+folgenden Modulnamen geben die Herkunft der Implementierung an; Aufrufer
+importieren die öffentlichen Reexporte von `missionweaveprotocol`, da die Module
+selbst privat sind.
+
+<SupportStatus status="implemented" /> gilt für die unten aufgeführten
+Crate-Root-APIs und das In-Process-Verhalten.
+
+<SupportStatus status="deployment-adapter-required" /> gilt für die aktuelle
+Registry-Autorität, den vertrauenswürdigen Zulassungskontext, den
+authentifizierten Protokollzugriff und andere Bereitstellungsdienste.
+
+<SupportStatus status="not-implemented" /> bedeutet, dass die genau angeheftete
+crate keine entsprechende Laufzeit hat.
+
+## Crate und Ausführungsmodell
+
+Das crate hat die Version `0.1.0`, verwendet Edition 2024, deklariert Rust 1.85
+als minimal unterstützte Toolchain und stellt eine Binärdatei bereit:
+`missionweaveprotocol-conformance`. `src/lib.rs` ist das einzige öffentliche
+Importstammverzeichnis; Interne Modulpfade sind keine unterstützten APIs.
+
+Durch die Installation des crate wird kein Dienst gestartet, kein Socket
+geöffnet, kein Status beibehalten und keine Autorität gewährt. Zurückgegebene
+Byte-Slices und Beweisobjekte bleiben lokale Prozesswerte, es sei denn, die
+Anwendung speichert oder überträgt sie absichtlich.
+
+## Vollständige Quellkarte
+
+| Laufzeitproblem                  | Öffentliche Implementierungsquelle                          | Vertrag beim angehefteten Commit                                                                                                                          |
+| -------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Paketstamm und Konstanten        | `lib.rs`                                                    | Exportiert die unterstützte öffentliche Oberfläche und die SDK-, Protokoll- und Wire-Versionen erneut.                                                    |
+| Strikt JSON                      | `strict_json.rs`                                            | `parse_strict_json` lehnt ungültige UTF-8, doppelte Mitglieder, fehlerhafte JSON und nachgestellte Daten ab.                                              |
+| Schema und genaue Zeit           | `schema.rs`, `signed_document.rs`                           | Offline-Entwurfsvalidierung 2020-12, bestätigte URI-/Datums-/Uhrzeitformate, gepackte Schemasuche und exakter sofortiger Vergleich.                       |
+| Kanonisch JSON und Ed25519       | `canonical.rs`                                              | RFC 8785 Bytes und Hashes plus `Ed25519Signer` Helfer.                                                                                                    |
+| Signierte Dokumente und Registry | `signed_document.rs`                                        | Neun Dokumentarten, Signatur, sechsstufige Verifizierung, vollständige Organization-weite Registry-Auflösung und unveränderlicher Verifizierungsnachweis. |
+| Rahmen                           | `frame.rs`                                                  | `FrameCodec` dekodieren, kodieren und Dokumentvalidierung. Dies ist ein Codec, kein gehosteter Gateway-Dienst.                                            |
+| Strukturkonformität              | `conformance.rs`, `bin/missionweaveprotocol-conformance.rs` | Eingebettete Schema-Vektorausführung, Berichtszusammenfassungen, CLI-Exit-Status und optional ausführliche Fehler.                                        |
+| Eingebettete Pakete              | `bundle.rs`                                                 | Exakter PIN-Zugriff, Artefaktsuche und Digest-Verifizierung für Protokoll-, Kryptografie- und Zulassungspakete.                                           |
+| Erstzulassung                    | `admission.rs`                                              | Erste Zulassung und historisches Vertrauen über erfolgreiche Signed Document-Verifizierung.                                                               |
+
+## Validierung, Signierung und Registry Beweis
+
+`SchemaCatalog::new`, `validate`, `validate_bytes`, Und `identifier` Arbeiten
+Sie über die 22 genau eingebetteten Schemata. Striktes Parsen und
+Schemavalidierung sind von der Kanonisierung getrennt. `canonical_bytes`,
+`canonical_sha256`, Und `signature_input` implementieren RFC 8785 und
+Signier-Eingabe-Konstruktion.
+
+`SigningKey` ist die anwendungseigene Signaturnaht. `Ed25519Signer` bietet
+Seed-basierte Signierungs- und Verifizierungshilfen für den kontrollierten
+lokalen Einsatz. `SignedDocumentCodec::sign` Und `verify` Wählen Sie eines von
+neun expliziten aus `SignedDocumentKind` Werte und führen Sie die Stufen
+„Parse“, „Schema“, „Signaturumschlag“, „Schlüsselauflösung“, „Kanonisierung“ und
+„Signatur“ der Reihe nach aus.
+
+`KeyResolver::resolve` muss zurückkehren
+`KeyRegistrySnapshot::organization_wide` Beweise für eine kohärente
+Anwendbarkeit Organization Revision mit vollständig erhaltener Historie. Ein
+ausgewählter Schlüssel, eine Teilprojektion, ein Cache-Treffer oder ein vom
+Aufrufer bereitgestelltes Vertrauensflag ist unzureichend.
+`VerifiedSignedDocument` stellt die empfangenen Bytes, die Signatur und die
+vollständigen kanonischen Bytes und Hashes, die geschützte Zeit, den
+Signaturnachweis und die Auflösung bereit Registry Beweis.
+
+## Frames, Bundles und Konformität
+
+`FrameCodec::decode`, `encode`, Und `validate_document` Rahmenwerte validieren;
+Sie verfügen nicht über Transport, Sitzungsauthentifizierung, Cursorpersistenz,
+Gegendruck, Routing oder maßgebliche Zustandsübergänge.
+
+`ProtocolBundle::verify` überprüft das Strukturpaket mit 22 Schemata und 59
+Dateien. `verify_cryptography` prüft 98 Artefakte, 22 Fälle und 62 deklarierte
+Bewertungen; `verify_admission` prüft 19 Artefakte, 5 Fälle und 30 deklarierte
+Bewertungen. Diese beiden Aufrufe überprüfen Pins, Zählungen und Digests. Sie
+führen nicht jede Kryptografie oder Zulassungsprüfung durch. Die
+Konformitätsbinärdatei und `ConformanceRunner::run` führen nur die
+Strukturvektoren aus.
+
+## Erster Einlass
+
+`AdmissionService::new`, `prepare_first_admission`, `admit_first` und
+`verify_historical_admission` legen den genauen Zulassungsfluss offen. Fahren
+Sie mit der [Rust Zulassungsreferenz](../admission/) für Adapterergebnisse,
+Aufrufreihenfolge und das ausführbare Paket-Consumer-Beispiel fort.
+
+## Explizite Verfügbarkeitsgrenzen
+
+<SupportStatus status="deployment-adapter-required" />
+**Admission-Authority-Grenze** – die Anwendung stellt aktuelle Registry-Beweise,
+historische Registry-Beweise, vertrauenswürdigen Akzeptanzkontext und ein
+authentifiziertes Nur-Anhänge-Protokoll bereit.
+
+<SupportStatus status="not-implemented" /> **Mission Orchestrierung** – es wird
+keine übergeordnete Mission Zustandsmaschine oder Orchestrierungsfassade
+exportiert.
+
+<SupportStatus status="not-implemented" /> **Worker Scheduler** – keine Worker
+Warteschlange, kein Scheduler, Lease Runner oder Wiederherstellungsschleife wird
+exportiert.
+
+<SupportStatus status="not-implemented" /> **Gehosteter Gateway-Dienst** – die
+Das crate stellt einen Frame-Codec bereit, keinen Gateway-Dienst mit Transport-,
+TLS-, Sitzungs-, Routing- oder Gegendruckbesitz.
+
+<SupportStatus status="not-implemented" /> **Autoritative Persistenzlaufzeit** –
+es wird keine datenbankgestützte oder Agent-lokale Persistenzlaufzeit
+exportiert.
+
+Diese Abwesenheiten sind Bestandteil des dokumentierten Betreuungsvertrages;
+Python Referenzlaufzeitfunktionen dürfen nicht aus gemeinsam genutzten
+Protokollnamen abgeleitet werden.

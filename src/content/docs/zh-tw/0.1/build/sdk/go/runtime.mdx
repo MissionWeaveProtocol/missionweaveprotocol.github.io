@@ -1,0 +1,92 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Go運行時參考
+description: 精確固定的 Go SDK 的完整導出包表面和運行時邊界。
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Go 運行時參考
+
+本頁涵蓋了由 [確切的 API inventory](../api/)
+表示的完整 Go 包。共享協定行為仍由本地[運行時參考](../../../runtime/architecture-and-bootstrap/)和[參考子句](../../../../reference/specification/)定義。下面的名稱定義了固定模組如何公開該行為。
+
+<SupportStatus status="implemented" /> 適用於下列所列的匯出套件 API
+和進程內編解碼器。
+
+<SupportStatus status="deployment-adapter-required" /> 適用於目前 Registry
+權威性、可信任準入情境、經過驗證的原子日誌存取以及部署提供的其他外部服務。
+
+<SupportStatus status="not-implemented" />
+表示精確固定的模組沒有對應的導出執行時間。
+
+## 導入和執行模型
+
+將單一套件導入為
+`missionweaveprotocol "github.com/missionweaveprotocol/go-sdk"`。此模組需要 Go
+1.24。公共名稱遵循 Go 導出規則；未導出的幫助程序和實作適配器不是應用程式契約。
+
+本模組使用 JSON、加密、嵌入和 I/O 的標準函式庫，以及其聲明的架構和 RFC
+8785 依賴項。單獨安裝軟體包不會啟動進程或建立權限。
+
+## 完整的原始碼圖
+
+| 運行時關注           | 公共源文件                                                                                       | 固定提交的合約                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| 包裝標識和文檔       | `doc.go`                                                                                         | 包級範圍和支援的實現邊界。                                                              |
+| 嚴格的 JSON 和時間值 | `json.go`, `rfc3339.go`                                                                          | 嚴格的 JSON 解碼和導出 RFC 3339 驗證和準入使用的即時比較表面。                          |
+| 架構目錄             | `schema.go`                                                                                      | 2020-12 草案 架構載入、驗證和精確打包的架構存取。                                       |
+| 規格 JSON            | `canonical.go`                                                                                   | RFC 8785 規範化與規範位元組產生。                                                       |
+| 簽署與簽署文件       | `signing.go`、`signed_document_codec.go`、`signed_document_verification.go`、`ed25519_strict.go` | Ed25519個助手，九個簽章文件配置文件，完整的Registry解析，嚴格的點檢查和六階段驗證證據。 |
+| 框架                 | `frame.go`                                                                                       | 支援的 WebSocket 幀值的解析和編碼操作。這是編解碼器，而不是託管網關服務。               |
+| 一致性與捆綁         | `conformance.go`、`bundle.go`                                                                    | 嵌入式捆綁標識、摘要驗證、清單執行和指令支援。                                          |
+| 首次準入             | `admission.go`                                                                                   | 成功驗證之上的首次準入與歷史信任型別化部署適配器。                                      |
+
+## 驗證和密碼學
+
+`DecodeJSON` 強制執行受支援的嚴格 JSON 資料模型，`SchemaCatalog`
+驗證確切的嵌入式草案 2020-12 架構集。 `CanonicalizeJSON` 和
+`MarshalCanonicalJSON` 產生 RFC
+8785 位元組。這些是單獨的門：模式成功並不意味著規範或簽名的證據。
+
+`SignedDocumentCodec.Sign`
+選擇明確文件類型，驗​​證受保護時間，標準化無符號投影，呼叫
+`SigningKey`，檢查 Ed25519 編碼，附加信封並驗證結果。 `Verify`
+消耗原始位元組並依序執行解析、模式、簽章信封、金鑰解析、規範化和簽章階段。傳回的
+`VerifiedSignedDocument`
+公開了防禦位元組副本、簽章和完整雜湊值、受保護時間、簽章證據和解析的金鑰。
+
+`KeyResolver`
+必須傳回完整的 Organization 範圍的 Registry 證據。選定的金鑰、映射條目或呼叫者提供的信任標誌是不夠的。
+
+## 框架、捆綁包和一致性
+
+框架函數解析和編碼值，但不開啟套接字、驗證會話、保留遊標、安排工作或應用權威轉換。這些是部署或更高階的執行時間職責。
+
+`VerifyProtocolBundle`、`VerifyCryptographyBundle` 和 `VerifyAdmissionBundle`
+將每個嵌入工件集綁定到其記錄的身份。 `RunEmbeddedConformance`
+執行嵌入的結構向量。當 SDK 提交、協定 pin、架構集、加密包、準入包或部署適配器變更時再次執行這些。通過它們僅證明了經過測試的封裝表面。
+
+## 首次準入
+
+`NewAdmissionService` 建構精確模式服務。 `PrepareFirstAdmission`、`AdmitFirst`
+和 `VerifyHistoricalAdmission` 是可能傳回適配器或驗證錯誤的同步 Go 呼叫。
+`AdmissionCurrentKeyResolver`、`TrustedAdmissionContext` 和 `AdmissionLog`
+仍然是部署介面。繼續[Go準入參考](../admission/)，了解確切的結果、原子性要求和歷史路徑。
+
+## 明確的可用性邊界
+
+<SupportStatus status="not-implemented" /> **Mission 編排** — 不匯出進階 Mission
+狀態機或編排外觀。
+
+<SupportStatus status="not-implemented" /> **Worker 排程器** — 不匯出 Worker
+佇列、排程器、租用執行程式或復原循環。
+
+<SupportStatus status="not-implemented" /> **託管網關服務** —
+此模組提供幀編解碼器，而不是具有傳輸、會話、TLS、路由或反壓所有權的網關服務。
+
+<SupportStatus status="not-implemented" /> **權威持久性運行時** —
+不導出資料庫支援的或 Agent 本地持久性運行時。
+
+這些未實作項目是受支援執行階段合約的一部分。應用程式不得從共享協定名稱推斷 Python 參考執行階段能力。

@@ -1,0 +1,271 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-MSN
+title: 任务、群组、Membership 和对话
+description: Mission 和 Group 生命周期、成员资格、可见性、对话、消息和子任务。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../../components/InformativeBlock.astro";
+
+## 7. Mission 和 Group 生命周期
+
+### 7.1 创建
+
+<NormativeClause id="MWP-MSN-001" level="MUST">
+
+Mission
+MUST 声明有界目标、机器可读的完成定义、截止日期、可执行预算、风险/批准政策和 MissionOwner。根 Mission 的 MissionOwner
+MUST 是人类。创建过程正好分配了一个 Group 和一个 Group 级别的会话。 Mission
+ID 和 Group ID MUST 保持稳定。
+
+</NormativeClause>
+
+Mission 生命周期为：
+
+<span id="mission-transition-table"></span>
+
+| 当前状态            | Command 或原因                                    | 下一个状态          | 权威                                       |
+| ------------------- | ------------------------------------------------- | ------------------- | ------------------------------------------ |
+| 无                  | `mission.create` 与 Coordinator 租赁              | `active`            | 人类 MissionOwner，可能通过控制平面        |
+| 无                  | `mission.create_follow_up` 链接到已批准的 Mission | `active`            | 相同的人类 MissionOwner                    |
+| 无                  | `mission.create_child` 链接到父级 WorkItem        | `active`            | 父级 Coordinator 作为子任务的 MissionOwner |
+| `active`            | `mission.submit_for_approval`                     | `awaiting_approval` | 当前 Coordinator                           |
+| `awaiting_approval` | `mission.request_changes`                         | `active`            | MissionOwner                               |
+| `awaiting_approval` | `mission.approve`                                 | `approved`          | MissionOwner                               |
+| 非终结符            | `mission.cancel` 或父级取消传播化                 | `cancelled`         | MissionOwner 或 Organization 政策          |
+| 非终结符            | `mission.terminate` 或声明的子失败传播            | `failed`            | Coordinator 或 Organization 政策           |
+
+<NormativeClause id="MWP-MSN-002" level={["MUST NOT","MUST"]}>
+
+`approved`、`cancelled` 和 `failed` 是终端。重新打开或重写已批准的 Mission MUST
+NOT。更正、批准撤销或补救 MUST 创建链接的后续 Mission；撤销保留新的 Event，并且不会删除原始的 Approval。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-003" level={["MAY","MUST NOT","MUST"]}>
+
+Coordinator MAY 检查点或阻止单个 WorkItem 并建议取消，但 MUST
+NOT 通常会取消 Mission。 MissionOwner
+MAY 向 Coordinator 发出指令。直接人工分配到 Worker 是一种明确的、经过审核的紧急覆盖，并且 MUST 仍然通过 Worker 接受、能力、授权、预算和租赁规则。
+
+</NormativeClause>
+
+### 7.2 Coordinator 租赁
+
+<NormativeClause id="MWP-MSN-004" level="MAY">
+
+任一时刻最多只 MAY 有一个当前 Coordinator Lease
+Epoch。该租约标识 Agent、Coordinator Epoch、Session
+Epoch、到期时间和续订策略。只有当前 Coordinator
+Epoch 可以授权或分配 WorkItems、接受 Worker 结果、提交 Mission 或创建子任务。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-005" level={["MAY","MUST"]}>
+
+如果 Coordinator 停止续订其租约，Organization 控制平面或 MissionOwner
+MAY 会指定具有更高 Coordinator
+Epoch 的替代者。前一个 Coordinator 生成的事件仍然有效的历史记录，但其后来的协调命令 MUST 会因过时而被拒绝。替换 MUST 接收签名的 Context
+Package 和 MUST 在发出新分配之前协调当前的 WorkItem 状态。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-006" level={["SHOULD","MAY","MUST NOT"]}>
+
+Coordinator
+SHOULD 预留用于规划、监控、集成和升级的容量。它 MAY 执行协调本机工作项和异常后备工作，但 MUST
+NOT 是其自身输出的唯一审阅者。
+
+</NormativeClause>
+
+### 7.3 进度和完成情况
+
+<NormativeClause id="MWP-MSN-007" level={["MUST","MAY","MUST NOT"]}>
+
+权威的 Mission 进度 MUST 源自 WorkItem 依赖关系图、已接受的 Evidence、关键路径、阻碍因素、截止日期和批准状态。 Coordinator
+MAY 发布叙述性摘要、风险和预测，但 MUST NOT 用未经证实的百分比替换派生状态。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-008" level="MUST">
+
+在提交之前，Coordinator
+MUST 审核所有必需的 WorkItem 结果并接受 Evidence。然后，它针对特定的 Mission 修订版和 Artifact 集发出
+`mission.submit_for_approval`。 MissionOwner 发出签名的 Approval 或签名的更改请求。请求的更改重新打开相同的 Mission，并且 Coordinator 创建修订或更正的工作项，而不删除先前提交的内容。
+
+</NormativeClause>
+
+### 7.4 保留和归档
+
+<NormativeClause id="MWP-MSN-009" level={["MUST","MUST NOT","MAY"]}>
+
+活动的 Group
+MUST 保留其完整的 Event 历史记录。归档 MUST 生成包含决策、工作项、批准和 Artifact 引用的签名最终快照。根据 Organization 策略保留原始加密审核日志。合法删除或安全编辑 MUST 附加可审核的墓碑；它 MUST
+NOT 默默地重写先前的 Event ID 或序列号。重新连接 MAY 使用快照，后跟后续事件。
+
+</NormativeClause>
+
+## 8. Membership，可见性和关注度
+
+<NormativeClause id="MWP-MSN-010" level="MUST">
+
+Membership 将 Agent 或人类绑定到一个 Group、一个纪元、一个角色、可见性起始序列和显式功能。 Group 范围的 Agent 或人类 Command
+MUST 携带其当前的 Membership Epoch；来自已撤销或过时的 Membership Epoch
+MUST 的 Command 将被拒绝。 Organization-service 命令由 Organization 策略进行身份验证和授权，而不是通过发明 Group
+Membership
+Epoch 进行身份验证和授权。 MissionOwner 和 Coordinator 成员资格 MUST 具有完整的 Group 可见性。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-011" level="SHOULD">
+
+Worker Membership SHOULD 按需即时建立：
+
+1. Coordinator 选择候选者，并授予限定范围的临时 Membership；
+2. Worker 收到一份有到期时间的 offer 和一个已签名的 Context Package；
+3. 接受 offer 会激活 Membership 并创建 ownership；以及
+4. 当 Worker 不再承担 WorkItem 或审核义务，或者 Mission 已归档时，Membership 结束。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-012" level={["MUST NOT","MAY"]}>
+
+迟加入的 Worker MUST NOT 自动接收不受限制的历史记录。它接收 Context
+Package、相关对话和 Artifact 引用，以及仅其 Membership 允许的历史记录。它 MAY 在授权时检索引用的源事件。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-013" level={["MUST","SHOULD","MAY"]}>
+
+所有提交的消息都保留在持久的 Group 历史记录中，但实时传递 MUST 支持注意力过滤器。 Worker
+SHOULD 接收其 WorkItem 对话、直接提及、重要公告和订阅的横切主题。其他授权历史记录可按需检索。 Coordinator
+MAY 消耗所有消息或连续摘要。 MissionOwner
+SHOULD 接收摘要通知，同时保留完整的检查权限。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-014" level={["MUST NOT","MUST","SHOULD"]}>
+
+Agent 的嘈杂 Group MUST
+NOT 会导致来自另一个 Group 的流量匮乏。网关 MUST 实现每个 Group 流量控制，SHOULD 允许独立订阅游标。
+
+</NormativeClause>
+
+## 9. 对话和消息
+
+<NormativeClause id="MWP-MSN-015" level={["MUST","MAY"]}>
+
+Mission 的创建会创建 Group 级别的规划会话。每个 WorkItem
+MUST 都拥有一个专用会话。实现 MAY 为敏感材料创建审查对话和链接的受限对话。受限对话保留在 Mission 的审核边界内，并且 MUST 可由 Coordinator 和 MissionOwner 检查。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-016" level={["MAY","MUST NOT"]}>
+
+提交的 Message 仅包含已完成的内容。 MissionWeaveProtocol 0.1 未定义部分令牌或
+`message.delta`
+流。 Message 内容 MAY 包括文本和对工件或结构化数据的引用。嵌入大型二进制数据MUST
+NOT；它作为 Artifact 引用进行传输。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-017" level="MUST NOT">
+
+每个 Message 对象都有
+`authority: false`。 Message（例如“立即部署”）只是对话。要采取行动，授权参与者必须通过 Command 创建或授权 WorkItem。接口 MUST
+NOT 提供 Message 作为可执行分配。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-018" level="MAY">
+
+任意 Group Agent MAY：
+
+- 发布 Message；
+- 提出WorkItem；
+- 请求帮助；和
+- 在相关对话中直接与同事讨论背景。
+
+</NormativeClause>
+
+### 9.1 委派工作权限
+
+<NormativeClause id="MWP-MSN-019" level={["MAY","MUST"]}>
+
+仅当前 Coordinator、MissionOwner 紧急覆盖或持有显式范围委托授权 MAY 的 Agent 授权并提供 WorkItem。
+`work_delegate`
+角色仅使 Group 成员有资格使用补助金；该角色本身并不传达作品创作权。委托的
+`work.authorize` 或 `work.offer` Command MUST 引用持久的授予 ID。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-020" level={["MAY","MUST"]}>
+
+仅当前的Coordinator
+MAY发出`membership.grant_delegation`。生成的授权 MUST 记录其授权 ID、受让人 Agent
+ID、Mission ID、Group ID、目标 WorkItem
+ID、允许的功能 ID 和最低版本、所有六个资源预算的货币和明确上限维度、最大后代深度、受让人 Membership
+Epoch、Coordinator Epoch、发行 Coordinator、授予时间和到期时间。接受会发出
+`membership.delegation.granted`。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-021" level={["MAY","MUST"]}>
+
+目标 WorkItem 是 Grant 的范围根。受让人 MAY 提供该根或现有后代，并且 MAY 仅当
+`parentWorkItemId`
+显式将其链接到该子树时才授权新的后代。每个必需的工作合同功能 MUST 均获得拨款允许并满足其最低版本。在拨款 MUST 下创建或提供的所有工作项的累积预算保持在每个拨款上限之内。后代深度 MUST 满足授予最大值和 Organization 合作策略。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-022" level={["MUST","MUST NOT"]}>
+
+每次使用时，参与者 MUST 都是受让人，并持有一个活动的 `work_delegate`
+Membership，其纪元等于授予人的受让人 Membership 纪元。授权的 Mission、Group、Coordinator
+Epoch、发行者和有效性间隔 MUST 仍然与当前的权威状态匹配。替换的 Coordinator、更改或结束的 Membership、授权过期、目标丢失或失败、取消或验证的目标立即使进一步使用无效。赠款不可转让。没有有效补助金的工作人员可以提出子工作，但 MUST
+NOT 为另一个 Worker 创建可执行义务。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-023" level={["MUST","MAY"]}>
+
+接受的消息是不可变的。更正、撤消或编辑 MUST 附加引用原始 Message
+ID 的新 Event。编辑需要可审计的政策原因。用户界面 MAY 显示最新的有效形式，同时保留 Event 链。
+
+</NormativeClause>
+
+<InformativeBlock title="固定源内容续接">
+
+下一个块恢复稍后固定的源段。有关介入的本地页面和确切的行范围，请参阅[规范源映射](./)。
+
+</InformativeBlock>
+
+## 14. 家长和孩子的任务
+
+<NormativeClause id="MWP-MSN-024" level={["MAY","MUST"]}>
+
+足够复杂的 WorkItem
+MAY 升级为子任务，具有自己的 Group、Coordinator、WorkItem 图、会员资格、预算、截止日期和审批政策。父级 WorkItem 和子任务 MUST 相互链接。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-025" level="MUST">
+
+父子图 MUST 是非循环的。子预算、截止日期、功能、数据访问和权限 MUST 是父级的子集。组织 MUST 配置默认最大深度，并需要显式 MissionOwner 或超过该阈值的策略批准。允许合法批准的复杂性 MUST；限制是护栏，而不是硬协议上限。
+
+</NormativeClause>
+
+默认情况下，子级 Coordinator 审核并提交子级结果，父级 Coordinator 充当子级 MissionOwner。当风险策略如此规定时，还需要根 MissionOwner 的人工批准。批准的子任务结果会作为父级 WorkItem 的 Evidence 和 Artifact。
+
+失败的子项 Mission 不会自动使其父项失败。它发出结构化故障 Evidence 并阻止父级 WorkItem 或使其失败。父级 Coordinator 可以重新计划、修改范围、创建替换子级或取消。仅当父级完成策略声明子级不可或缺且别无选择时，失败才会自动传播。
+
+<NormativeClause id="MWP-MSN-026" level={["MUST NOT","MUST"]}>
+
+父级 Coordinator 接收子级状态更改、进度摘要、修订后的估计、阻碍因素、预算/策略升级和最终结果。父级 Coordinator
+MUST
+NOT 被要求摄取每个子 Message，但仍保留经过授权的按需检查能力。根 MissionOwner
+MUST 能够检查完整的 Mission 树。
+
+</NormativeClause>

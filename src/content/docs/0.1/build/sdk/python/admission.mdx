@@ -1,0 +1,134 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Python First Admission and Historical Trust"
+description:
+  "Typed Python adapters, exact call order, trust boundaries, and a runnable
+  Admission example."
+---
+
+import admissionExample from "../../../../../../../examples/sdk/python/admission.py?raw";
+
+# Python First Admission and Historical Trust
+
+The Python `AdmissionService` layers authenticated First Admission and
+Historical Trust above the six-stage Signed Document verifier
+([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+The controlling language-independent flow is the local
+[First Admission and Historical Trust runtime page](../../../runtime/first-admission-and-historical-trust/),
+and the exact requirements are the local
+[First-Admission and Historical-Trust clauses](../../../../reference/specification/first-admission-and-historical-trust/).
+
+## Public types
+
+| Public API                                     | Responsibility                                                                                                                                                                                                                                                                                                          |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.resolve_current`  | Return complete Organization-wide Registry evidence that the deployment asserts is current for a new first-admission decision.                                                                                                                                                                                          |
+| `TrustedAdmissionContext.issue`                | Issue the trusted record ID, trusted acceptance instant, and accepting service only after authoritative absence.                                                                                                                                                                                                        |
+| `AdmissionLog.lookup`                          | Return `AdmissionLookupStatus.FOUND` with authenticated bytes or `AdmissionLookupStatus.AUTHORITATIVE_ABSENCE`. Transport failure, cache miss, indeterminate state, and unauthenticated absence fail closed under [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
+| `AdmissionLog.append_or_return_existing`       | Atomically append candidate bytes or return the concurrent authoritative winner.                                                                                                                                                                                                                                        |
+| `AuthenticatedAdmissionRecord`                 | Bind returned record bytes to the accepting service identity authenticated by the adapter for [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) validation.                                                                                                          |
+| `AdmissionService.prepare_first_admission`     | Create and validate candidate bytes from an already verified document and trusted context. It does not append or imply admission.                                                                                                                                                                                       |
+| `AdmissionService.admit_first`                 | Implement the current-evidence, authoritative-absence, atomic append, and returned-record flow in [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                                                                                                                 |
+| `AdmissionService.verify_historical_admission` | Rerun verification with historical Registry evidence and require a found record without issuing context or appending, as required by [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                                                                              |
+
+The adapter result is typed evidence. A caller-provided trust boolean is not an
+authoritative lookup outcome and must never select the success path.
+
+## First-admission call
+
+:::note[Informative example]
+
+```python
+admitted = AdmissionService().admit_first(
+    SignedDocumentKind.COMMAND,
+    document_bytes,
+    current_registry,
+    admission_log,
+    trusted_context,
+)
+```
+
+:::
+
+`admit_first` verifies before calling the log. When lookup returns
+`AdmissionLookupStatus.AUTHORITATIVE_ABSENCE`, it calls
+`prepare_first_admission`, invokes `append_or_return_existing`, then validates
+the record actually returned. A concurrent winner is acceptable only when its
+bytes, authenticated service, document binding, and trusted time all validate
+([MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009),
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)).
+
+## Historical replay call
+
+:::note[Informative example]
+
+```python
+historical = AdmissionService().verify_historical_admission(
+    SignedDocumentKind.COMMAND,
+    document_bytes,
+    historical_registry,
+    admission_log,
+)
+```
+
+:::
+
+Historical replay uses retained Registry history, requires a found Admission
+record, and never calls `TrustedAdmissionContext.issue` or
+`AdmissionLog.append_or_return_existing`. Matching record IDs in the example
+demonstrate that replay recovered the first authoritative record; they do not by
+themselves prove Command freshness, signer authorization, state-machine
+acceptance, or portable log-proof verification. Command freshness and signer
+authorization remain separate requirements under
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+and
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
+
+## Runnable exact-pinned example
+
+:::note[Informative example]
+
+The example uses only public SDK APIs and the declared `cryptography` runtime
+dependency. It deterministically creates an Ed25519 key, a complete
+Organization-wide Registry, a signed Command, and typed in-memory adapters. The
+fixed private seed is demonstration material and must never be used outside the
+example.
+
+<pre>
+  <code>{admissionExample}</code>
+</pre>
+
+Run it from an exact checkout after installing all SDK extras:
+
+```bash
+uv sync --all-extras
+uv run python /absolute/path/to/examples/sdk/python/admission.py
+```
+
+Expected output contains the same First-Admission Record ID for
+`first admission` and `historical replay`. The program also asserts matching
+signing hashes and record bytes, and that the log appended exactly once.
+
+:::
+
+:::note[Implementation note]
+
+Replace the example adapters in a deployment:
+
+- `CurrentRegistryFixture` with an authenticated current-Registry resolver;
+- `InMemoryAdmissionLog` with an authenticated, append-only, atomic Admission
+  Log; and
+- `FixedTrustedAdmissionContext` with an Organization-controlled trusted-time
+  and accepting-service issuer.
+
+Replace `DeterministicSigningKey` with a deployment-owned signing service or key
+adapter. Never embed a private signing seed in production code.
+
+Do not collapse those boundaries into one availability or trust flag.
+
+:::
+
+Post-cryptographic Admission rejection remains protected stage `admission` and
+wire code `AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).

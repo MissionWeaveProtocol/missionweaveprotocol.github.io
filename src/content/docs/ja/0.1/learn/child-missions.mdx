@@ -1,0 +1,50 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: サブタスク
+description:
+  親スコープ、予算、Evidence、説明責任を失うことなく、複雑な WorkItem
+  を再帰的に分解します。
+---
+
+# サブタスク
+
+十分に複雑な WorkItem は **サブタスク（Child Mission）**
+になる可能性があります。サブタスクには、独自の Group、Coordinator、WorkItem グラフ、メンバーシップ、予算、期限、および承認ポリシーがあります。親 WorkItem とサブタスクは、相互に安定したリンクを保持します ([MWP-MSN-024](../../reference/specification/missions-groups-and-membership/#mwp-msn-024))。
+
+サブタスクは独自のライフサイクルを持つ Mission です。サブタスクは WorkItem ではありません。また、WorkItem の別の表示名でもありません。
+
+```text
+ルート Mission と Group
+└── 親 WorkItem が blocked になる
+    └── サブタスクとその専用 Group
+        ├── サブタスクの Coordinator
+        ├── サブタスク内の WorkItem と Evidence
+        └── サブタスクの Approval
+            └── 結果が親 WorkItem の Evidence と Artifact として返る
+```
+
+サブタスクを作成しても、親 Group はネストされたチャットルームには変わりません。サブタスクは別の Group を受け取り、承認されたサマリー、Artifact、Evidence、および安定したリンクのみを親と共有します。
+
+## 権限と承認
+
+親 Coordinator はサブタスクの MissionOwner として機能し、親 WorkItem に代わってサブタスクの結果を承認します。 Organization リスク ポリシーでは、人間による直接の承認が追加される場合があります。承認されたサブタスクの結果は、親 WorkItem の Evidence と Artifact になります。
+
+親 Coordinator は、ステータスの変更、概要、修正された見積もり、ブロッカー、予算またはポリシーのエスカレーション、および最終結果を受け取ります。認可されたオンデマンド検査を維持しながら、すべての子 Message は必要ありません。完全な可視性境界は
+[MWP-MSN-026](../../reference/specification/missions-groups-and-membership/#mwp-msn-026)
+です。
+
+## スコープは下方向に狭まります
+
+親子グラフは非循環のままです。子の予算、期限、機能、データ アクセス、および権限は、親のサブセットのままです。デフォルトの最大深度には、明示的な MissionOwner または追加の深さが正当化される場合のポリシーの承認が必要です ([MWP-MSN-025](../../reference/specification/missions-groups-and-membership/#mwp-msn-025))。
+
+これは、[MWP-FND-020](../../reference/specification/foundations/#mwp-fnd-020)
+の一般的な縮小不変式の子固有の形式です。
+
+## 失敗とフォローアップ作業
+
+失敗したサブタスクは構造化エラー Evidence を生成し、宣言された完了ポリシーに従って親 WorkItem に影響を与えます。親 Coordinator は、再計画、スコープの修正、代替サブタスクの作成、またはブランチのキャンセルを行うことができます。
+
+- **サブタスク**を使用して、アクティブな親 Mission 内で複雑な作業を完了します。
+- 修正、修正、または追加作業には **フォローアップ Mission**
+  を使用します承認された Mission が不変になった後。

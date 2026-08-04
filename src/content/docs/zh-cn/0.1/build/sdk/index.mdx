@@ -1,0 +1,67 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 官方 SDK 运行时参考
+description:
+  六个官方 MissionWeaveProtocol SDK 的精确提交安装、运行时、准入、支持和公共 API
+  参考。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkRuntimeMatrix from "../../../../../../components/SdkRuntimeMatrix.astro";
+
+# 官方 SDK 运行时参考
+
+:::caution[Draft Standard 0.1]
+
+这些版本化的 SDK 页面是规范网站出版物的一部分。它们在每个确切的 SDK 提交时定义受支持的公共运行时表面。准确的来源链接可确定出处；存储库 README 或
+`docs/` 页面不提供缺失的要求。
+
+:::
+
+共享的[运行时参考](../runtime/architecture-and-bootstrap/)定义了与语言无关的顺序和信任边界。每个 SDK 树都添加其真实的包标识、工具链、公共名称、适配器、可运行示例和显式可用性边界，而无需制造跨语言奇偶校验。
+
+## 精确的释放矩阵
+
+<SdkRuntimeMatrix />
+
+`Implemented` 表示固定源包含记录的公共表面。 `Deployment adapter required`
+表示 SDK 提供运行时合约，但部署必须提供外部权限、持久性或网络基础设施。
+`Not implemented` 表示固定的 SDK 没有相应的公共运行时表面。
+
+## 运行时参考
+
+<CardGrid>
+  <LinkCard
+    title="Python 参考运行时"
+    description="安装精确版本的软件包，组装完整运行时，运行首次准入与历史信任流程，并检查每个公共 API 条目。"
+    href="./python/"
+  />
+  <LinkCard
+    title="TypeScript SDK"
+    description="安装精确版本的包根运行时，运行首次准入与历史信任流程，并检查所有受支持的导出。"
+    href="./typescript/"
+  />
+  <LinkCard
+    title="Go SDK"
+    description="安装精确版本的模块，运行类型化的首次准入与历史信任流程，并检查每个导出 API 条目。"
+    href="./go/"
+  />
+  <LinkCard
+    title="Rust SDK"
+    description="安装精确版本的 crate，运行类型化的首次准入与历史信任流程，并检查每个 crate 根 API 条目。"
+    href="./rust/"
+  />
+  <LinkCard
+    title="Java SDK"
+    description="安装精确版本的 Maven 工件，运行类型化的首次准入与历史信任流程，并检查每个公共 Java API 条目。"
+    href="./java/"
+  />
+  <LinkCard
+    title="C++ SDK"
+    description="安装精确版本的 CMake 包，运行类型化的首次准入与历史信任流程，并检查每个已安装头文件 API 条目。"
+    href="./cpp/"
+  />
+</CardGrid>
+
+上面的每棵树都是同一规范版本的一部分。发布仍然需要每个精确固定的本机示例和网站发布检查，以满足其记录的验证边界。

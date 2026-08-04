@@ -1,0 +1,72 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: TypeScript SDK
+description:
+  安裝並導航 MissionWeaveProtocol 0.1 的完整固定 TypeScript 運行時參考。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# TypeScript SDK
+
+`@missionweaveprotocol/sdk`是官方的TypeScript實作套件。此參考描述了確切的提交
+`6d53ebfcf8350ae81d89fd818611b07f7373685c`、套件版本 `0.1.0` 以及 Node.js
+20 或更高版本。不同的提交或包建置是不同的記錄實現輸入，即使其版本字串未更改。
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="typescript"
+  command={`git clone https://github.com/MissionWeaveProtocol/typescript-sdk.git missionweaveprotocol-typescript-sdk
+cd missionweaveprotocol-typescript-sdk
+git checkout --detach 6d53ebfcf8350ae81d89fd818611b07f7373685c
+npm ci
+npm run build
+npm pack --pack-destination ..
+cd ..
+npm install ./missionweaveprotocol-sdk-0.1.0.tgz`}
+  verifyCommand={`node -e 'import("@missionweaveprotocol/sdk").then(({ sdkMetadata }) => console.log(sdkMetadata()))' npx --no-install Missionweaveprotocol-conformance --json`}
+>
+  <p slot="notes">
+    包根目錄提供 ESM 和 CommonJS 建置。僅支援包根和 <code>package.json</code>{" "}
+    匯出；內部來源檔案路徑不是公共子路徑 API。固定來源套件在直接 Git
+    依賴項安裝期間不會建置 <code>dist/</code>，因此記錄的流程會明確建置和安裝
+    tarball。只有當其來源綁定到相同的確切提交時，另一個 tarball 才可以替換它。
+  </p>
+</SdkInstall>
+
+:::
+
+安裝的 `missionweaveprotocol-conformance`
+指令運行打包的架構和向量曲面。它不建立部署權限、Admission
+Log 持久性、網路安全性或生產準備。
+
+## 使用此參考
+
+<CardGrid>
+  <LinkCard
+    title="完整執行階段"
+    description="每個支援的套件根模組、Node.js 運行時邊界、一致性入口點和明確非實作。"
+    href="./runtime/"
+  />
+  <LinkCard
+    title="首次準入與歷史信任"
+    description="Registry 目前證據、可信任上下文和 Admission Log 的型別化適配器，以及一個可運行範例。"
+    href="./admission/"
+  />
+  <LinkCard
+    title="確切的公共 API"
+    description="每個公共包根聲明都解析為其確切的原始程式碼行。"
+    href="./api/"
+  />
+</CardGrid>
+
+## 支援記錄的提交
+
+<SdkRuntimeMatrix sdk="typescript" />
+
+此矩陣將進程內實作與部署擁有的權限區分開來。安裝此軟體包不提供目前的 Registry 服務、經過驗證的原子 Admission
+Log、託管網關或持久運行時持久性。

@@ -1,0 +1,160 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Erstzulassung und historischer Trust
+description: >-
+  Wie eine Laufzeit die authentifizierten Admission Log-Ergebnisse, das atomare
+  Anhängen, die Validierung zurückgegebener Datensätze und die historische
+  Wiedergabe über der Kryptografie schichtet.
+---
+
+# Erstzulassung und historisches Vertrauen
+
+Die Zulassung ist eine separate semantische Schicht nach sechsstufiger
+kryptografischer Überprüfung. Signierungsbytes, Signatur-Hashes,
+Schlüsselauflösung oder das Signaturergebnis werden nicht geändert
+([MWP-ADM-005](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+Voraussetzung ist ein abgeschlossenes sechsstufiges Ergebnis
+([MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015))
+mit einem zulassungsunabhängigen Signatur-Hash
+([MWP-SDV-017](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-017))
+und dem korrekten aktuellen oder historischen Registry-Nachweisvertrag
+([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)).
+
+## Erforderliche Schnittstellen
+
+Die Zulassungsebene hängt von diesen eindeutigen Beweisen und Autoritätsgrenzen
+ab:
+
+:::note[Implementation note]
+
+Stellen Sie jede Grenze mit einer typisierten Schnittstelle dar:
+
+- aktuelle Registry Nachweise für eine neue Erstzulassungsentscheidung;
+- verbindliche historische Registry-Beweise zur Wiedergabe;
+- eine authentifizierte Admission Log-Suche;
+- eine atomare Operation zum Anhängen oder Zurückgeben vorhandener Elemente; und
+- Organization-vertrauenswürdiger Akzeptanzkontext, der nur nach maßgeblicher
+  Abwesenheit verwendet wird.
+
+:::
+
+Der logische Schlüssel Admission Log ist `(organizationId, signingHash)`. Es
+muss den akzeptierenden Dienst authentifizieren, zwischen einem gefundenen
+Datensatz und einer maßgeblichen Nichtvorhandenseinsfeststellung unterscheiden,
+die Nur-Anhänge-Integrität wahren und bei nicht verfügbaren, unbestimmten, nicht
+authentifizierten, integritätsbedingten, widersprüchlichen oder fehlgeschlagenen
+Festschreibungsergebnissen zu einer geschlossenen Ablehnung führen
+([MWP-ADM-003](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).
+Ein vom Anrufer bereitgestellter Trust-Boolescher Wert ist keines dieser
+Ergebnisse.
+
+Für einen logischen Schlüssel existiert höchstens ein maßgeblicher Datensatz.
+Ein identischer gültiger Datensatz, der bei einem erneuten Versuch gefunden
+wird, ist ein idempotenter Erfolg, während ein widersprüchlicher Dokumenttyp,
+eine widersprüchliche Schlüssel-ID oder Principal abgelehnt und nicht ersetzt
+wird
+([MWP-ADM-004](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-004)).
+
+## Erstzulassungsalgorithmus
+
+```text
+sechsstufige kryptografische Verifizierung
+→ maßgebliche Suche im Admission Log
+→ Validierung des gefundenen Datensatzes oder maßgebliche Abwesenheit
+→ Vorbereitung von vertrauenswürdigem Kontext und Kandidatendatensatz
+→ atomisches Anhängen oder Zurückgeben des vorhandenen Datensatzes
+→ Validierung des zurückgegebenen Datensatzes
+→ zugelassenes Ergebnis
+```
+
+Nur maßgebliche Abwesenheit ermöglicht eine vertrauenswürdige Kontexterfassung
+und Kandidatenvorbereitung. Das Anhängen kann den lokalen Kandidaten oder einen
+gleichzeitigen Gewinner zurückgeben, und der zurückgegebene Datensatz wird vor
+Erfolg immer validiert
+([MWP-ADM-006](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006)).
+
+Das First-Admission Record ist ein separates, unsigniertes Neun-Felder-Objekt.
+Es authentifiziert sich nicht selbst und darf kein `signature`
+([MWP-ADM-001](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001))
+enthalten. Behalten Sie die lexikalische Schreibweise von `trustedAcceptedAt`
+bei; Vergleichen Sie es als RFC 3339-Instant, ohne dass die von geschützten
+Dokumentzeiten verwendete Großbuchstaben-`Z`-Schreibweise erforderlich ist
+([MWP-ADM-002](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-002)).
+
+Die Kandidatenvorbereitung hängt kein Event an, führt keinen Übergang aus und
+impliziert keinen Erfolg. Ein gleichzeitiger Gewinner kann eine andere
+Datensatz-ID oder vertrauenswürdige Zeit zurückgeben, aber nur validierte
+zurückgegebene Bytes können erfolgreich sein
+([MWP-ADM-007](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-007)).
+
+## Validierung des zurückgegebenen Datensatzes
+
+Datensatzvalidierung:
+
+1. Analysiert strikt genau einen UTF-8 JSON Wert;
+2. wendet das normative Schema First-Admission Record an;
+3. vergleicht `organizationId`, `documentKind`, `signingHash`, `keyId` und
+   `principal` genau mit dem sechsstufigen Ergebnis;
+4. vergleicht `acceptedBy` genau mit der vom authentifizierten Dienstidentität
+   Admission Log-Adapter; und
+5. vergleicht `trustedAcceptedAt` unabhängig mit den beibehaltenen Werten des
+   ausgewählten Schlüssels halboffenes Gültigkeitsintervall.
+
+Die genauen Bindungsregeln sind
+[MWP-ADM-009](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009),
+und die Regel für vertrauenswürdige Zeitintervalle ist
+[MWP-ADM-010](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010).
+Es reicht nie aus, nur Kandidatenbytes zu validieren. Ein signierter Event kann
+nicht als eigener First-Admission Record dienen; ein späteres Event darf nur
+einen separaten Datensatz veröffentlichen oder darauf verweisen
+([MWP-ADM-011](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-011)).
+
+## Historische Wiederholung
+
+```text
+sechsstufige kryptografische Verifizierung mit maßgeblichen historischen Registry-Nachweisen
+→ ein gefundener Datensatz ist erforderlich
+→ Datensatzvalidierung
+→ kein vertrauenswürdiger Kontext und kein Anhängen
+```
+
+Replay kann keine fehlende Zulassung erstellen, keinen neuen vertrauenswürdigen
+Kontext ausgeben oder ein altes Dokument als neu zugelassen behandeln
+([MWP-ADM-008](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)).
+
+## Grenzen nach der Zulassung
+
+Ein anerkanntes Ergebnis steht noch immer nicht fest Command Aktualität oder
+Unterzeichnerberechtigung. Ein neu präsentiertes Command verfügt über eine
+separate Frische- und Clock-Skew-Prüfung
+([MWP-ADM-013](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)),
+und die zuständige Behörde validiert separat die Rolle und Richtlinie des
+Unterzeichners zu den geschützten und vertrauenswürdigen Akzeptanzzeiten
+([MWP-ADM-014](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)).
+
+Jeder postkryptografische Zulassungsfehler wird auf der Wire-Ebene
+`AUTH_INVALID_SIGNATURE` zugeordnet; die geschützte Stufe `admission` bleibt
+erhalten
+([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).
+
+:::note[Implementation note]
+
+Aktuelle Schlüsselauflösung, historische Schlüsselauflösung beibehalten,
+Admission Log Zugriff und die Erfassung vertrauenswürdiger Kontexte als
+unterschiedliche typisierte Adapter, selbst wenn ein Dienst mehrere davon
+implementiert. Dadurch wird verhindert, dass ein Cache-Fehler, ein
+Transportfehler oder ein boolescher Aufrufer-Wert fälschlicherweise als
+maßgebliche Abwesenheit dargestellt wird.
+
+Der Adapter API sollte eine authentifizierte Dienstidentität zusammen mit
+gefundenen oder angehängten Bytes zurückgeben, damit die Datensatzvalidierung
+einem nicht versehentlich vertrauen kann `acceptedBy` Feld aus dem Datensatz
+selbst entnommen.
+
+:::
+
+Verwenden Sie das lokale
+[Zulassungskonformitätspaket](../../../reference/conformance/admission/), um
+sowohl die Erstzulassung als auch die historische Wiedergabe zu testen,
+einschließlich fehlerhafter Adapterergebnisse.

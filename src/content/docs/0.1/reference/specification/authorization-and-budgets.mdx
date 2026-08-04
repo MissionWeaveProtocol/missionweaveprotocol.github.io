@@ -1,0 +1,79 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-AUT
+title: "Authorization, budgets, and side effects"
+description:
+  "Normative authorization, capability, approval, budget, and side-effect
+  controls."
+---
+
+import NormativeClause from "../../../../../components/NormativeClause.astro";
+
+## 12. Authorization, budgets, and side effects
+
+<NormativeClause id="MWP-AUT-001" level="MUST">
+
+After WorkItem acceptance and all required approvals, the Authorization Service
+issues a short-lived least-privilege capability token. The token MUST be bound
+to:
+
+- the Worker Agent ID and current Session Epoch;
+- WorkItem ID and Ownership Epoch;
+- the current Execution Lease ID;
+- allowed tools, resources, data, and operations;
+- financial, token, call, compute, time, and side-effect limits; and
+- an expiration no later than the applicable Execution Lease.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-002" level={["MAY","MUST NOT","MUST"]}>
+
+The Coordinator MAY request authorization but MUST NOT manufacture, copy, or
+forward a Worker's credential. Tokens and secrets MUST NOT appear in Messages,
+Agent Cards, Context Packages, Artifacts, or Group Events. Expired, revoked,
+mismatched, or over-budget tokens MUST be rejected.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-003" level={["MUST","MAY"]}>
+
+Organization policy MUST be able to place a WorkItem into
+`awaiting_execution_approval` before production deployment, payments, external
+communications, destructive changes, or sensitive-data access. The Authorization
+Service MUST withhold the capability token until the signed approval gate is
+satisfied. Low-risk work MAY proceed automatically under policy.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-004" level="MUST NOT">
+
+Mission and WorkItem budgets are mandatory protocol concepts. The MissionOwner
+sets Mission limits, the Coordinator allocates no more than those limits to
+WorkItems and child Missions, and the Authorization Service enforces hard
+limits. Budget exhaustion pauses affected work and requires explicit escalation;
+Agents MUST NOT silently exceed a limit.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-005" level="MUST">
+
+The Group Authority MUST persist an aggregate six-dimensional budget ledger. A
+signed `ext.missionweaveprotocol.core.resource_usage_record` Command records a
+nonzero delta against one WorkItem, Ownership Epoch, and Execution Lease ID; the
+corresponding `ext.missionweaveprotocol.core.resource_usage_recorded` Event
+carries the delta, cumulative usage, and remaining budget. Consumption MUST
+update the WorkItem and its complete WorkItem/Mission ancestry in one atomic
+transition. A one-dimension overflow MUST reject the whole transition as
+`BUDGET_EXCEEDED`. Capability-token budgets MUST be capped by both the Work
+Contract and the authoritative remaining budget.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-006" level="MUST">
+
+Cancellation or emergency termination MUST revoke relevant leases and capability
+tokens, stop new assignments, and initiate contract-defined cleanup or
+compensation WorkItems where needed.
+
+</NormativeClause>

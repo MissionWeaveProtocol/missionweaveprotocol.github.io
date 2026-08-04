@@ -1,0 +1,37 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Strukturkonformität
+description: >-
+  Alle erwartet-gültigen und erwartet-ungültigen MissionWeaveProtocol
+  0,1-Strukturvektoren.
+---
+
+import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
+import StructuralVectorCatalog from "../../../../../../components/StructuralVectorCatalog.astro";
+import release from "../../../../../../data/normative/0.1/release-source.json";
+
+# Strukturkonformität
+
+Das Strukturmanifest enthält **{release.structural.total}**-Fälle:
+**{release.structural.valid}** erwartet-gültig und
+**{release.structural.invalid}** erwartet-ungültig. Jeder Eintrag identifiziert
+ein Schemaartefakt, ein Instanzartefakt und das erwartete Gültigkeitsergebnis.
+
+- <ArtifactLink path="protocol/conformance/manifest.json">
+    Strukturelles Manifest
+  </ArtifactLink>
+- <ArtifactLink path="protocol/conformance/README.md">
+    Lokale Manifestsemantik
+  </ArtifactLink>
+
+Eine Implementierung führt das vollständige Manifest anhand des genauen lokalen
+Schemas und der Instanzbytes aus. Ein übereinstimmendes Ergebnis zeigt lediglich
+die strukturelle Schemakonformität. Es zeigt kein Zustandsautomaten-, Bestell-,
+Autorisierungs-, Leasing-, Budget-, Wiedergabe-, kryptografisches oder
+Zulassungsverhalten.
+
+Die folgenden Tabellen sind die durchsuchbaren lokalen Vektorverzeichnisse für
+erwartete gültige und erwartete ungültige Vektoren.
+
+<StructuralVectorCatalog />

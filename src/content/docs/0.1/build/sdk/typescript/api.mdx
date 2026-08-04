@@ -1,0 +1,25 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "TypeScript public API inventory"
+description:
+  "Every supported TypeScript package-root declaration resolved to its exact
+  source file and line at the documented SDK commit."
+---
+
+import SdkApiInventory from "../../../../../../components/SdkApiInventory.astro";
+
+# TypeScript public API inventory
+
+This exact-commit inventory is generated from the real package-root export
+declarations at `6d53ebfcf8350ae81d89fd818611b07f7373685c`. Star exports include
+their public declarations; selective exports include only the named root
+surface. Ordinary imports and internal-only declarations are excluded.
+
+The inventory is the naming and exact source provenance reference, not a
+substitute for the local [runtime semantics](../runtime/) or
+[Admission call flow](../admission/). The package exports only `.` and
+`./package.json`; a source module listed here is not an independently supported
+package subpath.
+
+<SdkApiInventory sdk="typescript" />

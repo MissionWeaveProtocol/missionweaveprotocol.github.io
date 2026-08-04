@@ -1,0 +1,96 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Identität, Rollen und Autorität
+description: >-
+  Wie MissionWeaveProtocol stabile Identität, Präsenz, Sitzungen, Koordination,
+  Planung, Autorisierung und Genehmigung trennt.
+---
+
+# Identität, Rollen und Autorität
+
+MissionWeaveProtocol 0.1 arbeitet innerhalb eines vertrauenswürdigen
+Organization. Der Organization regiert Agent Identität, Richtlinie,
+Autorisierung, dauerhaft Group Ordnung und menschliche Verantwortung.
+
+## Autorität ist bewusst gespalten
+
+| Sorge                                                      | Autorität                                     |
+| ---------------------------------------------------------- | --------------------------------------------- |
+| Stabile Identität und verifizierte Fähigkeiten             | Organization-kontrolliert Agent Registry      |
+| Mission Richtung und endgültige Genehmigung                | MissionOwner                                  |
+| Planung, Zuordnung, Integration und Einreichung            | Aktuell Coordinator Epoche                    |
+| Kreuzen-Group Ausführungsanordnung                         | Worker-eigener Scheduler                      |
+| Übergangsvalidierung und Per-Group Event bestellen         | Group Authority                               |
+| Werkzeug-, Daten-, Ressourcen- und Nebeneffektberechtigung | Autorisierungsdienst und Organization Politik |
+
+Der Group Authority ist eine logische Autorität pro Group. Eine Implementierung
+kann es intern replizieren, aber die Replikattopologie ist nicht Teil der
+Protokollsemantik. Der Coordinator Und Worker Rollendefinitionen sind verankert
+durch [MWP-FND-010](../../reference/specification/foundations/#mwp-fnd-010) und
+[MWP-FND-011](../../reference/specification/foundations/#mwp-fnd-011).
+
+## Identität ist nicht Präsenz
+
+Ein **Agent Card** ist stabil, versioniert, Organization-signierte Identität. Es
+bindet öffentliche Schlüssel, Endpunkte, unterstützte Protokollversionen,
+verifizierte Funktionen und maximale Parallelität unter dem Organization's
+Unterschrift
+([MWP-IDN-001](../../reference/specification/identity-registry-and-sessions/#mwp-idn-001)).
+
+Eine **Anwesenheitsaufzeichnung** ist vergänglich. Es kann Verfügbarkeit, offene
+Ausführungsslots, Funktionsverfügbarkeit, geschätzte Antwortlatenz und
+Heartbeat-Zeit melden, aber es erneuert weder eine Miete noch akzeptiert es eine
+Zuweisung
+([MWP-IDN-005](../../reference/specification/identity-registry-and-sessions/#mwp-idn-005)).
+
+Fähigkeit unterscheidet sich auch von Autorisierung. Eine Fähigkeit sagt, was
+ein Agent wird verifiziert; Es werden keine wiederverwendbaren
+Anmeldeinformationen oder Zugriff auf Geschäftsdaten gespeichert Agent Card
+([MWP-IDN-002](../../reference/specification/identity-registry-and-sessions/#mwp-idn-002)).
+
+## Sitzungen und Fechten
+
+Der WebSocket-Handshake authentifiziert einen bei Organization registrierten
+Schlüssel und eine neue Herausforderung und stellt dann ein kurzlebiges
+Sitzungstoken und ein neues Session Epoch aus. Die Handshake-Sequenz wird durch
+[MWP-IDN-007](../../reference/specification/identity-registry-and-sessions/#mwp-idn-007).
+Durch die Ausgabe einer späteren Epoche werden ältere Laufzeiten für diese
+Agent-Identität abgegrenzt
+([MWP-IDN-008](../../reference/specification/identity-registry-and-sessions/#mwp-idn-008)).
+
+Weitere Epochen schränken die Autorität weiter ein:
+
+- eine Membership Epoch grenzt eine ältere Version eines Group Membership ab;
+- eine Coordinator-Epoche grenzt einen ersetzten Coordinator und seine
+  Gewährungen ab;
+- eine Ownership Epoch grenzt frühere Eigentümer exklusiver Arbeiten ab; und
+- eine Execution Lease ID grenzt einen abgelaufenen oder widerrufenen
+  Ausführungszeitraum ab.
+
+## Vom Kontext zum erlaubten Nebeneffekt
+
+```text
+Message oder Work Proposal
+        ↓ explizite Autorisierung
+WorkItem und Work Contract
+        ↓ Annahme durch den Worker
+Ownership Epoch
+        ↓ aktuelle Prüfungen von Session, Richtlinie, Budget und Approval
+Execution Lease und bereichsgebundenes Capability-Token
+        ↓
+zulässige Operation
+```
+
+Der Autorisierungsdienst stellt ein kurzlebiges Token mit den geringsten
+Privilegien erst nach der entsprechenden Akzeptanz-, Genehmigungs-,
+Richtlinien-, Eigentums-, Leasing- und Budgetprüfung aus. Seine Bindungsfelder
+werden durch
+[MWP-AUT-001](../../reference/specification/authorization-and-budgets/#mwp-aut-001)
+definiert. Anmeldeinformationen werden nicht über Nachrichten, Agent Karten,
+Kontextpakete, Artefakte oder Ereignisse übertragen. siehe
+[MWP-AUT-002](../../reference/specification/authorization-and-budgets/#mwp-aut-002).
+
+Die Ausführung Approval ermöglicht einen begrenzten riskanten Vorgang. Die
+endgültige Approval ist eine separate unterzeichnete Entscheidung, die eine
+abgeschlossene Mission-Revision und einen genauen Artifact-Satz akzeptiert.

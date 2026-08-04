@@ -1,0 +1,97 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Cycle de vie du travail
+description: >-
+  Comment la conversation devient explicite. WorkItems, exécution acceptée,
+  Evidence, vérification et approbation Mission.
+---
+
+# Cycle de vie du travail
+
+MissionWeaveProtocol maintient la coopération conversationnelle fluide tout en
+rendant explicite la responsabilité de l'exécutable. Un Message peut fournir un
+contexte ou demander un travail, mais les interfaces ne peuvent pas le présenter
+comme une instruction exécutable
+([MWP-MSN-017](../../reference/specification/missions-groups-and-membership/#mwp-msn-017)).
+
+## De la discussion à l'engagement
+
+1. **Discuter.** Les agents échangent des messages terminés dans un Group ou
+   WorkItem Conversation.
+2. **Proposer.** Tout membre Group peut soumettre une proposition de travail.
+   Aucun exécutable WorkItem existe déjà.
+3. **Autoriser.** Le Coordinator actuel, une dérogation d'urgence MissionOwner
+   ou un Agent avec une autorisation de délégation valide crée le WorkItem.
+4. **Offre.** L'acteur autorisé propose le WorkItem à un Worker éligible et
+   enregistre la base de sélection. L'ensemble d'autorisations exclusives et la
+   règle d'offre déléguée sont définies par
+   [MWP-MSN-019](../../reference/specification/missions-groups-and-membership/#mwp-msn-019).
+5. **Accepter.** Le Worker effectue le contrôle d'admission. L'acceptation
+   commence une nouvelle Époque de propriété et place le WorkItem dans la file
+   d'attente par-Group de ce Worker.
+
+L'acceptation est un engagement de planification durable et non une exécution
+immédiate. Les contrôles d'admission et les effets de propriété du Worker sont
+définis par
+[MWP-WRK-005](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-005).
+
+## Le contrat de travail
+
+Chaque WorkItem comporte un contrat de travail versionné et lisible par machine.
+Sa forme requise est identifiée par
+[MWP-WRK-001](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-001)
+et comprend :
+
+- objectif, livrables et critères d'acceptation ;
+- Evidence requis et références d'entrée ou de dépendance ;
+- les outils, données, ressources et opérations autorisés ;
+- les identifiants et versions de capacités requis ;
+- délai, urgence demandée et impact commercial ;
+- budgets financiers, de jetons, d'appels d'outils, de calcul, d'horloge murale
+  et d'effets secondaires ;
+- tentatives de nouvelle tentative, interruption, délai et politique de coûts ;
+  et
+- la classification des risques et toute étape d'approbation préalable à
+  l'exécution.
+
+Une ambiguïté essentielle est résolue avant l'acceptation. Une révision de
+contrat important est renvoyée via une acceptation renouvelée Worker
+([MWP-WRK-002](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-002)).
+
+## Un chemin commun réussi
+
+```text
+Work Proposal
+    ↓ autoriser
+open WorkItem
+    ↓ proposer
+offered
+    ↓ le Worker accepte
+queued
+    ↓ propriété valide, portes d’Approval et Execution Lease
+active
+    ↓ le Worker soumet Artifact et Evidence
+submitted
+    ↓ le Coordinator accepte le résultat
+verified
+```
+
+Le travail actif peut revenir au point de contrôle `queued`, entrer `blocked`
+avec un point de contrôle durable, échouer avec Evidence ou être annulé. Le
+tableau de transition complet se trouve sur la
+[page de spécifications WorkItem](../../reference/specification/work-scheduling-and-recovery/#workitem-transition-table).
+
+## Evidence avant approbation
+
+Une réclamation Worker ne constitue pas une preuve suffisante d'achèvement. La
+soumission inclut les artefacts et Evidence mappés aux critères d'acceptation.
+L'examen Coordinator vérifie l'intégrité de Artifact, les tests déterministes,
+le réviseur qualitatif Evidence et la décision d'acceptation enregistrée dans
+l'ordre décrit par
+[MWP-WRK-025](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-025).
+
+Une fois les WorkItems requis vérifiés, Coordinator soumet une révision Mission
+spécifique et un ensemble Artifact. Le MissionOwner signe le Approval final ou
+demande des modifications sans effacer les soumissions antérieures
+([MWP-MSN-008](../../reference/specification/missions-groups-and-membership/#mwp-msn-008)).

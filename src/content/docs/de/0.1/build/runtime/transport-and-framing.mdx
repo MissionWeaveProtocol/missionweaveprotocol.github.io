@@ -1,0 +1,124 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Transport und Framing
+description: >-
+  Die normative HELLO-Authentifizierung, Session Epoch-Abgrenzung,
+  WebSocket-Textrahmen, Group-Abonnements, Multiplexing, ACK, PING und das
+  Gegendruckmodell.
+---
+
+# Transport und Framing
+
+MissionWeaveProtocol 0.1 bindet die Laufzeit an authentifiziertes WebSocket über
+TLS 1.3. Rahmen und Lieferung von Transportbedarf; Es ersetzt nicht die
+individuelle Signed Document-Verifizierung, Group-Autorisierung, dauerhafte
+Wiedergabe oder Abgrenzung. Das erforderliche TLS, WebSocket, JSON, JCS, Schema
+und kryptografische Spezifikationen werden durch
+[MWP-FND-003](../../../reference/specification/foundations/#mwp-fnd-003)
+aufgezählt.
+
+## HALLO Authentifizierung
+
+Der HELLO-Austausch mit vier Nachrichten verwendet eine neue Server-Challenge
+und einen Organization-registrierten Ed25519-Schlüssel. Es handelt die
+Protokollversion aus und gibt ein kurzlebiges Sitzungstoken sowie ein neu
+ausgestelltes Session Epoch
+([MWP-IDN-007](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-007))
+zurück.
+
+Die Ausgabe der Epoche `n + 1` begrenzt jede Laufzeit auf die Epoche `n` oder
+niedriger. Jeder zustandsverändernde Agent Command wird anhand der aktuellen
+Epoche überprüft, und zwei Laufzeiten können nicht gleichzeitig eine stabile
+Agent-Identität betreiben
+([MWP-IDN-008](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-008)).
+
+## WebSocket Nachrichtengrenze
+
+Ein Server stellt `wss` bereit; Eine authentifizierte Verbindung kann alle von
+einem Agent verwendeten Gruppen multiplexen. Jede WebSocket-Nachricht enthält
+genau einen UTF-8 JSON Textrahmen, der dem lokalen `websocket-frame`-Schema
+entspricht. Binäre Frames können keine Protokollobjekte oder Artifact-Inhalte
+übertragen
+([MWP-EVT-008](../../../reference/specification/commands-events-and-ordering/#mwp-evt-008)).
+
+Kernrahmentypen sind:
+
+| Rahmen      | Zweck                                                                |
+| ----------- | -------------------------------------------------------------------- |
+| `HELLO`     | Challenge-Authentifizierung, Versionsaushandlung und Sitzungsausgabe |
+| `SUBSCRIBE` | autorisierte Group Auswahl- und Wiedergabepositionen                 |
+| `COMMAND`   | eine unterschriebene Anfrage für einen strukturierten Übergang       |
+| `EVENT`     | eine unveränderlich akzeptierte Tatsache                             |
+| `ACK`       | ein oder mehrere dauerhafte zusammenhängende Cursor                  |
+| `PING`      | Lebendigkeit und optionale Präsenz                                   |
+| `ERROR`     | maschinenlesbare Ausweis- oder Transporthinweise                     |
+
+## Vor der Sequenzierung abonnieren und weiterleiten
+
+Nach der Authentifizierung trägt `SUBSCRIBE` Group-IDs, Wiedergabepositionen pro
+Group und optionale Aufmerksamkeitsfilter. Der Server erzwingt unabhängig
+Membership und gibt nicht bekannt, ob ein nicht autorisierter Group vorhanden
+ist
+([MWP-EVT-009](../../../reference/specification/commands-events-and-ordering/#mwp-evt-009)).
+
+Ereignisse aus verschiedenen Gruppen können sich überschneiden. Ein Empfänger
+leitet jeden Event über die Group-ID weiter, bevor er Sequenz, Cursor,
+Deduplizierung oder Warteschlangenlogik anwendet. Es ist nur die Reihenfolge pro
+Group definiert
+([MWP-EVT-010](../../../reference/specification/commands-events-and-ordering/#mwp-evt-010)).
+
+## Lebendigkeit, Fortschritt und Druck
+
+`ACK` meldet dauerhaften Fortschritt. `PING` beweist die Lebendigkeit und kann
+einen Anwesenheitsnachweis enthalten; Der Peer wiederholt sein Nonce. Server
+verwenden begrenzte Puffer und pro-Group Gegendruck und pausieren einen
+überlasteten Group mit `BACKPRESSURE`-Anleitung, anstatt nicht verbundene
+Gruppen zu trennen, wo dies möglich ist
+([MWP-EVT-011](../../../reference/specification/commands-events-and-ordering/#mwp-evt-011)).
+
+Die Präsenz kann auf dem authentifizierten `PING` ohne eine individuelle
+dauerhafte Signatur übertragen werden, kann jedoch keinen anderen Group
+([MWP-IDN-006](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-006))
+offenlegen. Ein lautes Group kann einen anderen nicht aushungern lassen;
+Gateways bieten nach Möglichkeit Flusskontrolle pro-Group und unabhängige
+Abonnement-Cursor
+([MWP-MSN-014](../../../reference/specification/missions-groups-and-membership/#mwp-msn-014)).
+
+Ein ACK ist keine Berechtigung zum Löschen des maßgeblichen Event-Verlaufs, und
+ein PING oder eine Anwesenheitsaktualisierung ist keine Zuweisungsannahme oder
+Mietverlängerung. Empfänger deduplizieren Ereignisse und bewegen einen Cursor
+niemals über eine Sequenzlücke
+([MWP-WRK-029](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)).
+ACK und Wiederverbindungswiedergabe verwenden den höchsten zusammenhängenden
+dauerhaften Cursor und können Ereignisse im Zusammenhang mit einer
+Verbindungsunterbrechung erneut übermitteln
+([MWP-WRK-030](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)).
+
+## Kodierung an der Drahtgrenze
+
+Wire JSON kann in jeder Mitgliedsreihenfolge eintreffen, doppelte Mitgliedsnamen
+werden jedoch vor der Schemavalidierung abgelehnt. Jede Signatur, jeder vom
+Inhalt abgeleitete Bezeichner und jeder Hash verwenden das genaue RFC 8785 JCS
+Wertmodell und die exakten Bytes
+([MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012)).
+Große Inhalte werden als inhaltsadressierte Artifact-Referenz übertragen und
+nicht als binärer oder teilweise gestreamter Protokollrahmen.
+
+:::note[Implementation note]
+
+Behalten Sie unabhängige pro-Group-Empfangspuffer und Wiedergabestatus hinter
+der einen Verbindung bei. Stellen Sie die Verbindung mit begrenztem Backoff
+wieder her, behalten Sie jedoch den letzten dauerhaften Cursor für jeden Group
+bei und erwarten Sie doppelte Ereignisse rund um die Trennungsgrenze.
+
+Wenden Sie verbindungsweite Grenzwerte als letztes Sicherheitsventil und
+Grenzwerte gemäß Group als normalen Isolationsmechanismus an. Puffergrößen,
+Heartbeat-Perioden, Reconnect-Jitter und Auswahlmöglichkeiten der
+Socket-Bibliothek sind Bereitstellungsoptimierungen und keine
+Verbindungskonstanten.
+
+:::
+
+Fahren Sie mit [Fehler und Beobachtbarkeit](../errors-and-observability/) für
+Drahtzurückweisungen und geschützte Diagnosen fort.

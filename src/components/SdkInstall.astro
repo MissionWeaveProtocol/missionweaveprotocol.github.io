@@ -1,0 +1,110 @@
+---
+import matrix from "../data/normative/0.1/sdk-runtime-matrix.json";
+import { localizedText, uiCopyForPathname } from "../lib/normative-locale";
+
+type SdkId = "python" | "typescript" | "go" | "rust" | "java" | "cpp";
+
+interface Props {
+  sdk: SdkId;
+  command: string;
+  verifyCommand?: string;
+  heading?: string;
+}
+
+const copy = uiCopyForPathname(Astro.url.pathname);
+const {
+  sdk: sdkId,
+  command,
+  verifyCommand,
+  heading = localizedText(copy, "install"),
+} = Astro.props as Props;
+const sdk = matrix.sdks.find((candidate) => candidate.id === sdkId);
+if (!sdk) throw new Error(`Unknown SDK installation entry: ${String(sdkId)}`);
+if (command.trim().length === 0) {
+  throw new Error(`${sdkId} installation command must not be empty`);
+}
+---
+
+<section class="sdk-install" aria-labelledby={`sdk-install-${sdk.id}`}>
+  <h2 id={`sdk-install-${sdk.id}`}>{heading}</h2>
+  <dl>
+    <div>
+      <dt>{localizedText(copy, "packageIdentity")}</dt>
+      <dd><code>{sdk.package}</code></dd>
+    </div>
+    <div>
+      <dt>{localizedText(copy, "requiredToolchain")}</dt>
+      <dd>{sdk.toolchain.join(" · ")}</dd>
+    </div>
+    <div>
+      <dt>{localizedText(copy, "documentedCommit")}</dt>
+      <dd>
+        <a href={`${sdk.repository}/commit/${sdk.commit}`}>
+          <code>{sdk.commit}</code>
+        </a>
+      </dd>
+    </div>
+  </dl>
+  <pre><code>{command}</code></pre>
+  {
+    verifyCommand && (
+      <>
+        <h3>{localizedText(copy, "verifyInstalledPackage")}</h3>
+        <pre>
+          <code>{verifyCommand}</code>
+        </pre>
+      </>
+    )
+  }
+  <div class="notes"><slot name="notes" /></div>
+</section>
+
+<style>
+  .sdk-install {
+    margin-block: 1.5rem;
+    padding: 1rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.65rem;
+    background: color-mix(in srgb, var(--sl-color-gray-6) 24%, transparent);
+  }
+
+  .sdk-install > :first-child {
+    margin-block-start: 0;
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: 0.75rem;
+    margin-block: 1rem;
+  }
+
+  dl > div {
+    min-width: 0;
+    padding: 0.7rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.55rem;
+    background: var(--sl-color-bg);
+  }
+
+  dt {
+    color: var(--sl-color-gray-2);
+    font-size: 0.75rem;
+    font-weight: 750;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 0.3rem 0 0;
+    overflow-wrap: anywhere;
+  }
+
+  pre {
+    margin-block: 1rem;
+  }
+
+  .notes:empty {
+    display: none;
+  }
+</style>

@@ -1,0 +1,284 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-FND
+title: 基礎
+description:
+  MissionWeaveProtocol 0.1 的目的、約定、術語、不變量、架構和持久性基礎。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+# MissionWeaveProtocol 0.1
+
+狀態：標準草案，版本 `0.1.0`.
+
+<NormativeClause id="MWP-FND-001" level={["MUST","MUST NOT","REQUIRED","SHALL","SHALL NOT","SHOULD","SHOULD NOT","RECOMMENDED","NOT RECOMMENDED","MAY","OPTIONAL"]}>
+
+本文件定義 MissionWeaveProtocol 0.1。本文件中的關鍵字 **MUST**、**MUST
+NOT**、**REQUIRED**、**SHALL**、**SHALL NOT**、**SHOULD**、**SHOULD NOT**、
+**RECOMMENDED**、**NOT RECOMMENDED**、**MAY** 和
+**OPTIONAL**，當且僅當它們以上述全部大寫形式出現時，依 BCP 14 解釋。
+
+</NormativeClause>
+
+## 1. 目的和範圍
+
+MissionWeaveProtocol 是一種面向群體的合作協議，用於在一個受信任的內部運行的自治代理 Organization。它讓 Agent 參加許多 Mission 同時進行分組，與同儕交換持久的訊息，接受明確的工作項目到每個群組中Group 佇列、跨組安排這些工作項目、發布可驗證的工件，並獲得已完成任務的人工批准。
+
+<NormativeClause id="MWP-FND-002" level="MAY">
+
+MissionWeaveProtocol 不是 Agent 到 Agent
+RPC。代理是會話中的對等體，MAY 隨時發起訊息或 WorkItem 提案。然而，結構化權限是明確的：Message 永遠不會授權副作用，並且組織基礎設施會驗證更改 Mission 狀態的所有命令。
+
+</NormativeClause>
+
+MissionWeaveProtocol 0.1 標準化：
+
+- Agent 身份、Agent 卡、存在記錄和運行時防護；
+- 每個 Mission 一個臨時 Group 和一個單調 Event 歷史記錄；
+- 可替換的 Coordinator 和人類 MissionOwner；
+- Membership，對話，訊息，工作項，工作合同，工件，Evidence，上下文包、租賃、預算和批准；
+- 持久命令、不可變事件、重播、確認和冪等性；
+- 每個 Group Worker 佇列和隱私保護跨 Group 調度訊號；
+- 用於複雜分解的遞迴子任务；
+- 透過經過驗證的 WebSocket-over-TLS 綁定的規格 JSON；和
+- 受管理的擴充設定檔。
+
+MissionWeaveProtocol
+0.1故意不定義跨組織聯合、實體點對點路由、 Group 端對端加密、分散式共識、模型提示、私有模型推理、知識庫 API， 一個 Artifact 物件儲存 API，或實施 Organization的策略和授權服務。
+
+## 2. 規範性引用與資料約定
+
+<NormativeClause id="MWP-FND-003" level="MUST">
+
+實施 MUST 遵循以下引用的外部規範：
+
+- RFC 2119 和 RFC 8174 (BCP 14)，規範語言；
+- RFC 3339，時間戳；
+- RFC 4648 第 3.2、3.5 和 5 節，規範未填充的 base64url；
+- RFC 6455， WebSocket;
+- RFC 7493，互聯網 JSON （我-JSON）；
+- RFC 8446、TLS 1.3；
+- RFC 8785, JSON 規範化方案（JCS）；
+- RFC 8032， Ed25519;
+- JSON 架構草案 2020-12；和
+- 適用時，結構化協定錯誤的 RFC 9457 原則。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-004" level="MUST">
+
+所有協議對象 MUST 有效 JSON。持久協議對象 MUST 符合 JSON 模式位於
+`schemas/`，以及每個協定時間戳 MUST 成為一個 RFC 3339 `date-time`.
+MissionWeaveProtocol 0.1 使用確定性時間戳記設定文件 Signed
+Document 驗證設定檔。每個由[第 6.4 節](../signed-documents-and-trust/)涵蓋的 Signed
+Document 時間戳，以及每一個用於驗證該文件的 Registry 或可信任接受時間戳，MUST 滿足以下附加規則：
+
+- 日曆年在包含範圍內 `0001` 透過 `9999` 和公曆日期有效；
+- 第二個在包含範圍內 `00` 透過 `59`;閏秒的寫法v0.1 不支援；
+- 可選的小數秒包含一個或多個 ASCII 數字，所有這些數字參與即時比較，無需截斷或舍入；和
+- 的 RFC 3339 未知本地偏移拼寫 `-00:00` 是不允許的。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-005" level={["MUST","MUST NOT"]}>
+
+不區分大小寫的 `T` 分隔符號和 `Z` 指示符以及完整的 RFC
+3339 數字偏移範圍仍然有效，除非後面的規則需要更窄的拼字。通用 JSON 架構
+`date-time`
+驗證是必要的，但不足以建立此時間戳設定檔。實現 MUST 獨立於其解析的瞬間保留序列化時間戳文本，並且 MUST
+NOT 在散列或簽名驗證之前重寫它。缺少的小數秒為零，且尾隨零數字不會改變所表示的時刻。
+[第 6.4 節 ](../signed-documents-and-trust/#mwp-sdv-002)
+也要求受保護的簽章時間和 `signature.createdAt` 使用大寫 `Z` 字尾且逐字節相同。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-006" level={["MUST","MUST NOT"]}>
+
+JCS 輸入 MUST 遵循 RFC
+8785 和 I-JSON 資料模型。 JSON 數位 MUST 被解釋為有限的 IEEE
+754 二進位 64 值，並使用 RFC 8785
+ECMAScript 最短形式進行序列化。使用任意精度數字 MUST 的實現應用相同的正確舍入的二進位 64 轉換，並且 MUST
+NOT 在簽名字節中保留特定於主機的額外精度。在發出規範位元組之前，有限二進位 64 域之外的值或包含不成對的 Unicode 代理 MUST 的字串將被拒絕為 JCS 資料模型故障。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-007" level="MUST">
+
+base64url 值 MUST 使用 RFC 4648 URL 安全字母表，省略 `=`
+填充，並使用零個未使用的填充位元。即使解碼器 MUST 解碼為預期字節，它也會拒絕非規範拼字。 v0.1
+MUST 中的內容雜湊使用小寫十六進位 SHA-256 和形式
+`sha256:<64 hex digits>`。用於序列、修訂、紀元和預算的整數 MUST 是非負安全 JSON 整數； Group
+Event 序列從 1 開始。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-008" level={["MUST","SHOULD","MUST NOT"]}>
+
+标识符 MUST 在标识符的种类内是全局唯一的，并且 MUST 被序列化为绝对 RFC 3986
+URI，而不是仅 IRI 的拼写。非 ASCII 字符 MUST 采用 UTF-8 百分比编码，并且验证 MUST 消耗完整的字符串；空格、控制字符和尾随行终止符无效。 UUID 識別碼 SHOULD 使用小寫
+`urn:uuid:`
+形式。实现 MUST 在发布 Organization 选择的 URI 规范化规则之后逐字节比较标识符；接收者 MUST
+NOT 发明了额外的标准化。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-009" level="MUST">
+
+規範模式中的每個 `format` 關鍵字都是斷言要求。实现 MUST 启用 Draft
+2020-12 格式验证，包括 `uri` 和 `date-time`，而不是将这些关键字视为注释。
+
+</NormativeClause>
+
+## 3. 術語和角色
+
+<a href={`${import.meta.env.BASE_URL}artifacts/0.1/protocol/CONTEXT.md`}>
+  <code>../CONTEXT.md</code>
+</a>
+中的領域術語表是規範的。以下角色規則完善了這個詞彙：
+
+- 一 **Organization** 是 v0.1 中唯一的信任和治理边界。
+- 一 **Agent**
+  是一種穩定身份，最多具有一個活動運行時會話。水平擴展由單獨註冊表示 Agent 身份。
+- 一個**MissionOwner**
+  負責 Group 成員的指示、核准和正常取消。對於根 Mission，該角色由人類承擔；對於子任务，上層 Coordinator 在人類的最終責任下承擔該角色。
+
+<NormativeClause id="MWP-FND-010" level="MAY">
+
+- 一個**Coordinator**
+  是一個 Agent 持有可更新的角色租約。正好一個 Coordinator 時代 MAY 積極進行 Mission 一次。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-011" level="MAY">
+
+- 一個**Worker** 是一個 Agent 接受 WorkItems 到它自己的調度中隊列。相同 Agent
+  MAY 成為一個 Worker 在許多組中。
+
+</NormativeClause>
+
+- 一個**Group Authority**
+  是 Organization 進行身份驗證的基礎設施會話、驗證 Membership 和策略，序列化結構化轉換，並附加事件。它不是語義管理器，並且不決定代理應該說什麼或他們應該如何推理。
+
+<NormativeClause id="MWP-FND-012" level={["MAY","MUST NOT"]}>
+
+Group
+Authority 是每個 Group 的一個邏輯權限。實現 MAY 在內部複製它，但共識、領導者選舉和副本拓撲 MUST
+NOT 將公開為 MissionWeaveProtocol 語義。這種選擇提供了確定性的排他所有權，而不需要代理人以社交方式解決裂腦執行問題。
+
+</NormativeClause>
+
+## 4. 核心不變量
+
+<NormativeClause id="MWP-FND-013" level="MUST">
+
+符合要求的實作 MUST 保留以下所有不變量：
+
+</NormativeClause>
+
+1. **一個 Mission，一個 Group。 **
+   每個 Mission 恰好擁有一個主 Group，並且每個主 Group 恰好屬於一個 Mission。
+
+<NormativeClause id="MWP-FND-014" level="MUST NOT">
+
+2. **會話不是授權。 ** 一個Message，提及，總結，Context
+   Package，或者模型輸出MUST
+   NOT本身授權一個工具調用，業務操作、WorkItem 分配、預算支出或權限授予。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-015" level="MUST">
+
+3. **結構化執行權限。 **
+   任何具後果的操作 MUST 同時關聯到已接受的 WorkItem、目前 Ownership
+   Epoch、有效的 Execution Lease、適用的策略 Approval，以及限定範圍的能力權杖。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-016" level="MUST">
+
+4. **一個活動運行時。 ** 狀態變更 Agent Command MUST 承載目前 Session
+   Epoch。即使 WebSocket 保持連接，較低紀元 MUST 也會被拒絕。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-017" level={["MAY","MUST NOT"]}>
+
+5. **獨佔工作受 fencing 保護。 **
+   對於每個獨佔 WorkItem，最多存在一個目前 Ownership
+   Epoch。來自過時 Epoch 的結果 MAY 作為非權威 Evidence 保留，但 MUST
+   NOT 完成該 WorkItem。
+
+</NormativeClause>
+
+6. **僅附加歷史記錄。 **
+   接受的事件和提交的訊息是不可變的。更正、撤回、編輯、撤銷和補救是新事件。
+7. **僅定義每個 Group 內的順序。 **
+   每個 Group 都有一個單調 Event 序列。MissionWeaveProtocol 未定義跨組的全域順序或原子事務。
+
+<NormativeClause id="MWP-FND-018" level={["MAY","MUST"]}>
+
+8. **至少一次傳遞。 **
+   事件 MAY 傳遞多次。穩定標識符和冪等處理 MUST 使每個接受的狀態轉換可觀察一次。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-019" level="MUST">
+
+9. **Mission 隔離.**
+   Mission 內容、憑證、中間狀態和 Agent 記憶是 Group- 預設範圍。叉-Group 揭露 MUST 明確並授權。
+
+</NormativeClause>
+
+10. **人類最終批准。 **
+    根 Mission 只有在 MissionOwner 核准確切的 Mission 修訂版和 Artifact 集後才會完成。Coordinator 審查不是最終的人類 Approval。
+
+<NormativeClause id="MWP-FND-020" level="MUST NOT">
+
+11. **預算和權限向下縮小。 ** WorkItem 和孩子-Mission 預算、能力和資源權限 MUST
+    NOT 超過他們父母的補助金。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-021" level="MUST">
+
+12. **沒有私人的 Mission 側通道。 **
+    Mission-有關的 Agent 溝通 MUST 被記錄在 Mission
+    Group 或可見的連結的、存取控制的對話 Coordinator 和 MissionOwner.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-022" level={["MUST","MUST NOT"]}>
+
+13. **沒有私人推理要求。 **
+    代理 MUST 發布決策、輸入、審計所需的證據、阻礙因素和結果；他們 MUST
+    NOT 需要發布私人思想鏈、隱藏提示或原始記憶體。
+
+</NormativeClause>
+
+## 5.系統架構
+
+MissionWeaveProtocol 部署至少包含：
+
+- Organization 控制的 Agent Registry；
+- Group Authority 和持久的 Group Event 儲存；
+- 評估策略並頒發能力令牌的授權服務；
+- 一名或多名獨立安排的代理人；
+- Artifact 透過內容雜湊定址的儲存；和
+- 用於 Mission 指令、監控、幹預和操作的人機介面 Approval。
+
+<NormativeClause id="MWP-FND-023" level="MUST NOT">
+
+權威狀態由 Mission、Membership、WorkItem、Ownership Epoch 與 Lease
+Epoch、去重回執、Approval 和 Group
+Event 構成。Agent 本機遊標、每 Group 佇列、checkpoint、outbox、inbox 與 scheduler 狀態都是可重建的投影。Agent 本機資料庫的遺失 MUST
+NOT 改變權威 Mission 狀態。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-024" level="RECOMMENDED">
+
+對於 v0.1 參考實現，PostgreSQL 和 Agent-本地 SQLite 是 RECOMMENDED，對於工件，內容尋址物件儲存是 RECOMMENDED。這些產品不符合有線協議要求。
+
+</NormativeClause>

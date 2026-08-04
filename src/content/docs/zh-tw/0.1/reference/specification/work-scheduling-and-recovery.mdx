@@ -1,0 +1,345 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-WRK
+title: 工作、日程安排和恢復
+description: 工作項目、工作合約、調度、執行、恢復、工件、Evidence、重播和確認。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../../components/InformativeBlock.astro";
+
+## 10. 工作項目和工作合同
+
+### 10.1 所需的工作合約
+
+<NormativeClause id="MWP-WRK-001" level="MUST">
+
+每一個 WorkItem MUST 攜帶版本化的、機器可讀的工作合同，其中包含：
+
+- 目標和所需的交付成果；
+- 驗收標準和要求 Evidence;
+- 輸入和依賴引用；
+- 允許的工具、資料、操作和資源限制；
+- 所需的功能 ID 和版本；
+- 截止日期、請求的緊迫性和業務影響；
+- 財務、代幣、工具呼叫、計算、掛鐘和副作用預算適用；
+- 重試嘗試、退避、截止日期和成本政策；和
+- 風險分類和任何執行前批准要求。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-002" level={["MUST","MUST NOT","MAY"]}>
+
+本質上的歧義 MUST 被提出在 WorkItem 接受前的交談；這 Worker MUST
+NOT 接受 WorkItem 進入其執行隊列。這 Coordinator 透過發布新的解決方案
+`work.offer`
+與更正的合約或授權更換 WorkItem。重大修訂的工作合約增加了修訂內容並需要更新 Worker 驗收。自然語言散文 MAY 補充一下，但是 MUST
+NOT 替換合約字段。
+
+</NormativeClause>
+
+### 10.2 WorkItem 狀態機
+
+WorkItem 的核心狀態和轉換是：
+
+<span id="workitem-transition-table"></span>
+
+| 目前狀態                                                                     | 轉換                                  | 下一狀態                | 說明                                                       |
+| ---------------------------------------------------------------------------- | ------------------------------------- | ----------------------- | ---------------------------------------------------------- |
+| 無                                                                           | `work.propose`                        | 開放工作提案            | 任何 Group 成員均可提出；尚不存在 WorkItem                 |
+| 無或開放工作提案                                                             | `work.authorize`                      | `open`                  | Coordinator 或範圍內委託方建立 WorkItem                    |
+| `open`、`offered`、`queued`、`active`、`blocked` 或 `failed`，且無有效所有者 | `work.offer`                          | `offered`               | 建立、替換或延長持久報價；過期所有者先被 fencing           |
+| `offered`                                                                    | `work.accept_offer`                   | `queued`                | 原子性 Ownership Epoch 開始                                |
+| `offered`                                                                    | 報價到期                              | `offered`               | 到期會使接受操作失效，但本身不會附加 Event 或變更狀態      |
+| `queued`                                                                     | 需要時執行 `approval.grant_execution` | `queued`                | 無需執行工作即可滿足啟動閘門                               |
+| `queued`                                                                     | `work.start`                          | `active`                | 需要有效所有權與 Execution Lease                           |
+| `active`                                                                     | `work.checkpoint`                     | `queued`                | 持久化進度會釋放執行權，同時保留有界 Ownership Lease       |
+| `active`                                                                     | `work.block`                          | `blocked`               | 檢查點與有界阻塞租約                                       |
+| `blocked`                                                                    | `work.unblock`                        | `queued` 或 `open`      | 重新進入其佇列，或在所有權到期後重新報價                   |
+| `active`                                                                     | `work.submit`                         | `submitted`             | 需要 Artifact 與 Evidence                                  |
+| `submitted`                                                                  | `work.accept_result`                  | `verified`              | Coordinator 審核成功                                       |
+| `open`、`offered`、`queued`、`active`、`blocked` 或 `submitted`              | `work.fail`                           | `failed`                | 需要失敗 Evidence；Coordinator 稍後可發布新的 `work.offer` |
+| `open`、`offered`、`queued`、`active`、`blocked` 或 `submitted`              | `work.cancel`                         | `cancelled`             | 適用清理政策                                               |
+| `open`、`offered`、`queued`、`active` 或 `blocked`                           | `mission.create_child`                | `blocked`               | 連結的子任务執行期間，所有權被 fencing                     |
+| `blocked`                                                                    | 連結的子任务獲批                      | `verified`              | 子任务的 Approval 成為父 WorkItem 的 Evidence              |
+| `blocked`                                                                    | 連結的子任务失敗                      | `blocked` 或 `failed`   | 宣告的子任务失敗政策控制傳播                               |
+| `open`、`offered`、`queued`、`active`、`blocked` 或 `submitted`              | 父 Mission 失敗或取消                 | `failed` 或 `cancelled` | Mission 終態傳播到未完成的 WorkItem                        |
+
+<NormativeClause id="MWP-WRK-003" level={["MAY","MUST"]}>
+
+`verified` 和 `cancelled` 是終端 WorkItem 修訂。 `failed`
+將控制權回傳給 Coordinator 並且可能只能透過新的過渡 `work.offer`;這 Coordinator
+MAY 而是創造一個替代品 WorkItem 或取消分行 Mission 等級。實施 MUST 拒絕該表和目前聚合修訂不允許的轉換。
+
+</NormativeClause>
+
+### 10.3 要約、存取控制和所有權
+
+<NormativeClause id="MWP-WRK-004" level={["MAY","MUST NOT","SHOULD"]}>
+
+一個離線的 Worker MAY 收到具有到期時間的持久報價。報價 MUST
+NOT 接受前保留獨家所有權。獨家工作項目 SHOULD 依序提供給排名最高的合格者 Worker。對於緊急安置 Coordinator
+MAY 提供給有限的候選集；第一個有效的接受自動贏得一個新的所有權 Epoch，並且在失敗者執行之前，每個失敗的報價都會被撤回。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-005" level={["MUST","SHOULD"]}>
+
+接受意味著持久的調度承諾，而不是立即執行。一個 Worker
+MUST 針對佇列容量、並發性、功能可用性、截止日期、授權資格、依賴性和預算執行存取控制。它 MUST 當它無法做出可信的承諾時拒絕，並且 SHOULD 使用結構化原因，例如
+`capacity`, `deadline`, `capability`, `authorization`, `dependency`， 或者
+`budget`.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-006" level={["MUST","MUST NOT"]}>
+
+每項作業 MUST 記錄結構化選擇基礎：所需的能力匹配、授權資格、可用性估計、預期成本、特定於能力的可靠性 Evidence，以及所應用的政策規則。私人思想鏈 MUST
+NOT 被包括在內。
+
+</NormativeClause>
+
+### 10.4 依賴關係與動態規劃
+
+<NormativeClause id="MWP-WRK-007" level={["MAY","MUST"]}>
+
+一個 Mission的 WorkItems 形成一個不斷發展的有向無環圖。一個 Coordinator
+MAY 在了解完整圖表之前開始執行，在發現發生時添加工作項，並並行運行獨立分支。一個 WorkItem 僅當其聲明的依賴項滿足合約的依賴項策略時才符合資格。依賴循環 MUST 被拒絕。
+
+</NormativeClause>
+
+沒有跨 Group 交易。跨 Group 關係使用穩定的關聯 ID、上層與子任务連結、Artifact 和補償 WorkItem。
+
+## 11. 調度、執行與復原
+
+### 11.1 Per-Group 佇列和全域調度程序
+
+<NormativeClause id="MWP-WRK-008" level="MUST">
+
+每個 Worker
+MUST 為每個 Group 維護一個不同的 Event 收件匣、遊標和工作佇列。佇列是已接受的 Group 事件的持久本地投影，並且 MUST 可透過重播重建。 Mission、所有權、租賃和 WorkItem 狀態在 Group 日誌中仍然具有權威性。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-009" level="MUST NOT">
+
+Worker 自有的 Scheduler 從所有每個 Group 佇列中選擇符合條件的 WorkItem，並將其放入宣告的隔離執行槽。Scheduler 對跨 Group 順序擁有最終決定權。Coordinator 提供所要求的緊迫性、截止日期和業務影響，但 MUST
+NOT 強制其 Mission 排在其他 Mission 之前。Organization 優先級的升級透過策略或 MissionOwner 進行。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-010" level={["MUST","SHOULD"]}>
+
+Scheduler
+MUST 實作加權公平和抗飢餓。有效排序 SHOULD 考慮 Organization 優先級類別、截止日期、佇列時效、每個 Group 配額、風險閘門和資源可用性。純粹且無界的最高優先級優先調度不符合規範。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-011" level="MUST">
+
+Agent
+Card 聲明最大並發；狀態報告目前容量。每個活動插槽 MUST 將 Mission 上下文、憑證、檢查點、工具預算和副作用金鑰與其他插槽隔離。
+
+</NormativeClause>
+
+### 11.2 安排揭露
+
+<NormativeClause id="MWP-WRK-012" level={["SHOULD","MUST NOT"]}>
+
+在驗收和材料計劃更改時，Worker
+SHOULD 發布預計開始視窗、預計完成時間、置信度、產能狀態和計算時間。它 MUST
+NOT 公開來自另一個 Group 的名稱、內容、分配或確切的全域佇列位置。
+
+</NormativeClause>
+
+### 11.3 執行租用和搶佔
+
+<NormativeClause id="MWP-WRK-013" level="MUST">
+
+排隊所有權和主動執行使用可更新的、受保護的租約。所有權授予 MUST 包括所有權紀元和啟動截止日期。開始工作需要具有穩定租約 ID 的執行租約，該租約 ID 綁定到 Agent
+ID、Session Epoch、WorkItem
+ID、所有權紀元、開始、續約歷史記錄和到期。續約歷史記錄和到期。每個續約、檢查點、區塊、Artifact 發布、提交和 Worker 報告的失敗 MUST 都會引用目前的租約 ID。即使其所有權 Epoch 未更改，攜帶舊租約 ID
+MUST 的延遲 Command 也會被拒絕。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-014" level="MUST">
+
+能力令牌綁定到 Execution Lease
+ID，而不是相反。這允許在一項租約保持有效的情況下輪換或縮小代幣範圍；每個令牌仍然會在不晚於其發行時的租約邊界到期。檢查點、阻止、提交釋放租約；超時使之過期；會話替換、重新分配、取消和失敗撤銷它。開啟取代 Agent 會話 MUST 會撤銷 Agent 的活動租約，並將受影響的工作項目傳回
+`queued`，然後它們在新啟動時可以在新啟動時執行。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-015" level="MUST NOT">
+
+優先順序變更會立即對排隊的工作項目重新排序。活動工作 MUST
+NOT 在不安全點被強制中斷。搶佔是合作性的：
+
+1. Scheduler請求搶佔；
+2. Worker 到達安全性、冪等檢查點；
+3. 發出檢查點並暫停；
+4. 其執行槽被釋放；和
+5. 暫停的WorkItem重新進入其Group佇列以供稍後恢復。
+
+</NormativeClause>
+
+### 11.4 進度、阻塞和重試
+
+<NormativeClause id="MWP-WRK-016" level={["MUST","SHOULD"]}>
+
+進度報告 MUST 圍繞當前階段、已完成的里程碑、下一個檢查點、阻礙因素、修訂估計和 Evidence 參考進行建構。任意百分比是非權威的。當估計發生重大變化或被阻止時，工作人員 SHOULD 在有意義的檢查點進行報告。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-017" level={["MUST","MAY"]}>
+
+當被阻止時，Worker MUST 檢查點會發出具有所需解析度的
+`work.blocked`，並釋放其執行槽。所有權 MAY 在有界阻止租約期間保留。 Coordinator 可以解決阻止者、授權提議的子工作或重新分配。未阻塞的工作會返回其每個 Group 就緒佇列。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-018" level="MUST">
+
+自動重試受到工作合約的嘗試、退避、成本和截止日期預算的限制。外部嘗試 MUST 使用 WorkItem 執行冪等金鑰或確定性派生嘗試金鑰。耗盡或永久故障會發出
+`work.failed` 和 Evidence。
+
+</NormativeClause>
+
+### 11.5 Worker 和 Coordinator 失敗
+
+<NormativeClause id="MWP-WRK-019" level={["MAY","MUST NOT"]}>
+
+如果 Worker 錯過了其開始截止日期或停止續約租約，則 Coordinator
+MAY 從具有更高所有權 Epoch 的最新檢查點重新分配。儲存舊擁有者 MAY 的最新結果以供審核，但 MUST
+NOT 完成 WorkItem。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-020" level={["MAY","MUST NOT","MUST"]}>
+
+如果 Group 服務不可用，Worker
+MAY 將在有界租約寬限期內繼續已活動的可逆計算，並緩衝簽章的進度和檢查點。它 MUST
+NOT 在沒有當前有效的租約和功能令牌的情況下啟動新的工作項目或執行新的高風險、不可逆或外部可見的操作。它 MUST 在提交或進一步副作用之前重新連接進行協調。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-021" level="MUST">
+
+每個緩衝的 Command MUST 都攜帶關鍵的
+`urn:missionweaveprotocol:extension:bounded-offline-execution`
+綁定。綁定記錄了 Agent、Group、WorkItem、原始 Session
+Epoch、所有權 Epoch、歷史租約執行 ID、斷開期限、歷史時間、增量時間、增量成本、增量成本、增量成本、增量時間、增量時間、增量時間、增量成本、增量成本、增量成本、增量成本、增量時間、增量時間、增量成本、增量成本、增量成本、增量成本、增量時間、數量。重新連接 Worker
+MUST 保留該綁定，但使用 `issuedAt`、Session Epoch 和 Membership
+Command目前經過驗證的會話的紀元。 Group Authority
+MUST 拒絕在歷史租約/寬限視窗之外、租約關閉後、更改所有者或在綁定 WorkItem 會話之外緩衝的進度。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-022" level="MUST">
+
+對帳及其資源費用是一項權威交易。對於每個非零離線增量， Group Authority
+MUST 附加一個 `ext.missionweaveprotocol.core.resource_usage_recorded`
+Event 識別歷史執行會話和協調會話，更新 WorkItem 並完成預算血統，然後應用 Message 或檢查站。預算溢出 MUST 拒絕指控和進展 Command 沒有部分的 Event 或狀態改變。
+
+</NormativeClause>
+
+<InformativeBlock title="固定來源內容續接">
+
+下一個區塊恢復稍後固定的來源段。中間的本地頁面與確切行範圍請參閱[規範來源映射](./)。
+
+</InformativeBlock>
+
+## 13.工件， Evidence和上下文包
+
+### 13.1 工件
+
+<NormativeClause id="MWP-WRK-023" level="MUST">
+
+一個 Artifact 是不可變的且內容已解決。二進位內容 MUST 儲存在外部 Group
+Event 紀錄.其簽署的清單 MUST 包含內容雜湊、媒體類型和架構、生產者 Agent 和 Agent
+Card 版本， Mission/Group/WorkItem
+ID、來源 Artifact 雜湊值、相關工具/模型/功能版本、建立時間、資料分類、大小和檢索 URI。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-024" level={["MUST","MUST NOT"]}>
+
+派生工件形成出處圖。實施 MUST 檢索時驗證內容哈希 Artifact 和 MUST
+NOT 將可變 URI 視為內容標識。
+
+</NormativeClause>
+
+### 13.2 Evidence基於審查
+
+<NormativeClause id="MWP-WRK-025" level={["MUST","SHOULD"]}>
+
+一個 Worker的完成聲明是不夠的。 WorkItem 提交 MUST 包括 Evidence 映射到驗收標準。 Coordinator 審查 SHOULD， 為了：
+
+1. 驗證 Artifact 完整性和所需的輸出模式；
+2. 執行確定性測試或可用的業務規則；
+3. 請求評審者 Agent 提供用於語意或定性標準的 Evidence；
+4. 綜合評估 Evidence；以及
+5. 保留所有結果，以供最終的人類 Approval 使用。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-026" level={["MUST","MUST NOT"]}>
+
+Evidence
+MUST 記錄主題、標準、方法、結果、生產者、時間戳記和引用的工件。 Evidence 和決策記錄 MUST
+NOT 包括私人思想鏈。
+
+</NormativeClause>
+
+### 13.3 上下文包
+
+<NormativeClause id="MWP-WRK-027" level="MUST">
+
+一個 Context
+Package 是一個簽名的、版本化的、有範圍的摘要，絕不是歷史的權威替代品。它 MUST 確認 Mission 和 WorkItem 範圍、來源 Event 範圍， Artifact 哈希值、決策、約束、未解決的問題、生成器、時間和簽章。一個 Worker 可以檢索引用的事件 Membership 允許。更新包會建立新版本並保留先前版本的出處。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-028" level="MUST NOT">
+
+Group 內容 MUST
+NOT 預設進入另一個 Mission 的上下文。可重複使用知識必須明確發佈為 Organization 批准的、分類的、帶有出處的 Artifact。跨 Group 轉送需要權限檢查和可審核的 Event。全域調度程序可以檢查排程器元數據，但 MUST
+NOT 檢查機密 Mission 內容。
+
+</NormativeClause>
+
+<InformativeBlock title="固定來源內容續接">
+
+下一個區塊恢復稍後固定的來源段。有關介入的本地頁面和確切的行範圍，請參閱[規範來源映射](./)。
+
+</InformativeBlock>
+
+## 16. 傳送、重播與確認
+
+<NormativeClause id="MWP-WRK-029" level={["MUST","MAY","MUST NOT"]}>
+
+MissionWeaveProtocol 承諾至少一次 Event 交付。接收者 MUST 依 Event
+ID 進行重複資料刪除，且 MUST 依序處理每個 Group。它 MAY 緩衝了一個無序的 Event，但 MUST
+NOT 將其持久遊標推進了一個間隙。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-030" level="MUST NOT">
+
+遊標是由 Agent 持久處理的最高連續 Group 序列。 `ACK`
+訊框報告一個或多個遊標。確認允許進行傳遞清理，但 MUST
+NOT 刪除權威的 Group 歷史記錄。重連使用`SUBSCRIBE.afterSequence`；伺服器重播該位置之後的事件，可能包括先前斷開連接周圍的重複事件。
+
+</NormativeClause>
+
+如果舊遊標在線上日誌中不再可用，伺服器將傳回 `CURSOR_TOO_OLD`
+和簽署的快照參考。 Agent 恢復快照，驗證其哈希/簽名，並從快照序列恢復。
+
+<NormativeClause id="MWP-WRK-031" level="MUST">
+
+外部工具操作 MUST 使用從 Mission ID、WorkItem
+ID、所有權 Epoch 和邏輯操作 ID 派生的穩定冪等金鑰。僅靠網路傳遞永遠無法保證外部副作用的精確一次。
+
+</NormativeClause>

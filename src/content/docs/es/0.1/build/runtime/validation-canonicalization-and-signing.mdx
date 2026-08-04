@@ -1,0 +1,159 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Validación, canonicalización y firma
+description: >-
+  La normativa estricta: JSON, esquema, JCS, Registry, firma y canalización de
+  verificación de seis etapas compartida por cada tiempo de ejecución.
+---
+
+# Validación, canonicalización y firma
+
+El procesamiento Signed Document es una canalización semántica ordenada. Los
+límites de las funciones internas pueden diferir, pero la aceptación y la
+clasificación diagnóstica deben preservar el orden normativo de las etapas.
+
+En las seis etapas, aplique el JSON común y el perfil de marca de tiempo
+([MWP-FND-004](../../../reference/specification/foundations/#mwp-fnd-004)),
+conserve el texto léxico de marca de tiempo
+([MWP-FND-005](../../../reference/specification/foundations/#mwp-fnd-005)),
+requiera base64url canónica, hashes y seguridad enteros
+([MWP-FND-007](../../../reference/specification/foundations/#mwp-fnd-007)) y
+habilitar cada aserción de formato de esquema normativo
+([MWP-FND-009](../../../reference/specification/foundations/#mwp-fnd-009)). Las
+mismas reglas de transferencia canónica se aplican a todas las firmas y hashes
+derivados de contenido
+([MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012)).
+
+## Verificación de seis etapas
+
+La secuencia de control es
+[MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015):
+
+1. analizar estrictamente exactamente un valor UTF-8 JSON; rechazar una marca de
+   orden de bytes, datos finales, UTF-8 no válido y nombres de miembros
+   decodificados duplicados;
+2. validar el documento completo frente a su esquema normativo;
+3. validar el sobre de firma, la hora protegida, la regla del firmante esperado
+   y estricta codificación de firma Ed25519;
+4. validar la evidencia completa Organization con alcance Registry, resolver la
+   clave y Principal y pruebe la hora firmada protegida con el historial de
+   claves retenidas;
+5. omitir exactamente el miembro de nivel superior `signature` y producir RFC
+   8785 JCS bytes;
+6. verifique la firma pura Ed25519 sobre esos bytes exactos.
+
+El verificador se detiene en la primera etapa fallida y no autoriza a un actor,
+no agrega un Event ni ejecuta una transición de estado antes de que se completen
+las seis etapas.
+
+## Sin pérdidas JSON y JCS
+
+La entrada JCS está restringida al modelo de datos RFC 8785 e I-JSON. Los
+números son valores finitos binarios IEEE 75464 serializados con la forma de ida
+y vuelta más corta requerida; los sustitutos Unicode no emparejados y los
+valores fuera de ese dominio fallan antes de que se emitan los bytes canónicos
+([MWP-FND-006](../../../reference/specification/foundations/#mwp-fnd-006)).
+
+No canonicalice el cable entrante JSON como sustituto del análisis o la
+validación del esquema. La canonicalización es la etapa 5 y opera sobre el valor
+recibido después de todas las comprobaciones semánticas anteriores que controlan
+la clasificación de las etapas.
+
+## Aceptación estricta de Ed25519
+
+El éxito de la importación del proveedor no es la regla de aceptación. Un
+verificador:
+
+- decodifica canónicamente `Renc`, requiere membresía en un subgrupo de orden
+  primario, acepta solo `0 <= S < L` y no reduce un escalar fuera de rango
+  ([MWP-SDV-003](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-003));
+- aplica ID de clave inmutable a Principal, algoritmo y enlace de clave pública
+  más Organization invariantes sin reutilización y sin alias
+  ([MWP-SDV-004](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-004));
+- decodifica estrictamente la clave pública de 32 bytes como canónica, sin
+  identidad, punto Edwards25519 de orden primo
+  ([MWP-SDV-005](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-005));
+  y
+- comprueba la ecuación de verificación pure-Ed25519 sobre los 5 bytes exactos
+  de la etapa
+  ([MWP-SDV-006](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-006)).
+
+Registry conserva índices e historial suficientes para demostrar la unicidad
+vinculante y las afirmaciones de ausencia
+([MWP-SDV-007](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-007)).
+
+## Hora protegida y firmante esperado
+
+Cada esquema Signed Document se asigna a un campo de hora de firma protegido y a
+un firmante esperado. El firmante exacto se selecciona en
+[MWP-SDV-001](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-001).
+La hora protegida y `signature.createdAt` usan `Z` en mayúsculas, deben ser byte
+por byte idénticos y no se pueden reparar ni normalizar antes de la comparación
+([MWP-SDV-002](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-002)).
+
+## Resolución de clave respaldada por Registry
+
+La etapa 4 es más amplia que una búsqueda de clave seleccionada:
+
+- la evidencia se limita a exactamente un Organization y uno coherente revisión
+  autorizada Registry;
+- todos los elementos del historial vinculantes y retenidos necesarios para la
+  no reutilización en todo Organization, Las afirmaciones sin alias y de
+  integridad se validan antes de la selección
+  ([MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008));
+- el adaptador de implementación establece la aplicabilidad de la revisión, su
+  integridad y cobertura histórica o informes que no puede
+  ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010));
+  y
+- el tiempo protegido se compara con `validFrom`, `validUntil` medio abiertos y
+  Límites `revokedAt` como un instante
+  ([MWP-SDV-014](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-014)).
+
+La evidencia no disponible, la cobertura incompleta, la clave desconocida
+autorizada, los enlaces no relacionados no válidos y una clave seleccionada no
+válida no se cierran en la etapa 4. Evidence puede provenir de una instantánea
+completa o de índices y consultas autorizados, pero un caché parcial no puede
+sustituir a la prueba completa de Organization
+([MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009)).
+Una clave desconocida tiene autoridad solo después de que se establece que está
+completa
+([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011)).
+
+El historial de validez se agrega únicamente o se versiona explícitamente; sus
+primeros límites `validUntil` y `revokedAt` efectivos se conservan para la
+verificación histórica
+([MWP-SDV-012](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-012)).
+El Principal vinculado de la clave seleccionada debe ser igual al firmante
+esperado exacto
+([MWP-SDV-013](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-013)).
+
+## Firma y firma de hashes
+
+Un firmante construye el mismo valor protegido que reconstruirá un verificador:
+
+1. Construya todos los campos que no sean de firma, incluido el campo protegido
+   de hora firmada. requerido por el tipo de documento.
+2. Elija la hora protegida y la clave de firma esperada, conservando la
+   mayúsculas-`Z` ortografía de marca de tiempo que también se convertirá en
+   `signature.createdAt`.
+3. Produzca RFC 8785 JCS bytes de firma del objeto completo con el Miembro
+   `signature` de nivel superior ausente.
+4. Calcule el hash de firma y la firma pure-Ed25519 sobre esos bytes exactos.
+   codificando la firma como base64url canónica sin relleno.
+5. Adjunte el sobre de firma completo con `Ed25519`, el ID de clave
+   seleccionado, el tiempo protegido de byte idéntico y el valor de firma
+   codificado.
+6. Validar el Signed Document final contra su esquema normativo completo y el
+   mismo verificador de seis etapas antes de la publicación.
+
+El hash de firma es independiente del estado de admisión y tiene la forma exacta
+definida por
+[MWP-SDV-017](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-017).
+Los números de etapa son clasificaciones semánticas en lugar de límites de
+funciones requeridos, como lo aclara
+[MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016).
+
+Ejecute cada implementación contra el
+[paquete de conformidad de criptografía ](../../../reference/conformance/cryptography/)
+local antes de superponer Admisión por encima del resultado de seis etapas.

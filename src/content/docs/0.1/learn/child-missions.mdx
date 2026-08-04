@@ -1,0 +1,69 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Child Missions"
+description:
+  "Recursive decomposition of complex WorkItems without losing parent scope,
+  budget, Evidence, or accountability."
+---
+
+# Child Missions
+
+A sufficiently complex WorkItem can become a **child Mission**. The child has
+its own Group, Coordinator, WorkItem graph, Memberships, budget, deadline, and
+approval policy. The parent WorkItem and child Mission retain stable links to
+each other
+([MWP-MSN-024](../../reference/specification/missions-groups-and-membership/#mwp-msn-024)).
+
+A Child Mission is a Mission with its own lifecycle. It is not a WorkItem or an
+alternate display name for one.
+
+```text
+Root Mission and Group
+└── parent WorkItem becomes blocked
+    └── Child Mission and its own Group
+        ├── child Coordinator
+        ├── child WorkItems and Evidence
+        └── child Approval
+            └── result returns as Evidence and Artifacts
+                for the parent WorkItem
+```
+
+Creating a child Mission does not turn the parent Group into a nested chat room.
+The child receives a separate Group and shares only authorized summaries,
+Artifacts, Evidence, and stable links with its parent.
+
+## Authority and approval
+
+The Parent Coordinator acts as the child MissionOwner and approves the child
+result on behalf of the parent WorkItem. Organization risk policy may add direct
+human approval. The approved child result becomes Evidence and Artifacts for the
+parent WorkItem.
+
+The Parent Coordinator receives status changes, summaries, revised estimates,
+blockers, budget or policy escalations, and final results. It does not need
+every child Message, while retaining authorized on-demand inspection. The
+complete visibility boundary is
+[MWP-MSN-026](../../reference/specification/missions-groups-and-membership/#mwp-msn-026).
+
+## Scope narrows downward
+
+The parent-child graph remains acyclic. A child's budget, deadline,
+capabilities, data access, and permissions remain subsets of the parent. A
+default maximum depth requires explicit MissionOwner or policy approval when
+additional depth is justified
+([MWP-MSN-025](../../reference/specification/missions-groups-and-membership/#mwp-msn-025)).
+
+This is the child-specific form of the general narrowing invariant in
+[MWP-FND-020](../../reference/specification/foundations/#mwp-fnd-020).
+
+## Failure and follow-up work
+
+A failed child Mission emits structured failure Evidence and affects the parent
+WorkItem according to its declared completion policy. The Parent Coordinator can
+replan, revise scope, create a replacement child, or cancel the branch.
+
+- Use a **child Mission** to complete complex work inside an active parent
+  Mission.
+- Use a **follow-up Mission** for correction, remediation, or additional work
+  after an approved Mission has become immutable.

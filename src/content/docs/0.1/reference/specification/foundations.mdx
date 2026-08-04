@@ -1,0 +1,328 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-FND
+title: "Foundations"
+description:
+  "Purpose, conventions, terminology, invariants, architecture, and persistence
+  foundations for MissionWeaveProtocol 0.1."
+---
+
+import NormativeClause from "../../../../../components/NormativeClause.astro";
+
+# MissionWeaveProtocol 0.1
+
+Status: Draft Standard, version `0.1.0`.
+
+<NormativeClause id="MWP-FND-001" level={["MUST","MUST NOT","REQUIRED","SHALL","SHALL NOT","SHOULD","SHOULD NOT","RECOMMENDED","NOT RECOMMENDED","MAY","OPTIONAL"]}>
+
+This document defines version 0.1 of MissionWeaveProtocol. The key words
+**MUST**, **MUST NOT**, **REQUIRED**, **SHALL**, **SHALL NOT**, **SHOULD**,
+**SHOULD NOT**, **RECOMMENDED**, **NOT RECOMMENDED**, **MAY**, and **OPTIONAL**
+in this document are to be interpreted as described by BCP 14 when, and only
+when, they appear in all capitals as shown here.
+
+</NormativeClause>
+
+## 1. Purpose and scope
+
+MissionWeaveProtocol is a group-oriented cooperation protocol for autonomous
+Agents operating inside one trusted Organization. It lets an Agent participate
+in many Mission Groups concurrently, exchange durable Messages with peers,
+accept explicit WorkItems into per-Group queues, schedule those WorkItems across
+Groups, publish verifiable Artifacts, and obtain human approval of completed
+Missions.
+
+<NormativeClause id="MWP-FND-002" level="MAY">
+
+MissionWeaveProtocol is not Agent-to-Agent RPC. Agents are peers in Conversation
+and MAY initiate Messages or WorkItem proposals at any time. Structured
+authority is nevertheless explicit: a Message never authorizes a side effect,
+and organization infrastructure validates all Commands that change Mission
+state.
+
+</NormativeClause>
+
+MissionWeaveProtocol 0.1 standardizes:
+
+- Agent identity, Agent Cards, Presence Records, and runtime fencing;
+- one temporary Group and one monotonic Event history per Mission;
+- a replaceable Coordinator and a human MissionOwner;
+- Membership, Conversations, Messages, WorkItems, Work Contracts, Artifacts,
+  Evidence, Context Packages, leases, budgets, and approvals;
+- durable Commands, immutable Events, replay, acknowledgements, and idempotency;
+- per-Group Worker queues and privacy-preserving cross-Group scheduling signals;
+- recursive child Missions for complex decomposition;
+- canonical JSON over an authenticated WebSocket-over-TLS binding; and
+- governed Extension Profiles.
+
+MissionWeaveProtocol 0.1 deliberately does not define cross-organization
+federation, physical peer-to-peer routing, Group end-to-end encryption,
+distributed consensus, model prompts, private model reasoning, a knowledge-base
+API, an Artifact object-store API, or the implementation of the Organization's
+policy and authorization services.
+
+## 2. Normative references and data conventions
+
+<NormativeClause id="MWP-FND-003" level="MUST">
+
+Implementations MUST follow these external specifications where referenced:
+
+- RFC 2119 and RFC 8174 (BCP 14), normative language;
+- RFC 3339, timestamps;
+- RFC 4648 Sections 3.2, 3.5, and 5, canonical unpadded base64url;
+- RFC 6455, WebSocket;
+- RFC 7493, Internet JSON (I-JSON);
+- RFC 8446, TLS 1.3;
+- RFC 8785, JSON Canonicalization Scheme (JCS);
+- RFC 8032, Ed25519;
+- JSON Schema Draft 2020-12; and
+- RFC 9457 principles for structured protocol errors, where applicable.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-004" level="MUST">
+
+All protocol objects MUST be valid JSON. Durable protocol objects MUST conform
+to the JSON Schemas in `schemas/`, and every protocol timestamp MUST be an RFC
+3339 `date-time`. MissionWeaveProtocol 0.1 uses a deterministic timestamp
+profile for the Signed Document Verification Profile. Every timestamp in a
+Signed Document covered by [Section 6.4](../signed-documents-and-trust/), and
+every Registry or trusted-acceptance timestamp used to verify that document,
+MUST satisfy the following additional rules:
+
+- the calendar year is in the inclusive range `0001` through `9999` and the
+  Gregorian date is valid;
+- the second is in the inclusive range `00` through `59`; leap-second spellings
+  are not supported in v0.1;
+- an optional fractional second contains one or more ASCII digits, all of which
+  participate in instant comparison without truncation or rounding; and
+- the RFC 3339 unknown-local-offset spelling `-00:00` is not permitted.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-005" level={["MUST","MUST NOT"]}>
+
+The case-insensitive `T` separator and `Z` designator and the full RFC 3339
+numerical-offset range remain valid unless a later rule requires a narrower
+spelling. Generic JSON Schema `date-time` validation is necessary but not
+sufficient to establish this timestamp profile. An implementation MUST preserve
+serialized timestamp text independently from its parsed instant and MUST NOT
+rewrite it before hashing or signature verification. An absent fractional second
+is zero, and trailing zero digits do not change the represented instant.
+[Section 6.4](../signed-documents-and-trust/#mwp-sdv-002) additionally requires
+the protected signed time and `signature.createdAt` to use the uppercase `Z`
+suffix and to be byte-for-byte identical.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-006" level={["MUST","MUST NOT"]}>
+
+JCS input MUST follow the RFC 8785 and I-JSON data model. JSON numbers MUST be
+interpreted as finite IEEE 754 binary64 values and serialized with the RFC 8785
+ECMAScript shortest-round-trip form. An implementation using arbitrary-precision
+numbers MUST apply the same correctly rounded binary64 conversion and MUST NOT
+preserve host-specific extra precision in signing bytes. A value outside the
+finite binary64 domain or a string containing an unpaired Unicode surrogate MUST
+be rejected as a JCS data-model failure before canonical bytes are emitted.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-007" level="MUST">
+
+A base64url value MUST use the RFC 4648 URL-safe alphabet, omit `=` padding, and
+use zero unused pad bits. A decoder MUST reject a noncanonical spelling even
+when it decodes to the expected bytes. A content hash in v0.1 MUST use
+lower-case hexadecimal SHA-256 and the form `sha256:<64 hex digits>`. Integers
+used for sequences, revisions, epochs, and budgets MUST be non-negative safe
+JSON integers; Group Event sequences start at 1.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-008" level={["MUST","SHOULD","MUST NOT"]}>
+
+An identifier MUST be globally unique within the identifier's kind and MUST be
+serialized as an absolute RFC 3986 URI, not an IRI-only spelling. Non-ASCII
+characters MUST be UTF-8 percent-encoded, and validation MUST consume the
+complete string; whitespace, control characters, and trailing line terminators
+are invalid. UUID identifiers SHOULD use lower-case `urn:uuid:` form.
+Implementations MUST compare identifiers byte-for-byte after the URI
+normalization rules chosen by the issuing Organization; recipients MUST NOT
+invent additional normalization.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-009" level="MUST">
+
+Every `format` keyword in the normative Schemas is an assertion requirement.
+Implementations MUST enable Draft 2020-12 format validation, including `uri` and
+`date-time`, rather than treating those keywords as annotations.
+
+</NormativeClause>
+
+## 3. Terms and roles
+
+The domain glossary in <a
+href={`${import.meta.env.BASE_URL}artifacts/0.1/protocol/CONTEXT.md`}><code>../CONTEXT.md</code></a>
+is normative. The following role rules refine that vocabulary:
+
+- An **Organization** is the sole trust and governance boundary in v0.1.
+- An **Agent** is one stable identity with at most one active runtime session.
+  Horizontal scale-out is represented by separately registered Agent identities.
+- A **MissionOwner** is the accountable Group member for directives, approval,
+  and normal cancellation. It is a human for a root Mission. For a child
+  Mission, the Parent Coordinator fills this role under the root human's
+  accountability.
+
+<NormativeClause id="MWP-FND-010" level="MAY">
+
+- A **Coordinator** is an Agent holding a renewable role lease. Exactly one
+  Coordinator epoch MAY be active for a Mission at a time.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-011" level="MAY">
+
+- A **Worker** is an Agent that accepts WorkItems into its own scheduling
+  queues. The same Agent MAY be a Worker in many Groups.
+
+</NormativeClause>
+
+- A **Group Authority** is Organization infrastructure that authenticates
+  sessions, validates Membership and policy, serializes structured transitions,
+  and appends Events. It is not a semantic manager and does not decide what
+  Agents should say or how they should reason.
+
+<NormativeClause id="MWP-FND-012" level={["MAY","MUST NOT"]}>
+
+The Group Authority is one logical authority per Group. An implementation MAY
+replicate it internally, but consensus, leader election, and replica topology
+MUST NOT be exposed as MissionWeaveProtocol semantics. This choice provides
+deterministic exclusive ownership without requiring Agents to resolve
+split-brain execution socially.
+
+</NormativeClause>
+
+## 4. Core invariants
+
+<NormativeClause id="MWP-FND-013" level="MUST">
+
+A conforming implementation MUST preserve all of the following invariants:
+
+</NormativeClause>
+
+1. **One Mission, one Group.** Each Mission owns exactly one primary Group and
+   each primary Group belongs to exactly one Mission.
+
+<NormativeClause id="MWP-FND-014" level="MUST NOT">
+
+2. **Conversation is not authority.** A Message, mention, summary, Context
+   Package, or model output MUST NOT by itself authorize a tool call, business
+   action, WorkItem assignment, budget expenditure, or permission grant.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-015" level="MUST">
+
+3. **Structured execution authority.** A consequential action MUST be connected
+   to an accepted WorkItem, the current ownership epoch, a valid Execution
+   Lease, applicable policy approval, and a scoped capability token.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-016" level="MUST">
+
+4. **One active runtime.** A state-changing Agent Command MUST carry the current
+   Session Epoch. A lower epoch MUST be rejected even if its WebSocket remains
+   connected.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-017" level={["MAY","MUST NOT"]}>
+
+5. **Exclusive work is fenced.** At most one current ownership epoch exists for
+   an exclusive WorkItem. Results from a stale epoch MAY be retained as
+   non-authoritative Evidence but MUST NOT complete the WorkItem.
+
+</NormativeClause>
+
+6. **Append-only history.** Accepted Events and committed Messages are
+   immutable. Correction, retraction, redaction, revocation, and remediation are
+   new Events.
+7. **Per-Group order only.** Every Group has one monotonic Event sequence.
+   MissionWeaveProtocol defines no global order or atomic transaction across
+   Groups.
+
+<NormativeClause id="MWP-FND-018" level={["MAY","MUST"]}>
+
+8. **At-least-once delivery.** Events MAY be delivered more than once. Stable
+   identifiers and idempotent processing MUST make each accepted state
+   transition observable once.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-019" level="MUST">
+
+9. **Mission isolation.** Mission content, credentials, intermediate state, and
+   Agent memory are Group-scoped by default. Cross-Group disclosure MUST be
+   explicit and authorized.
+
+</NormativeClause>
+
+10. **Human final approval.** A root Mission becomes completed only after its
+    MissionOwner approves an exact Mission revision and Artifact set.
+    Coordinator review is not final human Approval.
+
+<NormativeClause id="MWP-FND-020" level="MUST NOT">
+
+11. **Budgets and permissions narrow downward.** WorkItem and child-Mission
+    budgets, capabilities, and resource permissions MUST NOT exceed their parent
+    grants.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-021" level="MUST">
+
+12. **No private Mission side-channel.** Mission-related Agent communication
+    MUST be recorded in the Mission Group or a linked, access-controlled
+    Conversation visible to the Coordinator and MissionOwner.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-022" level={["MUST","MUST NOT"]}>
+
+13. **No private reasoning requirement.** Agents MUST publish decisions, inputs,
+    evidence, blockers, and outcomes needed for audit; they MUST NOT be required
+    to publish private chain-of-thought, hidden prompts, or raw internal memory.
+
+</NormativeClause>
+
+## 5. System architecture
+
+A MissionWeaveProtocol deployment contains at least:
+
+- an Organization-controlled Agent Registry;
+- a Group Authority and durable Group Event store;
+- an Authorization Service that evaluates policy and issues capability tokens;
+- one or more independently scheduled Agents;
+- Artifact storage addressed by content hash; and
+- a human interface for Mission directives, monitoring, intervention, and
+  Approval.
+
+<NormativeClause id="MWP-FND-023" level="MUST NOT">
+
+The authoritative state consists of Missions, Memberships, WorkItems, ownership
+and lease epochs, deduplication receipts, approvals, and Group Events.
+Agent-local Cursors, per-Group queues, checkpoints, outboxes, inboxes, and
+Scheduler state are rebuildable projections. Loss of an Agent's local database
+MUST NOT change authoritative Mission state.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-024" level="RECOMMENDED">
+
+PostgreSQL and Agent-local SQLite are RECOMMENDED for the v0.1 reference
+implementation, and content-addressed object storage is RECOMMENDED for
+Artifacts. These products are not wire-protocol requirements.
+
+</NormativeClause>

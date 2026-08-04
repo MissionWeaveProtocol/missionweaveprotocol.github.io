@@ -1,0 +1,25 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Go public API inventory"
+description:
+  "Every exported Go declaration resolved to its exact source file and line at
+  the documented SDK commit."
+---
+
+import SdkApiInventory from "../../../../../../components/SdkApiInventory.astro";
+
+# Go public API inventory
+
+This exact-commit inventory is generated from the root package source files at
+`80c39852e8a2053ac761b8d53d62483264f803f1`. It records exported types,
+interfaces, structs, constants, functions, methods, and accessors using the
+declarations present at that commit.
+
+The inventory is the naming and exact source provenance reference, not a
+substitute for the local [runtime semantics](../runtime/) or
+[Admission call flow](../admission/). A declaration's presence does not supply
+the external authority, atomicity, durability, or authenticated evidence its
+contract requires.
+
+<SdkApiInventory sdk="go" />

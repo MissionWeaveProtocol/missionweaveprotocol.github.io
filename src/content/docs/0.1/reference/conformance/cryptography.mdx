@@ -1,0 +1,52 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Cryptography conformance"
+description:
+  "The complete local Signed Document Verification Profile evidence bundle."
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import BundleArtifactCatalog from "../../../../../components/BundleArtifactCatalog.astro";
+import release from "../../../../../data/normative/0.1/release-source.json";
+
+# Cryptography conformance
+
+The profile <code>{release.cryptography.profile}</code> binds
+**{release.cryptography.artifacts} artifacts**, **{release.cryptography.cases}
+cases**, and **{release.cryptography.evaluations} evaluations**. Exactly
+**{release.cryptography.complete}** evaluations complete and
+**{release.cryptography.rejected}** are rejected. Its RFC 8785-bound digest is
+
+<code>{release.cryptography.digest}</code>.
+
+- <ArtifactLink path="protocol/cryptography/manifest.json">
+    Cryptography manifest
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/manifest.schema.json">
+    Manifest schema
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/README.md">
+    Local bundle semantics
+  </ArtifactLink>
+
+## Six semantic stages
+
+Every signed-document evaluation uses this ordered classification:
+
+1. strict UTF-8 JSON parsing;
+2. normative JSON Schema validation;
+3. signature-envelope and protected-time validation;
+4. signing-key resolution and validity validation;
+5. RFC 8785 canonicalization and signing-hash production; and
+6. Ed25519 signature verification.
+
+The corresponding normative rules are published in the
+[Signed Documents and trust](../../specification/signed-documents-and-trust/)
+page. `complete` means that all six stages completed for that evaluation.
+
+Passing this bundle does not prove First-Admission Record validation,
+historical-trust validation, Command freshness or clock-skew enforcement, or
+signer authorization under applicable role and policy.
+
+<BundleArtifactCatalog bundle="cryptography" />

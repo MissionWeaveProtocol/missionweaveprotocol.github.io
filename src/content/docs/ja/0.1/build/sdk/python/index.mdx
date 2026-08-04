@@ -1,0 +1,74 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Python SDK
+description:
+  完全な MissionWeaveProtocol 0.1 コミットで、完全な Python 3.12 リファレンス
+  ランタイムをインストールして操作します。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Python SDK
+
+`missionweaveprotocol`
+パッケージは、Python リファレンス ランタイムです。このページでは、コミット
+`9403cf1310914670506c56cbab363fdaa465d3cc`、パッケージ バージョン
+`0.1.0`、および Python
+3.12 以降について説明します。バージョン文字列が変更されていない場合でも、異なるコミットまたはパッケージのビルドは、文書化された異なる実装入力となります。
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="python"
+  command={`uv add "missionweaveprotocol @ git+https://github.com/MissionWeaveProtocol/python-sdk.git@9403cf1310914670506c56cbab363fdaa465d3cc"`}
+  verifyCommand={`uv run python -c "import missionweaveprotocol as mwp; print(mwp.__version__)"
+uv run missionweaveprotocol-conformance --help`}
+>
+  <p slot="notes">
+    正確な VCS
+    要件により、文書化されたコミットからパッケージがビルドされます。デプロイメントでは、代わりに、ビルドの出自がそのコミットにバインドされ、バンドルされたアーティファクトが同じダイジェスト
+    チェックに合格するホイールをインストールする場合があります。
+  </p>
+</SdkInstall>
+
+:::
+
+パッケージは、文書化されたコミットで次のコンソール コマンドを宣言します。
+
+| Command                            | 公共目的                                                          |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `missionweaveprotocol-server`      | 構成された Group ゲートウェイ サービスを開始します。              |
+| `missionweaveprotocol-demo`        | 決定論的なリファレンス ランタイムのデモを実行します。             |
+| `missionweaveprotocol-conformance` | 実装に依存しない構造スキーマとベクトル マニフェストを実行します。 |
+
+コマンドを開始しても、デプロイメント権限は作成されません。サーバーには、デプロイメント所有の Registry マテリアル、永続性、セッション資格情報、ネットワーク バインディング、および運用 TLS 構成が引き続き必要です。
+
+## このリファレンスを使用してください
+
+<CardGrid>
+  <LinkCard
+    title="完全なランタイム"
+    description="すべてのパブリック モジュール、ランタイム責任、永続化境界、トランスポート サーフェス、および適合エントリ ポイント。"
+    href="./runtime/"
+  />
+  <LinkCard
+    title="初回アドミッションと履歴信頼"
+    description="現在の Registry 証拠、Admission Log、および信頼コンテキストの型付きアダプターと、1 つの実行可能な例。"
+    href="./admission/"
+  />
+  <LinkCard
+    title="正確なパブリック API"
+    description="すべてのパブリック クラス、プロトコル、関数、メソッド、定数、型は正確なソース行に解決されます。"
+    href="./api/"
+  />
+</CardGrid>
+
+## 文書化されたコミットでのサポート
+
+<SdkRuntimeMatrix sdk="python" />
+
+Python
+SDK は、マトリックスで表される完全なリファレンス ランタイムを実装します。データベース サービス、ネットワーク サービング、証明書、およびアドミッション オーソリティはデプロイメントの依存関係であり、パッケージのインストールによって作成されることが保証されるものではありません。

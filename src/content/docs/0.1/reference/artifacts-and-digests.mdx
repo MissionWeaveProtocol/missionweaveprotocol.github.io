@@ -1,0 +1,60 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Artifacts and digests"
+description:
+  "How the MissionWeaveProtocol 0.1 website binds local normative bytes and
+  release identities."
+---
+
+import ArtifactLink from "../../../../components/ArtifactLink.astro";
+import artifacts from "../../../../data/normative/0.1/artifacts.json";
+
+# Artifacts and digests
+
+The local protocol bundle contains **{artifacts.bundle.files} exact files** with
+tree digest <code>{artifacts.bundle.digest}</code>. The protocol pin SHA-256 is
+
+<code>{artifacts.protocolPin.sha256}</code> and the pinned protocol bundle
+SHA-256 is <code>{artifacts.protocolPin.bundleSha256}</code>.
+
+| Surface                |                                                          Files or artifacts | Digest                                       |
+| ---------------------- | --------------------------------------------------------------------------: | -------------------------------------------- |
+| Schemas                |                                                   {artifacts.schemas.files} | <code>{artifacts.schemas.digest}</code>      |
+| Structural conformance | {artifacts.structural.files} files / {artifacts.structural.vectors} vectors | <code>{artifacts.structural.digest}</code>   |
+| Cryptography           |                                          {artifacts.cryptography.artifacts} | <code>{artifacts.cryptography.digest}</code> |
+| Admission              |                                             {artifacts.admission.artifacts} | <code>{artifacts.admission.digest}</code>    |
+
+## Digest semantics
+
+Individual manifest entries bind exact file bytes with lower-case SHA-256. The
+cryptography and Admission top-level `artifactDigest` values remove exactly that
+member, serialize the remaining manifest with RFC 8785 JCS, and hash the
+canonical bytes. Their declared artifact entries transitively bind every named
+file.
+
+The website bundle tree digest additionally binds each canonical relative path,
+a NUL separator, the exact file bytes, and a trailing NUL separator in sorted
+path order. This prevents two different artifact layouts from sharing an
+identity merely because their concatenated bytes match.
+
+## Local release artifacts
+
+- <ArtifactLink path="protocol/spec/PROTOCOL.md">
+    Pinned protocol source
+  </ArtifactLink>
+- <ArtifactLink path="protocol/CONTEXT.md">
+    Pinned normative glossary
+  </ArtifactLink>
+- <ArtifactLink path="protocol/conformance/manifest.json">
+    Structural manifest
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/manifest.json">
+    Cryptography manifest
+  </ArtifactLink>
+- <ArtifactLink path="protocol/admission/manifest.json">
+    Admission manifest
+  </ArtifactLink>
+- <ArtifactLink path="normative-release.json">
+    Generated website release manifest
+  </ArtifactLink>

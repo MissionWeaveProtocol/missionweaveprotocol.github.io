@@ -1,0 +1,61 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Security boundaries"
+description:
+  "What Signed Document verification and Admission establish, and which security
+  decisions remain separate."
+---
+
+# Security boundaries
+
+MissionWeaveProtocol separates evidence layers so that one successful check is
+never silently promoted into a broader trust claim.
+
+## Current and historical Registry evidence
+
+**Current Registry evidence** represents an authoritative revision applicable to
+a new verification or first-admission decision. A superseded revision cannot be
+presented as current. The deployment seam establishes revision currency,
+Organization scope, completeness, and historical coverage as described by
+[MWP-SDV-010](../../reference/specification/signed-documents-and-trust/#mwp-sdv-010).
+First admission therefore depends on current Registry evidence, not merely the
+latest revision visible in an unspecified cache.
+
+**Historical Registry evidence** retains the original `validFrom` and every
+effective `validUntil` or `revokedAt` change needed to evaluate an earlier
+protected signed time. That history is append-only or explicitly versioned
+([MWP-SDV-012](../../reference/specification/signed-documents-and-trust/#mwp-sdv-012)).
+
+First admission uses current evidence; historical replay uses authoritative
+historical evidence and also requires an existing First-Admission Record.
+
+## Separate and excluded concerns
+
+| Concern                        | Boundary                                                                                                                                                                                                                                      |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Command freshness              | A newly presented Command has a separate bounded `issuedAt` freshness and clock-skew check ([MWP-ADM-013](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)).                                                  |
+| signer authorization           | A verified key-bound Principal still needs authoritative role and policy authorization before state acceptance ([MWP-ADM-014](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)).                              |
+| portable Admission Log proof   | Version 0.1 defines typed adapter outcomes and record validation, not a portable deployed proof format ([MWP-EXT-013](../../reference/specification/errors-extensions-and-security/#mwp-ext-013)).                                            |
+| state-machine acceptance       | Cryptography and Admission finish before the Organization or Group Authority validates current revision, roles, policy, epochs, budgets, and leases ([MWP-EVT-004](../../reference/specification/commands-events-and-ordering/#mwp-evt-004)). |
+| caller-provided trust booleans | A boolean supplied by the caller cannot replace authenticated, typed Admission Log outcomes or their integrity and absence distinctions ([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).     |
+
+## Layered outcome model
+
+```text
+valid JSON and schema
+        ↓
+six-stage cryptographic result
+        ↓
+First Admission or Historical Trust result
+        ↓
+Command freshness when applicable
+        ↓
+signer role and policy authorization
+        ↓
+current state-machine validation and atomic Event append
+```
+
+Each arrow adds evidence; none retroactively changes what the earlier layer
+proved. In particular, admission does not become a seventh cryptographic stage,
+and a First-Admission Record does not authenticate itself.

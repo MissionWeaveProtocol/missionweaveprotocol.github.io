@@ -1,0 +1,206 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-ADM
+title: Primera Admisión y Confianza Histórica
+description: >-
+  El contrato autorizado Admission Log, el flujo de primera admisión, la
+  repetición histórica y el mapeo de fallas.
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+<NormativeClause id="MWP-ADM-001" level={["MUST","MUST NOT"]}>
+
+Un **First-Admission Record** constituye los metadatos autoritativos del proceso
+de anexado fuera del perfil de verificación Signed Document. MUST ajustarse a
+`schemas/first-admission-record.schema.json` y contener exactamente estos nueve
+campos obligatorios: `protocolVersion`, `admissionRecordId`, `organizationId`,
+`documentKind`, `signingHash`, `keyId`, `principal`, `trustedAcceptedAt` y
+`acceptedBy`. `trustedAcceptedAt` es el instante de aceptación confiable
+asignado por la Organization. El registro no es un Signed Document, MUST NOT
+contener una `signature`, no se autentica por sí mismo y MUST NOT aceptarse
+basándose únicamente en sus propios bytes.
+
+</NormativeClause>
+
+Las restricciones de campo son:
+
+| Campo               | Restricción                                                                                                                            |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `protocolVersion`   | la constante v0.1 `protocolVersion`                                                                                                    |
+| `admissionRecordId` | identificador de protocolo absoluto                                                                                                    |
+| `organizationId`    | identificador de protocolo absoluto                                                                                                    |
+| `documentKind`      | uno de `agent-card`, `approval`, `artifact`, `command`, `context-package`, `event`, `evidence`, `extension-profile` o `group-snapshot` |
+| `signingHash`       | `sha256:` seguido de 64 dígitos hexadecimales en minúscula                                                                             |
+| `keyId`             | identificador de protocolo absoluto                                                                                                    |
+| `principal`         | forma exacta del actor común                                                                                                           |
+| `trustedAcceptedAt` | RFC 3339 en el perfil de marca de tiempo del protocolo                                                                                 |
+| `acceptedBy`        | forma de actor común con `type: service`                                                                                               |
+
+<NormativeClause id="MWP-ADM-002" level="MUST">
+
+Se mantendrá la ortografía léxica de `trustedAcceptedAt` MUST. A diferencia de
+las dos marcas de tiempo protegidas Signed Document, no es necesario utilizar
+`Z` en mayúsculas; se compara como un instante exacto.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]} exclusions={["caller-provided-trust-booleans"]}>
+
+Dentro del Admission Log de una Organization, la clave lógica de búsqueda y
+adición es `(organizationId, signingHash)`. El registro MUST autenticar el
+servicio de aceptación, restringir las escrituras a servicios autorizados por la
+Organization, preservar la integridad de solo adición, ofrecer una búsqueda
+autoritativa que distinga un registro encontrado de una constatación
+autoritativa de ausencia y proporcionar una única operación atómica de añadir o
+devolver el registro existente para esa clave lógica. Los resultados no
+disponibles, indeterminados, no autenticados, con fallo de integridad,
+conflictivos o con fallo de confirmación MUST cerrarse denegando la operación.
+Un valor booleano de confianza, autenticación o integridad proporcionado por el
+llamante MUST NOT sustituir el resultado tipado del adaptador.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-004" level={["MUST NOT","MUST"]}>
+
+Como máximo puede existir un registro autoritativo para una clave lógica. Un
+`admissionRecordId` MUST NOT identificar registros bajo diferentes claves
+lógicas. Un registro compatible válido encontrado en un reintento es un éxito
+idempotente y MUST devolverse sin anexar. Un registro bajo la misma clave lógica
+con un tipo de documento, ID de clave o Principal diferente es un conflicto y
+MUST NOT reemplazarse, repararse ni conciliarse silenciosamente.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-005" level="MUST">
+
+La admisión es una capa semántica separada después de las seis etapas
+criptográficas. Su etapa de diagnóstico protegida es `admission`; no es una
+séptima etapa criptográfica y no altera los bytes de firma, el hash de firma, la
+resolución de clave o el resultado de la firma. Cada ruta de admisión o de
+confianza histórica MUST primero completa las seis etapas y conserva el
+Organization resultante, el tipo de documento, el hash de firma, el ID de clave
+resuelta, el Principal vinculado y el intervalo de validez de clave efectiva.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-006" level="MUST">
+
+Para la primera admisión, la evidencia del Registry proporcionada a la etapa 4
+MUST ser actual y aplicable a una nueva decisión de admisión
+[como se exige anteriormente](../signed-documents-and-trust/#mwp-sdv-010).
+Después de la verificación de seis etapas, la implementación MUST buscar
+`(organizationId, signingHash)`. Todo registro encontrado MUST validarse como se
+describe a continuación. Solo una constatación autoritativa de ausencia permite
+obtener el contexto de aceptación confiable, preparar un First-Admission Record
+candidato y llamar a append-or-return-existing. La primera admisión no termina
+hasta validar el registro autenticado devuelto por esa operación, tanto si acaba
+de confirmarse como si ya existía por una operación concurrente. Validar solo
+los bytes candidatos no es suficiente.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]} exclusions={["state-machine-acceptance"]}>
+
+La preparación del candidato MUST NOT agrega un Event, ejecuta una transición de
+estado o implica que la admisión se realizó correctamente. El
+`admissionRecordId` o `trustedAcceptedAt` MAY devuelto por un ganador simultáneo
+difiere del candidato perdedor, pero el registro devuelto se acepta solo cuando
+todas las reglas vinculantes y de intervalo siguientes tienen éxito.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-008" level={["MUST","MUST NOT"]}>
+
+La reproducción histórica MUST volver a ejecutar las seis etapas criptográficas
+con evidencia histórica autoritativa del Registry que contenga todo el historial
+de validez conservado necesario para la hora de firma protegida. A continuación,
+MUST exigir que exista un First-Admission Record y validarlo. La reproducción
+histórica MUST NOT emitir un nuevo contexto de aceptación confiable, añadir un
+registro ausente ni tratar el documento como una nueva admisión. Una caducidad o
+revocación posterior no invalida por sí sola una firma histórica anclada cuando
+tanto la hora de firma protegida como `trustedAcceptedAt` estaban dentro del
+intervalo de la clave seleccionada.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-009" level={["MUST","MUST NOT"]}>
+
+La validación del registro MUST analizar estrictamente un único valor JSON
+UTF-8, aplicar el Schema normativo y exigir igualdad exacta entre el registro y
+la evidencia de seis etapas para `organizationId`, `documentKind`,
+`signingHash`, `keyId` y `principal`. El `acceptedBy` del registro MUST ser
+exactamente igual a la identidad de servicio autenticada por el resultado del
+Admission Log. Un registro del mismo contenido sin firmar bajo otra
+Organization, otro tipo de documento, otro ID de clave u otro Principal MUST NOT
+reutilizarse. La integridad de solo adición del registro y la identidad de
+servicio autenticada son afirmaciones del despliegue establecidas por el
+resultado correcto del adaptador Admission Log; el registro no demuestra por sí
+solo ninguna de las dos propiedades.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-010" level="MUST NOT">
+
+Para la aceptación confiable instantánea `t`, la admisión es válida solo cuando
+`validFrom <= t`, `validUntil` está ausente o `t < validUntil`, y `revokedAt`
+está ausente o `t < revokedAt`. Estos son los mismos límites de intervalo
+semiabierto usados para el tiempo firmado protegido, evaluados de forma
+independiente en `trustedAcceptedAt`, utilizando los límites efectivos retenidos
+más tempranos de `validUntil` y `revokedAt`. Un documento recién presentado MUST
+NOT aceptarse solo porque su firmante retrodató el tiempo protegido para
+situarlo antes del vencimiento o la revocación.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-011" level={["MUST NOT","MAY"]}>
+
+Para un Event firmado, ese documento Event MUST NOT servir como su propio
+First-Admission Record mediante la búsqueda o la operación
+append-or-return-existing, y su firma MUST NOT tratarse como autenticación del
+registro ni de su ancla de admisión. Un Event firmado posterior MAY publicar o
+referenciar un registro separado; su firma autentica únicamente la referencia
+del Event.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-012" level="MUST">
+
+Cada error posterior a la finalización de las seis etapas durante la búsqueda,
+la preparación del candidato, la validación del intervalo de tiempo confiable,
+la operación append-or-return-existing, el análisis del registro devuelto, la
+validación del Schema, la vinculación, la comparación del servicio autenticado o
+el autoanclaje de un Event MUST asignarse en el wire a `AUTH_INVALID_SIGNATURE`.
+El diagnóstico de auditoría protegido MUST conservar la etapa `admission` y un
+motivo estable sin revelar ese motivo al llamante no confiable.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-013" level="MUST" exclusions={["command-freshness","signer-authorization"]}>
+
+Un Command recién presentado MUST satisfacer además la ventana acotada de
+frescura y tolerancia al desfase de reloj que la Organization defina para
+`issuedAt`. Esa comprobación de frescura y la autorización del firmante según el
+rol y la política aplicables permanecen separadas de la validación del
+First-Admission Record.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-014" level="MUST" exclusions={["signer-authorization","state-machine-acceptance"]}>
+
+La verificación criptográfica autentica al Principal vinculado a la clave; no
+otorga autoridad de protocolo a ese Principal. Antes de aceptar una transición
+de estado, la Organization o Group Authority pertinente MUST verificar el rol y
+la autorización del firmante utilizando la política y el estado autoritativos
+aplicables en el momento protegido de la firma y, para la primera admisión, en
+el momento de aceptación confiable. En particular, `acceptedBy` MUST ser un
+servicio autorizado de Group Authority o de Organization Event; un emisor de
+Agent Card MUST estar autorizado para su Organization; un aprobador de Extension
+Profile y un aprobador de Approval MUST satisfacer la política de Organization;
+y un creador de Group Snapshot MUST ser un servicio de archivo autorizado. Esta
+comprobación de autorización ocurre solo después de que las seis etapas
+criptográficas y cualquier validación aplicable de primera admisión o confianza
+histórica tengan éxito; el error es `AUTH_FORBIDDEN`.
+
+</NormativeClause>

@@ -1,0 +1,230 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-EXT
+title: 扩展、错误、控制和一致性
+description: 扩展配置文件、错误代码、安全控制、兼容性、一致性、概念验证要求和许可。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 18. 扩展配置文件
+
+<NormativeClause id="MWP-EXT-001" level={["MAY","MUST"]}>
+
+开发人员 MAY 通过 Organization 批准的扩展配置文件定义自定义命令、事件和数据。每个配置文件 MUST 声明全局唯一的配置文件 URI、语义版本、架构 URI 和哈希、所需功能、关键性和 Organization 批准签名。 Group 固定其使用的受支持的配置文件的主要版本。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-002" level={["MUST","MAY"]}>
+
+扩展类型 MUST 使用配置文件定义的 `ext.<organization>.<profile>.<name>`
+命名空间。未知的非关键扩展 MAY 将被保留并转发，无需解释。 Agent
+MUST 拒绝参与依赖于未知关键配置文件的转换。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-003" level="MUST NOT">
+
+Extension Profile MUST
+NOT 覆盖或弱化身份、Membership、Event 排序、幂等性、Session
+Epoch、所有权纪元、租赁、预算、 Approval、Artifact 来源、Mission 隔离或消息从不授权操作的规则。
+
+</NormativeClause>
+
+## 19. 错误
+
+<NormativeClause id="MWP-EXT-004" level={["MUST","SHOULD"]}>
+
+错误 MUST 符合
+`schemas/error.schema.json`。错误响应 MUST 可由机器读取，MUST 说明重试是否安全，并且 SHOULD 在不泄露未授权数据的前提下标识相关 frame 或 Action
+ID。核心错误码为：
+
+| 代码                         | 意义                                                                    |
+| ---------------------------- | ----------------------------------------------------------------------- |
+| `UNSUPPORTED_VERSION`        | 没有兼容的协议版本                                                      |
+| `AUTH_REQUIRED`              | 缺少身份验证                                                            |
+| `AUTH_INVALID_SIGNATURE`     | Signed Document 签名、key 有效性、Admission proof 或 freshness 检查失败 |
+| `AUTH_STALE_SESSION`         | Session Epoch 已被 fencing                                              |
+| `AUTH_STALE_COORDINATOR`     | Coordinator Epoch 已被 fencing                                          |
+| `AUTH_FORBIDDEN`             | Actor 缺少权限或不符合策略资格                                          |
+| `GROUP_NOT_FOUND`            | Group 不存在或故意未公开                                                |
+| `MEMBERSHIP_REQUIRED`        | 没有适用的 Membership                                                   |
+| `MEMBERSHIP_STALE`           | Membership Epoch 已被围栏                                               |
+| `SCHEMA_VALIDATION_FAILED`   | 对象不符合其架构                                                        |
+| `INVALID_COMMAND`            | Command 格式良好，但语义无效                                            |
+| `INVALID_STATE_TRANSITION`   | 聚合状态禁止转换                                                        |
+| `REVISION_CONFLICT`          | 预期修订版不符                                                          |
+| `ACTION_ID_COLLISION`        | 稳定的 Action ID 被不同内容重复使用                                     |
+| `UNKNOWN_CRITICAL_EXTENSION` | 无法解释所需的扩展名                                                    |
+| `WORK_CONTRACT_INCOMPLETE`   | 缺少所需的工作合同信息                                                  |
+| `WORK_OFFER_EXPIRED`         | 优惠不再有效                                                            |
+| `WORK_ALREADY_OWNED`         | 另一位候选人赢得了独家所有权                                            |
+| `WORK_LEASE_EXPIRED`         | 所需的租约不再有效                                                      |
+| `WORK_STALE_OWNERSHIP`       | Ownership Epoch 已被 fencing                                            |
+| `APPROVAL_REQUIRED`          | 政策关口尚未满足                                                        |
+| `BUDGET_EXCEEDED`            | Mission 或 WorkItem 硬预算已用完                                        |
+| `RATE_LIMITED`               | 已达到策略率或递归阈值                                                  |
+| `BACKPRESSURE`               | 接收器当前无法接受更多流量                                              |
+| `CURSOR_TOO_OLD`             | 在线重播不再包含请求的位置                                              |
+| `PROTOCOL_VIOLATION`         | 同伴违反框架或核心不变量                                                |
+| `INTERNAL_ERROR`             | Authority 发生故障，但未接受该转换                                      |
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-005" level={["MUST","MUST NOT","MAY"]}>
+
+未改变的 Command 重试 MUST 保留原始 Action ID 和签名内容。
+`AUTH_INVALID_SIGNATURE` 在原因纠正之前 MUST
+NOT 以原内容重试。对签名信封、权威 key 或 Admission 状态进行本地纠正后，只要所有受保护内容仍然有效，发送方 MAY 使用原始 Action
+ID 重试。如果 Command
+freshness 已过期，发送方 MUST 改为创建新的 Command，并使用新的 Action ID、当前的
+`issuedAt`、与之匹配的 `signature.createdAt` 和新签名。`ACTION_ID_COLLISION`
+要求创建具有新 Action
+ID 的新 Command。过时的 fencing 错误要求使用当前权威 Epoch，并创建具有新 Action
+ID 与签名的新 Command。
+
+</NormativeClause>
+
+## 20. 速率、递归和失控控制
+
+<NormativeClause id="MWP-EXT-006" level={["MUST","SHOULD"]}>
+
+Organization 策略 MUST 支持对 Message 和提案率、未解决的澄清轮次、活动和排队工作项、委托深度、令牌/时间/财务预算以及循环或重复分解的限制。这些控制 SHOULD 使用软阈值、Coordinator 通知和显式升级，而不是固定的低协议上限。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-007" level={["MUST","MUST NOT"]}>
+
+实现 MUST 拒绝循环委托或 Mission 祖先。当合法工作需要更多深度、预算或费率时，Coordinator 可以请求政策或 MissionOwner 批准并在授予后继续。策略限制 MUST
+NOT 默默地放弃已接受的工作。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-008" level="MUST">
+
+合作限制升级 MUST 由持久的一次性 **合作覆盖授予**
+表示，而不是由注入的布尔值、本地回调结果或可重用豁免表示。授权 MUST 绑定一个 Mission、Group、策略名称、受益人 Principal、目标 Command 种类、目标操作 ID、原因、审批者、授权时间和到期时间。只有 MissionOwner 或授权的 Organization 策略参与者才可以颁发它。目标 Command
+MUST 在其 `cooperationOverrideGrantId` 信封成员中引用授权 ID。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-009" level="MUST">
+
+在接受目标转换之前，Group Authority
+MUST 验证引用的授权是否存在、未过期且未使用，并且与 Command 的 Mission、Group、演员、种类完全匹配，操作 ID 和超出策略。仅当目标转换被接受时，MUST 才会自动消耗授权。发行和消费 MUST 都将附加到权威策略日志中，消费链接到已接受的 Event。相同接受的 Command 的幂等重试返回其先前的 Event；任何其他尝试使用授予 MUST 的操作都会失败。
+
+</NormativeClause>
+
+## 21. 架构和版本兼容性
+
+<NormativeClause id="MWP-EXT-010" level="MUST">
+
+所有 v0.1 架构均使用 JSON 架构草案 2020-12。核心对象设置`additionalProperties: false`；仅通过显式
+`extensions`
+成员和批准的配置文件才能实现可扩展性。实现 MUST 在可能的情况下为规范中继保留未知的非关键扩展字节。
+
+</NormativeClause>
+
+电汇 `protocolVersion` 是
+`0.1`。向后兼容的架构澄清增加了规范补丁版本，而无需更改线路版本。改变核心语义或必填字段的更改需要新的线路次要或主要版本以及握手协商。
+
+这 22 个规范模式是：
+
+- `common.schema.json`
+- `websocket-frame.schema.json`
+- `command.schema.json`
+- `event.schema.json`
+- `agent-card.schema.json`
+- `presence-record.schema.json`
+- `mission.schema.json`
+- `group.schema.json`
+- `membership.schema.json`
+- `conversation.schema.json` 和 `message.schema.json`
+- `work-contract.schema.json` 和 `work-item.schema.json`
+- `artifact.schema.json` 和 `evidence.schema.json`
+- `lease.schema.json`
+- `approval.schema.json`
+- `context-package.schema.json`
+- `group-snapshot.schema.json`
+- `extension-profile.schema.json`
+- `first-admission-record.schema.json`
+- `error.schema.json`
+
+## 22. 一致性和所需的概念证明
+
+仅当满足以下条件时，实现才符合 MissionWeaveProtocol 0.1：
+
+- 根据规范模式验证每个持久对象；
+- 通过 `conformance/manifest.json`
+  中的所有 58 个结构向量，其中包括 27 个预期有效和 31 份预期无效文件；
+- 通过 `cryptography/manifest.json` 中的所有评估，涵盖所有九个 Signed
+  Document 验证配置文件中的架构配置文件及其规范签名字节、哈希值、密钥绑定和签名；
+- 通过独立 `admission/manifest.json`
+  中的全部 30 项评估行为捆绑，涵盖五个案例的首次入院和历史重放；
+- 强制执行所有 Mission 和 WorkItem 转换；
+- 演示重放、重复数据删除、乐观并发和防护；
+- 演示授权和 Message/非授权不变式；和
+- 通过故障恢复测试而不接受陈旧或重复的一面影响。
+
+<NormativeClause id="MWP-EXT-011" level="MUST">
+
+对于加密包，`manifest.fixtureSchemas`
+标识规范的 Registry 夹具和仅测试签名密钥夹具架构。运行程序 MUST 在应用声明的语义阶段之前根据指定的架构验证每个装置。为了验证
+`artifactDigest`，运行程序 MUST 准确删除顶级 `artifactDigest` 成员，使用 RFC
+8785
+JCS 序列化剩余清单，使用 SHA-256 对这些字节进行哈希处理，然后进行比较`sha256:`
+后跟 64 个小写十六进制摘要数字。每个声明的工件哈希值都适用于确切的文件字节。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-012" level="MUST">
+
+对于准入捆绑包，`manifest.fixtureSchemas` 标识 First-Admission
+Record 和 Registry 固定架构，`manifest.cryptography.artifactDigest`
+固定每次评估使用的未更改的加密捆绑包。其 `artifactDigest`
+使用相同的顶级成员删除、RFC 8785
+JCS 和 SHA-256 过程进行计算。运行程序 MUST 在执行声明的适配器结果之前验证所有声明的准入工件字节和哈希、固定的加密摘要以及每个引用的文件。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-013" level="MUST" exclusions={["command-freshness","signer-authorization","portable-log-proof-verification","state-machine-acceptance"]}>
+
+通过 `missionweaveprotocol-conformance`
+或存储库的 Schema 向量仅证明 Schema 和向量的一致性。这是完全协议一致性的必要但不充分证据。通过
+`cryptography/manifest.json`
+仅证明[第 6.4 节](../signed-documents-and-trust/#mwp-sdv-015)
+中的六个密码学验证阶段。通过 `admission/manifest.json`
+还证明其声明的 First-Admission
+Record 和历史重放评估，但不证明 Command 新鲜度与时钟偏差强制、适用角色和策略下的签名者授权，也不证明可移植的已部署 Admission
+Log 证明格式。实现 MUST 单独证明这些要求。仅当自动化的正面和负面证据覆盖
+[上文](../commands-events-and-ordering/#core-command-kinds)中的每个核心 Command 和 Event 类型，以及[第 7.1 节](../missions-groups-and-membership/#mission-transition-table)
+和[第 10.2 节](../work-scheduling-and-recovery/#workitem-transition-table)中的每个转换行时，参考实现 MUST 声称完全符合 MissionWeaveProtocol
+0.1；否则，MUST 明确报告范围更窄的已验证子集。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-014" level="MUST">
+
+v0.1 参考概念证明 MUST 使用 Python 并运行两个并发软件开发任务，并至少有一个共享 Worker。至少一个 Mission
+MUST 将需求分析、实施、测试、代码审查、集成和人工 Approval 作为单独的图形阶段。概念验证 MUST 演示了不同的每个 Group 队列、全局加权公平调度、上下文和凭证隔离、多个执行槽、安全检查点抢占、Coordinator 审查以及人性化 Approval 界面。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-015" level="MUST">
+
+其故障套件 MUST 注入重复的 Event 交付、Worker 重启和队列重建、Coordinator 故障和纪元替换、临时 Group 断开连接、租约到期和WorkItem 重新分配、高优先级到达和人工变更请求。 Python 实现是参考实现，而不是规范规范。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-016" level={["MUST","MUST NOT"]}>
+
+概念证明 MUST 保留在一项 Organization 和一项逻辑 Group 服务中。 MUST
+NOT 需要联合、物理对等路由、分布式共识、Group 端到端加密或自定义扩展配置文件来证明核心一致性。
+
+</NormativeClause>
+
+## 23. 许可
+
+规范、模式、一致性套件和参考实现均根据 Apache License
+2.0 获得许可。该许可证不授予商标权。

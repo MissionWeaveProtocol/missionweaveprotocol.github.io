@@ -1,0 +1,56 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 分组和日程安排
+description:
+  每个 Group 队列、一个 Worker
+  拥有的调度程序、隔离的执行槽、检查点安全抢占和重播。
+---
+
+# 分组和日程安排
+
+Worker 可以属于多个 Mission 组，而无需合并其上下文。它为每个 Group 维护一个不同的 Event 收件箱、光标和工作队列，并且这些本地投影仍然可以从接受的事件中重建 ([MWP-WRK-008](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008))。
+
+```text
+Group A Event → Group A 队列 ┐
+Group B Event → Group B 队列 ├→ Worker 调度器 → 隔离执行槽
+Group C Event → Group C 队列 ┘
+```
+
+## 谁控制优先级
+
+Coordinator 提供其 Mission 所请求的紧迫性、截止日期和业务影响。 Worker 调度程序对跨 Group 排序拥有最终控制权；一个 Coordinator 无法强制其 Mission 领先于不相关的组 ([MWP-WRK-009](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-009))。
+
+Scheduler 应用加权公平和抗饥饿。有效排序考虑 Organization 优先级、截止日期、队列时效、每个 Group 配额、风险门槛和可用资源。
+[MWP-WRK-010](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-010)
+排除纯无界最高优先级优先调度。
+
+## 隔离和时间表披露
+
+每个活动插槽将 Mission 上下文、凭证、检查点、工具预算和副作用密钥与每个其他插槽隔离 ([MWP-WRK-011](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-011))。
+
+Worker 可以发布估计的开始和完成窗口、置信度、容量状态和计算时间，而无需暴露另一个 Group 的身份、内容、分配或确切的全局队列位置 ([MWP-WRK-012](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-012))。
+
+## 所有权、租赁和安全抢占
+
+接受后会开始新的 Ownership
+Epoch 和启动截止日期。活动执行使用绑定到 Agent、Session
+Epoch、WorkItem、Ownership Epoch、稳定 Lease ID 和到期时刻的 Execution Lease
+([MWP-WRK-013](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013))。
+
+优先级更改会立即对排队的工作重新排序。活动工作在释放其插槽之前到达安全、幂等的检查点：
+
+1. Scheduler请求抢占；
+2. Worker到达安全检查点；
+3. Worker 记录检查点并暂停；
+4. 执行槽被释放；和
+5. WorkItem 返回到其 Group 队列。
+
+该序列是[MWP-WRK-015](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-015)中的规范合作抢占模型。
+
+## 通过重放恢复
+
+Event 至少交付一次。重新启动的 Worker 从快照和有序重播中恢复每个 Group 游标和队列，按 Event
+ID 进行重复数据删除，并且不会将持久游标推进序列间隙（[MWP-WRK-029](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)）。确认报告最高的连续持久位置，而不删除权威的 Group 历史记录 ([MWP-WRK-030](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030))。
+
+MissionWeaveProtocol 定义每个 Group 内的排序，而不是跨组的全局顺序。

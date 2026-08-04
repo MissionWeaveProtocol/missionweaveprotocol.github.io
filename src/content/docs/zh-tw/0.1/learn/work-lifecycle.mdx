@@ -1,0 +1,71 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 工作生命週期
+description: 對話如何成為明確工作項目、接受執行、Evidence、驗證和 Mission 批准。
+---
+
+# 工作生命週期
+
+MissionWeaveProtocol 在保持對話協作流暢的同時，明確界定可執行責任。一個 Message 可以提供上下文或請求工作，但介面不能將其呈現為可執行指令（[MWP-MSN-017](../../reference/specification/missions-groups-and-membership/#mwp-msn-017)）。
+
+## 從討論到承諾
+
+1. **討論。** Agent 在 Group 或 WorkItem 對話中交換已完成的 Message。
+2. **提議。 ** 任何 Group 會員可以提交工作提案。尚不存在可執行的 WorkItem。
+3. **授權。 **
+   目前 Coordinator, 一個 MissionOwner 緊急超越，或一個 Agent 具有有效範圍的委託授權創建 WorkItem。
+4. **報價。 **
+   授權參與者提供 WorkItem 給符合資格的 Worker 和記錄選擇依據。獨佔授權集和委託報價規則由[MWP-MSN-019](../../reference/specification/missions-groups-and-membership/#mwp-msn-019)。
+5. **接受。 ** Worker 執行準入控制。接受操作會開始新的 Ownership
+   Epoch，並將 WorkItem 放入該 Worker 對應的每個 Group 佇列。
+
+接受是持久的調度承諾，而不是立即執行。 Worker 的準入檢查和所有權影響由
+[MWP-WRK-005](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-005)
+定義。
+
+## 工作合約
+
+每個 WorkItem 都帶有版本化的、機器可讀的工作合約。其所需的形狀由
+[MWP-WRK-001](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-001)
+標識，包括：
+
+- 目標、可交付成果和驗收標準；
+- 需要 Evidence 和輸入或依賴項引用；
+- 允許的工具、資料、資源和操作；
+- 所需的能力標識符和版本；
+- 截止日期、請求的緊迫性和業務影響；
+- 財務、代幣、工具呼叫、計算、掛鐘和副作用預算；
+- 重試嘗試、退避、截止日期和成本政策；和
+- 風險分類和任何執行前審批門。
+
+在接受之前解決了本質上的歧義。透過更新的 Worker 接受（[MWP-WRK-002](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-002)）返回重大合約修訂。
+
+## 共同的成功之路
+
+```text
+Work Proposal
+    ↓ 授權
+open WorkItem
+    ↓ 發出 offer
+offered
+    ↓ Worker 接受
+queued
+    ↓ 有效所有權、Approval 閘門和 Execution Lease
+active
+    ↓ Worker 提交 Artifact 和 Evidence
+submitted
+    ↓ Coordinator 接受結果
+verified
+```
+
+活動工作可能會檢查點回到 `queued`，輸入具有持久檢查點的
+`blocked`，失敗並顯示 Evidence，或取消。完整的轉換錶位於
+[WorkItem 規格頁](../../reference/specification/work-scheduling-and-recovery/#workitem-transition-table)。
+
+## 批准前的 Evidence
+
+一個 Worker 索賠並不能充分證明完成情況。提交內容包括工件和 Evidence 映射到驗收標準。 Coordinator 審查檢查 Artifact 完整性、確定性測試、定性審核員 Evidence，以及依照
+[MWP-WRK-025 所描述的順序記錄的驗收決定](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-025)。
+
+驗證所需的 WorkItem 後，Coordinator 提交特定的 Mission 修訂版和 Artifact 集。MissionOwner 簽署最終 Approval 或要求變更，而不刪除先前提交的內容（[MWP-MSN-008](../../reference/specification/missions-groups-and-membership/#mwp-msn-008)）。

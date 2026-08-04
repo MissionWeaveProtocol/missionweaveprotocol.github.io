@@ -1,0 +1,126 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Protokolltypen
+description: >-
+  Wie JSON, Skalarprofile, generierte Sprachtypen, dauerhafte Objekte, Befehle,
+  Ereignisse und der semantische Zustand zusammenpassen.
+---
+
+# Protokolltypen
+
+Behandeln Sie ein Protokollobjekt als mehr als eine deserialisierte Klasse. Eine
+konforme Laufzeit behält vier verschiedene Ebenen bei:
+
+```text
+empfangene UTF-8-Bytes
+→ verlustfrei geparster JSON-Wert
+→ gemäß Schema gültiges Protokollobjekt
+→ semantisch akzeptierter maßgeblicher Zustand oder lokale Projektion
+```
+
+Das Überspringen einer Ebene führt zu Normalisierungs-, Validierungsreihenfolge-
+oder Autoritätsfehlern.
+
+## Skalare Profile
+
+Alle Protokollobjekte sind JSON, dauerhafte Objekte entsprechen den lokalen
+normativen Schemata und Protokollzeitstempel verwenden RFC 3339 mit zusätzlichen
+deterministischen Regeln, bei denen die Signed Document-Verifizierung gilt
+([MWP-FND-004](../../../reference/specification/foundations/#mwp-fnd-004)).
+
+- Behalten Sie die Schreibweise des Zeitstempels getrennt vom analysierten
+  Zeitpunkt bei. Nicht umschreiben es vor dem Hashing oder der Verifizierung
+  ([MWP-FND-005](../../../reference/specification/foundations/#mwp-fnd-005)).
+- Base64url kanonisch ohne Auffüllung dekodieren, Kleinbuchstaben verwenden
+  `sha256:<64 hex digits>` Hashes und halten Sie Sequenzen, Revisionen, Epochen
+  und Budgets innerhalb des nicht negativen, sicheren JSON Ganzzahlbereichs
+  ([MWP-FND-007](../../../reference/specification/foundations/#mwp-fnd-007)).
+- Validieren Sie Bezeichner als vollständige absolute RFC 3986-URIs und
+  vergleichen Sie sie behaltene Bytes, ohne eine empfängerseitige Normalisierung
+  zu erfinden
+  ([MWP-FND-008](../../../reference/specification/foundations/#mwp-fnd-008)).
+- Aktivieren Sie jedes Schema-Schlüsselwort `format` als Behauptung,
+  einschließlich `uri` und `date-time`
+  ([MWP-FND-009](../../../reference/specification/foundations/#mwp-fnd-009)).
+
+## Schematypen und semantische Typen
+
+Generierte Sprachtypen sind nützliche Projektionen der JSON-Schemas, ersetzen
+jedoch nicht die Validierung. Die v0.1-Schemas verwenden Draft 2020-12, lehnen
+unbekannte Kerneigenschaften ab und lassen Erweiterbarkeit nur durch deklarierte
+Erweiterungsmitglieder und genehmigte Profile zu
+([MWP-EXT-010](../../../reference/specification/errors-extensions-and-security/#mwp-ext-010)).
+
+Halten Sie diese Kategorien getrennt:
+
+| Kategorie            | Beispiele                                                                | Akzeptanzgrenze                                                             |
+| -------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| Skalar               | Bezeichner, Zeitstempel, Hash, Base64URL, sichere Ganzzahl               | lexikalische und Werteprofilvalidierung                                     |
+| Langlebiges Dokument | Mission, WorkItem, Artifact, Evidence, Agent Card                        | strikt JSON plus vollständiges normatives Schema                            |
+| Signed Document      | Command, Event, Approval, Agent Card, Artifact manifestieren             | Schema plus sechsstufige Verifizierung                                      |
+| Maßgebender Staat    | aggregierte Revision, Membership, Eigentum, Miete, Haushaltsbuch         | aktuell Organization oder Group Authority Übergang                          |
+| Lokale Projektion    | Cursor, Posteingang, Postausgang, Per-Group Warteschlange, Kontrollpunkt | wiederaufbaubar aus maßgeblichen Ereignissen und lokaler dauerhafter Arbeit |
+
+Jede Signed Document Art wählt eine geschützte Zeit und den erwarteten
+Unterzeichner unter
+[MWP-SDV-001](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-001).
+Der First-Admission Record ist ein separates, vorzeichenloses Neun-Felder-Objekt
+und kann seine eigenen Bytes nicht authentifizieren
+([MWP-ADM-001](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001)).
+
+## Befehle und Ereignisse
+
+A Command ist eine signierte Anfrage für einen strukturierten Übergang. Sein
+Umschlag bindet die stabile Aktions-ID, Version, Akteur, Typ, Nutzlast,
+Korrelation, Ausgabezeit und Anwendbarkeit Group und Epochenfelder
+([MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001)).
+Eine gültige Command Das Objekt ist daher noch kein akzeptierter Übergang.
+
+Ein Event ist eine unveränderlich akzeptierte Tatsache. Group Ereignisse
+enthalten das Monotone Group Reihenfolge und Gesamtrevision, die vom zugewiesen
+wurden Group Authority; die beiden Organization-gültiger Bootstrap Event Arten
+weglassen Group Bestellfelder
+([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)).
+
+## Bewahren Sie Beweise auf, die für spätere Phasen benötigt werden
+
+Ein Decoder muss genügend Informationen speichern, um:
+
+- doppelte entschlüsselte Mitgliedsnamen vor der Schemavalidierung ablehnen;
+- geschützten Zeitstempeltext Byte für Byte vergleichen;
+- Wenden Sie die an RFC 8785 Binär64- und Unicode-Datenmodell;
+- Lassen Sie genau die oberste Ebene weg `signature` Mitglied beim Erzeugen von
+  Signaturbytes;
+- Fehlende Daten von nicht verfügbaren oder unbestimmten maßgebenden Daten
+  unterscheiden Beweise; und
+- Melden Sie die erste fehlgeschlagene semantische Stufe, ohne geschützte
+  Details offenzulegen der Draht.
+
+Die Ablehnung doppelter Namen und vom Inhalt abgeleitete kanonische Bytes folgen
+[MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012).
+Die bestellten Verifizierungseingaben und die Fertigstellung von Stufe 4
+Registry Scannen folgen
+[MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015),
+einschließlich vollständiger Beweisvalidierung vor der Suche nach ausgewählten
+Schlüsseln unter
+[MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008).
+Ein teilweiser Cache kann die maßgebliche Vollständigkeit nicht ersetzen
+([MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009));
+Der Adapter muss die anwendbare Revision, Vollständigkeit und historische
+Abdeckung nachweisen oder melden, dass dies nicht möglich ist
+([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)),
+und ein unbekannter Schlüssel ist erst dann maßgeblich, wenn die Vollständigkeit
+festgestellt wurde
+([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011)).
+Bei der verlustfreien Aufbewahrung bleibt die normative Stufenklassifizierung
+gemäß
+[MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016)
+erhalten, während die geschützte Diagnosebehandlung und die drahtsichere
+Fehlergrenze
+[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)
+folgen.
+
+Durchsuchen Sie die genauen lokalen Typen im
+[JSON Schemakatalog](../../../reference/schemas/). Implementieren Sie dann
+[Validierung, Kanonisierung und Signierung](../validation-canonicalization-and-signing/).

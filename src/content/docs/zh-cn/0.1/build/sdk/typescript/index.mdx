@@ -1,0 +1,72 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: TypeScript SDK
+description:
+  安装并导航 MissionWeaveProtocol 0.1 的完整固定 TypeScript 运行时参考。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# TypeScript SDK
+
+`@missionweaveprotocol/sdk`是官方的TypeScript实现包。此参考描述了确切的提交
+`6d53ebfcf8350ae81d89fd818611b07f7373685c`、包版本 `0.1.0` 以及 Node.js
+20 或更高版本。不同的提交或包构建是不同的记录实现输入，即使其版本字符串未更改。
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="typescript"
+  command={`git clone https://github.com/MissionWeaveProtocol/typescript-sdk.git missionweaveprotocol-typescript-sdk
+cd missionweaveprotocol-typescript-sdk
+git checkout --detach 6d53ebfcf8350ae81d89fd818611b07f7373685c
+npm ci
+npm run build
+npm pack --pack-destination ..
+cd ..
+npm install ./missionweaveprotocol-sdk-0.1.0.tgz`}
+  verifyCommand={`node -e 'import("@missionweaveprotocol/sdk").then(({ sdkMetadata }) => console.log(sdkMetadata()))' npx --no-install Missionweaveprotocol-conformance --json`}
+>
+  <p slot="notes">
+    包根目录提供 ESM 和 CommonJS 构建。仅支持包根和 <code>package.json</code>{" "}
+    导出；内部源文件路径不是公共子路径 API。固定源包在直接 Git
+    依赖项安装期间不会构建 <code>dist/</code>，因此记录的流程会显式构建和安装
+    tarball。仅当其来源绑定到相同的确切提交时，另一个 tarball 才可以替换它。
+  </p>
+</SdkInstall>
+
+:::
+
+安装的 `missionweaveprotocol-conformance`
+命令运行打包的架构和矢量曲面。它不建立部署权限、Admission
+Log 持久性、网络安全性或生产准备情况。
+
+## 使用此参考
+
+<CardGrid>
+  <LinkCard
+    title="完整运行时"
+    description="每个受支持的包根模块、Node.js 运行时边界、一致性入口点和显式非实现。"
+    href="./runtime/"
+  />
+  <LinkCard
+    title="首次准入与历史信任"
+    description="Registry 当前证据、可信上下文和 Admission Log 的类型化适配器，以及一个可运行示例。"
+    href="./admission/"
+  />
+  <LinkCard
+    title="确切的公共 API"
+    description="每个公共包根声明都解析为其确切的源代码行。"
+    href="./api/"
+  />
+</CardGrid>
+
+## 支持记录的提交
+
+<SdkRuntimeMatrix sdk="typescript" />
+
+该矩阵将进程内实施与部署拥有的权限区分开来。安装该软件包不提供当前的 Registry 服务、经过身份验证的原子 Admission
+Log、托管网关或持久运行时持久性。

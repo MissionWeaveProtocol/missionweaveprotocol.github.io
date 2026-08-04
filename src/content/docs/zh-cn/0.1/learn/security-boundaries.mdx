@@ -1,0 +1,52 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 安全边界
+description: Signed Document 验证和准入建立什么，以及哪些安全决策保持独立。
+---
+
+# 安全边界
+
+MissionWeaveProtocol 将证据层分开，以便一项成功的检查永远不会默默地升级为更广泛的信任声明。
+
+## 当前和历史Registry证据
+
+**当前 Registry 证据**代表适用于新验证或首次准入决策的权威修订。被取代的修订版不能作为当前修订版呈现。部署接缝建立了修订时效性、Organization 范围、完整性和历史覆盖范围，如
+[MWP-SDV-010](../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)
+中所述。因此，首次准入取决于当前 Registry 证据，而不仅仅是未指定缓存中可见的最新修订版本。
+
+**历史 Registry 证据**保留原始 `validFrom`
+以及评估早期受保护签名时间所需的每个有效 `validUntil` 或 `revokedAt`
+更改。该历史记录仅附加或显式版本化 ([MWP-SDV-012](../../reference/specification/signed-documents-and-trust/#mwp-sdv-012))。
+
+首次准入使用现有证据；历史重放使用权威的历史证据，还需要现有的First-Admission
+Record。
+
+## 分离和排除的关注点
+
+| 关注                      | 边界                                                                                                                                                                                         |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Command 新鲜度            | 新提出的 Command 具有单独的有界 `issuedAt` 新鲜度和时钟偏差检查（[MWP-ADM-013](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)）。                          |
+| 签名人授权                | 经过验证的密钥绑定 Principal 在状态接受之前仍需要权威角色和策略授权 ([MWP-ADM-014](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014))。                       |
+| 可移植 Admission Log 证明 | 版本 0.1 定义了类型化适配器结果和记录验证，但没有定义可移植的已部署证明格式（[MWP-EXT-013](../../reference/specification/errors-extensions-and-security/#mwp-ext-013)）。                    |
+| 状态机接受                | 在 Organization 或 Group Authority 验证当前修订、角色、策略、纪元、预算和租约之前完成加密和准入 ([MWP-EVT-004](../../reference/specification/commands-events-and-ordering/#mwp-evt-004))。   |
+| 调用者提供的信任布尔值    | 调用者提供的布尔值不能替换经过身份验证的、类型化的 Admission Log 结果或其完整性和缺失区别 ([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003))。 |
+
+## 分层结果模型
+
+```text
+有效 JSON 和 Schema
+        ↓
+六阶段密码验证结果
+        ↓
+首次准入或历史信任结果
+        ↓
+适用时检查 Command 新鲜度
+        ↓
+签名者角色和策略授权
+        ↓
+当前状态机验证和原子式追加 Event
+```
+
+每个箭头都增加了证据；没有任何追溯性改变前一层所证明的内容。特别是，准入不会成为第七个加密阶段，并且 First-Admission
+Record 不会验证自身。

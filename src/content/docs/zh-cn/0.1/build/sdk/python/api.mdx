@@ -1,0 +1,19 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Python 公共 API 清单
+description: 每个公共 Python 符号都解析为其确切的源文件和记录的 SDK 提交中的行。
+---
+
+import SdkApiInventory from "../../../../../../../components/SdkApiInventory.astro";
+
+# Python 公共 API 清单
+
+此精确提交清单是从 `9403cf1310914670506c56cbab363fdaa465d3cc` 处的每个第一方
+`src/missionweaveprotocol/*.py`
+模块生成的。它记录公共类、协议、枚举、数据类、函数、方法、常量和类型别名，包括通过子模块公开但不由
+`missionweaveprotocol.__init__` 重新导出的 API。
+
+库存是命名和出处参考，不能替代本地[运行时语义](../runtime/)或[准入调用流程](../admission/)。符号的存在证明固定源声明了它；成功使用仍然取决于其记录的验证、权限、状态和部署先决条件。
+
+<SdkApiInventory sdk="python" />

@@ -1,0 +1,103 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Conformance and upgrades"
+description:
+  "How to verify exact release artifacts, report the proven support subset,
+  preserve extensions, and upgrade without changing v0.1 semantics."
+---
+
+# Conformance and upgrades
+
+Conformance belongs to an exact artifact set, not a branch name or a general
+claim that an SDK supports MissionWeaveProtocol. Begin with the local
+[normative release identity](../../../reference/normative-release/), verify
+every pinned digest, then run the applicable evidence surfaces.
+
+## Required evidence layers
+
+1. The [JSON Schema catalog](../../../reference/schemas/) defines the exact
+   durable object shapes and asserted formats.
+2. The
+   [structural conformance bundle](../../../reference/conformance/structural/)
+   exercises expected-valid and expected-invalid protocol documents.
+3. The [cryptography bundle](../../../reference/conformance/cryptography/)
+   exercises every Signed Document profile through the six semantic stages.
+4. The [Admission bundle](../../../reference/conformance/admission/) exercises
+   First Admission and Historical Trust above the pinned cryptography bundle.
+5. Full runtime claims additionally need positive and negative evidence for
+   Commands, Events, state transitions, replay, fencing, authorization, budgets,
+   failure recovery, and stale or duplicate side effects.
+
+The local [conformance overview](../../../reference/conformance/) keeps these
+surfaces separate so passing one layer is not silently promoted into another.
+
+## Verify manifests before cases
+
+For the cryptography bundle, validate fixture Schemas, remove exactly the
+top-level `artifactDigest` member, JCS-canonicalize the remaining manifest, hash
+it with SHA-256, and verify every declared artifact byte hash before executing
+cases
+([MWP-EXT-011](../../../reference/specification/errors-extensions-and-security/#mwp-ext-011)).
+
+The Admission manifest uses the same digest procedure and additionally pins the
+unchanged cryptography digest. Verify all referenced artifacts and that pin
+before executing adapter outcomes
+([MWP-EXT-012](../../../reference/specification/errors-extensions-and-security/#mwp-ext-012)).
+
+## State the proven subset
+
+Schema vectors prove schema-and-vector behavior. Cryptography proves the six
+verification stages. Admission additionally proves its declared first-admission
+and historical-replay cases, but not Command freshness, signer authorization,
+state-machine acceptance, or a portable deployed Admission Log proof format. A
+reference implementation may claim full MissionWeaveProtocol 0.1 conformance
+only when automated positive and negative evidence covers every core Command
+kind, every core Event kind, and every transition row. Otherwise it reports the
+narrower verified subset explicitly
+([MWP-EXT-013](../../../reference/specification/errors-extensions-and-security/#mwp-ext-013)).
+
+## Extensions and compatibility
+
+An Extension Profile declares its globally unique URI, semantic version, Schema
+URI and hash, capabilities, criticality, and Organization approval signature
+([MWP-EXT-001](../../../reference/specification/errors-extensions-and-security/#mwp-ext-001)).
+Unknown noncritical extension data can be retained and relayed, while a
+transition depending on an unknown critical profile is refused
+([MWP-EXT-002](../../../reference/specification/errors-extensions-and-security/#mwp-ext-002)).
+No profile can weaken identity, ordering, idempotency, fencing, budgets,
+Approval, provenance, isolation, or the Message/non-authority invariant
+([MWP-EXT-003](../../../reference/specification/errors-extensions-and-security/#mwp-ext-003)).
+
+The v0.1 Schemas reject unknown core properties and admit extensibility only
+through explicit extension members. Preserve unknown noncritical extension bytes
+for canonical relay where possible
+([MWP-EXT-010](../../../reference/specification/errors-extensions-and-security/#mwp-ext-010)).
+
+Assignments pin Agent Card and required capability versions. An incompatible
+capability upgrade checkpoints active work and requires renewed acceptance
+before execution continues
+([MWP-IDN-003](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-003)).
+
+## Upgrade rule
+
+The wire `protocolVersion` remains `0.1` for backward-compatible specification
+clarifications. A change to core semantics, required fields, or signing bytes
+requires a negotiated new wire minor or major version. Never introduce a new
+signature-envelope protection rule as silent v0.1 behavior
+([MWP-SDV-019](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-019)).
+
+:::note[Implementation note]
+
+Treat an upgrade as a new immutable release set. Stage the new website release,
+schemas, manifests, SDK pins, and generated inventories together; verify them in
+an isolated environment; then negotiate or roll traffic only where both sides
+support the required wire version and Extension Profiles.
+
+Keep old validators and historical Registry/Admission evidence available for
+replay of records created under their exact release. Canarying, rollback
+windows, database migration tooling, and deployment sequencing are operational
+choices, but a rollback cannot reinterpret already accepted signing bytes or
+Events.
+
+:::

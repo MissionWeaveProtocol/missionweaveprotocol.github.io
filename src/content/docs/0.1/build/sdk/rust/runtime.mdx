@@ -1,0 +1,116 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Rust runtime reference"
+description:
+  "The complete crate-root surface and runtime boundaries of the exact-pinned
+  Rust SDK."
+---
+
+import SupportStatus from "../../../../../../components/SupportStatus.astro";
+
+# Rust runtime reference
+
+This page covers the complete crate-root surface represented by the
+[exact API inventory](../api/). Shared protocol behavior remains defined by the
+local [runtime reference](../../../runtime/architecture-and-bootstrap/) and
+[Reference clauses](../../../../reference/specification/). The module names
+below identify implementation provenance; callers import the public re-exports
+from `missionweaveprotocol` because the modules themselves are private.
+
+<SupportStatus status="implemented" /> applies to the crate-root APIs and
+in-process behavior listed below.
+
+<SupportStatus status="deployment-adapter-required" /> applies to current
+Registry authority, trusted Admission context, authenticated log access, and
+other deployment services.
+
+<SupportStatus status="not-implemented" /> means the exact-pinned crate has no
+corresponding runtime.
+
+## Crate and execution model
+
+The crate is version `0.1.0`, uses edition 2024, declares Rust 1.85 as its
+minimum supported toolchain, and exposes one binary:
+`missionweaveprotocol-conformance`. `src/lib.rs` is the sole public import root;
+internal module paths are not supported APIs.
+
+Installing the crate starts no service, opens no socket, persists no state, and
+grants no authority. Returned byte slices and evidence objects remain local
+process values unless the application deliberately stores or transmits them.
+
+## Complete source map
+
+| Runtime concern               | Public implementation source                                | Contract at the pinned commit                                                                                                              |
+| ----------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Package root and constants    | `lib.rs`                                                    | Re-exports the supported public surface and the SDK, protocol, and wire versions.                                                          |
+| Strict JSON                   | `strict_json.rs`                                            | `parse_strict_json` rejects invalid UTF-8, duplicate members, malformed JSON, and trailing data.                                           |
+| Schema and exact time         | `schema.rs`, `signed_document.rs`                           | Offline Draft 2020-12 validation, asserted URI/date-time formats, packaged Schema lookup, and exact instant comparison.                    |
+| Canonical JSON and Ed25519    | `canonical.rs`                                              | RFC 8785 bytes and hashes plus `Ed25519Signer` helpers.                                                                                    |
+| Signed Documents and Registry | `signed_document.rs`                                        | Nine document kinds, signing, six-stage verification, complete Organization-wide Registry resolution, and immutable verification evidence. |
+| Frames                        | `frame.rs`                                                  | `FrameCodec` decode, encode, and document validation. This is a codec, not a hosted gateway service.                                       |
+| Structural conformance        | `conformance.rs`, `bin/missionweaveprotocol-conformance.rs` | Embedded Schema-vector execution, report summaries, CLI exit status, and optional verbose failures.                                        |
+| Embedded bundles              | `bundle.rs`                                                 | Exact pin access, artifact lookup, and digest verification for protocol, cryptography, and Admission bundles.                              |
+| First Admission               | `admission.rs`                                              | First Admission and Historical Trust above successful Signed Document verification.                                                        |
+
+## Validation, signing, and Registry evidence
+
+`SchemaCatalog::new`, `validate`, `validate_bytes`, and `identifier` operate
+over the 22 exact embedded Schemas. Strict parsing and Schema validation are
+separate from canonicalization. `canonical_bytes`, `canonical_sha256`, and
+`signature_input` implement RFC 8785 and signing-input construction.
+
+`SigningKey` is the application-owned signing seam. `Ed25519Signer` provides
+seed-based signing and verification helpers for controlled local use.
+`SignedDocumentCodec::sign` and `verify` select one of nine explicit
+`SignedDocumentKind` values and run parse, Schema, signature-envelope,
+key-resolution, canonicalization, and signature stages in order.
+
+`KeyResolver::resolve` must return `KeyRegistrySnapshot::organization_wide`
+evidence for one coherent applicable Organization revision with complete
+retained history. A selected key, partial projection, cache hit, or
+caller-provided trust flag is insufficient. `VerifiedSignedDocument` exposes the
+received bytes, signing and complete canonical bytes and hashes, protected time,
+signature evidence, and resolved Registry evidence.
+
+## Frames, bundles, and conformance
+
+`FrameCodec::decode`, `encode`, and `validate_document` validate frame values;
+they do not own transport, Session authentication, Cursor persistence,
+backpressure, routing, or authoritative state transitions.
+
+`ProtocolBundle::verify` checks the 22-Schema and 59-file structural bundle.
+`verify_cryptography` checks 98 artifacts, 22 cases, and 62 declared
+evaluations; `verify_admission` checks 19 artifacts, 5 cases, and 30 declared
+evaluations. Those two calls verify pins, counts, and digests. They do not
+execute every cryptography or Admission evaluation. The conformance binary and
+`ConformanceRunner::run` execute only the structural vectors.
+
+## First Admission
+
+`AdmissionService::new`, `prepare_first_admission`, `admit_first`, and
+`verify_historical_admission` expose the exact Admission flow. Continue with the
+[Rust Admission reference](../admission/) for adapter outcomes, call order, and
+the runnable package-consumer example.
+
+## Explicit availability boundaries
+
+<SupportStatus status="deployment-adapter-required" /> **Admission authority** —
+the application provides current Registry evidence, historical Registry
+evidence, trusted acceptance context, and an authenticated append-only log.
+
+<SupportStatus status="not-implemented" /> **Mission orchestration** — no
+high-level Mission state machine or orchestration façade is exported.
+
+<SupportStatus status="not-implemented" /> **Worker scheduler** — no Worker
+queue, scheduler, lease runner, or recovery loop is exported.
+
+<SupportStatus status="not-implemented" /> **Hosted gateway service** — the
+crate supplies a frame codec, not a gateway service with transport, TLS,
+Session, routing, or backpressure ownership.
+
+<SupportStatus status="not-implemented" /> **Authoritative persistence runtime**
+— no database-backed or Agent-local persistence runtime is exported.
+
+These absences are part of the documented support contract; Python
+reference-runtime capabilities must not be inferred from shared protocol names.

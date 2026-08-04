@@ -1,0 +1,80 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Python SDK
+description: >-
+  Instale y navegue por el tiempo de ejecución de referencia completo Python
+  3.12 en su commit exacto MissionWeaveProtocol 0.1.
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Python SDK
+
+El paquete `missionweaveprotocol` es el tiempo de ejecución de referencia
+Python. Esta página describe la confirmación
+`9403cf1310914670506c56cbab363fdaa465d3cc`, la versión del paquete `0.1.0` y
+Python 3.12 o posterior. Una confirmación o compilación de paquete diferente es
+una entrada de implementación documentada diferente, incluso cuando su cadena de
+versión no ha cambiado.
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="python"
+  command={`uv add "missionweaveprotocol @ git+https://github.com/MissionWeaveProtocol/python-sdk.git@9403cf1310914670506c56cbab363fdaa465d3cc"`}
+  verifyCommand={`uv run python -c "import missionweaveprotocol as mwp; print(mwp.__version__)"
+uv run missionweaveprotocol-conformance --help`}
+>
+  <p slot="notes">
+    El requisito exacto de VCS construye el paquete a partir de la confirmación
+    documentada. En cambio, una implementación puede instalar una rueda cuyo
+    origen de compilación esté vinculado a ese compromiso y cuyos artefactos
+    empaquetados pasen las mismas comprobaciones de resumen.
+  </p>
+</SdkInstall>
+
+:::
+
+El paquete declara estos comandos de consola en la confirmación documentada:
+
+| Command                            | Finalidad pública                                                                   |
+| ---------------------------------- | ----------------------------------------------------------------------------------- |
+| `missionweaveprotocol-server`      | Inicie el servicio de puerta de enlace Group configurado.                           |
+| `missionweaveprotocol-demo`        | Ejecute la demostración determinista en tiempo de ejecución de referencia.          |
+| `missionweaveprotocol-conformance` | Ejecute el esquema estructural y el manifiesto vectorial de implementación neutral. |
+
+Iniciar un comando no crea autoridad de implementación. El servidor aún requiere
+material Registry propiedad de la implementación, persistencia, credenciales de
+sesión, enlace de red y configuración TLS de producción.
+
+## Utilice esta referencia
+
+<CardGrid>
+  <LinkCard
+    title="Runtime completo"
+    description="Cada módulo público, responsabilidad de tiempo de ejecución, límite de persistencia, superficie de transporte y punto de entrada de conformidad."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="Primera admisión y confianza histórica"
+    description="Adaptadores tipados para Registry actual, Admission Log y contexto de confianza, con un ejemplo ejecutable."
+    href="./admission/"
+  />
+  <LinkCard
+    title="API pública exacta"
+    description="Todas las clases, protocolos, funciones, métodos, constantes y tipos públicos se resolvieron en líneas fuente exactas."
+    href="./api/"
+  />
+</CardGrid>
+
+## Soporte en el compromiso documentado
+
+<SdkRuntimeMatrix sdk="python" />
+
+Python SDK implementa el tiempo de ejecución de referencia completo representado
+por la matriz. Los servicios de base de datos, el servicio de red, los
+certificados y la autoridad de admisión son dependencias de implementación, no
+garantías creadas al instalar el paquete.

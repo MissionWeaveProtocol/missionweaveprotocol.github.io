@@ -1,0 +1,26 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Inventar der öffentlichen Go-API
+description: >-
+  Jede exportierte Go-Deklaration wurde beim dokumentierten SDK-Commit in ihre
+  genaue Quelldatei und Zeile aufgelöst.
+---
+
+import SdkApiInventory from "../../../../../../../components/SdkApiInventory.astro";
+
+# Inventar der öffentlichen Go-API
+
+Dieses exakt festgeschriebene Inventar wird aus den Quelldateien des Stammpakets
+unter `80c39852e8a2053ac761b8d53d62483264f803f1` generiert. Es zeichnet
+exportierte Typen, Schnittstellen, Strukturen, Konstanten, Funktionen, Methoden
+und Accessoren unter Verwendung der bei diesem Commit vorhandenen Deklarationen
+auf.
+
+Die Bestandsaufnahme ist die Benennung und genaue Quellenangabe und kein Ersatz
+für die lokale [Laufzeitsemantik](../runtime/) oder
+[Zulassungsaufrufablauf](../admission/). Das Vorhandensein einer Erklärung
+liefert nicht die externe Autorität, Atomizität, Dauerhaftigkeit oder
+authentifizierten Beweise, die ihr Vertrag erfordert.
+
+<SdkApiInventory sdk="go" />

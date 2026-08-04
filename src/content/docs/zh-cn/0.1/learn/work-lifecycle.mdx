@@ -1,0 +1,72 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 工作生命周期
+description: 对话如何成为显式工作项、接受执行、Evidence、验证和 Mission 批准。
+---
+
+# 工作生命周期
+
+MissionWeaveProtocol 保持对话合作流畅，同时明确可执行的责任。 Message 可以提供上下文或请求工作，但接口不能将其呈现为可执行指令 ([MWP-MSN-017](../../reference/specification/missions-groups-and-membership/#mwp-msn-017))。
+
+## 从讨论到承诺
+
+1. **讨论。** 代理在 Group 或 WorkItem 中交换已完成的消息谈话。
+2. **提案。** 任何 Group 成员都可以提交工作提案。尚不存在可执行的 WorkItem。
+3. **授权。**
+   当前 Coordinator、MissionOwner 紧急覆盖，或具有有效范围委托授权的 Agent 创建 WorkItem。
+4. **要约。**
+   授权参与者向符合条件的 Worker 提供 WorkItem，并且记录选择依据。独占授权集和委托报价规则由[MWP-MSN-019](../../reference/specification/missions-groups-and-membership/#mwp-msn-019)定义。
+5. **接受。** Worker 执行准入控制。接受操作会开启新的 Ownership
+   Epoch，并将 WorkItem 放入该 Worker 对应的 Group 队列中。
+
+接受是持久的调度承诺，而不是立即执行。 Worker 的准入检查和所有权影响由
+[MWP-WRK-005](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-005)
+定义。
+
+## 工作合同
+
+每个 WorkItem 都带有版本化的、机器可读的工作合同。其所需的形状由
+[MWP-WRK-001](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-001)
+标识，包括：
+
+- 目标、可交付成果和验收标准；
+- 需要 Evidence 和输入或依赖项引用；
+- 允许的工具、数据、资源和操作；
+- 所需的能力标识符和版本；
+- 截止日期、请求的紧迫性和业务影响；
+- 财务、代币、工具调用、计算、挂钟和副作用预算；
+- 重试尝试、退避、截止日期和成本政策；和
+- 风险分类和任何执行前审批门。
+
+在接受之前解决了本质上的歧义。通过更新的 Worker 接受（[MWP-WRK-002](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-002)）返回重大合同修订。
+
+## 共同的成功之路
+
+```text
+Work Proposal
+    ↓ 授权
+open WorkItem
+    ↓ 发出 offer
+offered
+    ↓ Worker 接受
+queued
+    ↓ 有效所有权、Approval 门和 Execution Lease
+active
+    ↓ Worker 提交 Artifact 和 Evidence
+submitted
+    ↓ Coordinator 接受结果
+verified
+```
+
+活动工作可能会检查点回到 `queued`，输入带有持久检查点的
+`blocked`，失败并显示 Evidence，或者被取消。完整的转换表位于
+[WorkItem 规范页](../../reference/specification/work-scheduling-and-recovery/#workitem-transition-table)。
+
+## 批准前的 Evidence
+
+Worker 声明不足以证明完成。提交内容包括映射到验收标准的工件和 Evidence。 Coordinator 审核检查 Artifact 完整性、确定性测试、定性审核者 Evidence 以及按照
+[MWP-WRK-025](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-025)
+描述的顺序记录的接受决定。
+
+验证所需的工作项后，Coordinator 提交特定的 Mission 修订版和 Artifact 集。 MissionOwner 签署最终 Approval 或请求更改而不删除早期提交的内容 ([MWP-MSN-008](../../reference/specification/missions-groups-and-membership/#mwp-msn-008))。

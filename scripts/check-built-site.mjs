@@ -2,6 +2,11 @@ import assert from "node:assert/strict";
 import { access, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  buildNormativeRedirects,
+  localeDefinitions,
+  routeManifest,
+} from "./lib/normative-routes.mjs";
 
 const dist = fileURLToPath(new URL("../dist/", import.meta.url));
 const configuredBase = process.env.SITE_BASE;
@@ -13,41 +18,165 @@ const withBase = (route) => {
   return base === "/" ? `/${normalizedRoute}` : `${base}/${normalizedRoute}`;
 };
 
-const requiredOutputs = [
+const routeToOutput = (route) => {
+  const relative = route.replace(/^\/|\/$/gu, "");
+  return relative === ""
+    ? "index.html"
+    : path.posix.join(relative, "index.html");
+};
+const localizedRoute = (directory, route) =>
+  directory === "" ? route : "/" + directory + route;
+
+const redirects = buildNormativeRedirects();
+const requiredOutputs = new Set([
   "index.html",
   "404.html",
-  "docs/0.1/index.html",
-  "reference/specification/index.html",
-  "reference/schemas/index.html",
-  "reference/conformance/index.html",
-  "sdk/index.html",
-  "sdk/python/index.html",
-  "zh-cn/index.html",
-  "zh-cn/docs/0.1/index.html",
-  "zh-cn/sdk/index.html",
-  "zh-tw/index.html",
-  "zh-tw/docs/0.1/index.html",
-  "zh-tw/sdk/index.html",
-  "ja/index.html",
-  "ja/docs/0.1/index.html",
-  "ja/sdk/index.html",
-  "es/index.html",
-  "es/docs/0.1/index.html",
-  "es/sdk/index.html",
-  "fr/index.html",
-  "fr/docs/0.1/index.html",
-  "fr/sdk/index.html",
-  "de/index.html",
-  "de/docs/0.1/index.html",
-  "de/sdk/index.html",
+  ...localeDefinitions
+    .filter(({ directory }) => directory !== "")
+    .map(({ directory }) => path.posix.join(directory, "index.html")),
+  ...localeDefinitions.map(({ directory }) =>
+    routeToOutput(localizedRoute(directory, "/community/")),
+  ),
+  ...routeManifest.routes.flatMap((route) =>
+    localeDefinitions.map(({ directory }) =>
+      routeToOutput(localizedRoute(directory, route.versioned)),
+    ),
+  ),
+  ...Object.keys(redirects).map(routeToOutput),
+  "artifacts/0.1/normative-release.json",
+  "artifacts/0.1/protocol/CONTEXT.md",
+  "artifacts/0.1/protocol/spec/PROTOCOL.md",
+  "artifacts/0.1/protocol/cryptography/manifest.json",
+  "artifacts/0.1/protocol/admission/manifest.json",
+  "artifacts/0.1/protocol/schemas/first-admission-record.schema.json",
   "sitemap-index.xml",
   "llms.txt",
   "robots.txt",
-];
+]);
 
 for (const output of requiredOutputs) {
   await access(path.join(dist, output));
 }
+
+const metadataFailures = [];
+for (const [source, target] of Object.entries(redirects)) {
+  const output = routeToOutput(source);
+  const html = await readFile(path.join(dist, output), "utf8");
+  const targetWithBase = withBase(target);
+  if (
+    !html.includes(
+      '<meta http-equiv="refresh" content="0;url=' + targetWithBase + '">',
+    )
+  ) {
+    metadataFailures.push(output + " does not redirect to " + targetWithBase);
+  }
+  const expectedCanonical =
+    '<link rel="canonical" href="' + origin + targetWithBase + '">';
+  if (!html.includes(expectedCanonical)) {
+    metadataFailures.push(
+      output + " does not declare " + origin + targetWithBase + " canonical",
+    );
+  }
+}
+
+for (const route of routeManifest.routes) {
+  for (const currentLocale of localeDefinitions) {
+    const currentRoute = localizedRoute(
+      currentLocale.directory,
+      route.versioned,
+    );
+    const output = routeToOutput(currentRoute);
+    const html = await readFile(path.join(dist, output), "utf8");
+    const expectedCanonical =
+      '<link rel="canonical" href="' + origin + withBase(currentRoute) + '"/>';
+    const canonicalMatches =
+      html.match(/<link rel="canonical" href="[^"]+"\/>/gu) ?? [];
+    if (
+      canonicalMatches.length !== 1 ||
+      canonicalMatches[0] !== expectedCanonical
+    ) {
+      metadataFailures.push(
+        output + " must declare exactly " + expectedCanonical,
+      );
+    }
+
+    for (const alternateLocale of localeDefinitions) {
+      const alternateRoute = localizedRoute(
+        alternateLocale.directory,
+        route.versioned,
+      );
+      const expectedAlternate =
+        '<link rel="alternate" hreflang="' +
+        alternateLocale.starlight +
+        '" href="' +
+        origin +
+        withBase(alternateRoute) +
+        '"/>';
+      if (!html.includes(expectedAlternate)) {
+        metadataFailures.push(
+          output + " is missing alternate " + alternateLocale.starlight,
+        );
+      }
+    }
+    const expectedDefault =
+      '<link rel="alternate" hreflang="x-default" href="' +
+      origin +
+      withBase(route.versioned) +
+      '"/>';
+    if (!html.includes(expectedDefault)) {
+      metadataFailures.push(output + " is missing x-default alternate");
+    }
+  }
+}
+
+for (const { directory } of localeDefinitions) {
+  const prefix = directory === "" ? "" : directory + "/";
+  const html = await readFile(
+    path.join(dist, prefix, "0.1/build/sdk/index.html"),
+    "utf8",
+  );
+  for (const target of [
+    "/" + prefix + "0.1/build/sdk/",
+    "/" + prefix + "0.1/build/sdk/python/",
+    "/" + prefix + "0.1/build/sdk/typescript/",
+    "/" + prefix + "0.1/build/sdk/go/",
+    "/" + prefix + "0.1/build/sdk/rust/",
+    "/" + prefix + "0.1/build/sdk/java/",
+    "/" + prefix + "0.1/build/sdk/cpp/",
+  ]) {
+    const targetWithBase = withBase(target);
+    if (!html.includes('href="' + targetWithBase + '"')) {
+      metadataFailures.push(
+        prefix + "0.1/build/sdk/index.html navigation misses " + targetWithBase,
+      );
+    }
+  }
+  for (const staleTarget of [
+    "/" + prefix + "sdk/",
+    "/" + prefix + "sdk/python/",
+    "/" + prefix + "sdk/typescript/",
+    "/" + prefix + "sdk/go/",
+    "/" + prefix + "sdk/rust/",
+    "/" + prefix + "sdk/java/",
+    "/" + prefix + "sdk/cpp/",
+  ]) {
+    const staleTargetWithBase = withBase(staleTarget);
+    if (html.includes('href="' + staleTargetWithBase + '"')) {
+      metadataFailures.push(
+        prefix +
+          "0.1/build/sdk/index.html navigation retains " +
+          staleTargetWithBase,
+      );
+    }
+  }
+}
+
+assert.equal(
+  metadataFailures.length,
+  0,
+  "Normative route metadata validation failed:\n" +
+    metadataFailures.map((failure) => "  " + failure).join("\n"),
+);
 
 async function collectHtmlFiles(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -107,6 +236,13 @@ for (const file of htmlFiles) {
   if (html.includes("/edit/main/")) {
     failures.push(`${path.relative(dist, file)} exposes an edit-page link`);
   }
+  for (const match of html.matchAll(
+    /\{(?:release|artifacts)\.[A-Za-z0-9_.]+\}/gu,
+  )) {
+    failures.push(
+      `${path.relative(dist, file)} exposes an unresolved normative data expression: ${match[0]}`,
+    );
+  }
   const route = path
     .relative(dist, file)
     .replace(/\\/gu, "/")
@@ -159,5 +295,5 @@ assert.equal(
 );
 
 console.log(
-  `Built site passed ${requiredOutputs.length} output checks and ${checkedReferences} internal reference checks across ${htmlFiles.length} pages.`,
+  `Built site passed ${requiredOutputs.size} output checks and ${checkedReferences} internal reference checks across ${htmlFiles.length} pages.`,
 );

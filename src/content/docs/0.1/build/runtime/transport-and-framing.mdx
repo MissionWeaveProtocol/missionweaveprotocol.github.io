@@ -1,0 +1,108 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Transport and framing"
+description:
+  "The normative HELLO authentication, Session Epoch fencing, WebSocket text
+  frames, Group subscriptions, multiplexing, ACK, PING, and backpressure model."
+---
+
+# Transport and framing
+
+MissionWeaveProtocol 0.1 binds the runtime to authenticated WebSocket over TLS
+1.3. Transport supplies framing and delivery; it does not replace individual
+Signed Document verification, Group authorization, durable replay, or fencing.
+The required TLS, WebSocket, JSON, JCS, Schema, and cryptographic specifications
+are enumerated by
+[MWP-FND-003](../../../reference/specification/foundations/#mwp-fnd-003).
+
+## HELLO authentication
+
+The four-message HELLO exchange uses a fresh server challenge and an
+Organization-registered Ed25519 key. It negotiates the protocol version and
+returns a short-lived session token plus a newly issued Session Epoch
+([MWP-IDN-007](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-007)).
+
+Issuing epoch `n + 1` fences every runtime at epoch `n` or lower. Every
+state-changing Agent Command is checked against the current epoch, and two
+runtimes cannot operate one stable Agent identity concurrently
+([MWP-IDN-008](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-008)).
+
+## WebSocket message boundary
+
+A server provides `wss`; one authenticated connection can multiplex all Groups
+used by one Agent. Every WebSocket message contains exactly one UTF-8 JSON text
+frame conforming to the local `websocket-frame` Schema. Binary frames cannot
+carry protocol objects or Artifact content
+([MWP-EVT-008](../../../reference/specification/commands-events-and-ordering/#mwp-evt-008)).
+
+Core frame types are:
+
+| Frame       | Purpose                                                             |
+| ----------- | ------------------------------------------------------------------- |
+| `HELLO`     | challenge authentication, version negotiation, and session issuance |
+| `SUBSCRIBE` | authorized Group selection and replay positions                     |
+| `COMMAND`   | one signed request for a structured transition                      |
+| `EVENT`     | one immutable accepted fact                                         |
+| `ACK`       | one or more durable contiguous Cursors                              |
+| `PING`      | liveness and optional Presence                                      |
+| `ERROR`     | machine-readable rejection or transport guidance                    |
+
+## Subscribe and route before sequencing
+
+After authentication, `SUBSCRIBE` carries Group IDs, per-Group replay positions,
+and optional attention filters. The server independently enforces Membership and
+does not disclose whether an unauthorized Group exists
+([MWP-EVT-009](../../../reference/specification/commands-events-and-ordering/#mwp-evt-009)).
+
+Events from different Groups may interleave. A receiver routes each Event by
+Group ID before applying sequence, Cursor, deduplication, or queue logic; only
+per-Group order is defined
+([MWP-EVT-010](../../../reference/specification/commands-events-and-ordering/#mwp-evt-010)).
+
+## Liveness, progress, and pressure
+
+`ACK` reports durable progress. `PING` proves liveness and may carry a Presence
+Record; the peer echoes its nonce. Servers use bounded buffers and per-Group
+backpressure, pausing an overloaded Group with `BACKPRESSURE` guidance rather
+than disconnecting unrelated Groups where possible
+([MWP-EVT-011](../../../reference/specification/commands-events-and-ordering/#mwp-evt-011)).
+
+Presence may travel on authenticated `PING` without an individual durable
+signature, but cannot expose another Group
+([MWP-IDN-006](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-006)).
+A noisy Group cannot starve another; gateways provide per-Group flow control and
+independent subscription Cursors where possible
+([MWP-MSN-014](../../../reference/specification/missions-groups-and-membership/#mwp-msn-014)).
+
+An ACK is not permission to delete authoritative Event history, and a PING or
+Presence update is not assignment acceptance or lease renewal. Receivers
+deduplicate Events and never advance a Cursor over a sequence gap
+([MWP-WRK-029](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)).
+ACK and reconnect replay use the highest contiguous durable Cursor and may
+redeliver Events around a disconnect
+([MWP-WRK-030](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)).
+
+## Encoding at the wire boundary
+
+Wire JSON may arrive in any member order, but duplicate member names are
+rejected before Schema validation. Every signature, content-derived identifier,
+and hash uses the exact RFC 8785 JCS value model and bytes
+([MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012)).
+Large content travels as a content-addressed Artifact reference rather than a
+binary or partial-streaming protocol frame.
+
+:::note[Implementation note]
+
+Maintain independent per-Group receive buffers and replay state behind the one
+connection. Reconnect with bounded backoff, but preserve the last durable Cursor
+for each Group and expect duplicate Events around the disconnect boundary.
+
+Apply connection-wide limits as a final safety valve and per-Group limits as the
+normal isolation mechanism. Buffer sizes, heartbeat periods, reconnect jitter,
+and socket library choices are deployment tuning, not wire constants.
+
+:::
+
+Continue with [Errors and observability](../errors-and-observability/) for wire
+rejections and protected diagnostics.

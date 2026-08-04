@@ -1,0 +1,78 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Rust SDK
+description: >-
+  Installez et parcourez la référence d'exécution complète Rust épinglée avec
+  précision pour MissionWeaveProtocol 0.1.
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Rust SDK
+
+`missionweaveprotocol` est le crate officiel Rust. Cette référence décrit le
+commit exact `2727f8777737265d98dde4ceaca306612ef54c52`, la version du crate
+`0.1.0`, Rust 1.85 ou plus récente et l'édition 2024. La pin documentée n'est
+pas publiée sur crates.io ; une révision Git ou une archive de package
+différente est une entrée d’implémentation différente.
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="rust"
+  command={`git clone https://github.com/MissionWeaveProtocol/rust-sdk.git missionweaveprotocol-rust-sdk
+cd missionweaveprotocol-rust-sdk
+git checkout --detach 2727f8777737265d98dde4ceaca306612ef54c52
+cargo test --locked --all-features
+cargo package --locked`}
+  verifyCommand={`cargo run --locked --quiet --bin missionweaveprotocol-conformance
+cargo install --locked --path . --bin missionweaveprotocol-conformance
+missionweaveprotocol-conformance --verbose`}
+>
+  <p slot="notes">
+    Les applications lient la bibliothèque avec une dépendance Cargo Git dont{" "}
+    <code>rev</code> est le commit exact ci-dessus. Une copie vendue ou emballée
+    n'est acceptable que lorsque sa provenance se résout dans les mêmes octets
+    et que ses ensembles de protocoles intégrés réussissent les appels de
+    vérification documentés.
+  </p>
+</SdkInstall>
+
+:::
+
+Le binaire `missionweaveprotocol-conformance` accepte `--verbose` en option. Il
+exécute les vecteurs de schéma structurels intégrés ; il n'établit pas la devise
+Registry, la durabilité Admission Log, la sécurité du réseau ou la préparation à
+la production.
+
+## Utilisez cette référence
+
+<CardGrid>
+  <LinkCard
+    title="Runtime complet"
+    description="Chaque réexportation à la racine du crate, codec, vérificateur de bundle, limite CLI et non-implémentation explicite."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="Première admission et confiance historique"
+    description="Traits typés pour le Registry actuel, le contexte de confiance et l’Admission Log, avec un exemple exécutable."
+    href="./admission/"
+  />
+  <LinkCard
+    title="API publique exacte"
+    description="Chaque déclaration publique à la racine du crate est résolue selon sa ligne source exacte."
+    href="./api/"
+  />
+</CardGrid>
+
+## Support lors du commit documenté
+
+<SdkRuntimeMatrix sdk="rust" />
+
+Le crate fournit un comportement de protocole dans le processus, et non une
+autorité de déploiement. Les applications fournissent toujours des preuves
+Registry actuelles et historiques authentifiées, un contexte d'admission fiable
+et un Admission Log en ajout uniquement faisant autorité.

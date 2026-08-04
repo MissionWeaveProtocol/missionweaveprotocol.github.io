@@ -1,0 +1,302 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-EXT
+title: Erweiterungen, Fehler, Kontrollen und Konformität
+description: >-
+  Erweiterungsprofile, Fehlercodes, Sicherheitskontrollen, Kompatibilität,
+  Konformität, Proof-of-Concept-Anforderungen und Lizenzierung.
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 18. Erweiterungsprofile
+
+<NormativeClause id="MWP-EXT-001" level={["MAY","MUST"]}>
+
+Entwickler MAY Definieren Sie benutzerdefinierte Befehle, Ereignisse und Daten
+über Organization-genehmigte Erweiterungsprofile. Jedes Profil MUST Deklarieren
+Sie einen global eindeutigen Profil-URI, eine semantische Version, einen
+Schema-URI und einen Hash, erforderliche Funktionen, Kritikalität usw
+Organization Genehmigungsunterschrift. A Group pinnt die unterstützten
+Hauptversionen der verwendeten Profile.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-002" level={["MUST","MAY"]}>
+
+Erweiterungsarten MUST Benutze die `ext.<organization>.<profile>.<name>`
+Namespace, der durch das Profil definiert wird. Eine unbekannte, unkritische
+Erweiterung MAY gespeichert und ohne Interpretation weitergegeben werden. Ein
+Agent MUST die Teilnahme an einem Übergang ablehnen, der von einem unbekannten
+kritischen Profil abhängt.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-003" level="MUST NOT">
+
+Ein Extension Profile MUST NOT Identität außer Kraft setzen oder schwächen,
+Membership, Event Ordnung, Idempotenz, Session Epoch, Eigentumsepoche,
+Mietvertrag, Budget, Approval, Artifact Herkunft, Mission Isolation oder die
+Regel, dass Nachrichten niemals Aktionen autorisieren.
+
+</NormativeClause>
+
+## 19. Fehler
+
+<NormativeClause id="MWP-EXT-004" level={["MUST","SHOULD"]}>
+
+Fehler MUST `schemas/error.schema.json` entsprechen. Eine Fehlerantwort MUST
+maschinenlesbar sein, MUST angeben, ob ein erneuter Versuch sicher ist, und
+SHOULD den zugehörigen Frame oder die Action ID identifizieren, ohne nicht
+autorisierte Daten preiszugeben. Kerncodes sind:
+
+| Code                         | Bedeutung                                                                                                              |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `UNSUPPORTED_VERSION`        | Keine kompatible Protokollversion                                                                                      |
+| `AUTH_REQUIRED`              | Authentifizierung fehlt                                                                                                |
+| `AUTH_INVALID_SIGNATURE`     | Signatur des unterzeichneten Dokuments, Schlüsselgültigkeit, Zulassungsnachweis oder Aktualitätsprüfung fehlgeschlagen |
+| `AUTH_STALE_SESSION`         | Session Epoch ist eingezäunt                                                                                           |
+| `AUTH_STALE_COORDINATOR`     | Coordinator Epoche ist eingezäunt                                                                                      |
+| `AUTH_FORBIDDEN`             | Dem Schauspieler fehlt die Erlaubnis oder die Richtlinienberechtigung                                                  |
+| `GROUP_NOT_FOUND`            | Group fehlt oder wurde absichtlich nicht bekannt gegeben                                                               |
+| `MEMBERSHIP_REQUIRED`        | Nicht anwendbar Membership                                                                                             |
+| `MEMBERSHIP_STALE`           | Membership Epoche ist eingezäunt                                                                                       |
+| `SCHEMA_VALIDATION_FAILED`   | Objekt entspricht nicht seinem Schema                                                                                  |
+| `INVALID_COMMAND`            | Command ist wohlgeformt, aber semantisch ungültig                                                                      |
+| `INVALID_STATE_TRANSITION`   | Der Aggregatzustand verbietet den Übergang                                                                             |
+| `REVISION_CONFLICT`          | Erwartete Revision stimmt nicht überein                                                                                |
+| `ACTION_ID_COLLISION`        | Stabile Aktions-ID wurde mit anderem Inhalt wiederverwendet                                                            |
+| `UNKNOWN_CRITICAL_EXTENSION` | Erforderliche Erweiterung kann nicht interpretiert werden                                                              |
+| `WORK_CONTRACT_INCOMPLETE`   | Erforderliche Informationen zum Arbeitsvertrag fehlen                                                                  |
+| `WORK_OFFER_EXPIRED`         | Angebot ist nicht mehr gültig                                                                                          |
+| `WORK_ALREADY_OWNED`         | Ein anderer Kandidat gewann den exklusiven Besitz                                                                      |
+| `WORK_LEASE_EXPIRED`         | Erforderlicher Mietvertrag ist nicht mehr gültig                                                                       |
+| `WORK_STALE_OWNERSHIP`       | Eigentumsepoche ist eingezäunt                                                                                         |
+| `APPROVAL_REQUIRED`          | Policy Gate wurde nicht erfüllt                                                                                        |
+| `BUDGET_EXCEEDED`            | Ein hartes Mission- oder WorkItem-Budget ist erschöpft                                                                 |
+| `RATE_LIMITED`               | Leitzins oder Rekursionsschwellenwert wurde erreicht                                                                   |
+| `BACKPRESSURE`               | Der Receiver kann derzeit keinen weiteren Datenverkehr akzeptieren                                                     |
+| `CURSOR_TOO_OLD`             | Die Online-Wiedergabe enthält die angeforderte Position nicht mehr                                                     |
+| `PROTOCOL_VIOLATION`         | Peer hat das Framing oder eine Kerninvariante verletzt                                                                 |
+| `INTERNAL_ERROR`             | Die Behörde hat versagt, ohne den Übergang zu akzeptieren                                                              |
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-005" level={["MUST","MUST NOT","MAY"]}>
+
+Ein unveränderter Command-Wiederholungsversuch MUST die ursprüngliche Action ID
+und den signierten Inhalt beibehalten. `AUTH_INVALID_SIGNATURE` MUST NOT
+unverändert wiederholt werden, bevor die Ursache behoben ist. Nach lokaler
+Korrektur des Signaturumschlags, des maßgeblichen Schlüssels oder des
+Admission-Status MAY ein Absender die ursprüngliche Action ID wiederholen,
+solange alle geschützten Inhalte gültig bleiben. Wenn die Command-Freshness
+abgelaufen ist, MUST der Absender stattdessen ein neues Command mit einer neuen
+Action ID, einer aktuellen `issuedAt`, einer passenden `signature.createdAt` und
+einer neuen Signatur erstellen. `ACTION_ID_COLLISION` erfordert ein neues
+Command mit einer neuen Action ID. Ein veralteter Fencing- Fehler erfordert die
+aktuelle maßgebliche Epoch sowie ein neues Command mit einer neuen Action ID und
+Signatur.
+
+</NormativeClause>
+
+## 20. Rate-, Rekursions- und Runaway-Kontrollen
+
+<NormativeClause id="MWP-EXT-006" level={["MUST","SHOULD"]}>
+
+Organization Politik MUST Supportgrenzen auf Message und Vorschlagsraten,
+ungelöste Klärungsrunden, aktive und in der Warteschlange befindliche WorkItems,
+Delegationstiefe, Token-/Zeit-/Finanzbudgets und zirkuläre oder doppelte
+Zerlegung. Diese Kontrollen SHOULD weiche Schwellenwerte verwenden, Coordinator
+Benachrichtigung und explizite Eskalation statt fester niedriger
+Protokollobergrenzen.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-007" level={["MUST","MUST NOT"]}>
+
+Eine Umsetzung MUST zyklische Delegation ablehnen oder Mission Abstammung. Wenn
+legitime Arbeit mehr Tiefe, Budget oder Rate erfordert, ist die Coordinator kann
+Richtlinien anfordern oder MissionOwner Genehmigung und Fortsetzung nach der
+Bewilligung. Richtlinienlimits MUST NOT Akzeptierte Arbeiten stillschweigend
+verwerfen.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-008" level="MUST">
+
+Eine Eskalation der Grenzen der Zusammenarbeit MUST durch einen dauerhaften,
+einmaligen **Cooperation Override Grant** dargestellt werden, nicht durch einen
+injizierten Booleschen Wert, ein lokales Rückrufergebnis oder eine
+wiederverwendbare Ausnahme. Der Zuschuss MUST binde einen Mission, Group,
+Versicherungsname, Begünstigter Principal, Ziel Command Art, Zielaktions-ID,
+Grund, Genehmiger, Gewährungszeit und Ablauf. Nur die MissionOwner oder ein
+autorisierter Organization Der politische Akteur kann es herausgeben. Das Ziel
+Command MUST Geben Sie darin die Förder-ID an `cooperationOverrideGrantId`
+Umschlagmitglied.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-009" level="MUST">
+
+Bevor Sie den Zielübergang akzeptieren, Group Authority MUST Stellen Sie sicher,
+dass der genannte Zuschuss existiert, nicht abgelaufen und nicht verbraucht ist
+und genau mit dem übereinstimmt Command'S Mission, Group, Akteur, Art,
+Aktions-ID und überschrittene Richtlinie. Es MUST Verbrauchen Sie den Zuschuss
+nur dann atomar, wenn der Zielübergang akzeptiert wird. Sowohl Ausgabe als auch
+Verbrauch MUST werden an das maßgebliche Richtlinienprotokoll angehängt, wobei
+der Verbrauch mit dem akzeptierten verknüpft wird Event. Ein idempotenter
+Wiederholungsversuch desselben wird akzeptiert Command gibt seinen Prior zurück
+Event; jede andere versuchte Verwendung des Zuschusses MUST scheitern.
+
+</NormativeClause>
+
+## 21. Schema- und Versionskompatibilität
+
+<NormativeClause id="MWP-EXT-010" level="MUST">
+
+Alle v0.1-Schemas verwenden JSON Schemaentwurf 2020-12. Kernobjekte festgelegt
+`additionalProperties: false`; Erweiterbarkeit erfolgt nur durch explizite
+`extensions` Mitglieder und genehmigte Profile. Implementierungen MUST Bewahren
+Sie nach Möglichkeit eine unbekannte, nicht kritische Erweiterung byteäquivalent
+für die kanonische Weiterleitung auf.
+
+</NormativeClause>
+
+Die Leitung `protocolVersion` ist `0.1`. Eine abwärtskompatible Schemaklärung
+erhöht die Spezifikations-Patch-Version, ohne die Wire-Version zu ändern. Eine
+Änderung, die die Kernsemantik oder erforderliche Felder ändert, erfordert eine
+neue Wire-Neben- oder Hauptversion und eine Handshake-Aushandlung.
+
+Die 22 normativen Schemata sind:
+
+- `common.schema.json`
+- `websocket-frame.schema.json`
+- `command.schema.json`
+- `event.schema.json`
+- `agent-card.schema.json`
+- `presence-record.schema.json`
+- `mission.schema.json`
+- `group.schema.json`
+- `membership.schema.json`
+- `conversation.schema.json` und `message.schema.json`
+- `work-contract.schema.json` und `work-item.schema.json`
+- `artifact.schema.json` und `evidence.schema.json`
+- `lease.schema.json`
+- `approval.schema.json`
+- `context-package.schema.json`
+- `group-snapshot.schema.json`
+- `extension-profile.schema.json`
+- `first-admission-record.schema.json`
+- `error.schema.json`
+
+## 22. Konformität und erforderlicher Proof of Concept
+
+Eine Implementierung entspricht nur dann MissionWeaveProtocol 0.1, wenn sie:
+
+- validiert jedes dauerhafte Objekt anhand der normativen Schemata;
+- übergibt alle 58 Strukturvektoren in `conformance/manifest.json`, bestehend
+  aus 27 erwartet-gültigen und 31 erwartet-ungültigen Dokumenten;
+- besteht jede Auswertung in `cryptography/manifest.json` und deckt alle neun
+  Schemaprofile im Signed Document-Verifizierungsprofil sowie ihre kanonischen
+  Signaturbytes, Hashes, Schlüsselbindungen und Signaturen ab;
+- besteht alle 30 Bewertungen im unabhängigen Verhaltenspaket
+  `admission/manifest.json`, das die Erstzulassung und die historische
+  Wiederholung in fünf Fällen abdeckt;
+- erzwingt alle Übergänge Mission und WorkItem;
+- demonstriert Wiedergabe, Deduplizierung, optimistische Parallelität und
+  Fencing;
+- demonstriert die Autorisierung und die Message/non-authority-Invariante; und
+- besteht Fehlerwiederherstellungstests, ohne veraltete oder doppelte
+  Nebeneffekte zu akzeptieren.
+
+<NormativeClause id="MWP-EXT-011" level="MUST">
+
+Für das Kryptografiepaket: `manifest.fixtureSchemas` identifiziert das Normative
+Registry-fixture- und Test-only-Signing-Key-Fixture-Schemas. Ein Läufer MUST
+Validieren Sie jedes Fixture anhand des benannten Schemas, bevor Sie die
+deklarierten semantischen Stufen anwenden. Zur Überprüfung `artifactDigest`, ein
+Läufer MUST Entfernen Sie genau die oberste Ebene `artifactDigest` Mitglied,
+serialisieren Sie das verbleibende Manifest mit RFC 8785 JCS, hash diese Bytes
+mit SHA-256, und vergleichen `sha256:` gefolgt von den 64 hexadezimalen
+Digest-Ziffern in Kleinbuchstaben. Jeder deklarierte Artefakt-Hash gilt für die
+genauen Dateibytes.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-012" level="MUST">
+
+Für das Admission-Bundle: `manifest.fixtureSchemas` identifiziert die
+First-Admission Record Und Registry Vorrichtungsschemata und
+`manifest.cryptography.artifactDigest` pinnt das unveränderte Kryptografiepaket,
+das von jeder Auswertung verwendet wird. Es ist `artifactDigest` wird mit der
+gleichen Entfernung von Mitgliedern der obersten Ebene berechnet, RFC 8785 JCS,
+Und SHA-256 Verfahren. Ein Läufer MUST Überprüfen Sie alle deklarierten
+Admission-Artefaktbytes und -Hashes, den angehefteten Kryptographie-Digest und
+jede referenzierte Datei, bevor Sie die deklarierten Adapterergebnisse
+ausführen.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-013" level="MUST" exclusions={["command-freshness","signer-authorization","portable-log-proof-verification","state-machine-acceptance"]}>
+
+Das Bestehen von `missionweaveprotocol-conformance` oder der Schema-Vektoren des
+Repositorys weist nur die Schema- und Vektorkonformität nach. Es ist ein
+notwendiger, aber nicht ausreichender Nachweis der vollständigen
+Protokollkonformität. Das Bestehen von `cryptography/manifest.json` weist nur
+die sechs kryptografischen Verifizierungsstufen aus
+[Abschnitt 6.4](../signed-documents-and-trust/#mwp-sdv-015) nach. Das Bestehen
+von `admission/manifest.json` weist zusätzlich die deklarierten First-Admission
+Record- und Historical-Replay-Evaluierungen nach, jedoch nicht die Durchsetzung
+von Command-Freshness und Zeitversatztoleranz, die Autorisierung des
+Unterzeichners gemäß der anwendbaren Rolle und Richtlinie oder ein portables
+Nachweisformat für ein bereitgestelltes Admission Log. Eine Implementierung MUST
+diese Anforderungen gesondert nachweisen. Eine Referenzimplementierung MUST die
+vollständige MissionWeaveProtocol-0.1-Konformität nur dann beanspruchen, wenn
+automatisierte positive und negative Nachweise jeden oben genannten Kern-Typ von
+[Command und Event](../commands-events-and-ordering/#core-command-kinds) sowie
+jede Übergangszeile in den
+[Abschnitten 7.1](../missions-groups-and-membership/#mission-transition-table)
+und [10.2](../work-scheduling-and-recovery/#workitem-transition-table) abdecken;
+andernfalls MUST sie die engere verifizierte Teilmenge ausdrücklich angeben.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-014" level="MUST">
+
+Der Referenz-Proof of Concept v0.1 MUST verwenden Python und führen Sie zwei
+gleichzeitige Softwareentwicklungsmissionen durch, wobei mindestens eine
+gemeinsam genutzt wird Worker. Mindestens einer Mission MUST Analyse der
+Übungsanforderungen, Implementierung, Tests, Codeüberprüfung, Integration und
+Mensch Approval als separate Diagrammstufen. Der Proof of Concept MUST zeigen
+ausgeprägte Per-Group Warteschlangen, globale gewichtete faire Planung, Kontext-
+und Anmeldeinformationsisolierung, mehrere Ausführungsslots, sichere
+Checkpoint-Präemption, Coordinator Rezension und ein Mensch Approval
+Schnittstelle.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-015" level="MUST">
+
+Seine Fehlersuite MUST Duplikat injizieren Event Lieferung, Worker Neustart und
+Neuaufbau der Warteschlange, Coordinator Scheitern und Epochenersatz,
+vorübergehend Group Trennung, Ablauf des Mietvertrags usw WorkItem Neuzuweisung,
+eine Ankunft mit hoher Priorität und eine menschliche Änderungsanfrage. Der
+Python Bei der Implementierung handelt es sich um eine Referenzimplementierung,
+nicht um die normative Spezifikation.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-016" level={["MUST","MUST NOT"]}>
+
+Der Proof of Concept MUST bleiben in einem Organization und eine logische Group
+Service. Es MUST NOT erfordern Föderation, physisches Peer-to-Peer-Routing,
+verteilten Konsens, Group End-to-End-Verschlüsselung oder benutzerdefinierte
+Erweiterungsprofile zum Nachweis der Kernkonformität.
+
+</NormativeClause>
+
+## 23. Lizenzierung
+
+Die Spezifikation, Schemata, Konformitätssuite und Referenzimplementierung sind
+unter der Apache-Lizenz 2.0 lizenziert. Die Lizenz gewährt keine Markenrechte.

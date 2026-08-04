@@ -1,0 +1,101 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 首次準入與歷史信任
+description:
+  運行時如何在加密之上分層驗證 Admission Log
+  結果、原子追加、返回記錄驗證和歷史重播。
+---
+
+# 首次準入與歷史信任
+
+準入是經過六階段密碼驗證後的一個單獨的語意層。它不會更改簽名字節、簽章雜湊、金鑰解析或簽章結果（[MWP-ADM-005](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)）。其先決條件是完成六階段結果（[MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)）與準入無關的簽章哈希（[MWP-SDV-017](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-017)）和正確的當前或歷史 Registry-證據合約（[MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)）。
+
+## 需要的接口
+
+準入層取決於這些不同的證據和權限邊界：
+
+:::note[Implementation note]
+
+用類型化介面表示每個邊界：
+
+- 新的首次準入決策所需的目前 Registry 證據；
+- 權威歷史 Registry 重播的證據；
+- 經過驗證的 Admission Log 抬頭;
+- 一個原子追加或返回現有操作；和
+- Organization- 僅在權威缺席後才使用可信接受上下文。
+
+:::
+
+這 Admission Log 邏輯鍵是
+`(organizationId, signingHash)`。它必須對接受服務進行身份驗證，區分發現與權威缺席，保留僅附加完整性，並因不可用、不確定、未經身份驗證、完整性失敗、衝突或提交失敗結果而失敗關閉（[MWP-ADM-003](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)）。呼叫者提供的信任布林值不是這些結果之一。
+
+邏輯鍵最多存在一筆權威記錄。重試時發現相同的有效記錄是冪等成功，而文件類型、金鑰 ID 或衝突 Principal 被拒絕而不是被替換（[MWP-ADM-004](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-004)）。
+
+## 首次準入演算法
+
+```text
+六階段密碼驗證
+→ Admission Log 權威查找
+→ 驗證已找到的記錄，或權威確認不存在
+→ 準備可信上下文和候選記錄
+→ 原子式附加或傳回現有記錄
+→ 驗證傳回的記錄
+→ 已準入結果
+```
+
+只有權威缺席才允許可信的上下文獲取和候選人準備。追加可能會返回本地候選人或同時獲勝者，並且返回的記錄始終在成功之前進行驗證（[MWP-ADM-006](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006)）。
+
+這 First-Admission Record 是一個單獨的無符號九字段物件。它不驗證自身且不能包含
+`signature`
+([MWP-ADM-001](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001)）。保留詞彙拼寫
+`trustedAcceptedAt`;將其比較為 RFC 3339 即時無需大寫-`Z`
+受保護文件時間使用的拼字（[MWP-ADM-002](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-002)).
+
+候選人準備不附加 Event，執行轉換，或暗示成功。並發獲勝者可能會返回不同的記錄 ID 或可信時間，但只有經過驗證的返回位元組才能成功（[MWP-ADM-007](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-007)）。
+
+## 回傳記錄驗證
+
+記錄驗證：
+
+1. 嚴格解析恰好一個 UTF-8 JSON 值；
+2. 套用規範的 First-Admission Record Schema；
+3. 將 `organizationId`、`documentKind`、`signingHash`、`keyId` 和 `principal`
+   與六階段結果逐項精確比較；
+4. 將 `acceptedBy` 與 Admission Log 適配器驗證的服務身分精確比較；
+5. 獨立檢查 `trustedAcceptedAt` 是否位於所選金鑰保留的半開有效區間內。
+
+確切的綁定規則是[MWP-ADM-009](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)，可信任時間間隔規則為[MWP-ADM-010](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)。僅驗證候選位元組是不夠的。已簽名 Event 不能作為自己的 First-Admission
+Record;稍後 Event 只能發布或引用單獨的記錄（[MWP-ADM-011](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-011)）。
+
+## 歷史回放
+
+```text
+使用權威歷史 Registry 證據進行六階段密碼驗證
+→ 必須找到記錄
+→ 驗證記錄
+→ 不簽發可信上下文，也不附加
+```
+
+重播無法創建缺少的承認、發出新的可信上下文或將舊文檔視為新承認的文檔（[MWP-ADM-008](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)）。
+
+## 準入後的界限
+
+承認的結果仍未成立 Command 新鮮度或簽名者授權。新推出的一款 Command 有單獨的新鮮度和時鐘偏差檢查（[MWP-ADM-013](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)），相關機構在受保護且可信賴的接受時間分別驗證簽署者的角色和策略（[MWP-ADM-014](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)）。
+
+每次加密後準入失敗都會保留受保護的階段 `admission` 並映射到線路上
+`AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).
+
+:::note[Implementation note]
+
+保留當前密鑰解析度、歷史密鑰解析度、 Admission
+Log 存取和可信任上下文取得作為不同類型的適配器，即使一個服務實現了其中的多個。這可以防止快取未命中、傳輸錯誤或呼叫者布林值被錯誤地表示為權威缺席。
+
+適配器 API 應傳回經過驗證的服務身分以及找到或附加的字節，以便記錄驗證不會意外信任
+`acceptedBy` 從記錄本身取得的欄位。
+
+:::
+
+使用本地 [準入一致性捆綁包](../../../reference/conformance/admission/)
+測試首次準入和歷史重播，包括失敗的適配器結果。

@@ -1,0 +1,90 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Work lifecycle"
+description:
+  "How conversation becomes explicit WorkItems, accepted execution, Evidence,
+  verification, and Mission approval."
+---
+
+# Work lifecycle
+
+MissionWeaveProtocol keeps conversational cooperation fluid while making
+executable responsibility explicit. A Message may provide context or request
+work, but interfaces cannot present it as an executable instruction
+([MWP-MSN-017](../../reference/specification/missions-groups-and-membership/#mwp-msn-017)).
+
+## From discussion to commitment
+
+1. **Discuss.** Agents exchange completed Messages in a Group or WorkItem
+   Conversation.
+2. **Propose.** Any Group member may submit a Work Proposal. No executable
+   WorkItem exists yet.
+3. **Authorize.** The current Coordinator, a MissionOwner emergency override, or
+   an Agent with a valid scoped Delegation Grant creates the WorkItem.
+4. **Offer.** The authorized actor offers the WorkItem to an eligible Worker and
+   records the selection basis. The exclusive authorizing set and delegated
+   offer rule are defined by
+   [MWP-MSN-019](../../reference/specification/missions-groups-and-membership/#mwp-msn-019).
+5. **Accept.** The Worker performs admission control. Acceptance starts a new
+   Ownership Epoch and places the WorkItem in that Worker's per-Group queue.
+
+Acceptance is a durable scheduling commitment, not immediate execution. The
+Worker's admission checks and ownership effects are defined by
+[MWP-WRK-005](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-005).
+
+## The Work Contract
+
+Every WorkItem carries a versioned, machine-readable Work Contract. Its required
+shape is identified by
+[MWP-WRK-001](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-001)
+and includes:
+
+- goal, deliverables, and acceptance criteria;
+- required Evidence and input or dependency references;
+- permitted tools, data, resources, and operations;
+- required capability identifiers and versions;
+- deadline, requested urgency, and business impact;
+- financial, token, tool-call, compute, wall-clock, and side-effect budgets;
+- retry attempts, backoff, deadline, and cost policy; and
+- risk classification and any pre-execution approval gate.
+
+An essential ambiguity is resolved before acceptance. A material contract
+revision returns through renewed Worker acceptance
+([MWP-WRK-002](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-002)).
+
+## A common successful path
+
+```text
+Work Proposal
+    ↓ authorize
+open WorkItem
+    ↓ offer
+offered
+    ↓ Worker accepts
+queued
+    ↓ valid ownership, approval gates, and Execution Lease
+active
+    ↓ Worker submits Artifacts and Evidence
+submitted
+    ↓ Coordinator accepts the result
+verified
+```
+
+Active work may checkpoint back to `queued`, enter `blocked` with a durable
+checkpoint, fail with Evidence, or be cancelled. The complete transition table
+is on the
+[WorkItem specification page](../../reference/specification/work-scheduling-and-recovery/#workitem-transition-table).
+
+## Evidence before approval
+
+A Worker claim is not sufficient proof of completion. Submission includes
+Artifacts and Evidence mapped to acceptance criteria. Coordinator review checks
+Artifact integrity, deterministic tests, qualitative reviewer Evidence, and the
+recorded acceptance decision in the order described by
+[MWP-WRK-025](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-025).
+
+After required WorkItems are verified, the Coordinator submits a specific
+Mission revision and Artifact set. The MissionOwner signs final Approval or
+requests changes without erasing earlier submissions
+([MWP-MSN-008](../../reference/specification/missions-groups-and-membership/#mwp-msn-008)).

@@ -1,0 +1,108 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Learn MissionWeaveProtocol 0.1"
+description:
+  "A normative conceptual path through MissionWeaveProtocol 0.1, from Missions
+  and Groups to trust, admission, and security boundaries."
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+# Learn MissionWeaveProtocol 0.1
+
+:::caution[Draft Standard 0.1]
+
+This versioned Learn path is part of the normative website publication. It
+explains the model in reader order and links every rule to its stable clause in
+the local Reference specification.
+
+:::
+
+MissionWeaveProtocol coordinates autonomous Agents inside one trusted
+Organization. It separates conversation from execution authority, keeps each
+Mission's state and credentials isolated, and records the durable facts needed
+for replay, recovery, Evidence, and human accountability. These boundaries begin
+with [MWP-FND-002](../reference/specification/foundations/#mwp-fnd-002) and the
+[core invariants](../reference/specification/foundations/#mwp-fnd-013).
+
+## The short version
+
+1. A human MissionOwner creates a bounded Mission with a definition of done,
+   deadline, budget, and approval policy.
+2. The Mission receives exactly one primary Group, one durable Event history,
+   and a replaceable Coordinator.
+3. Group members exchange durable Messages and may propose work, but a Message
+   never creates executable authority by itself
+   ([MWP-FND-014](../reference/specification/foundations/#mwp-fnd-014)).
+4. An authorized actor creates a WorkItem with a machine-readable Work Contract.
+5. A Worker performs admission control, accepts the offer into its per-Group
+   queue, and schedules it across Groups through its own Scheduler.
+6. Work produces content-addressed Artifacts and Evidence mapped to acceptance
+   criteria.
+7. The Coordinator verifies results before the MissionOwner approves an exact
+   Mission revision and Artifact set.
+
+## Follow the model
+
+<CardGrid>
+  <LinkCard
+    title="Core model"
+    description="Missions, Groups, durable records, local projections, and the invariants that connect them."
+    href="./core-model/"
+  />
+  <LinkCard
+    title="Identity, roles, and authority"
+    description="Organization identity, Agent Cards, Presence, sessions, fencing, and split authority."
+    href="./identity-roles-and-authority/"
+  />
+  <LinkCard
+    title="Work lifecycle"
+    description="Conversation, proposals, Work Contracts, acceptance, execution, Evidence, and approval."
+    href="./work-lifecycle/"
+  />
+  <LinkCard
+    title="Groups and scheduling"
+    description="Per-Group queues, global Worker scheduling, isolated slots, preemption, and replay."
+    href="./groups-and-scheduling/"
+  />
+  <LinkCard
+    title="Child Missions"
+    description="Recursive decomposition without losing parent scope, budget, Evidence, or accountability."
+    href="./child-missions/"
+  />
+  <LinkCard
+    title="Signed Documents and trust"
+    description="Protected content, Registry evidence, six-stage verification, and signing hashes."
+    href="./signed-documents-and-trust/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Authoritative lookup, atomic admission, returned-record validation, and historical replay."
+    href="./first-admission-and-historical-trust/"
+  />
+  <LinkCard
+    title="Security boundaries"
+    description="What cryptography and Admission establish, and which concerns remain separate."
+    href="./security-boundaries/"
+  />
+</CardGrid>
+
+## Protocol boundaries
+
+MissionWeaveProtocol does not define Agent-to-Agent RPC, cross-organization
+federation, physical peer-to-peer routing, distributed consensus, model prompts,
+or private model reasoning. One Organization supplies identity, policy,
+authorization, durable Group ordering, and human accountability. Mission content
+remains Group-scoped by default
+([MWP-FND-019](../reference/specification/foundations/#mwp-fnd-019)), while
+auditable decisions and outcomes do not require disclosure of private
+chain-of-thought
+([MWP-FND-022](../reference/specification/foundations/#mwp-fnd-022)).
+
+For exact requirement wording, use the local
+[Reference specification](../reference/specification/),
+[terminology](../reference/terminology/), [schemas](../reference/schemas/), and
+[conformance surfaces](../reference/conformance/). The exact commits, profiles,
+digests, and built-site identity are published on the local
+[normative release page](../reference/normative-release/).

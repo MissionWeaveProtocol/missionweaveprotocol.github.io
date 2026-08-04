@@ -1,0 +1,93 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "First Admission and Historical Trust"
+description:
+  "The authoritative lookup, atomic append, returned-record validation, and
+  historical replay flows layered above six-stage verification."
+---
+
+# First Admission and Historical Trust
+
+Cryptographic verification proves protected bytes and a key-bound Principal.
+First Admission adds an Organization-assigned trusted acceptance instant and an
+authoritative append-only record. The Admission layer remains separate from the
+six cryptographic stages
+([MWP-ADM-005](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+
+## Admission Log contract
+
+The logical key is `(organizationId, signingHash)`. The Admission Log
+authenticates its accepting service, distinguishes a found record from
+authoritative absence, preserves append-only integrity, and exposes one atomic
+append-or-return-existing operation. Typed outcomes fail closed; a caller trust
+flag cannot replace them
+([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).
+
+The exact nine-field record shape, prohibition on a `signature` member, and
+non-self-authenticating boundary are defined by
+[MWP-ADM-001](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001).
+Its exact local artifact is indexed in the
+[JSON Schema catalog](../../reference/schemas/), and the complete
+first-admission and replay evidence bundle is published under
+[Admission conformance](../../reference/conformance/admission/).
+
+## First-admission flow
+
+The reader-visible sequence is exactly:
+
+```text
+six-stage cryptographic verification
+→ authoritative Admission Log lookup
+→ found record validation OR authoritative absence
+→ trusted context and candidate preparation
+→ atomic append-or-return-existing
+→ returned record validation
+→ admitted result
+```
+
+The branch point matters. A found record goes directly to record validation.
+Only authoritative absence permits trusted context and candidate preparation.
+The atomic append may return the local candidate or a concurrently committed
+record, and the returned record is always validated before success. Candidate
+bytes alone never establish admission. This orchestration is defined by
+[MWP-ADM-006](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).
+
+Candidate preparation also does not append an Event or imply a state transition
+([MWP-ADM-007](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-007)).
+
+## Returned-record validation
+
+The returned First-Admission Record is parsed as one strict UTF-8 JSON value,
+validated against the local schema, and compared with the six-stage result for
+Organization, document kind, signing hash, key ID, and Principal. Its
+`acceptedBy` identity matches the service authenticated by the adapter result
+([MWP-ADM-009](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)).
+
+The trusted acceptance instant is independently tested against the same selected
+key interval used for the protected signed time
+([MWP-ADM-010](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)).
+
+Failures after six-stage completion retain protected diagnostic stage
+`admission` and map on the wire to `AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).
+
+## Historical replay
+
+Historical replay follows a narrower path:
+
+```text
+six-stage cryptographic verification
+→ required found record
+→ record validation
+→ no trusted context or append
+```
+
+The six stages use authoritative historical Registry evidence containing the
+retained validity history needed for the protected signed time. Replay requires
+an existing record, validates it, and never creates a new admission or issues
+trusted candidate context
+([MWP-ADM-008](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)).
+
+Admission remains separate from Command freshness and signer authorization; the
+next page makes those boundaries explicit.

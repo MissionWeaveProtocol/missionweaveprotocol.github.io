@@ -1,0 +1,113 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Architecture and bootstrap"
+description:
+  "How to assemble the normative trust boundaries and start a runtime from an
+  exact MissionWeaveProtocol 0.1 release."
+---
+
+# Architecture and bootstrap
+
+A runtime begins with explicit trust and state boundaries. MissionWeaveProtocol
+is not Agent-to-Agent RPC
+([MWP-FND-002](../../../reference/specification/foundations/#mwp-fnd-002)).
+Messages and model output cannot authorize side effects
+([MWP-FND-014](../../../reference/specification/foundations/#mwp-fnd-014));
+consequential action is connected to accepted work, current fencing, policy, and
+a scoped capability token
+([MWP-FND-015](../../../reference/specification/foundations/#mwp-fnd-015)).
+
+## Logical runtime responsibilities
+
+| Responsibility           | Protocol role                                                                                                            |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| Agent Registry           | Publishes Organization-governed Agent identity, capabilities, endpoints, signing keys, and history.                      |
+| Signed Document verifier | Produces the six-stage cryptographic result from exact document bytes and authoritative Registry evidence.               |
+| Admission service        | Obtains authenticated Admission Log outcomes and produces First-Admission or Historical Trust results.                   |
+| Group Authority          | Authenticates actors, validates current state and policy, serializes accepted transitions, and appends Group Events.     |
+| Authorization Service    | Issues short-lived capability tokens bound to accepted work, epochs, leases, policy, and budgets.                        |
+| Agent runtime            | Maintains Group-scoped local projections, consumes Events, schedules accepted work, and produces Artifacts and Evidence. |
+
+The Group Authority is one logical authority per Group. Replication may be an
+internal implementation choice, but consensus and replica topology are not
+protocol semantics
+([MWP-FND-012](../../../reference/specification/foundations/#mwp-fnd-012)).
+
+The Organization-issued Agent Card is the stable identity and capability root;
+self-declared capability is not sufficient
+([MWP-IDN-001](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-001)).
+Every implementation must also preserve the complete invariant set, including
+conversation/non-authority, fencing, append-only history, at-least-once
+delivery, Mission isolation, and narrowing budgets
+([MWP-FND-013](../../../reference/specification/foundations/#mwp-fnd-013)).
+Mission content, credentials, intermediate state, and Agent memory remain
+Group-scoped unless disclosure is explicit and authorized
+([MWP-FND-019](../../../reference/specification/foundations/#mwp-fnd-019)).
+
+## Bootstrap order
+
+1. **Select one exact release.** Load the committed release inputs and verify
+   the generated website release identity before accepting local artifacts.
+2. **Load schemas and scalar validators.** Register Draft 2020-12 format
+   assertions, strict JSON handling, timestamp, URI, base64url, JCS, and Ed25519
+   behavior before decoding protocol traffic.
+3. **Verify trust prerequisites.** Refuse readiness unless the runtime can
+   establish the applicable current or historical Registry evidence
+   ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010))
+   and authenticated Admission Log outcomes
+   ([MWP-ADM-003](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).
+   Unavailable or indeterminate evidence is not authoritative absence.
+4. **Open durable state.** Recover authoritative service state and Agent-local
+   projections without confusing the two. Local queue or Cursor loss must not
+   alter Mission truth
+   ([MWP-FND-023](../../../reference/specification/foundations/#mwp-fnd-023)).
+5. **Establish runtime identity.** Complete the fresh-challenge HELLO exchange
+   and obtain the new Session Epoch before issuing Agent Commands
+   ([MWP-IDN-007](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-007)).
+   A later Session Epoch fences every earlier runtime for that Agent identity
+   ([MWP-IDN-008](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-008)).
+   Durable Commands and Artifact manifests remain individually signed even on an
+   authenticated session
+   ([MWP-IDN-009](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-009)).
+6. **Subscribe and replay.** Resume each authorized Group from its durable
+   contiguous Cursor, route by Group ID, and close any sequence gap before live
+   processing.
+7. **Enable state transitions.** A Group Authority accepts a Command only after
+   authenticating the actor and validating schema, epochs, revision, role,
+   delegation, budget, policy, and lease atomically
+   ([MWP-EVT-004](../../../reference/specification/commands-events-and-ordering/#mwp-evt-004)).
+8. **Enable side effects last.** Issue least-privilege capability tokens only
+   after WorkItem acceptance and required approvals, with bindings no broader or
+   longer-lived than the current Execution Lease
+   ([MWP-AUT-001](../../../reference/specification/authorization-and-budgets/#mwp-aut-001)).
+
+## Fail-closed startup
+
+Do not mark a runtime ready when its schema catalog, exact release identity,
+Registry evidence, Admission adapter, durable state, or Session Epoch is
+indeterminate. A degraded runtime may remain available for diagnostics, but it
+must not accept state transitions whose prerequisites are unproved.
+
+:::note[Implementation note]
+
+The logical responsibilities may run in one process or many services. A small
+deployment can combine verification, Admission, Group Authority, and transport;
+a larger deployment can isolate them behind authenticated adapters. Process
+topology, leader election, database products, cache layout, and service
+discovery are deployment choices, provided they preserve the same logical
+authority and atomicity boundaries.
+
+Initialize distinct typed adapters for the Organization Registry, current and
+historical key resolution, Admission Log access, and trusted acceptance context,
+even when one service implements several of them. This keeps transport errors,
+cache misses, and authoritative absence as different results.
+
+Keep one explicit readiness state per dependency instead of collapsing every
+failure into a single `healthy` boolean. That makes it possible to distinguish a
+read-only recovery runtime from one authorized to accept Commands.
+
+:::
+
+Continue with [Protocol types](../protocol-types/) before implementing codecs or
+generated language models.

@@ -1,0 +1,325 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-MSN
+title: "Missions, Groups, Membership, and Conversations"
+description:
+  "Mission and Group lifecycle, membership, visibility, conversation, Messages,
+  and child Missions."
+---
+
+import NormativeClause from "../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../components/InformativeBlock.astro";
+
+## 7. Mission and Group lifecycle
+
+### 7.1 Creation
+
+<NormativeClause id="MWP-MSN-001" level="MUST">
+
+A Mission MUST declare a bounded objective, machine-readable definition of done,
+deadline, enforceable budget, risk/approval policy, and MissionOwner. A root
+Mission's MissionOwner MUST be human. Creation allocates exactly one Group and
+one Group-level Conversation. Mission IDs and Group IDs MUST remain stable.
+
+</NormativeClause>
+
+The Mission lifecycle is:
+
+<span id="mission-transition-table"></span>
+
+| Current state       | Command or cause                                          | Next state          | Authority                                              |
+| ------------------- | --------------------------------------------------------- | ------------------- | ------------------------------------------------------ |
+| none                | `mission.create` with a Coordinator lease                 | `active`            | human MissionOwner, possibly through the control plane |
+| none                | `mission.create_follow_up` linked to an approved Mission  | `active`            | the same human MissionOwner                            |
+| none                | `mission.create_child` linked to a parent WorkItem        | `active`            | Parent Coordinator as child MissionOwner               |
+| `active`            | `mission.submit_for_approval`                             | `awaiting_approval` | current Coordinator                                    |
+| `awaiting_approval` | `mission.request_changes`                                 | `active`            | MissionOwner                                           |
+| `awaiting_approval` | `mission.approve`                                         | `approved`          | MissionOwner                                           |
+| non-terminal        | `mission.cancel` or parent-cancellation propagation       | `cancelled`         | MissionOwner or Organization policy                    |
+| non-terminal        | `mission.terminate` or declared child-failure propagation | `failed`            | Coordinator or Organization policy                     |
+
+<NormativeClause id="MWP-MSN-002" level={["MUST NOT","MUST"]}>
+
+`approved`, `cancelled`, and `failed` are terminal. An approved Mission MUST NOT
+be reopened or rewritten. Corrections, approval revocation, or remediation MUST
+create a linked follow-up Mission; revocation remains a new Event and does not
+erase the original Approval.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-003" level={["MAY","MUST NOT","MUST"]}>
+
+The Coordinator MAY checkpoint or block individual WorkItems and recommend
+cancellation but MUST NOT normally cancel the Mission. The MissionOwner MAY
+issue directives to the Coordinator. Direct human assignment to a Worker is an
+explicit, audited emergency override and MUST still pass Worker acceptance,
+capability, authorization, budget, and lease rules.
+
+</NormativeClause>
+
+### 7.2 Coordinator lease
+
+<NormativeClause id="MWP-MSN-004" level="MAY">
+
+Exactly one Coordinator lease epoch MAY be current. The lease identifies the
+Agent, Coordinator Epoch, Session Epoch, expiry, and renewal policy. Only the
+current Coordinator epoch may authorize or assign WorkItems, accept Worker
+results, submit the Mission, or create child Missions.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-005" level={["MAY","MUST"]}>
+
+If the Coordinator stops renewing its lease, the Organization control plane or
+MissionOwner MAY appoint a replacement with a higher Coordinator Epoch. Events
+produced by the former Coordinator remain valid history, but its later
+coordination Commands MUST be rejected as stale. The replacement MUST receive a
+signed Context Package and MUST reconcile current WorkItem state before issuing
+new assignments.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-006" level={["SHOULD","MAY","MUST NOT"]}>
+
+The Coordinator SHOULD reserve capacity for planning, monitoring, integration,
+and escalation. It MAY execute coordination-native WorkItems and exceptional
+fallback work, but MUST NOT be the sole reviewer of its own output.
+
+</NormativeClause>
+
+### 7.3 Progress and completion
+
+<NormativeClause id="MWP-MSN-007" level={["MUST","MAY","MUST NOT"]}>
+
+Authoritative Mission progress MUST be derived from the WorkItem dependency
+graph, accepted Evidence, critical path, blockers, deadlines, and approval
+state. A Coordinator MAY publish narrative summaries, risks, and forecasts but
+MUST NOT replace derived state with an unsubstantiated percentage.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-008" level="MUST">
+
+Before submission, the Coordinator MUST review all required WorkItem results and
+acceptance Evidence. It then emits `mission.submit_for_approval` for a specific
+Mission revision and Artifact set. The MissionOwner either emits a signed
+Approval or a signed change request. Requested changes reopen the same Mission,
+and the Coordinator creates revised or corrective WorkItems without deleting
+earlier submissions.
+
+</NormativeClause>
+
+### 7.4 Retention and archival
+
+<NormativeClause id="MWP-MSN-009" level={["MUST","MUST NOT","MAY"]}>
+
+An active Group MUST retain its complete Event history. Archival MUST produce a
+signed final snapshot containing decisions, WorkItems, approvals, and Artifact
+references. The original encrypted audit log is retained according to
+Organization policy. Legal deletion or security redaction MUST append an
+auditable tombstone; it MUST NOT silently rewrite prior Event IDs or sequence
+numbers. Reconnection MAY use a snapshot followed by later Events.
+
+</NormativeClause>
+
+## 8. Membership, visibility, and attention
+
+<NormativeClause id="MWP-MSN-010" level="MUST">
+
+Membership binds an Agent or human to one Group, an epoch, a role, a visibility
+starting sequence, and explicit capabilities. A Group-scoped Agent or human
+Command MUST carry its current Membership Epoch; a Command from a revoked or
+stale Membership Epoch MUST be rejected. Organization-service Commands are
+authenticated and authorized by Organization policy rather than by inventing a
+Group Membership Epoch. MissionOwner and Coordinator Memberships MUST have
+complete Group visibility.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-011" level="SHOULD">
+
+Worker Membership SHOULD be just in time:
+
+1. the Coordinator selects a candidate and grants scoped provisional Membership;
+2. the Worker receives an expiring offer and signed Context Package;
+3. accepting the offer activates Membership and creates ownership; and
+4. Membership ends when the Worker has no WorkItems or review obligations, or
+   the Mission is archived.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-012" level={["MUST NOT","MAY"]}>
+
+A late-joining Worker MUST NOT automatically receive unrestricted history. It
+receives the Context Package, relevant Conversation and Artifact references, and
+only history allowed by its Membership. It MAY retrieve cited source Events when
+authorized.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-013" level={["MUST","SHOULD","MAY"]}>
+
+All committed Messages remain in the durable Group history, but live delivery
+MUST support attention filters. A Worker SHOULD receive its WorkItem
+Conversations, direct mentions, important announcements, and subscribed
+cross-cutting topics. Other authorized history is retrievable on demand. The
+Coordinator MAY consume all Messages or continuous summaries. The MissionOwner
+SHOULD receive summary notifications while retaining full inspection rights.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-014" level={["MUST NOT","MUST","SHOULD"]}>
+
+An Agent's noisy Group MUST NOT starve traffic from another Group. Gateways MUST
+implement per-Group flow control and SHOULD allow independent subscription
+cursors.
+
+</NormativeClause>
+
+## 9. Conversations and Messages
+
+<NormativeClause id="MWP-MSN-015" level={["MUST","MAY"]}>
+
+Creation of a Mission creates a Group-level planning Conversation. Every
+WorkItem MUST own a dedicated Conversation. An implementation MAY create a
+review Conversation and linked, restricted Conversations for sensitive material.
+Restricted Conversations remain within the Mission's audit boundary and MUST be
+inspectable by the Coordinator and MissionOwner.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-016" level={["MAY","MUST NOT"]}>
+
+A committed Message contains completed content only. MissionWeaveProtocol 0.1
+does not define partial token or `message.delta` streaming. Message content MAY
+include text and references to Artifacts or structured data. Large binary data
+MUST NOT be embedded; it is transferred as an Artifact reference.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-017" level="MUST NOT">
+
+Every Message object has `authority: false`. A Message such as "deploy
+immediately" is only conversation. To act, an authorized actor must create or
+authorize a WorkItem through a Command. Interfaces MUST NOT present a Message as
+an executable assignment.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-018" level="MAY">
+
+Any Group Agent MAY:
+
+- post a Message;
+- propose a WorkItem;
+- request help; and
+- discuss context directly with peers in the relevant Conversation.
+
+</NormativeClause>
+
+### 9.1 Delegated work authority
+
+<NormativeClause id="MWP-MSN-019" level={["MAY","MUST"]}>
+
+Only the current Coordinator, a MissionOwner emergency override, or an Agent
+holding an explicit scoped Delegation Grant MAY authorize and offer a WorkItem.
+The `work_delegate` role only makes a Group member eligible to use a Grant; the
+role alone conveys no work-authoring authority. A delegated `work.authorize` or
+`work.offer` Command MUST cite a persisted Grant ID.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-020" level={["MAY","MUST"]}>
+
+Only the current Coordinator MAY issue `membership.grant_delegation`. The
+resulting Grant MUST record its Grant ID, grantee Agent ID, Mission ID, Group
+ID, target WorkItem ID, allowed capability IDs and minimum versions, currency
+and explicit ceilings for all six Resource Budget dimensions, maximum descendant
+depth, grantee Membership Epoch, Coordinator Epoch, issuing Coordinator, grant
+time, and expiry. Acceptance emits `membership.delegation.granted`.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-021" level={["MAY","MUST"]}>
+
+The target WorkItem is the Grant's scope root. The grantee MAY offer that root
+or an existing descendant, and MAY authorize a new descendant only when
+`parentWorkItemId` explicitly links it into that subtree. Each required Work
+Contract capability MUST be allowed by the Grant and meet its minimum version.
+The cumulative budgets of all WorkItems created or offered under the Grant MUST
+remain within every Grant ceiling. Descendant depth MUST satisfy both the Grant
+maximum and Organization cooperation policy.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-022" level={["MUST","MUST NOT"]}>
+
+At every use, the actor MUST be the grantee and hold an active `work_delegate`
+Membership whose epoch equals the Grant's grantee Membership Epoch. The Grant's
+Mission, Group, Coordinator Epoch, issuer, and validity interval MUST still
+match current authoritative state. A replaced Coordinator, changed or ended
+Membership, expired Grant, missing target, or target that becomes failed,
+cancelled, or verified immediately invalidates further use. A Grant is
+non-transferable. Workers without a valid Grant may propose sub-work, but MUST
+NOT create executable obligations for another Worker.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-023" level={["MUST","MAY"]}>
+
+Accepted Messages are immutable. A correction, retraction, or redaction MUST
+append a new Event referencing the original Message ID. Redaction requires an
+auditable policy reason. User interfaces MAY display the latest effective form
+while retaining the Event chain.
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+The next block resumes a later pinned source segment. See the
+[specification source map](./) for the intervening local page and exact line
+ranges.
+
+</InformativeBlock>
+
+## 14. Parent and child Missions
+
+<NormativeClause id="MWP-MSN-024" level={["MAY","MUST"]}>
+
+A sufficiently complex WorkItem MAY be promoted to a child Mission with its own
+Group, Coordinator, WorkItem graph, Memberships, budget, deadline, and approval
+policy. The parent WorkItem and child Mission MUST link to each other.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-025" level="MUST">
+
+The parent-child graph MUST be acyclic. Child budgets, deadlines, capabilities,
+data access, and permissions MUST be subsets of the parent. Organizations MUST
+configure a default maximum depth and require explicit MissionOwner or policy
+approval beyond that threshold. Legitimate approved complexity MUST be allowed;
+limits are guardrails, not hard protocol ceilings.
+
+</NormativeClause>
+
+By default, the child Coordinator reviews and submits the child result and the
+Parent Coordinator acts as child MissionOwner. Root-human approval is
+additionally required when risk policy says so. The approved child result
+becomes Evidence and Artifacts for the parent WorkItem.
+
+A failed child Mission does not automatically fail its parent. It emits
+structured failure Evidence and blocks or fails the parent WorkItem. The Parent
+Coordinator may replan, revise scope, create a replacement child, or cancel.
+Failure propagates automatically only when the parent completion policy declares
+that child indispensable with no alternative.
+
+<NormativeClause id="MWP-MSN-026" level={["MUST NOT","MUST"]}>
+
+The Parent Coordinator receives child status changes, progress summaries,
+revised estimates, blockers, budget/policy escalations, and final results. It
+MUST NOT be required to ingest every child Message, but retains authorized
+on-demand inspection. The root MissionOwner MUST be able to inspect the complete
+Mission tree.
+
+</NormativeClause>

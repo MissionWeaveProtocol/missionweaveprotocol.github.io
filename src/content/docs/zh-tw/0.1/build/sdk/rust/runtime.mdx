@@ -1,0 +1,100 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Rust 運行時參考
+description: 精確固定的 Rust SDK 的完整箱根表面和運行時邊界。
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Rust 運行時參考
+
+本頁涵蓋了由[精確的 API 存貨](../api/)。共享協定行為仍然由本地[運行時參考](../../../runtime/architecture-and-bootstrap/)
+和[參考條款](../../../../reference/specification/)。下面的模組名稱標識了實作來源；呼叫者從以下位置匯入公共再導出
+`missionweaveprotocol` 因為模組本身是私有的。
+
+<SupportStatus status="implemented" /> 適用於下面列出的 crate-root API
+和進程內行為。
+
+<SupportStatus status="deployment-adapter-required" /> 適用於目前 Registry
+權威性、可信任準入情境、經過身分驗證的日誌存取和其他部署服務。
+
+<SupportStatus status="not-implemented" />
+意味著精確固定的crate沒有對應的運作時間。
+
+## crate與執行模型
+
+箱子是版本 `0.1.0`，使用 2024 版，聲明 Rust
+1.85 作為其最小支援的工具鏈，並公開一個二進位檔案：
+`missionweaveprotocol-conformance`. `src/lib.rs`
+是唯一的公共導入根；內部模組路徑不是受支援的 API。
+
+安裝包不會啟動任何服務，不會開啟任何套接字，不會保留任何狀態，也不會授予任何權限。傳回的位元組和證據物件保留本地過程值，除非應用程式故意儲存或傳輸它們。
+
+## 完整的原始碼圖
+
+| 運行時關注            | 公開實施原始碼                                              | 固定提交的合約                                                                           |
+| --------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| 包根與常數            | `lib.rs`                                                    | 重新匯出支援的公共表面和 SDK、協定和線路版本。                                           |
+| 嚴格的 JSON           | `strict_json.rs`                                            | `parse_strict_json` 拒絕無效 UTF-8、重複成員、格式錯誤 JSON和尾隨數據。                  |
+| 架構與確切時間        | `schema.rs`, `signed_document.rs`                           | 離線草案 2020-12 驗證、斷言 URI/日期時間格式、打包架構查找和精確的即時比較。             |
+| 典範 JSON 和 Ed25519  | `canonical.rs`                                              | RFC 8785 位元組和哈希加上 `Ed25519Signer` 幫手。                                         |
+| 簽署的文件和 Registry | `signed_document.rs`                                        | 九種文檔，簽名，六階段驗證，完整的Organization範圍的Registry解析，以及不可變的驗證證據。 |
+| 框架                  | `frame.rs`                                                  | `FrameCodec` 解碼、編碼和文件驗證。這是編解碼器，而不是託管網關服務。                    |
+| 結構一致性            | `conformance.rs`、`bin/missionweaveprotocol-conformance.rs` | 嵌入式模式向量執行、報告摘要、CLI 退出狀態和可選的詳細故障。                             |
+| 嵌入式套裝組合        | `bundle.rs`                                                 | 協定、密碼學和存取包的精確Pin存取、工件查找和摘要驗證。                                  |
+| 首次準入              | `admission.rs`                                              | 首次準入和歷史信任高於成功的 Signed Document 驗證。                                      |
+
+## 驗證、簽名和 Registry 證據
+
+`SchemaCatalog::new`、`validate`、`validate_bytes` 和 `identifier`
+在 22 個精確的嵌入式架構上運作。嚴格解析和模式驗證與規範化是分開的。
+`canonical_bytes`、`canonical_sha256` 和 `signature_input` 實現 RFC
+8785 和簽章輸入建構。
+
+`SigningKey` 是應用程式擁有的簽章接縫。 `Ed25519Signer`
+提供基於種子的簽章和驗證幫助程序以供受控本地使用。 `SignedDocumentCodec::sign`
+和 `verify` 選擇九個明確 `SignedDocumentKind`
+值之一，並依序運行解析、架構、簽章信封、金鑰解析、規範化和簽章階段。
+
+`KeyResolver::resolve` 必須回傳 `KeyRegistrySnapshot::organization_wide`
+證據，以取得具有完整保留歷史記錄的一個連貫的適用 Organization 修訂版。選定的金鑰、部分投影、快取命中或呼叫者提供的信任標誌是不夠的。
+`VerifiedSignedDocument`
+公開接收到的位元組、簽章和完整的規範位元組和雜湊、受保護的時間、簽章證據以及解析的 Registry 證據。
+
+## 框架、捆綁包和一致性
+
+`FrameCodec::decode`、`encode` 和 `validate_document`
+驗證訊框值；它們不擁有傳輸、會話驗證、遊標持久性、背壓、路由或權威狀態轉換。
+
+`ProtocolBundle::verify` 檢查 22 個架構和 59 個檔案結構套件。
+`verify_cryptography` 檢查 98 個工件、22 個案例和 62 個聲明的評估；
+`verify_admission`
+檢查 19 個工件、5 個案例和 30 個聲明的評估。這兩個呼叫驗證固定值、計數和摘要。他們並不執行所有密碼學或準入評估。一致性二進位檔案和
+`ConformanceRunner::run` 僅執行結構向量。
+
+## 首次準入
+
+`AdmissionService::new`、`prepare_first_admission`、`admit_first` 和
+`verify_historical_admission` 公開確切的進入流程。繼續使用
+[Rust 準入參考 ](../admission/)，了解適配器結果、呼叫順序和可運行套件消費者範例。
+
+## 明確的可用性邊界
+
+<SupportStatus status="deployment-adapter-required" /> **準入權威服務** —
+應用程式提供當前 Registry 證據、歷史 Registry
+證據、可信任接受上下文以及經過驗證的僅附加日誌。
+
+<SupportStatus status="not-implemented" /> **Mission 編排** — 不匯出進階 Mission
+狀態機或編排外觀。
+
+<SupportStatus status="not-implemented" /> **Worker 排程器** — 不匯出 Worker
+佇列、排程器、租用執行程式或復原循環。
+
+<SupportStatus status="not-implemented" /> **託管網關服務** — Rust crate
+提供訊框編解碼器，而不是擁有傳輸、TLS、會話、路由或背壓職責的閘道服務。
+
+<SupportStatus status="not-implemented" /> **權威持久性運行時** —
+不導出資料庫支援的或 Agent 本地持久性運行時。
+
+這些未實作項目是書面支援合約的一部分；不得從共享協定名稱推斷 Python 參考執行階段能力。

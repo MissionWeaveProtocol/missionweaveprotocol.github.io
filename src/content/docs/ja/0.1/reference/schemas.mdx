@@ -1,0 +1,28 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: JSON スキーマ カタログ
+description:
+  すべての標準的な MissionWeaveProtocol 0.1 JSON
+  スキーマをローカルで参照します。
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import SchemaCatalog from "../../../../../components/SchemaCatalog.astro";
+import release from "../../../../../data/normative/0.1/release-source.json";
+
+# JSON スキーマ カタログ
+
+MissionWeaveProtocol 0.1 は、**{release.schemas.count}**
+標準 JSON スキーマ ドラフト 2020-12 ファイルを公開します。以下のファイルは、正確なローカル リリース アーティファクトです。共有された検証ノートは、
+
+<ArtifactLink path="protocol/schemas/README.md">
+  <code>スキーマ/README.md</code> アーティファクト
+</ArtifactLink>
+。
+
+スキーマ検証は、宣言されたすべての `format`
+を含むアサーション ベースです。完全なローカル ルールは
+[MWP-FND-009](../specification/foundations/#mwp-fnd-009)です。これらのスキーマに合格すると、構造的な形状のみが証明されます。動作要件、暗号要件、またはアドミッション要件に代わるものではありません。
+
+<SchemaCatalog />

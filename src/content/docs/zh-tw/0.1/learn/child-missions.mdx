@@ -1,0 +1,45 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 子任务
+description: 複雜工作項目的遞歸分解，不會遺失父範圍、預算、Evidence 或責任。
+---
+
+# 子任务
+
+夠複雜的 WorkItem 可以成為 **子任务（Child
+Mission）**。子任务有自己的 Group、Coordinator、WorkItem 圖、會員資格、預算、截止日期和核准政策。上層 WorkItem 和子任务保留彼此的穩定連結 ([MWP-MSN-024](../../reference/specification/missions-groups-and-membership/#mwp-msn-024))。
+
+子任务是擁有獨立生命週期的 Mission。子任务不是 WorkItem，也不是 WorkItem 的另一種顯示名稱。
+
+```text
+根 Mission 及其 Group
+└── 上層 WorkItem 進入 blocked 狀態
+    └── 子任务及其獨立 Group
+        ├── 子任务 Coordinator
+        ├── 子任务內的 WorkItem 和 Evidence
+        └── 子任务 Approval
+            └── 結果作為上層 WorkItem 的 Evidence 和 Artifact 傳回
+```
+
+建立子任务不會將上層 Group 轉變為巢狀聊天室。子任务擁有獨立的 Group，並且只與上層共享經過授權的摘要、Artifact、Evidence 和穩定連結。
+
+## 權限和批准
+
+父級 Coordinator 充當子級 MissionOwner，並代表上層 WorkItem 核准子級結果。Organization 風險政策還可要求直接的人工核准。核准的子任务結果會作為上層 WorkItem 的 Evidence 和 Artifact。
+
+父級 Coordinator 接收狀態變更、摘要、修訂估計、阻礙因素、預算或政策升級以及最終結果。它不需要每個子Message，同時保留授權按需檢查。完整的可見性邊界是[MWP-MSN-026](../../reference/specification/missions-groups-and-membership/#mwp-msn-026)。
+
+## 範圍向下縮小
+
+父子圖仍然是非循環的。子級的預算、截止日期、能力、資料存取和權限仍然是父級的子集。當額外深度合理時，預設最大深度需要明確 MissionOwner 或策略批准 ([MWP-MSN-025](../../reference/specification/missions-groups-and-membership/#mwp-msn-025))。
+
+這是 [MWP-FND-020](../../reference/specification/foundations/#mwp-fnd-020)
+中一般縮小不變量的子特定形式。
+
+## 失敗及後續工作
+
+失敗的子任务會發出結構化故障 Evidence，並根據其聲明的完成策略影響上層 WorkItem。上層 Coordinator 可以重新規劃、修改範圍、建立替代子任务或取消該分支。
+
+- 使用**子任务**在處於活動狀態的上層 Mission 內完成複雜工作。
+- 使用**後續 Mission** 進行修正、補救或其他工作在核准的 Mission 變得不可變之後。

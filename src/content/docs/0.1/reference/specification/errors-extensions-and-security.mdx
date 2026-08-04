@@ -1,0 +1,285 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-EXT
+title: "Extensions, errors, controls, and conformance"
+description:
+  "Extension Profiles, error codes, security controls, compatibility,
+  conformance, proof-of-concept requirements, and licensing."
+---
+
+import NormativeClause from "../../../../../components/NormativeClause.astro";
+
+## 18. Extension Profiles
+
+<NormativeClause id="MWP-EXT-001" level={["MAY","MUST"]}>
+
+Developers MAY define custom Commands, Events, and data through
+Organization-approved Extension Profiles. Each profile MUST declare a globally
+unique profile URI, semantic version, schema URI and hash, required
+capabilities, criticality, and Organization approval signature. A Group pins the
+supported major versions of profiles it uses.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-002" level={["MUST","MAY"]}>
+
+Extension kinds MUST use the `ext.<organization>.<profile>.<name>` namespace
+defined by the profile. An unknown noncritical extension MAY be retained and
+relayed without interpretation. An Agent MUST refuse participation in a
+transition that depends on an unknown critical profile.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-003" level="MUST NOT">
+
+An Extension Profile MUST NOT override or weaken identity, Membership, Event
+ordering, idempotency, Session Epoch, Ownership Epoch, lease, budget, Approval,
+Artifact provenance, Mission isolation, or the rule that Messages never
+authorize actions.
+
+</NormativeClause>
+
+## 19. Errors
+
+<NormativeClause id="MWP-EXT-004" level={["MUST","SHOULD"]}>
+
+Errors MUST conform to `schemas/error.schema.json`. An error response MUST be
+machine-readable, MUST state whether retry is safe, and SHOULD identify the
+related frame or Action ID without exposing unauthorized data. Core codes are:
+
+| Code                         | Meaning                                                                             |
+| ---------------------------- | ----------------------------------------------------------------------------------- |
+| `UNSUPPORTED_VERSION`        | No compatible protocol version                                                      |
+| `AUTH_REQUIRED`              | Authentication is absent                                                            |
+| `AUTH_INVALID_SIGNATURE`     | Signed-document signature, key validity, admission proof, or freshness check failed |
+| `AUTH_STALE_SESSION`         | Session Epoch is fenced                                                             |
+| `AUTH_STALE_COORDINATOR`     | Coordinator Epoch is fenced                                                         |
+| `AUTH_FORBIDDEN`             | Actor lacks permission or policy eligibility                                        |
+| `GROUP_NOT_FOUND`            | Group is absent or intentionally undisclosed                                        |
+| `MEMBERSHIP_REQUIRED`        | No applicable Membership                                                            |
+| `MEMBERSHIP_STALE`           | Membership Epoch is fenced                                                          |
+| `SCHEMA_VALIDATION_FAILED`   | Object does not conform to its schema                                               |
+| `INVALID_COMMAND`            | Command is well-formed but semantically invalid                                     |
+| `INVALID_STATE_TRANSITION`   | Aggregate state forbids the transition                                              |
+| `REVISION_CONFLICT`          | Expected revision does not match                                                    |
+| `ACTION_ID_COLLISION`        | Stable Action ID was reused with different content                                  |
+| `UNKNOWN_CRITICAL_EXTENSION` | Required extension cannot be interpreted                                            |
+| `WORK_CONTRACT_INCOMPLETE`   | Required Work Contract information is missing                                       |
+| `WORK_OFFER_EXPIRED`         | Offer is no longer valid                                                            |
+| `WORK_ALREADY_OWNED`         | Another candidate won exclusive ownership                                           |
+| `WORK_LEASE_EXPIRED`         | Required lease is no longer valid                                                   |
+| `WORK_STALE_OWNERSHIP`       | Ownership Epoch is fenced                                                           |
+| `APPROVAL_REQUIRED`          | Policy gate has not been satisfied                                                  |
+| `BUDGET_EXCEEDED`            | A hard Mission or WorkItem budget is exhausted                                      |
+| `RATE_LIMITED`               | Policy rate or recursion threshold was reached                                      |
+| `BACKPRESSURE`               | Receiver cannot currently accept more traffic                                       |
+| `CURSOR_TOO_OLD`             | Online replay no longer contains the requested position                             |
+| `PROTOCOL_VIOLATION`         | Peer violated framing or a core invariant                                           |
+| `INTERNAL_ERROR`             | Authority failed without accepting the transition                                   |
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-005" level={["MUST","MUST NOT","MAY"]}>
+
+An unchanged Command retry MUST retain the original Action ID and signed
+content. `AUTH_INVALID_SIGNATURE` MUST NOT be retried unchanged before its cause
+is corrected. After local correction of the signature envelope or authoritative
+key or admission state, a sender MAY retry the original Action ID only while all
+protected content remains valid. If Command freshness has expired, the sender
+MUST instead create a new Command with a new Action ID, a current `issuedAt`, a
+matching `signature.createdAt`, and a new signature. `ACTION_ID_COLLISION`
+requires a new Command with a new Action ID. A stale fencing error requires the
+current authoritative epoch and a new Command with a new Action ID and
+signature.
+
+</NormativeClause>
+
+## 20. Rate, recursion, and runaway controls
+
+<NormativeClause id="MWP-EXT-006" level={["MUST","SHOULD"]}>
+
+Organization policy MUST support limits on Message and proposal rates,
+unresolved clarification rounds, active and queued WorkItems, delegation depth,
+token/time/financial budgets, and circular or duplicate decomposition. These
+controls SHOULD use soft thresholds, Coordinator notification, and explicit
+escalation rather than fixed low protocol ceilings.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-007" level={["MUST","MUST NOT"]}>
+
+An implementation MUST reject cyclic delegation or Mission ancestry. When
+legitimate work requires more depth, budget, or rate, the Coordinator may
+request policy or MissionOwner approval and continue after the grant. Policy
+limits MUST NOT silently discard accepted work.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-008" level="MUST">
+
+A cooperation-limit escalation MUST be represented by a durable, one-shot
+**Cooperation Override Grant**, not by an injected boolean, local callback
+result, or reusable exemption. The grant MUST bind one Mission, Group, policy
+name, beneficiary Principal, target Command kind, target Action ID, reason,
+approver, grant time, and expiry. Only the MissionOwner or an authorized
+Organization policy actor may issue it. The target Command MUST cite the grant
+ID in its `cooperationOverrideGrantId` envelope member.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-009" level="MUST">
+
+Before accepting the target transition, Group Authority MUST verify that the
+cited grant exists, is unexpired and unconsumed, and exactly matches the
+Command's Mission, Group, actor, kind, Action ID, and exceeded policy. It MUST
+atomically consume the grant only when the target transition is accepted. Both
+issuance and consumption MUST be appended to the authoritative Policy Log, with
+consumption linked to the accepted Event. An idempotent retry of the same
+accepted Command returns its prior Event; any other attempted use of the grant
+MUST fail.
+
+</NormativeClause>
+
+## 21. Schema and version compatibility
+
+<NormativeClause id="MWP-EXT-010" level="MUST">
+
+All v0.1 schemas use JSON Schema Draft 2020-12. Core objects set
+`additionalProperties: false`; extensibility occurs only through explicit
+`extensions` members and approved profiles. Implementations MUST preserve an
+unknown noncritical extension byte-equivalently for canonical relay where
+possible.
+
+</NormativeClause>
+
+The wire `protocolVersion` is `0.1`. A backward-compatible schema clarification
+increments the specification patch version without changing the wire version. A
+change that alters core semantics or required fields requires a new wire minor
+or major version and handshake negotiation.
+
+The 22 normative schemas are:
+
+- `common.schema.json`
+- `websocket-frame.schema.json`
+- `command.schema.json`
+- `event.schema.json`
+- `agent-card.schema.json`
+- `presence-record.schema.json`
+- `mission.schema.json`
+- `group.schema.json`
+- `membership.schema.json`
+- `conversation.schema.json` and `message.schema.json`
+- `work-contract.schema.json` and `work-item.schema.json`
+- `artifact.schema.json` and `evidence.schema.json`
+- `lease.schema.json`
+- `approval.schema.json`
+- `context-package.schema.json`
+- `group-snapshot.schema.json`
+- `extension-profile.schema.json`
+- `first-admission-record.schema.json`
+- `error.schema.json`
+
+## 22. Conformance and required proof of concept
+
+An implementation conforms to MissionWeaveProtocol 0.1 only if it:
+
+- validates every durable object against the normative schemas;
+- passes all 58 structural vectors in `conformance/manifest.json`, comprising 27
+  expected-valid and 31 expected-invalid documents;
+- passes every evaluation in `cryptography/manifest.json`, covering all nine
+  schema profiles in the Signed Document Verification Profile and their
+  canonical signing bytes, hashes, key bindings, and signatures;
+- passes all 30 evaluations in the independent `admission/manifest.json`
+  behavioral bundle, covering first admission and historical replay across five
+  cases;
+- enforces all Mission and WorkItem transitions;
+- demonstrates replay, deduplication, optimistic concurrency, and fencing;
+- demonstrates authorization and the Message/non-authority invariant; and
+- passes failure-recovery tests without accepting stale or duplicate side
+  effects.
+
+<NormativeClause id="MWP-EXT-011" level="MUST">
+
+For the cryptography bundle, `manifest.fixtureSchemas` identifies the normative
+Registry-fixture and test-only signing-key-fixture Schemas. A runner MUST
+validate each fixture against the named Schema before applying the declared
+semantic stages. To verify `artifactDigest`, a runner MUST remove exactly the
+top-level `artifactDigest` member, serialize the remaining manifest with RFC
+8785 JCS, hash those bytes with SHA-256, and compare `sha256:` followed by the
+64 lower-case hexadecimal digest digits. Each declared artifact hash applies to
+the exact file bytes.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-012" level="MUST">
+
+For the Admission bundle, `manifest.fixtureSchemas` identifies the
+First-Admission Record and Registry fixture Schemas, and
+`manifest.cryptography.artifactDigest` pins the unchanged cryptography bundle
+used by every evaluation. Its `artifactDigest` is calculated with the same
+top-level-member removal, RFC 8785 JCS, and SHA-256 procedure. A runner MUST
+verify all declared Admission artifact bytes and hashes, the pinned cryptography
+digest, and every referenced file before executing the declared adapter
+outcomes.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-013" level="MUST" exclusions={["command-freshness","signer-authorization","portable-log-proof-verification","state-machine-acceptance"]}>
+
+Passing `missionweaveprotocol-conformance` or the repository's schema vectors
+demonstrates schema-and-vector conformance only. It is necessary but not
+sufficient evidence of full protocol conformance. Passing
+`cryptography/manifest.json` demonstrates only the six cryptographic
+verification stages in
+[Section 6.4](../signed-documents-and-trust/#mwp-sdv-015). Passing
+`admission/manifest.json` additionally demonstrates the declared First-Admission
+Record and historical-replay evaluations, but it does not demonstrate Command
+freshness and clock-skew enforcement, signer authorization under applicable role
+and policy, or a portable deployed Admission Log proof format. An implementation
+MUST prove those requirements separately. A reference implementation MUST claim
+full MissionWeaveProtocol 0.1 conformance only when automated positive and
+negative evidence covers every core Command and Event kind
+[above](../commands-events-and-ordering/#core-command-kinds) and every
+transition row in
+[Sections 7.1](../missions-groups-and-membership/#mission-transition-table) and
+[10.2](../work-scheduling-and-recovery/#workitem-transition-table); otherwise it
+MUST report the narrower verified subset explicitly.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-014" level="MUST">
+
+The v0.1 reference proof of concept MUST use Python and run two concurrent
+software-development Missions with at least one shared Worker. At least one
+Mission MUST exercise requirements analysis, implementation, testing, code
+review, integration, and human Approval as separate graph stages. The proof of
+concept MUST demonstrate distinct per-Group queues, global weighted-fair
+scheduling, context and credential isolation, multiple execution slots, safe
+checkpoint preemption, Coordinator review, and a human Approval interface.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-015" level="MUST">
+
+Its failure suite MUST inject duplicate Event delivery, Worker restart and queue
+rebuilding, Coordinator failure and epoch replacement, temporary Group
+disconnection, lease expiry and WorkItem reassignment, a high-priority arrival,
+and a human change request. The Python implementation is a reference
+implementation, not the normative specification.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-016" level={["MUST","MUST NOT"]}>
+
+The proof of concept MUST remain within one Organization and one logical Group
+service. It MUST NOT require federation, physical peer-to-peer routing,
+distributed consensus, Group end-to-end encryption, or custom Extension Profiles
+to demonstrate core conformance.
+
+</NormativeClause>
+
+## 23. Licensing
+
+The specification, schemas, conformance suite, and reference implementation are
+licensed under Apache License 2.0. The license does not grant trademark rights.

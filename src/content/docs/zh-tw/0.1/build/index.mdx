@@ -1,0 +1,86 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 建構 MissionWeaveProtocol 0.1 運行時
+description: 解析、信任、存取、持久性、傳輸、診斷、一致性和升級的規範共享實現路徑。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+# 建置 MissionWeaveProtocol 0.1 運行時
+
+:::caution[Draft Standard 0.1]
+
+此版本化建構路徑是規範網站出版品的一部分。它將本地參考條款組織成實施順序，而不重新定義它們。當摘要和連結子句不同時，連結子句是控制要求。
+
+:::
+
+本地規範使用的 BCP 14 要求語言在
+[MWP-FND-001](../reference/specification/foundations/#mwp-fnd-001).共享路徑描述了每種語言實作都必須保留的語義。 SDK 特定頁面可以新增安裝指令、語言類型和公用 API 語法，但不得削弱或取代這些規則。
+
+:::note[Implementation note]
+
+## 建議的實作順序
+
+1. 引導精確的發布、信任邊界、驗證器、儲存和運行時身份。
+2. 保留協定JSON、識別碼、時間戳記、雜湊值和信封類型沒有宿主語言規範化。
+3. 實作嚴格的解析、Schema驗證、規範、簽章、Registry支援的金鑰解析和六階段驗證管道。
+4. 密碼驗證之上的第一層存取與歷史信任。
+5. 將權威狀態與可重建投影分開，然後實施重播、冪等性、防護和副作用恢復。
+6. 透過規範的 WebSocket 訊框對群組進行身份驗證和復用。
+7. 暴露穩定的線路錯誤，同時保留受保護的診斷和有用的信息操作信號。
+8. 驗證確切的發布工件，報告經過驗證的一致性子集，以及升級時無需默默更改線路語意。
+
+本命令為實施指南。連結的參考條款定義了要求及其接受範圍。
+
+:::
+
+## 共享運行時參考
+
+<CardGrid>
+  <LinkCard
+    title="架構和引導程式"
+    description="信任邊界、運行時責任、發布載入、身分、復原和啟動順序。"
+    href="./runtime/architecture-and-bootstrap/"
+  />
+  <LinkCard
+    title="協定類型"
+    description="Wire JSON、純量設定檔、持久物件、信封、產生的類型和語意狀態。"
+    href="./runtime/protocol-types/"
+  />
+  <LinkCard
+    title="驗證、規範化和簽名"
+    description="嚴格解析、架構斷言、JCS、Ed25519、Registry 證據和簽章雜湊。"
+    href="./runtime/validation-canonicalization-and-signing/"
+  />
+  <LinkCard
+    title="首次準入與歷史信任"
+    description="Admission Log 型別化結果、原子首次準入、記錄驗證和歷史重播。"
+    href="./runtime/first-admission-and-historical-trust/"
+  />
+  <LinkCard
+    title="持久化與復原"
+    description="權威狀態、本地投影、收據、重播、Cursors、快照和副作用。"
+    href="./runtime/persistence-and-recovery/"
+  />
+  <LinkCard
+    title="傳輸與訊框處理"
+    description="HELLO 驗證、Session Epoch 防護、訂閱、多重化、ACK、PING 和背壓。"
+    href="./runtime/transport-and-framing/"
+  />
+  <LinkCard
+    title="錯誤和可觀察性"
+    description="Wire-safe 錯誤、重試決策、受保護的診斷、稽核記錄、指標和追蹤邊界。"
+    href="./runtime/errors-and-observability/"
+  />
+  <LinkCard
+    title="一致性和升級"
+    description="精確的工件、結構和信任捆綁、聲明邊界、擴充和版本轉換。"
+    href="./runtime/conformance-and-upgrades/"
+  />
+</CardGrid>
+
+## 在程式碼之前發布
+
+從本地[規範版本identity](../reference/normative-release/)，而不是未固定的儲存庫分支或SDK
+README開始。發布頁面綁定協定工件、所有六個 SDK 提交、設定檔、摘要、區域設定以及本文檔使用的確切內建網站身分。

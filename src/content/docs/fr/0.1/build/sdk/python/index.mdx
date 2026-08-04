@@ -1,0 +1,80 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Python SDK
+description: >-
+  Installez et parcourez le runtime de référence complet Python 3.12 à son
+  commit exact MissionWeaveProtocol 0.1.
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Python SDK
+
+Le package `missionweaveprotocol` est le runtime de référence Python. Cette page
+décrit le commit `9403cf1310914670506c56cbab363fdaa465d3cc`, la version du
+package `0.1.0` et Python 3.12 ou version ultérieure. Une construction de commit
+ou de package différente est une entrée d'implémentation documentée différente,
+même lorsque sa chaîne de version est inchangée.
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="python"
+  command={`uv add "missionweaveprotocol @ git+https://github.com/MissionWeaveProtocol/python-sdk.git@9403cf1310914670506c56cbab363fdaa465d3cc"`}
+  verifyCommand={`uv run python -c "import missionweaveprotocol as mwp; print(mwp.__version__)"
+uv run missionweaveprotocol-conformance --help`}
+>
+  <p slot="notes">
+    L'exigence exacte du VCS crée le package à partir de la validation
+    documentée. Un déploiement peut à la place installer une roue dont la
+    provenance de la construction est liée à cette validation et dont les
+    artefacts regroupés passent les mêmes vérifications de résumé.
+  </p>
+</SdkInstall>
+
+:::
+
+Le package déclare ces commandes de console lors du commit documenté :
+
+| Command                            | Objectif public                                                                             |
+| ---------------------------------- | ------------------------------------------------------------------------------------------- |
+| `missionweaveprotocol-server`      | Démarrez le service de passerelle Group configuré.                                          |
+| `missionweaveprotocol-demo`        | Exécutez la démonstration déterministe de l’exécution de référence.                         |
+| `missionweaveprotocol-conformance` | Exécutez le schéma structurel et le manifeste vectoriel neutres en termes d’implémentation. |
+
+Le lancement d’une commande ne crée pas d’autorité de déploiement. Le serveur
+nécessite toujours le matériel Registry appartenant au déploiement, la
+persistance, les informations d'identification de session, la liaison réseau et
+la configuration TLS de production.
+
+## Utilisez cette référence
+
+<CardGrid>
+  <LinkCard
+    title="Runtime complet"
+    description="Chaque module public, responsabilité d'exécution, limite de persistance, surface de transport et point d'entrée de conformité."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="Première admission et confiance historique"
+    description="Adaptateurs typés pour le Registry actuel, l’Admission Log et le contexte de confiance, avec un exemple exécutable."
+    href="./admission/"
+  />
+  <LinkCard
+    title="API publique exacte"
+    description="Toutes les classes, protocoles, fonctions, méthodes, constantes et types publics résolus en lignes source exactes."
+    href="./api/"
+  />
+</CardGrid>
+
+## Support lors du commit documenté
+
+<SdkRuntimeMatrix sdk="python" />
+
+Le Python SDK implémente le runtime de référence complet représenté par la
+matrice. Les services de base de données, le service réseau, les certificats et
+l'autorité d'admission sont des dépendances de déploiement et non des garanties
+créées par l'installation du package.

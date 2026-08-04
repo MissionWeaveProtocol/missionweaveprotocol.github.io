@@ -1,0 +1,145 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Python Erstzulassung und historischer Trust
+description: >-
+  Typisierte Python-Adapter, genaue Aufrufreihenfolge, Vertrauensgrenzen und ein
+  ausführbares Zulassungsbeispiel.
+---
+
+import admissionExample from "../../../../../../../../examples/sdk/python/admission.py?raw";
+
+# Python Erstzulassung und historischer Trust
+
+Die Schichten Python und `AdmissionService` überlagern die authentifizierte
+Erstzulassung und das historische Vertrauen über dem sechsstufigen Verifizierer
+Signed Document
+([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+Der steuernde sprachunabhängige Ablauf ist die lokale
+[Laufzeitseite für Erstzulassung und historisches Vertrauen](../../../runtime/first-admission-and-historical-trust/),
+und die genauen Anforderungen sind die lokalen
+[First-Admission- und Historical-Trust-Klauseln](../../../../reference/specification/first-admission-and-historical-trust/).
+
+## Öffentliche Typen
+
+| Öffentlich API                                 | Verantwortung                                                                                                                                                                                                                                                                                                                                                                  |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `AdmissionCurrentKeyResolver.resolve_current`  | Geben Sie den vollständigen Organization-weiten Registry-Beweis zurück, der besagt, dass die Bereitstellung für eine neue Erstzulassungsentscheidung aktuell ist.                                                                                                                                                                                                              |
+| `TrustedAdmissionContext.issue`                | Vergeben Sie die vertrauenswürdige Datensatz-ID, die vertrauenswürdige Annahme sofort und den Annahmedienst erst nach behördlicher Abwesenheit.                                                                                                                                                                                                                                |
+| `AdmissionLog.lookup`                          | Gibt `AdmissionLookupStatus.FOUND` mit authentifizierten Bytes oder `AdmissionLookupStatus.AUTHORITATIVE_ABSENCE` zurück. Transportfehler, Cache-Fehler, unbestimmter Status und nicht authentifizierte Abwesenheit müssen gemäß [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003) zu einer geschlossenen Ablehnung führen. |
+| `AdmissionLog.append_or_return_existing`       | Kandidatenbytes atomar anhängen oder den gleichzeitigen maßgeblichen Gewinner zurückgeben.                                                                                                                                                                                                                                                                                     |
+| `AuthenticatedAdmissionRecord`                 | Binden Sie zurückgegebene Datensatzbytes an die vom Adapter authentifizierte akzeptierende Dienstidentität für die [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)-Validierung.                                                                                                                                           |
+| `AdmissionService.prepare_first_admission`     | Erstellen und validieren Sie Kandidatenbytes aus einem bereits überprüften Dokument und einem vertrauenswürdigen Kontext. Es stellt keine Zulassung dar und impliziert auch keine Zulassung.                                                                                                                                                                                   |
+| `AdmissionService.admit_first`                 | Implementieren Sie den Fluss „Current-Evidence“, „Authoritative-Absence“, „Atomic Append“ und „Returned Record“ in [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                                                                                                                                                       |
+| `AdmissionService.verify_historical_admission` | Führen Sie die Überprüfung erneut mit historischen Registry-Beweisen durch und fordern Sie einen gefundenen Datensatz an, ohne Kontext auszugeben oder anzuhängen, wie in [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) gefordert.                                                                                      |
+
+Das Adapterergebnis ist ein typisierter Beweis. Ein vom Anrufer bereitgestellter
+boolescher Vertrauenswert ist kein maßgebliches Suchergebnis und darf niemals
+den Erfolgspfad auswählen.
+
+## Ablauf der Erstzulassung
+
+:::note[Informative example]
+
+```python
+admitted = AdmissionService().admit_first(
+    SignedDocumentKind.COMMAND,
+    document_bytes,
+    current_registry,
+    admission_log,
+    trusted_context,
+)
+```
+
+:::
+
+`admit_first` führt eine Überprüfung durch, bevor das Protokoll aufgerufen wird.
+Wenn die Suche `AdmissionLookupStatus.AUTHORITATIVE_ABSENCE` zurückgibt, ruft
+sie `prepare_first_admission` auf, ruft `append_or_return_existing` auf und
+validiert dann den tatsächlich zurückgegebenen Datensatz. Ein gleichzeitiger
+Gewinner ist nur akzeptabel, wenn seine Bytes, sein authentifizierter Dienst,
+seine Dokumentbindung und seine vertrauenswürdige Zeit alle gültig sind
+([MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009),
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)).
+
+## Historischer Wiederholungsaufruf
+
+:::note[Informative example]
+
+```python
+historical = AdmissionService().verify_historical_admission(
+    SignedDocumentKind.COMMAND,
+    document_bytes,
+    historical_registry,
+    admission_log,
+)
+```
+
+:::
+
+Die historische Wiedergabe verwendet den beibehaltenen Registry-Verlauf,
+erfordert einen gefundenen Zulassungsdatensatz und ruft niemals
+`TrustedAdmissionContext.issue` oder `AdmissionLog.append_or_return_existing`
+auf. Übereinstimmende Datensatz-IDs im Beispiel zeigen, dass die Wiedergabe den
+ersten maßgeblichen Datensatz wiederhergestellt hat. Sie allein beweisen nicht
+die Aktualität von Command, die Autorisierung des Unterzeichners, die Akzeptanz
+durch den Zustandsautomaten oder die tragbare protokollsichere Überprüfung.
+Command Aktualität und Unterzeichnerautorisierung bleiben gemäß
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+und
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)
+separate Anforderungen.
+
+## Ausführbares, exakt angeheftetes Beispiel
+
+:::note[Informative example]
+
+Das Beispiel verwendet nur öffentliche SDK-APIs und die deklarierte
+Laufzeitabhängigkeit `cryptography`. Es erstellt deterministisch einen
+Ed25519-Schlüssel, einen vollständigen Organization-weiten Registry, einen
+signierten Command und typisierte In-Memory-Adapter. Der feste private Startwert
+ist Demonstrationsmaterial und darf niemals außerhalb des Beispiels verwendet
+werden.
+
+<pre>
+  <code>{admissionExample}</code>
+</pre>
+
+Führen Sie es von einem exakten Checkout aus, nachdem Sie alle SDK-Extras
+installiert haben:
+
+```bash
+uv sync --all-extras
+uv run python /absolute/path/to/examples/sdk/python/admission.py
+```
+
+Die erwartete Ausgabe enthält dieselbe First-Admission Record-ID für
+`first admission` und `historical replay`. Das Programm stellt außerdem
+übereinstimmende Signatur-Hashes und Datensatzbytes sicher und stellt sicher,
+dass das Protokoll genau einmal angehängt wurde.
+
+:::
+
+:::note[Implementation note]
+
+Ersetzen Sie die Beispieladapter in einer Bereitstellung:
+
+- `CurrentRegistryFixture` mit einem authentifizierten aktuellen
+  Registry-Resolver;
+- `InMemoryAdmissionLog` mit einem authentifizierten, nur anfügbaren, atomaren
+  Admission Log; und
+- `FixedTrustedAdmissionContext` mit einer Organization-kontrollierten
+  vertrauenswürdigen Zeit und Annahmedienstausgeber.
+
+Ersetzen Sie `DeterministicSigningKey` durch einen bereitstellungseigenen
+Signaturdienst oder Schlüsseladapter. Betten Sie niemals einen privaten
+Signatur-Seed in den Produktionscode ein.
+
+Fassen Sie diese Grenzen nicht in einer Verfügbarkeits- oder Vertrauensflagge
+zusammen.
+
+:::
+
+Die Ablehnung der postkryptografischen Zulassung bleibt geschützt, Stufe
+`admission` und Überweisungscode `AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).

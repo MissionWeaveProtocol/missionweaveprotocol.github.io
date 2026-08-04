@@ -1,0 +1,94 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: TypeScript 运行时参考
+description: 精确固定的 TypeScript SDK 的完整公共包根表面和运行时边界。
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# TypeScript 运行时参考
+
+此页面涵盖了由[确切的 API inventory](../api/)
+表示的完整 TypeScript 表面。共享协议行为仍然由本地[运行时参考](../../../runtime/architecture-and-bootstrap/)和[参考子句](../../../../reference/specification/)定义。下面的名称定义了固定包如何公开该行为。
+
+<SupportStatus status="implemented" /> 适用于下面列出的包根 API
+和进程内编解码器。
+
+<SupportStatus status="deployment-adapter-required" /> 适用于当前 Registry
+权威性、可信准入上下文、经过身份验证的原子日志访问以及部署提供的其他外部服务。
+
+<SupportStatus status="not-implemented" />
+表示精确固定的包没有相应的公共运行时。
+
+## 导入和执行模型
+
+从 `@missionweaveprotocol/sdk`
+导入公共名称。该包发布 ESM 和 CommonJS 入口点，并且需要 Node.js
+20 或更高版本。它不公开支持的子路径，例如`@missionweaveprotocol/sdk/admission`；下面的源模块名称是单个包根 API 的来源分组。
+
+SDK 使用节点加密和打包文件系统资产来实现架构、一致性、加密和准入捆绑。固定包不要求浏览器或 Deno 运行时支持。
+
+## 完整的源码图
+
+| 运行时关注           | 公共源码模块                                    | 固定提交的合同                                                                                                     |
+| -------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| 包标识和 JSON 类型   | `src/index.ts`、`src/json-types.ts`             | 公共编解码器接受的包元数据、协议常量和 JSON 域类型。                                                               |
+| 严格的 JSON 和时间值 | `src/strict-json.ts`、`src/rfc3339.ts`          | 包根严格解析导出加上公共 `Rfc3339Instant` 类型。内部 RFC 3339 解析器和仅验证严格 JSON 帮助程序不是包根导出。       |
+| 架构目录             | `src/schema-catalog.ts`                         | 2020 年 12 月草案 打包协议集上的架构发现、验证和结构化验证失败。                                                   |
+| 规范 JSON            | `src/canonical-json.ts`                         | RFC 8785 用于签名和摘要输入的规范化和字节生成。                                                                    |
+| 签署文件             | `src/signed-document-codec.ts`、`src/crypto.ts` | Ed25519 签名助手、九个签名文档配置文件、完整的 Organization 范围的 Registry 解析以及六阶段验证结果。               |
+| 框架                 | `src/frame-codec.ts`                            | 对支持的 WebSocket 框架对象进行严格的解析和编码操作。这是编解码器，而不是托管网关服务。                            |
+| 一致性和捆绑         | `src/conformance.ts`、`src/package-root.ts`     | 打包根发现、结构清单执行和 `missionweaveprotocol-conformance` 命令。加密和准入资产已打包，但没有公共验证运行程序。 |
+| 首次准入             | `src/admission.ts`                              | 成功的六阶段验证后，类型化首次准入和历史信任流程分层。                                                             |
+
+## 验证和密码学
+
+`parseStrictJson` 和 `parseStrictJsonObject`
+拒绝无效的 UTF-8、BOM、重复的对象成员、不支持的数字输入以及记录的 JSON 管道之外的其他语法。
+`SchemaCatalog` 验证确切的打包架构集。 `canonicalJsonBytes` 创建 RFC
+8785 字节；成功的模式验证本身并不能取代规范化或签名验证。
+
+`SignedDocumentCodec.sign`选择显式配置文件，验证受保护时间，规范化无符号投影，通过`SigningKey`获得严格的64字节Ed25519签名，附加信封并验证最终文档。
+`verify`
+消耗原始 UTF-8 字节并按顺序运行解析、架构、签名信封、密钥解析、规范化和签名阶段。返回的
+`VerifiedSignedDocument`
+公开了不可变的证据、防御性字节副本、签名和完整哈希、受保护的时间和解析的密钥。
+
+关键解析需要完整的 Organization 范围的 Registry 证据。选定的密钥、缓存条目或调用者提供的信任标志不是完整的 Registry 快照。
+
+## 框架、捆绑包和一致性
+
+`FrameCodec`
+解析和编码支持的帧值，但不打开套接字、验证会话、保留游标、安排工作或应用权威转换。部署必须提供这些更高级别的运行时职责。
+
+`packageRoot` 通过查找其 `PROTOCOL_PIN.json`
+来定位打包的工件树；找到该文件并不会验证其内容或任何工件摘要。 `runConformance`
+仅通过打包的架构目录执行结构一致性清单和向量。
+`missionweaveprotocol-conformance` 命令调用相同的结构运行器。
+
+固定包包含用于准确发布来源的密码学和准入资产，但它不会公开用于验证密码学或准入包摘要或执行这些评估清单的公共 API。应用程序不得将
+`packageRoot` 或成功的结构一致性报告视为这两个捆绑包已验证的证据。
+
+## 首次准入
+
+`AdmissionService`
+在同步签名文档验证器之上公开异步准备、首次准入和历史重放。当前Registry分辨率是同步的；可信上下文发布可以是同步的或异步的； Admission
+Log 查找和追加是异步的。继续使用
+[TypeScript 准入参考 ](../admission/)，了解确切的适配器结果和调用顺序。
+
+## 明确的可用性边界
+
+<SupportStatus status="not-implemented" /> **Mission 编排** — 不导出高级 Mission
+状态机或编排外观。
+
+<SupportStatus status="not-implemented" /> **Worker 调度程序** — 不导出 Worker
+队列、调度程序、租用运行程序或恢复循环。
+
+<SupportStatus status="not-implemented" /> **托管网关服务** — 该软件包提供
+`FrameCodec`，而不是具有传输、会话、TLS、路由或反压所有权的托管网关服务。
+
+<SupportStatus status="not-implemented" /> **权威持久性运行时** —
+不导出数据库支持的或 Agent 本地持久性运行时。
+
+这些未实现项是受支持运行时合同的一部分。应用程序不得从共享协议名称推断 Python 参考运行时能力。

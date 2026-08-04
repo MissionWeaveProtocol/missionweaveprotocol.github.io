@@ -1,0 +1,127 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Java Primera admisión y confianza histórica
+description: >-
+  Adaptadores Java escritos, orden de llamada exacto, límites de confianza y un
+  ejemplo de admisión ejecutable.
+---
+
+import javaAdmissionExample from "../../../../../../../../examples/sdk/java/AdmissionExample.java?raw";
+
+# Java Primera admisión y confianza histórica
+
+El Java `AdmissionService` coloca la primera admisión y la confianza histórica
+por encima del verificador Signed Document de seis etapas
+([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+El flujo independiente del idioma es la
+[página de tiempo de ejecución de confianza histórica y de primera admisión local ](../../../runtime/first-admission-and-historical-trust/),
+y los requisitos exactos son las
+[cláusulas de admisión ](../../../../reference/specification/first-admission-and-historical-trust/)
+locales.
+
+## Adaptadores públicos y resultados.
+
+| Público API                                        | Responsabilidad                                                                                                                                                                                                                                                     |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.resolveCurrent`       | Devuelva evidencia Organization completa de Registry que la implementación afirma que está actualizada para esta decisión.                                                                                                                                          |
+| `TrustedAdmissionContext.issue`                    | Emita la identificación del registro, el instante de aceptación confiable y el servicio de aceptación solo después de una constatación autoritativa de ausencia.                                                                                                    |
+| `AdmissionLog.lookup`                              | Devuelve `AdmissionLookup.Found` o `AdmissionLookup.AuthoritativeAbsence`. Fallos de pérdida de caché, tiempo de espera o ausencia no autenticada cerrados en [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
+| `AdmissionLog.appendOrReturnExisting`              | Agregue atómicamente bytes candidatos o devuelva el registro autoritativo ganador de una carrera concurrente a través de una identidad de servicio autenticada.                                                                                                     |
+| `AuthenticatedAdmissionRecord`                     | Vincule los bytes de registro devueltos al servicio autenticado por el adaptador para [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009).                                                                         |
+| `AdmissionService.prepareFirstAdmission`           | Crear y validar evidencia candidata a partir de un `VerifiedSignedDocument` producido por SDK; no anexa ni implica admisión.                                                                                                                                        |
+| `AdmissionService.admitFirst`                      | Verifique la evidencia actual, busque, prepárese después de la ausencia, agregue o devuelva lo existente y valide el registro devuelto en [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                     |
+| `AdmissionService.verifyHistoricalAdmission`       | Vuelva a ejecutar la verificación con evidencia histórica autoritativa del Registry y exija un registro existente sin emitir contexto ni añadirlo según [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).       |
+| `PreparedFirstAdmission`, `AdmittedSignedDocument` | Conserve la verificación inmutable y registre evidencia y devuelva copias defensivas de bytes de registro.                                                                                                                                                          |
+
+Un valor booleano de confianza proporcionado por la persona que llama no es un
+resultado de búsqueda de admisión y nunca debe seleccionar la ruta exitosa.
+
+## Orden de llamada de primera admisión
+
+:::note[Informative example]
+
+```java
+AdmittedSignedDocument first =
+    new AdmissionService()
+        .admitFirst(
+            SignedDocumentKind.COMMAND,
+            document,
+            currentRegistry,
+            admissionLog,
+            trustedContext);
+```
+
+:::
+
+`admitFirst` completa las seis etapas de verificación antes del acceso al
+registro. Un registro encontrado se valida y se devuelve sin emitir un contexto
+confiable ni agregarlo. Después de una constatación autoritativa de ausencia, el
+servicio emite el contexto, prepara bytes candidatos canónicos, llama a
+`appendOrReturnExisting` y valida el registro realmente devuelto. Un ganador
+simultáneo tiene éxito solo cuando el esquema, la autenticación, el enlace de
+documentos y el tiempo de confianza satisfacen
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+y
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010).
+
+## Repetición histórica y errores
+
+`verifyHistoricalAdmission` usa `KeyResolver`, vuelve a ejecutar las seis
+etapas, requiere `AdmissionLookup.Found` y nunca llama a
+`TrustedAdmissionContext.issue` o `AdmissionLog.appendOrReturnExisting`. Los ID
+de registro coincidentes recuperan el mismo registro autoritativo, pero no
+prueban la actualidad de Command, la autorización del firmante, la aceptación de
+la máquina de estado ni la verificación portátil a prueba de registros según
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+y
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
+
+Los fallos de seis etapas siguen siendo `SignedDocumentVerificationException`.
+Las fallas de la etapa de admisión son `AdmissionException` con código de cable
+`AUTH_INVALID_SIGNATURE`, etapa `admission` y `AdmissionReason` escrito, según
+lo requiere
+[MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012).
+Los adaptadores de implementación arrojan `AdmissionAdapterException`; El éxito
+o la disponibilidad genéricos no son pruebas autenticadas.
+
+## Ejemplo ejecutable con fijación exacta
+
+:::note[Informative example]
+
+El ejemplo lee los Command y Registry firmados de los recursos empaquetados en
+el JAR exacto y luego proporciona adaptadores de autoridad en memoria escritos.
+No lee archivos del repositorio. Afirma ID de registro, hashes de firma y bytes
+de registro idénticos para la primera admisión y la reproducción histórica, con
+exactamente un anexo.
+
+<pre>
+  <code>{javaAdmissionExample}</code>
+</pre>
+
+Cópielo en un checkout exacto y ejecute:
+
+```bash
+cp /absolute/path/to/examples/sdk/java/AdmissionExample.java \
+  examples/src/main/java/org/missionweaveprotocol/examples/AdmissionExample.java
+./mvnw -B -ntp verify
+./mvnw -q -Dexec.mainClass=org.missionweaveprotocol.examples.AdmissionExample \
+  -Dexec.classpathScope=test exec:java
+```
+
+La salida esperada contiene el mismo ID de registro para `first admission` y
+`historical replay`.
+
+:::
+
+:::note[Implementation note]
+
+Reemplace `CurrentRegistry` con adaptadores Registry actuales e históricos
+autenticados, `InMemoryAdmissionLog` con un registro duradero autenticado cuya
+operación de agregar o devolver existente es atómica y `FixedTrustedContext` con
+Tiempo de confianza controlado por Organization y emisión de servicio de
+aceptación. Conserve copias defensivas y nunca colapse estos límites de
+autoridad en un valor booleano de confianza proporcionado por la persona que
+llama.
+
+:::

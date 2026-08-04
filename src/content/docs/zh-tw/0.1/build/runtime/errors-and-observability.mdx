@@ -1,0 +1,76 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 錯誤和可觀察性
+description:
+  Wire-safe
+  錯誤、重試決策、受保護的驗證診斷、存取控制的審核記錄、指標和追蹤邊界。
+---
+
+# 錯誤和可觀察性
+
+線路錯誤是穩定的協定結果，而不是內部異常的轉儲。錯誤符合本地錯誤架構，說明重試是否安全，並且可以識別相關幀或操作 ID，而不會暴露未經授權的資料（[MWP-EXT-004](../../../reference/specification/errors-extensions-and-security/#mwp-ext-004)）。
+
+## 在正確的層進行分類
+
+| 層                                                  | 公開結果                                    |
+| --------------------------------------------------- | ------------------------------------------- |
+| 無效的 JSON、重複成員或不可能的 JCS 值              | `PROTOCOL_VIOLATION`                        |
+| 完整架構或所需信封失敗                              | `SCHEMA_VALIDATION_FAILED`                  |
+| 加密階段 3、4 或 6 失敗                             | `AUTH_INVALID_SIGNATURE`                    |
+| 準入或 Command-新鮮度失敗                           | `AUTH_INVALID_SIGNATURE`                    |
+| 缺少許可或政策資格                                  | `AUTH_FORBIDDEN`                            |
+| 過時會話、Membership、Coordinator、所有權或租賃狀態 | 相應的穩定的fencing代碼                     |
+| 目前聚合修訂不符                                    | `REVISION_CONFLICT`                         |
+| 接受壓力極限                                        | `BACKPRESSURE` 或 `RATE_LIMITED` 帶重試指導 |
+
+加密和準入失敗故意在線路上崩潰。 Organization 僅在受保護、存取控制的審核記錄中保留第一個失敗語意階段和特定原因 ([MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018))。階段編號是語意分類，而不是所需的內部函數邊界 ([MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016))。準入路徑中六階段完成後的每次失敗都使用受保護階段
+`admission` 和相同的公共 `AUTH_INVALID_SIGNATURE`
+代碼 ([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012))。
+
+## 重試決策
+
+重試行為取決於穩定的程式碼以及受保護的內容是否仍然有效：
+
+- 未更改的已接受 Command 重試保留原始操作 ID 和簽名內容；
+- `AUTH_INVALID_SIGNATURE` 不會按原樣重試，直到其原因確定為止已更正；
+- 過期的 Command 新鮮度需要新的 Command、操作 ID、受保護時間、和簽名；
+- `ACTION_ID_COLLISION` 始終需要新的 Action ID 和簽名內容；和
+- 陳舊的圍欄錯誤需要當前的權威紀元加上新的 Command 和簽名。
+
+完整的規則是[MWP-EXT-005](../../../reference/specification/errors-extensions-and-security/#mwp-ext-005))。沒有權威回應的傳輸逾時是不確定的：在決定是否發送新的轉換之前透過穩定身分進行查詢或重播。
+
+## 受保護的稽核記錄
+
+Organization 根據
+[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)
+的要求，在受保護的、存取控制的審核記錄中保留第一個失敗的語義階段及其具體原因。
+
+請勿將秘密、功能令牌、私鑰材料、原始憑證、未經授權的 Group 存在或受保護的信任失敗區別放入線路回應中。令牌和憑證也不包含在訊息、Agent 卡、上下文包、工件和事件中 ([MWP-AUT-002](../../../reference/specification/authorization-and-budgets/#mwp-aut-002))。
+
+審計證據涵蓋決策、輸入、阻礙因素和結果，無需私人思維鏈、隱藏提示或原始記憶體 ([MWP-FND-022](../../../reference/specification/foundations/#mwp-fnd-022))。
+
+## 修訂敏感的失敗
+
+不要將備用簽名字節行為視為相容性恢復路徑。保護簽名信封不同部分的修訂會更改有線簽名字節，並且無法產生或靜默接受為 v0.1
+([MWP-SDV-019](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-019))。
+
+:::note[Implementation note]
+
+使用單獨的公共錯誤和受保護診斷類型，以便序列化代碼不會意外暴露內部原因。日誌和追蹤應該引用穩定的 ID 和哈希值，而不是嵌入完整的協定文件。
+
+對於授權審核員來說，有用的結構化欄位包括：
+
+- 第一個失敗的語意階段、穩定的內部原因和來源適配器；
+- 確切的版本、架構、設定檔和實作版本；
+- 授權 Organization、Group、參與者、操作 ID、相關 ID 和簽名哈希引用；
+- 相關Registry修訂版或Admission Log結果身分；和
+- 權威狀態是否改變。
+
+命令已經攜帶穩定的操作和相關身份（[MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001)），並且接受的事件保留不可變的原因、參與者、相關性、序列和修訂上下文（[MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)）。優先選擇這些引用而不是不相關的追蹤身分。
+
+有用的指標包括公共代碼接受和拒絕的命令、受限遙測中的第一個失敗的受保護階段、Group 的重播延遲、遊標間隙計數、重複 Event 計數、租賃和預算拒絕計數、反壓持續時間、準入適配器。在附加 Organization、Group、參與者、操作、金鑰或簽章雜湊標識符之前定義有界基數。
+
+:::
+
+在聲明對版本的支援之前，先完成[一致性和升級](../conformance-and-upgrades/)。

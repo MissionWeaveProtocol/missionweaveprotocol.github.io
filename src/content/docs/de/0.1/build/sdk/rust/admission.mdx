@@ -1,0 +1,125 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Rust Erstzulassung und historischer Trust
+description: >-
+  Typisierte Rust-Adapter, genaue Aufrufreihenfolge, Vertrauensgrenzen und ein
+  ausführbares Zulassungsbeispiel.
+---
+
+import rustAdmissionExample from "../../../../../../../../examples/sdk/rust/admission.rs?raw";
+
+# Rust Erstzulassung und historischer Trust
+
+Der Rust `AdmissionService` legt die First Admission- und Historical
+Trust-Ebenen über dem sechsstufigen Signed Document-Verifizierer
+([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+Der sprachunabhängige Ablauf ist die lokale
+[Laufzeitseite für Erstzulassung und historisches Vertrauen](../../../runtime/first-admission-and-historical-trust/),
+und die genauen Anforderungen sind die lokalen
+[Admission-Klauseln](../../../../reference/specification/first-admission-and-historical-trust/).
+
+## Öffentliche Adapter und Ergebnisse
+
+| Öffentlich API                                     | Verantwortung                                                                                                                                                                                                                                                                                            |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver::resolve_current`     | Geben Sie den vollständigen Organization-weiten Registry-Beweis zurück, dass die Bereitstellung für diese Entscheidung aktuell ist.                                                                                                                                                                      |
+| `TrustedAdmissionContext::issue`                   | Vergeben Sie die Akten-ID, die vertrauenswürdige Annahmestelle und die Annahmezustellung erst nach behördlicher Abwesenheit.                                                                                                                                                                             |
+| `AdmissionLog::lookup`                             | Geben Sie `AdmissionLookup::Found` oder `AdmissionLookup::AuthoritativeAbsence` zurück. Cache-Fehler, Zeitüberschreitung oder nicht authentifizierte Abwesenheit schlagen unter [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003) fehl.               |
+| `AdmissionLog::append_or_return_existing`          | Hängen Sie Kandidatenbytes atomar an oder geben Sie den gleichzeitigen maßgeblichen Gewinner über eine authentifizierte Dienstidentität zurück.                                                                                                                                                          |
+| `AuthenticatedAdmissionRecord`                     | Binden Sie zurückgegebene Datensatzbytes an die vom Protokolladapter authentifizierte Dienstidentität für [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009).                                                                                          |
+| `AdmissionService::prepare_first_admission`        | Erstellen und validieren Sie Kandidatennachweise aus einem mit SDK erstellten `VerifiedSignedDocument`; es stellt keine Zulassung dar oder impliziert diese.                                                                                                                                             |
+| `AdmissionService::admit_first`                    | Überprüfen Sie aktuelle Beweise, suchen Sie nach, bereiten Sie sie nach Abwesenheit vor, hängen Sie vorhandene an oder geben Sie sie zurück und validieren Sie den zurückgegebenen Datensatz unter [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006). |
+| `AdmissionService::verify_historical_admission`    | Führen Sie die Überprüfung erneut mit historischen Registry-Beweisen durch und fordern Sie einen vorhandenen Datensatz an, ohne Kontext auszugeben oder unter [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) anzuhängen.                           |
+| `PreparedFirstAdmission`, `AdmittedSignedDocument` | Bewahren Sie unveränderliche Überprüfungen auf und dokumentieren Sie Beweise; `FirstAdmissionRecord::bytes` gibt die validierten Bytes zurück.                                                                                                                                                           |
+
+Ein vom Anrufer bereitgestellter boolescher Vertrauensstellungswert ist kein
+Ergebnis der Zulassungssuche und darf niemals den Erfolgspfad auswählen.
+
+## Reihenfolge der Erstzulassung
+
+:::note[Informative example]
+
+```rust
+let first = AdmissionService::new()?.admit_first(
+    SignedDocumentKind::Command,
+    document,
+    &current_registry,
+    &admission_log,
+    &trusted_context,
+)?;
+```
+
+:::
+
+`admit_first` schließt alle sechs Überprüfungsphasen ab, bevor auf das Protokoll
+zugegriffen wird. Ein gefundener Datensatz wird validiert und zurückgegeben,
+ohne dass ein vertrauenswürdiger Kontext ausgegeben oder ein Anhang hinzugefügt
+wird. Nach maßgeblicher Abwesenheit gibt der Dienst Kontext aus, bereitet
+kanonische Kandidatenbytes vor und ruft auf `append_or_return_existing`und
+validiert den tatsächlich zurückgegebenen Datensatz. Ein gleichzeitiger Gewinner
+ist nur dann erfolgreich, wenn Schema, Authentifizierung, Dokumentbindung und
+vertrauenswürdige Zeit die Anforderungen erfüllen
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+und
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010).
+
+## Historische Wiedergabe und Fehler
+
+`verify_historical_admission` verwendet `KeyResolver`, führt alle sechs Phasen
+erneut durch, erfordert `AdmissionLookup::Found`, und ruft nie an
+`TrustedAdmissionContext::issue` oder `AdmissionLog::append_or_return_existing`.
+Übereinstimmende Datensatz-IDs stellen denselben maßgeblichen Datensatz wieder
+her, beweisen ihn jedoch nicht Command Aktualität, Autorisierung des
+Unterzeichners, Akzeptanz der Zustandsmaschine oder tragbare protokollsichere
+Überprüfung gemäß
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+und
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
+
+`AdmissionOperationError` Behält entweder den ursprünglichen sechsstufigen
+Verifizierungsfehler oder einen bei `AdmissionError`. Bei Zulassungsfehlern wird
+Wirecode offengelegt `AUTH_INVALID_SIGNATURE`, geschützte Bühne `admission`, und
+eine getippte `AdmissionReason`, wie in
+[MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012).
+Adapter kommen zurück `AdmissionAdapterError`; Der allgemeine Erfolg oder die
+Verfügbarkeit ist kein authentifizierter Beweis.
+
+## Ausführbares, exakt angeheftetes Beispiel
+
+:::note[Informative example]
+
+Das Beispiel liest das signierte Command Und Registry aus dem SDKist verifiziert
+eingebettet `ProtocolBundle`, stellt dann typisierte In-Memory-Autoritätsadapter
+bereit. Es liest keine Repository-Dateien. Es bestätigt identische
+Datensatz-IDs, Signatur-Hashes und Datensatzbytes für die Erstzulassung und die
+historische Wiedergabe mit genau einem Anhang.
+
+<pre>
+  <code>{rustAdmissionExample}</code>
+</pre>
+
+Kopieren Sie es in eine genaue Kasse und führen Sie Folgendes aus:
+
+```bash
+cp /absolute/path/to/examples/sdk/rust/admission.rs examples/website_admission.rs
+cargo test --locked --all-features
+cargo run --locked --example website_admission
+```
+
+Die erwartete Ausgabe enthält dieselbe Datensatz-ID für `first admission` Und
+`historical replay`.
+
+:::
+
+:::note[Implementation note]
+
+Ersetzen Sie `CurrentRegistry` durch authentifizierte aktuelle und historische
+Registry-Adapter, `InMemoryAdmissionLog` durch ein authentifiziertes dauerhaftes
+Protokoll, dessen Append-or-Return-Existing-Vorgang atomar ist, und
+`FixedTrustedContext` durch Organization-gesteuerte vertrauenswürdige Zeit und
+Annahmedienstausgabe. Behalten Sie defensive Kopien bei und fassen Sie diese
+Autoritätsgrenzen niemals in einem vom Aufrufer bereitgestellten
+Vertrauensbooleschen Wert zusammen.
+
+:::

@@ -1,0 +1,1975 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": "0.1",
+  "sourceTermCount": 63,
+  "locales": {
+    "zh-CN": {
+      "introduction": "本上下文定义由 Coordinator 领导的自主 Agent 群组在 Organization 内完成 Mission 时使用的术语。",
+      "sectionTitles": [
+        "协议身份",
+        "Organization 与身份",
+        "Mission 协作",
+        "Conversation 与工作",
+        "协调与状态",
+        "本地化术语"
+      ],
+      "entries": [
+        {
+          "term": "MissionWeaveProtocol",
+          "description": "在 Mission Groups 中工作的自治 Agents 的规范组织内部合作协议。",
+          "avoid": "缩写、空格或备用产品名称"
+        },
+        {
+          "term": "Organization",
+          "description": "注册Agents、定义策略并对人员进行身份验证的可信治理根。",
+          "avoid": "网络、联盟"
+        },
+        {
+          "term": "Agent",
+          "description": "具有一个稳定身份和最多一个活动会话的单个独立调度的运行时。",
+          "avoid": "服务、副本、进程池"
+        },
+        {
+          "term": "Agent Card",
+          "description": "由组织签名的 Agent 稳定身份和经过验证的功能的描述。",
+          "avoid": "简介、存在"
+        },
+        {
+          "term": "Agent Registry",
+          "description": "Organization 控制的当前 Agent Cards 源、不可变签名密钥绑定、其有效性历史记录以及已注册 Principals 的功能证据。",
+          "avoid": "存在服务、对等发现"
+        },
+        {
+          "term": "Signed Document",
+          "description": "一种持久协议对象，其所需的顶级签名在 Signed Document Verification Profile 下验证其规范内容。",
+          "avoid": "会话认证、传输帧"
+        },
+        {
+          "term": "Signed Document Verification Profile",
+          "description": "从一个持久的签名文档模式到其受保护的签名时间和预期签名者的规范映射，以进行签名和密钥有效性验证。",
+          "avoid": "会话认证、算法协商"
+        },
+        {
+          "term": "First-Admission Record",
+          "description": "Organization 控制的接受记录，绑定 Signed Document 的签名哈希、签名密钥 ID、签名者 Principal 和可信接受时间。它位于 Signed Document 及其验证配置文件的外部。",
+          "avoid": "本地首次出现时间、签名者提供的时间戳、自验证 Event"
+        },
+        {
+          "term": "Principal",
+          "description": "经过身份验证的 Agent、人类或 Organization 服务，可以被命名为协议对象的参与者或所有者。",
+          "avoid": "显示名称，未经身份验证的用户"
+        },
+        {
+          "term": "Presence Record",
+          "description": "有关 Agent 的可用性、容量和最近检测信号的临时信息。",
+          "avoid": "将其与 Agent Card 混为一谈"
+        },
+        {
+          "term": "Capability",
+          "description": "Agent 经验证可以执行的一种受版本控制、组织管理的工作。",
+          "avoid": "许可，自由形式技能"
+        },
+        {
+          "term": "Group Authority",
+          "description": "Organization 基础设施，用于验证参与者、验证策略和 Membership、序列化 Group 转换以及附加 Events，而不充当 Mission 的语义管理器。",
+          "avoid": "Coordinator，共识协议"
+        },
+        {
+          "term": "Authorization Service",
+          "description": "Organization 服务评估执行策略并在分配、租赁、预算和批准检查成功后颁发短期范围的功能令牌。",
+          "avoid": "Agent Registry、Scheduler"
+        },
+        {
+          "term": "Capability Token",
+          "description": "绑定到一个 Worker 会话、WorkItem、Ownership Epoch、Execution Lease、允许的操作和资源以及有限预算的短期执行授权。",
+          "avoid": "Capability，可重复使用的凭证"
+        },
+        {
+          "term": "Membership Token",
+          "description": "绑定到一个 Principal、Group、Membership Epoch、Session Epoch 和最低权限角色集的短期授权。",
+          "avoid": "Capability Token，订阅"
+        },
+        {
+          "term": "Mission",
+          "description": "具有已完成、预算、截止日期和批准生命周期定义的有界目标。",
+          "avoid": "项目、任务"
+        },
+        {
+          "term": "Child Mission",
+          "description": "创建 Mission 以完成父 Mission 的一个复杂 WorkItem。",
+          "avoid": "子任务"
+        },
+        {
+          "term": "Follow-up Mission",
+          "description": "当需要进行后续更正或额外工作时，新的 Mission 会链接到已批准的不可变的 Mission。",
+          "avoid": "编辑已批准的 Mission"
+        },
+        {
+          "term": "Group",
+          "description": "属于一个Mission的临时协作空间和共享历史。",
+          "avoid": "频道、房间、团队"
+        },
+        {
+          "term": "MissionOwner",
+          "description": "Mission 的责任主体。根 MissionOwner 是人类，拥有最终批准、取消和 Coordinator 替换权限。子MissionOwner是父Coordinator并代表其父WorkItem批准子结果；组织风险政策可能还需要直接的人员批准。",
+          "avoid": "用户、管理员"
+        },
+        {
+          "term": "Coordinator",
+          "description": "可更换的Agent负责规划、分配、监控、集成和提交。",
+          "avoid": "POC Agent，管理器服务，排序器"
+        },
+        {
+          "term": "Worker",
+          "description": "Agent 使用其自己的队列和 Scheduler 接受并执行 WorkItems。",
+          "avoid": "子代理、工具"
+        },
+        {
+          "term": "Membership",
+          "description": "将 Agent 或 MissionOwner 连接到一个 Group 的范围授权。",
+          "avoid": "订阅、存在"
+        },
+        {
+          "term": "Work Delegate",
+          "description": "Group 成员可通过显式 Delegation Grant 授权范围受限的 WorkItems；该角色本身不授予编写工作定义的权限。",
+          "avoid": "Coordinator，不受限制的管理员"
+        },
+        {
+          "term": "Delegation Grant",
+          "description": "对于一个目标 WorkItem 子树，从当前 Coordinator 到一个 Work Delegate 的权威、不可转让的授权，受功能版本、累积 Resource Budget、后代深度、到期以及 Membership 和 Coordinator Epochs 的限制。当其目标终端时，它就会结束。",
+          "avoid": "仅角色名称，可转让凭证"
+        },
+        {
+          "term": "Conversation",
+          "description": "Messages 的可审核线程，作用域为 Group 或一个 WorkItem。",
+          "avoid": "会话、聊天记录"
+        },
+        {
+          "term": "Message",
+          "description": "承诺的对话上下文永远不会自行授予可执行权限。",
+          "avoid": "Command，指令"
+        },
+        {
+          "term": "WorkItem",
+          "description": "Mission 的显式单元与所有者、生命周期、依赖项和 Work Contract 一起使用。",
+          "avoid": "Message、Mission、作业"
+        },
+        {
+          "term": "Work Proposal",
+          "description": "任何 Group 成员创建 WorkItem 的不可执行请求；只有 Coordinator 或范围委托才能将其授权为可执行义务。",
+          "avoid": "分配，Message-仅限权限"
+        },
+        {
+          "term": "Work Offer",
+          "description": "合格的 Worker 在本地准入控制后接受 WorkItem 的到期邀请。",
+          "avoid": "转让、所有权"
+        },
+        {
+          "term": "Admission Control",
+          "description": "Worker 在接受之前决定所提供的 WorkItem 是否符合其功能、授权、队列容量、截止日期、依赖性和预算约束。",
+          "avoid": "Coordinator 分配，调度优先级"
+        },
+        {
+          "term": "Selection Basis",
+          "description": "用于选择所提供的 Worker 的可审核事实，包括功能匹配、授权资格、可用性、成本、可靠性 Evidence 和应用的策略。",
+          "avoid": "私人推理，排名提示"
+        },
+        {
+          "term": "Work Contract",
+          "description": "WorkItem 的目标、可交付成果、验收标准、输入、权限、截止日期和重试预算。",
+          "avoid": "提示、要求"
+        },
+        {
+          "term": "Artifact",
+          "description": "Mission 工作生成或引用的不可变的内容寻址可交付成果。",
+          "avoid": "附件、消息负载"
+        },
+        {
+          "term": "Evidence",
+          "description": "用于根据其验收标准评估 Artifact 或 WorkItem 的记录事实。",
+          "avoid": "意见、思路"
+        },
+        {
+          "term": "Checkpoint",
+          "description": "用于阻塞、恢复和协作抢占的结构化、持久、安全恢复执行状态引用。",
+          "avoid": "进度百分比、私有内存转储"
+        },
+        {
+          "term": "Context Package",
+          "description": "带有出处的签名版本摘要，提供 Agent 范围的 Mission 上下文。",
+          "avoid": "内存转储、转录"
+        },
+        {
+          "term": "Command",
+          "description": "由授权参与者签署的进行结构化状态转换的请求。",
+          "avoid": "Message、Event"
+        },
+        {
+          "term": "Action ID",
+          "description": "由 Command 参与者选择的稳定标识符，因此相同签名内容的重试是幂等的，并且拒绝冲突的重用。",
+          "avoid": "Event ID，尝试次数"
+        },
+        {
+          "term": "Correlation ID",
+          "description": "链接相关 Commands、Events 和外部工作的标识符，无需强制排序。",
+          "avoid": "Group 序列、Action ID"
+        },
+        {
+          "term": "Event",
+          "description": "一个不可改变的公认事实。 Group Event 属于一个Group 的单调历史；显式定义的 Agent Card 注册和会话激活事实是 Organization 范围的 Events，没有 Group 序列。",
+          "avoid": "Command，通知"
+        },
+        {
+          "term": "Cursor",
+          "description": "由 Agent 持久处理的最高连续 Group Event 位置。",
+          "avoid": "偏移量、时间戳"
+        },
+        {
+          "term": "Attention Filter",
+          "description": "一种交付首选项，可缩小实时 Group 流量，同时保留成员检索授权历史记录的权利。",
+          "avoid": "Membership 可见性、访问控制"
+        },
+        {
+          "term": "Delivery",
+          "description": "至少一次将持久的 Events 传输给授权的 Group 成员，并通过 Event ID 进行重复数据删除，并由 Cursor 确认进度。",
+          "avoid": "恰好一次副作用"
+        },
+        {
+          "term": "Replay",
+          "description": "在持久化 Cursor 之后，按顺序重新交付 Group 的 Events，并受 Membership 可见性约束。",
+          "avoid": "跨 Group 排序"
+        },
+        {
+          "term": "Membership Epoch",
+          "description": "在 Group Membership 的旧版本下发行的单调值围栏 Commands、代币和 Delegation Grants。",
+          "avoid": "Session Epoch，存在"
+        },
+        {
+          "term": "Coordinator Epoch",
+          "description": "一个单调值，用于隔离已替换的 Coordinator、其先前的角色租用及其 Delegation Grants。",
+          "avoid": "Ownership Epoch，领导者选举任期"
+        },
+        {
+          "term": "Ownership Lease",
+          "description": "一种有界保留，在活动执行周期之前和之间将一个 Worker 分配给独占的 WorkItem。",
+          "avoid": "Execution Lease，永久分配"
+        },
+        {
+          "term": "Execution Lease",
+          "description": "一项可更新的、受保护的授权，允许一个 Worker 会话和 Ownership Epoch 执行独占的 WorkItem。执行Commands引用其稳定的Lease ID；短期功能令牌绑定到该租约 ID，并且可以在不更改租约的情况下轮换。",
+          "avoid": "锁定、赋值"
+        },
+        {
+          "term": "Session Epoch",
+          "description": "随着时间的推移，单调值围栏取代了共享一个 Agent 身份的运行时。",
+          "avoid": "WorkItem 租赁"
+        },
+        {
+          "term": "Ownership Epoch",
+          "description": "单调值围栏独家 WorkItem 的先前所有者。",
+          "avoid": "会话纪元"
+        },
+        {
+          "term": "Scheduler",
+          "description": "Worker 拥有的策略，在其每个 Group 队列和容量槽中选择符合条件的 WorkItems。",
+          "avoid": "Coordinator，队列"
+        },
+        {
+          "term": "Capacity Slot",
+          "description": "Worker 并发的一个独立单元，具有自己的 Group 上下文、凭据、检查点和副作用范围。",
+          "avoid": "Agent 身份、线程"
+        },
+        {
+          "term": "Resource Budget",
+          "description": "对分配给 Mission、WorkItem 或 Delegation Grant 的财务成本、模型代币、工具调用、计算时间、挂起时间和外部操作的硬性限制。",
+          "avoid": "估计、优先级"
+        },
+        {
+          "term": "Budget Ledger",
+          "description": "Missions 和 WorkItems 的已分配限制、累积使用量和剩余容量的权威分层帐户。",
+          "avoid": "本地令牌计量器，成本估算"
+        },
+        {
+          "term": "Resource Usage Record",
+          "description": "绑定到 WorkItem、Ownership Epoch 和 Execution Lease 的有符号非零资源增量，并自动滚动其预算祖先。",
+          "avoid": "进度百分比、预算分配"
+        },
+        {
+          "term": "Approval",
+          "description": "持久签署的决定接受特定的 Mission 修订版和确切的 Artifact 集。",
+          "avoid": "Coordinator 审核、验证"
+        },
+        {
+          "term": "Execution Approval",
+          "description": "一项有时间限制的签名人工决策，允许在发布功能令牌之前为一个 WorkItem Ownership Epoch 指定高风险操作、资源和预算。",
+          "avoid": "最终Approval、Work Offer"
+        },
+        {
+          "term": "Cooperation Override Grant",
+          "description": "在规定的到期日之前，通过一个 Mission Group 中的一个确切的 Command ，对一个 Principal 进行持久的一次性批准，以超过一项合作限制。",
+          "avoid": "布尔覆盖，可重用豁免"
+        },
+        {
+          "term": "Group Snapshot",
+          "description": "通过特定 Group 序列进行签名的档案投影，链接到保留的 Event 和生成它的策略日志历史记录。",
+          "avoid": "可变数据库备份"
+        },
+        {
+          "term": "Policy Log",
+          "description": "审核 Group 状态转换所需的授权、预算、风险、升级和编辑决策的仅附加记录。",
+          "avoid": "Agent 推理跟踪"
+        },
+        {
+          "term": "Extension Profile",
+          "description": "组织批准的、版本化的模式和语义包，不能覆盖核心不变量。",
+          "avoid": "插件，任意事件类型"
+        },
+        {
+          "term": "Child Mission display name",
+          "description": "本地化正文在简体中文和繁体中文中都使用 `子任务`，日语使用 `サブタスク`，西班牙语使用 `subtarea`，法语使用 `sous-tâche`，德语使用 `Unteraufgabe`。每个显示名称都表示一个完整的 Child Mission，具有自己的 Group、Coordinator、预算和 Approval 生命周期，绝不表示 WorkItem；中文正文使用简体中文 `工作项` 或繁体中文 `工作項` 表示 WorkItem。",
+          "avoid": "`子 Mission`、`子使命`、`子ミッション`、`Mission hija`、`Mission enfant`、德语 `untergeordnete Mission` 类表达、`子任務`，以及用 `子任务` 表示 WorkItem"
+        }
+      ]
+    },
+    "zh-TW": {
+      "introduction": "本上下文定義由 Coordinator 領導的自主 Agent 群組在 Organization 內完成 Mission 時使用的術語。",
+      "sectionTitles": [
+        "協定身份",
+        "Organization 與身份",
+        "Mission 協作",
+        "Conversation 與工作",
+        "協調與狀態",
+        "本地化術語"
+      ],
+      "entries": [
+        {
+          "term": "MissionWeaveProtocol",
+          "description": "在 Mission Groups 工作的自治 Agents 的規範組織內部合作協議。",
+          "avoid": "縮寫、空格或備用產品名稱"
+        },
+        {
+          "term": "Organization",
+          "description": "註冊Agents、定義策略並對人員進行身份驗證的可信治理根。",
+          "avoid": "網路、聯盟"
+        },
+        {
+          "term": "Agent",
+          "description": "具有一個穩定身份和最多一個活動會話的單一獨立調度的運行時。",
+          "avoid": "服務、副本、進程池"
+        },
+        {
+          "term": "Agent Card",
+          "description": "由組織簽署的 Agent 穩定身分和經過驗證的功能的描述。",
+          "avoid": "簡介、存在"
+        },
+        {
+          "term": "Agent Registry",
+          "description": "Organization 控制的當前 Agent Cards 來源、不可變簽署金鑰綁定、其有效性歷史記錄以及已註冊 Principals 的功能證據。",
+          "avoid": "存在服務、對等發現"
+        },
+        {
+          "term": "Signed Document",
+          "description": "一種持久協議對象，其所需的頂級簽名在 Signed Document Verification Profile 下驗證其規範內容。",
+          "avoid": "會話認證、傳輸幀"
+        },
+        {
+          "term": "Signed Document Verification Profile",
+          "description": "從持久的簽章文件模式到其受保護的簽章時間和預期簽章者的規範映射，以進行簽章和金鑰有效性驗證。",
+          "avoid": "會話認證、演算法協商"
+        },
+        {
+          "term": "First-Admission Record",
+          "description": "Organization 控制的接受記錄，綁定 Signed Document 的簽章雜湊、簽章金鑰 ID、簽章者 Principal 和可信任接受時間。它位於 Signed Document 及其驗證設定檔的外部。",
+          "avoid": "本地首次出現時間、簽署者提供的時間戳記、自驗證 Event"
+        },
+        {
+          "term": "Principal",
+          "description": "經過驗證的 Agent、人類或 Organization 服務，可以被命名為協定物件的參與者或擁有者。",
+          "avoid": "顯示名稱，未經身份驗證的用戶"
+        },
+        {
+          "term": "Presence Record",
+          "description": "有關 Agent 的可用性、容量和最近檢測訊號的臨時資訊。",
+          "avoid": "將其與 Agent Card 混為一談"
+        },
+        {
+          "term": "Capability",
+          "description": "Agent 經驗證可以執行的一種受版本控制、組織管理的工作。",
+          "avoid": "許可，自由形式技能"
+        },
+        {
+          "term": "Group Authority",
+          "description": "Organization 基礎設施，用於驗證參與者、驗證策略和 Membership、序列化 Group 轉換以及附加 Events，而不充當 Mission 的語義管理器。",
+          "avoid": "Coordinator，共識協議"
+        },
+        {
+          "term": "Authorization Service",
+          "description": "Organization 服務評估執行策略並在分配、租賃、預算和批准檢查成功後頒發短期範圍的功能令牌。",
+          "avoid": "Agent Registry、Scheduler"
+        },
+        {
+          "term": "Capability Token",
+          "description": "綁定到一個 Worker 會話、WorkItem、Ownership Epoch、Execution Lease、允許的操作和資源以及有限預算的短期執行授權。",
+          "avoid": "Capability，可重複使用的憑證"
+        },
+        {
+          "term": "Membership Token",
+          "description": "綁定到一個 Principal、Group、Membership Epoch、Session Epoch 和最低權限角色集的短期授權。",
+          "avoid": "Capability Token，訂閱"
+        },
+        {
+          "term": "Mission",
+          "description": "具有已完成、預算、截止日期和批准生命週期定義的有界目標。",
+          "avoid": "專案、任務"
+        },
+        {
+          "term": "Child Mission",
+          "description": "建立 Mission 以完成父 Mission 的一個複雜 WorkItem。",
+          "avoid": "子任務"
+        },
+        {
+          "term": "Follow-up Mission",
+          "description": "當需要進行後續更正或額外工作時，新的 Mission 會連結到已批准的不可變的 Mission。",
+          "avoid": "編輯已批准的 Mission"
+        },
+        {
+          "term": "Group",
+          "description": "屬於一個Mission的臨時協作空間和共享歷史。",
+          "avoid": "頻道、房間、團隊"
+        },
+        {
+          "term": "MissionOwner",
+          "description": "Mission 的責任主體。根 MissionOwner 是人類，擁有最終批准、取消和 Coordinator 替換權限。子MissionOwner是父Coordinator並代表其父WorkItem批准子結果；組織風險政策可能還需要直接的人員批准。",
+          "avoid": "使用者、管理員"
+        },
+        {
+          "term": "Coordinator",
+          "description": "可更換的Agent負責規劃、分配、監控、整合和提交。",
+          "avoid": "POC Agent，管理器服務，排序器"
+        },
+        {
+          "term": "Worker",
+          "description": "Agent 使用其自己的佇列和 Scheduler 接受並執行 WorkItems。",
+          "avoid": "子代理、工具"
+        },
+        {
+          "term": "Membership",
+          "description": "將 Agent 或 MissionOwner 連接到一個 Group 的範圍授權。",
+          "avoid": "訂閱、存在"
+        },
+        {
+          "term": "Work Delegate",
+          "description": "Group 成員可透過明確的 Delegation Grant 授權範圍受限的 WorkItems；該角色本身不授予編寫工作定義的權限。",
+          "avoid": "Coordinator，不受限制的管理員"
+        },
+        {
+          "term": "Delegation Grant",
+          "description": "對於一個目標 WorkItem 子樹，從當前 Coordinator 到一個 Work Delegate 的權威、不可轉讓的授權，受功能版本、累積 Resource Budget、後代深度、到期以及 Membership 和 Coordinator Epochs 的限制。當其目標終端時，它就會結束。",
+          "avoid": "僅角色名稱，可轉讓憑證"
+        },
+        {
+          "term": "Conversation",
+          "description": "Messages 的可審核線程，作用域為 Group 或一個 WorkItem。",
+          "avoid": "會話、聊天記錄"
+        },
+        {
+          "term": "Message",
+          "description": "承諾的對話上下文永遠不會自行授予可執行權限。",
+          "avoid": "Command，指令"
+        },
+        {
+          "term": "WorkItem",
+          "description": "Mission 的顯式單元與所有者、生命週期、依賴項和 Work Contract 一起使用。",
+          "avoid": "Message、Mission、作業"
+        },
+        {
+          "term": "Work Proposal",
+          "description": "任何 Group 成員建立 WorkItem 的不可執行請求；只有 Coordinator 或範圍委託才能將其授權為可執行義務。",
+          "avoid": "分配，Message-僅限權限"
+        },
+        {
+          "term": "Work Offer",
+          "description": "合格的 Worker 在本地存取控制後接受 WorkItem 的到期邀請。",
+          "avoid": "轉讓、所有權"
+        },
+        {
+          "term": "Admission Control",
+          "description": "Worker 在接受之前決定所提供的 WorkItem 是否符合其功能、授權、佇列容量、截止日期、依賴性和預算限制。",
+          "avoid": "Coordinator 分配，調度優先權"
+        },
+        {
+          "term": "Selection Basis",
+          "description": "用於選擇所提供的 Worker 的可審核事實，包括功能匹配、授權資格、可用性、成本、可靠性 Evidence 和應用的策略。",
+          "avoid": "私人推理，排名提示"
+        },
+        {
+          "term": "Work Contract",
+          "description": "WorkItem 的目標、可交付成果、驗收標準、輸入、權限、截止日期和重試預算。",
+          "avoid": "提示、要求"
+        },
+        {
+          "term": "Artifact",
+          "description": "Mission 工作產生或引用的不可變的內容尋址可交付成果。",
+          "avoid": "附件、訊息負載"
+        },
+        {
+          "term": "Evidence",
+          "description": "用於根據其驗收標準評估 Artifact 或 WorkItem 的記錄事實。",
+          "avoid": "意見、思路"
+        },
+        {
+          "term": "Checkpoint",
+          "description": "用於阻塞、復原和協作搶佔的結構化、持久、安全復原執行狀態參考。",
+          "avoid": "進度百分比、私有記憶體轉儲"
+        },
+        {
+          "term": "Context Package",
+          "description": "帶有出處的簽名版本摘要，提供 Agent 範圍的 Mission 上下文。",
+          "avoid": "記憶體轉儲、轉錄"
+        },
+        {
+          "term": "Command",
+          "description": "由授權參與者簽署的進行結構化狀態轉換的請求。",
+          "avoid": "Message、Event"
+        },
+        {
+          "term": "Action ID",
+          "description": "由 Command 參與者選擇的穩定標識符，因此相同簽名內容的重試是冪等的，並且拒絕衝突的重用。",
+          "avoid": "Event ID，嘗試次數"
+        },
+        {
+          "term": "Correlation ID",
+          "description": "連結相關 Commands、Events 和外部工作的標識符，無需強制排序。",
+          "avoid": "Group 序列、Action ID"
+        },
+        {
+          "term": "Event",
+          "description": "一個不可改變的公認事實。 Group Event 屬於一個Group 的單調歷史；明確定義的 Agent Card 註冊和會話啟動事實是 Organization 範圍的 Events，沒有 Group 序列。",
+          "avoid": "Command，通知"
+        },
+        {
+          "term": "Cursor",
+          "description": "由 Agent 持久處理的最高連續 Group Event 位置。",
+          "avoid": "偏移量、時間戳"
+        },
+        {
+          "term": "Attention Filter",
+          "description": "一種交付首選項，可縮小即時 Group 流量，同時保留會員檢索授權歷史記錄的權利。",
+          "avoid": "Membership 可見性、存取控制"
+        },
+        {
+          "term": "Delivery",
+          "description": "至少一次將持久的 Events 傳輸給授權的 Group 成員，並透過 Event ID 進行重複資料刪除，並由 Cursor 確認進度。",
+          "avoid": "恰好一次副作用"
+        },
+        {
+          "term": "Replay",
+          "description": "在持久化 Cursor 之後，依序重新交付 Group 的 Events，並受 Membership 可見性約束。",
+          "avoid": "跨 Group 排序"
+        },
+        {
+          "term": "Membership Epoch",
+          "description": "在 Group Membership 的舊版下發行的單調值圍欄 Commands、代幣和 Delegation Grants。",
+          "avoid": "Session Epoch，存在"
+        },
+        {
+          "term": "Coordinator Epoch",
+          "description": "一個單調值，用於隔離已替換的 Coordinator、其先前的角色租用及其 Delegation Grants。",
+          "avoid": "Ownership Epoch，領導者選舉任期"
+        },
+        {
+          "term": "Ownership Lease",
+          "description": "一種有界保留，在活動執行週期之前和之間將一個 Worker 分配給獨佔的 WorkItem。",
+          "avoid": "Execution Lease，永久分配"
+        },
+        {
+          "term": "Execution Lease",
+          "description": "一項可更新的、受保護的授權，允許一個 Worker 會話和 Ownership Epoch 執行獨佔的 WorkItem。執行Commands引用其穩定的Lease ID；短期功能令牌綁定到該租約 ID，並且可以在不更改租約的情況下輪換。",
+          "avoid": "鎖定、賦值"
+        },
+        {
+          "term": "Session Epoch",
+          "description": "隨著時間的推移，單調值圍欄取代了共享一個 Agent 身分的運行時。",
+          "avoid": "WorkItem 租賃"
+        },
+        {
+          "term": "Ownership Epoch",
+          "description": "單調值圍欄獨家 WorkItem 的先前所有者。",
+          "avoid": "會話紀元"
+        },
+        {
+          "term": "Scheduler",
+          "description": "Worker 擁有的策略，在其每個 Group 佇列和容量槽中選擇符合條件的 WorkItems。",
+          "avoid": "Coordinator，隊列"
+        },
+        {
+          "term": "Capacity Slot",
+          "description": "Worker 並發的一個獨立單元，具有自己的 Group 上下文、憑證、檢查點和副作用範圍。",
+          "avoid": "Agent 身份、線程"
+        },
+        {
+          "term": "Resource Budget",
+          "description": "對分配給 Mission、WorkItem 或 Delegation Grant 的財務成本、模型代幣、工具呼叫、計算時間、掛起時間和外部操作的硬性限制。",
+          "avoid": "估計、優先級"
+        },
+        {
+          "term": "Budget Ledger",
+          "description": "Missions 和 WorkItems 的已分配限制、累積使用量和剩餘容量的權威分層帳戶。",
+          "avoid": "本地令牌計量器，成本估算"
+        },
+        {
+          "term": "Resource Usage Record",
+          "description": "綁定到 WorkItem、Ownership Epoch 和 Execution Lease 的有符號非零資源增量，並自動捲動其預算祖先。",
+          "avoid": "進度百分比、預算分配"
+        },
+        {
+          "term": "Approval",
+          "description": "持久簽署的決定接受特定的 Mission 修訂版和確切的 Artifact 集。",
+          "avoid": "Coordinator 審核、驗證"
+        },
+        {
+          "term": "Execution Approval",
+          "description": "一項有時間限制的簽章人工決策，允許在發布功能代幣之前為一個 WorkItem Ownership Epoch 指定高風險操作、資源和預算。",
+          "avoid": "最終Approval、Work Offer"
+        },
+        {
+          "term": "Cooperation Override Grant",
+          "description": "在規定的到期日之前，透過一個 Mission Group 中的一個確切的 Command ，對一個 Principal 進行持久的一次性批准，以超過一項合作限制。",
+          "avoid": "布爾覆蓋，可重用豁免"
+        },
+        {
+          "term": "Group Snapshot",
+          "description": "透過特定 Group 序列進行簽署的檔案投影，連結到保留的 Event 和產生它的策略日誌歷史記錄。",
+          "avoid": "可變資料庫備份"
+        },
+        {
+          "term": "Policy Log",
+          "description": "審核 Group 狀態轉換所需的授權、預算、風險、升級和編輯決策的僅附加記錄。",
+          "avoid": "Agent 推理跟踪"
+        },
+        {
+          "term": "Extension Profile",
+          "description": "組織批准的、版本化的模式和語意包，不能涵蓋核心不變量。",
+          "avoid": "插件，任意事件類型"
+        },
+        {
+          "term": "Child Mission display name",
+          "description": "本地化正文在簡體中文和繁體中文中都使用 `子任务`，日文使用 `サブタスク`，西班牙文使用 `subtarea`，法文使用 `sous-tâche`，德文使用 `Unteraufgabe`。每個顯示名稱都表示一個完整的 Child Mission，具有自己的 Group、Coordinator、預算和 Approval 生命週期，絕不表示 WorkItem；中文正文使用簡體中文 `工作项` 或繁體中文 `工作項` 表示 WorkItem。",
+          "avoid": "`子 Mission`、`子使命`、`子ミッション`、`Mission hija`、`Mission enfant`、德文 `untergeordnete Mission` 類表達、`子任務`，以及用 `子任务` 表示 WorkItem"
+        }
+      ]
+    },
+    "ja": {
+      "introduction": "このコンテキストは、Coordinator が率いる自律 Agent の Group が Organization 内で Mission を遂行するときに用いる用語を定義します。",
+      "sectionTitles": [
+        "プロトコルの識別情報",
+        "Organization と識別情報",
+        "Mission の協働",
+        "Conversation と作業",
+        "調整と状態",
+        "ローカライズされた用語"
+      ],
+      "entries": [
+        {
+          "term": "MissionWeaveProtocol",
+          "description": "Mission Groups で動作する自律型 Agents 用の正規の組織内部連携プロトコル。",
+          "avoid": "省略された、スペースを空けた、または代替の製品名"
+        },
+        {
+          "term": "Organization",
+          "description": "Agents を登録し、ポリシーを定義し、人間を認証する、信頼されたガバナンス ルート。",
+          "avoid": "ネットワーク、フェデレーション"
+        },
+        {
+          "term": "Agent",
+          "description": "1 つの安定した ID と最大 1 つのアクティブなセッションを持つ、独立してスケジュールされた単一のランタイム。",
+          "avoid": "サービス、レプリカ、プロセス プール"
+        },
+        {
+          "term": "Agent Card",
+          "description": "Agent の安定した ID と検証済みの機能についての組織署名付きの説明。",
+          "avoid": "プロフィール、存在感"
+        },
+        {
+          "term": "Agent Registry",
+          "description": "現在の Agent Cards の Organization によって制御されるソース、不変の署名キー バインディング、その有効性履歴、および登録された Principals の機能証拠。",
+          "avoid": "プレゼンスサービス、ピア発見"
+        },
+        {
+          "term": "Signed Document",
+          "description": "必要なトップレベルの署名が 1 つの Signed Document Verification Profile で正規コンテンツを認証する耐久性のあるプロトコル オブジェクト。",
+          "avoid": "セッション認証、トランスポートフレーム"
+        },
+        {
+          "term": "Signed Document Verification Profile",
+          "description": "1 つの耐久性のある署名付きドキュメント スキーマから、その保護された署名時刻と、署名とキーの有効性の検証に必要な署名者への規範的なマッピング。",
+          "avoid": "セッション認証、アルゴリズムネゴシエーション"
+        },
+        {
+          "term": "First-Admission Record",
+          "description": "Signed Document の署名ハッシュ、署名キー ID、署名者 Principal、および信頼できる受け入れ時刻をバインドする、Organization によって制御される受け入れレコード。これは、Signed Document およびその検証プロファイルの外部にあります。",
+          "avoid": "ローカルの最初の時刻、署名者が指定したタイムスタンプ、自己認証 Event"
+        },
+        {
+          "term": "Principal",
+          "description": "プロトコル オブジェクトのアクターまたは所有者として指定できる、認証された Agent、人間、または Organization サービス。",
+          "avoid": "表示名、未認証ユーザー"
+        },
+        {
+          "term": "Presence Record",
+          "description": "Agent の可用性、容量、最近のハートビートに関する一時的な情報。",
+          "avoid": "Agent Card との混同"
+        },
+        {
+          "term": "Capability",
+          "description": "Agent が実行することが検証されている、バージョン管理され組織が管理する種類の作業。",
+          "avoid": "許可、自由形式スキル"
+        },
+        {
+          "term": "Group Authority",
+          "description": "Organization インフラストラクチャは、Mission のセマンティック マネージャーとして機能せずに、アクターの認証、ポリシーと Membership の検証、Group 遷移のシリアル化、および Events の追加を行います。",
+          "avoid": "Coordinator、コンセンサスプロトコル"
+        },
+        {
+          "term": "Authorization Service",
+          "description": "Organization サービスは、実行ポリシーを評価し、割り当て、リース、予算、承認のチェックが成功した後に、有効期限の短いスコープ指定された機能トークンを発行します。",
+          "avoid": "Agent Registry、Scheduler"
+        },
+        {
+          "term": "Capability Token",
+          "description": "1 つの Worker セッション、WorkItem、Ownership Epoch、Execution Lease、許可された操作とリソース、および制限された予算にバインドされた短期間の実行許可。",
+          "avoid": "Capability、再利用可能な資格情報"
+        },
+        {
+          "term": "Membership Token",
+          "description": "1 つの Principal、Group、Membership Epoch、Session Epoch、および最小特権ロール セットにバインドされた短期間の承認。",
+          "avoid": "Capability Token、サブスクリプション"
+        },
+        {
+          "term": "Mission",
+          "description": "完了、予算、期限、承認のライフサイクルが定義された、限定された目標。",
+          "avoid": "プロジェクト、タスク"
+        },
+        {
+          "term": "Child Mission",
+          "description": "親 Mission の 1 つの複合 WorkItem を完成させるために作成された Mission。",
+          "avoid": "サブタスク"
+        },
+        {
+          "term": "Follow-up Mission",
+          "description": "新しい Mission は、後の修正や追加作業が必要な場合に、不変の承認済み Mission にリンクされます。",
+          "avoid": "承認された Mission の編集"
+        },
+        {
+          "term": "Group",
+          "description": "一時的なコラボレーション スペースと共有履歴は、まさに 1 つの Mission に属します。",
+          "avoid": "チャンネル、部屋、チーム"
+        },
+        {
+          "term": "MissionOwner",
+          "description": "Mission の責任あるプリンシパル。ルート MissionOwner は人間であり、最終的な承認、キャンセル、および Coordinator の置換権限を保持します。子 MissionOwner は親 Coordinator であり、その親 WorkItem に代わって子の結果を承認します。組織のリスク ポリシーでは、人間による直接の承認がさらに必要になる場合があります。",
+          "avoid": "ユーザー、管理者"
+        },
+        {
+          "term": "Coordinator",
+          "description": "交換可能な Agent は、計画、割り当て、監視、統合、および送信を担当します。",
+          "avoid": "POC Agent、マネージャー サービス、シーケンサー"
+        },
+        {
+          "term": "Worker",
+          "description": "独自のキューと Scheduler を使用して WorkItems を受け入れ、実行する Agent。",
+          "avoid": "サブエージェント、ツール"
+        },
+        {
+          "term": "Membership",
+          "description": "Agent または MissionOwner を 1 つの Group に接続するスコープ付き認可。",
+          "avoid": "サブスクリプション、プレゼンス"
+        },
+        {
+          "term": "Work Delegate",
+          "description": "明示的な Delegation Grant により、限定された範囲の WorkItems を承認できる Group メンバー。この役割自体は、作業定義を作成する権限を付与しません。",
+          "avoid": "Coordinator、無制限の管理者"
+        },
+        {
+          "term": "Delegation Grant",
+          "description": "現在の Coordinator から 1 つのターゲット WorkItem サブツリーの 1 つの Work Delegate への権限のある譲渡不可の権限。機能バージョン、累積 Resource Budget、子孫の深さ、有効期限、Membership および Coordinator Epochs によって制限されます。ターゲットがターミナルになると終了します。",
+          "avoid": "ロール名のみ、譲渡可能な資格情報"
+        },
+        {
+          "term": "Conversation",
+          "description": "Group または 1 つの WorkItem をスコープとする Messages の監査可能スレッド。",
+          "avoid": "セッション、チャットログ"
+        },
+        {
+          "term": "Message",
+          "description": "実行権限を単独で付与することのない、コミットされた会話コンテキスト。",
+          "avoid": "Command、命令"
+        },
+        {
+          "term": "WorkItem",
+          "description": "Mission の明示的なユニットは、所有者、ライフサイクル、依存関係、および Work Contract と連携して動作します。",
+          "avoid": "Message、Mission、ジョブ"
+        },
+        {
+          "term": "Work Proposal",
+          "description": "WorkItem を作成するための Group メンバーによる実行不可能なリクエスト。 Coordinator またはスコープ指定された委任者のみが、それを実行可能な義務として承認できます。",
+          "avoid": "割り当て、Message のみの権限"
+        },
+        {
+          "term": "Work Offer",
+          "description": "ローカルの Admission Control 後に、適格な Worker が WorkItem を受け入れるための有効期限付き招待。",
+          "avoid": "譲渡、所有権"
+        },
+        {
+          "term": "Admission Control",
+          "description": "Worker は、提供された WorkItem がその機能、認可、キュー容量、期限、依存関係、および予算の制約に適合するかどうかを受け入れ前に決定します。",
+          "avoid": "Coordinator 割り当て、スケジュール優先度"
+        },
+        {
+          "term": "Selection Basis",
+          "description": "提供された Worker を選択するために使用される監査可能な事実 (機能の一致、認可適格性、可用性、コスト、信頼性 Evidence、および適用されたポリシーなど)。",
+          "avoid": "私的推論、ランキングプロンプト"
+        },
+        {
+          "term": "Work Contract",
+          "description": "WorkItem の目標、成果物、受け入れ基準、入力、権限、期限、および再試行予算。",
+          "avoid": "プロンプト、リクエスト"
+        },
+        {
+          "term": "Artifact",
+          "description": "Mission 作業によって生成または参照される、不変のコンテンツアドレス指定された成果物。",
+          "avoid": "添付ファイル、メッセージペイロード"
+        },
+        {
+          "term": "Evidence",
+          "description": "Artifact または WorkItem を許容基準に照らして評価するために使用される記録された事実。",
+          "avoid": "意見、思考の連鎖"
+        },
+        {
+          "term": "Checkpoint",
+          "description": "ブロック、リカバリ、協調プリエンプションに使用される、構造化され、耐久性があり、安全に再開できる実行状態参照。",
+          "avoid": "進行状況のパーセンテージ、プライベート メモリ ダンプ"
+        },
+        {
+          "term": "Context Package",
+          "description": "Agent スコープの Mission コンテキストを提供する、来歴を含む署名済みのバージョン付きの概要。",
+          "avoid": "メモリダンプ、トランスクリプト"
+        },
+        {
+          "term": "Command",
+          "description": "1 つの構造化された状態遷移を行うための、承認されたアクターによる署名付きリクエスト。",
+          "avoid": "Message、Event"
+        },
+        {
+          "term": "Action ID",
+          "description": "Command アクターによって選択された安定した識別子。そのため、同一の署名付きコンテンツの再試行はべき等であり、競合する再利用は拒否されます。",
+          "avoid": "Event ID、試行番号"
+        },
+        {
+          "term": "Correlation ID",
+          "description": "順序を強制せずに、関連する Commands、Events、および外部作業をリンクする識別子。",
+          "avoid": "Group シーケンス、Action ID"
+        },
+        {
+          "term": "Event",
+          "description": "不変の受け入れられた事実。 Group Event は、1 つの Group の単調履歴に属します。明示的に定義された Agent Card 登録およびセッションアクティブ化ファクトは、Group シーケンスのない、Organization スコープの Events です。",
+          "avoid": "Command、通知"
+        },
+        {
+          "term": "Cursor",
+          "description": "連続する最上位の Group Event 位置は、Agent によって永続的に処理されます。",
+          "avoid": "オフセット、タイムスタンプ"
+        },
+        {
+          "term": "Attention Filter",
+          "description": "承認された履歴を取得するメンバーの権利を維持しながら、ライブ Group トラフィックを制限する配信設定。",
+          "avoid": "Membership 可視性、アクセス制御"
+        },
+        {
+          "term": "Delivery",
+          "description": "Event ID による重複排除と Cursor による進行状況の確認を伴う、永続的な Events の許可された Group メンバーへの少なくとも 1 回の転送。",
+          "avoid": "1 回限りの副作用"
+        },
+        {
+          "term": "Replay",
+          "description": "永続化された Cursor より後の Group の Events を、Membership の可視性に従って順序どおり再配信すること。",
+          "avoid": "Group 間の順序付け"
+        },
+        {
+          "term": "Membership Epoch",
+          "description": "Commands、トークン、および 1 つの Group Membership の古いバージョンで発行された Delegation Grants を囲む単調値。",
+          "avoid": "Session Epoch、プレゼンス"
+        },
+        {
+          "term": "Coordinator Epoch",
+          "description": "置き換えられた Coordinator、その以前のロール リース、およびその Delegation Grants を囲む単調な値。",
+          "avoid": "Ownership Epoch、リーダー選挙期間"
+        },
+        {
+          "term": "Ownership Lease",
+          "description": "アクティブな実行期間の前後で、1 つの Worker を排他的な WorkItem に割り当てたままにする、有界予約。",
+          "avoid": "Execution Lease、永久割り当て"
+        },
+        {
+          "term": "Execution Lease",
+          "description": "1 つの Worker セッションと Ownership Epoch が排他的な WorkItem を実行できる、更新可能なフェンスされた許可。実行 Commands は安定したリース ID を参照します。有効期間の短い機能トークンはそのリース ID にバインドされ、リースを変更せずにローテーションする可能性があります。",
+          "avoid": "ロック、割り当て"
+        },
+        {
+          "term": "Session Epoch",
+          "description": "単調値フェンシングは、時間の経過とともに 1 つの Agent ID を共有するランタイムを置き換えました。",
+          "avoid": "WorkItem リース"
+        },
+        {
+          "term": "Ownership Epoch",
+          "description": "排他的な WorkItem の前の所有者を囲む単調な値。",
+          "avoid": "セッションエポック"
+        },
+        {
+          "term": "Scheduler",
+          "description": "Group ごとのキューとキャパシティ スロット全体で適格な WorkItems を選択する、Worker 所有のポリシー。",
+          "avoid": "Coordinator、キュー"
+        },
+        {
+          "term": "Capacity Slot",
+          "description": "独自の Group コンテキスト、資格情報、チェックポイント、および副作用スコープを備えた Worker 同時実行の 1 つの分離ユニット。",
+          "avoid": "Agent ID、スレッド"
+        },
+        {
+          "term": "Resource Budget",
+          "description": "Mission、WorkItem、または Delegation Grant に割り当てられる財務コスト、モデル トークン、ツール呼び出し、計算時間、経過時間、および外部アクションに対するハード制限。",
+          "avoid": "見積もり、優先順位"
+        },
+        {
+          "term": "Budget Ledger",
+          "description": "Missions および WorkItems の割り当てられた制限、累積使用量、および残りの容量に関する権限のある階層アカウント。",
+          "avoid": "ローカルトークンメーター、コスト見積もり"
+        },
+        {
+          "term": "Resource Usage Record",
+          "description": "WorkItem、Ownership Epoch、および Execution Lease にバインドされ、その予算の祖先をアトミックにロールスルーされる、署名付きのゼロ以外のリソース デルタ。",
+          "avoid": "進捗率、予算配分"
+        },
+        {
+          "term": "Approval",
+          "description": "特定の Mission リビジョンと正確な Artifact セットを受け入れる永続的な署名付き決定。",
+          "avoid": "Coordinator レビュー、検証"
+        },
+        {
+          "term": "Execution Approval",
+          "description": "機能トークンが発行される前に、1 つの WorkItem Ownership Epoch に対して指定された高リスク操作、リソース、および予算を許可する、期限付きの署名付き人間の決定。",
+          "avoid": "最終的な Approval、Work Offer"
+        },
+        {
+          "term": "Cooperation Override Grant",
+          "description": "指定された有効期限が切れる前に、1 つの Mission Group 内の 1 つの正確な Command を通じて、1 つの Principal が 1 つの連携制限を超えるための永続的なワンショットの承認。",
+          "avoid": "ブール値オーバーライド、再利用可能な除外"
+        },
+        {
+          "term": "Group Snapshot",
+          "description": "特定の Group シーケンスを介した署名付きアーカイブ プロジェクション。保持された Event およびその生成元のポリシー ログ履歴にリンクされます。",
+          "avoid": "可変データベースのバックアップ"
+        },
+        {
+          "term": "Policy Log",
+          "description": "Group の状態遷移を監査するために必要な、承認、予算、リスク、エスカレーション、および編集の決定に関する追加専用の記録。",
+          "avoid": "Agent 推論トレース"
+        },
+        {
+          "term": "Extension Profile",
+          "description": "組織によって承認され、バージョン管理されたスキーマとセマンティクスのパッケージ。コアの不変条件をオーバーライドすることはできません。",
+          "avoid": "プラグイン、任意のイベントタイプ"
+        },
+        {
+          "term": "Child Mission display name",
+          "description": "ローカライズされた本文では、簡体字中国語と繁体字中国語に `子任务`、日本語に `サブタスク`、スペイン語に `subtarea`、フランス語に `sous-tâche`、ドイツ語に `Unteraufgabe` を使用します。各表示名は、独自の Group、Coordinator、予算、Approval ライフサイクルを持つ完全な Child Mission を表し、WorkItem を表すことはありません。中国語では WorkItem に簡体字の `工作项` または繁体字の `工作項` を使用します。",
+          "avoid": "`子 Mission`、`子使命`、`子ミッション`、`Mission hija`、`Mission enfant`、ドイツ語の `untergeordnete Mission` 系表現、`子任務`、WorkItem の意味での `子任务`"
+        }
+      ]
+    },
+    "es": {
+      "introduction": "Este contexto define la terminología para las Mission internas de una Organization que completan Groups de Agents autónomos dirigidos por un Coordinator.",
+      "sectionTitles": [
+        "Identidad del protocolo",
+        "Organization e identidad",
+        "Colaboración en Mission",
+        "Conversation y trabajo",
+        "Coordinación y estado",
+        "Terminología localizada"
+      ],
+      "entries": [
+        {
+          "term": "MissionWeaveProtocol",
+          "description": "El protocolo canónico de cooperación interna de la organización para autónomos Agents que trabajan en Mission Groups.",
+          "avoid": "Nombres de productos abreviados, espaciados o alternativos"
+        },
+        {
+          "term": "Organization",
+          "description": "La raíz de gobernanza confiable que registra Agents, define políticas y autentica humanos.",
+          "avoid": "red, federación"
+        },
+        {
+          "term": "Agent",
+          "description": "Un único tiempo de ejecución programado de forma independiente con una identidad estable y como máximo una sesión activa.",
+          "avoid": "Servicio, réplica, grupo de procesos."
+        },
+        {
+          "term": "Agent Card",
+          "description": "Una descripción firmada por la organización de la identidad estable y las capacidades verificadas de un Agent.",
+          "avoid": "Perfil, presencia"
+        },
+        {
+          "term": "Agent Registry",
+          "description": "La fuente controlada por Organization del Agent Cards actual, enlaces de claves de firma inmutables, su historial de validez y evidencia de capacidad para el Principals registrado.",
+          "avoid": "Servicio de presencia, descubrimiento de pares"
+        },
+        {
+          "term": "Signed Document",
+          "description": "Un objeto de protocolo duradero cuya firma de nivel superior requerida autentica su contenido canónico bajo un Signed Document Verification Profile.",
+          "avoid": "Autenticación de sesión, trama de transporte."
+        },
+        {
+          "term": "Signed Document Verification Profile",
+          "description": "El mapeo normativo de un esquema de documento firmado duradero a su hora de firma protegida y al firmante esperado para la verificación de la firma y la validez de la clave.",
+          "avoid": "Autenticación de sesión, negociación de algoritmos."
+        },
+        {
+          "term": "First-Admission Record",
+          "description": "Un registro de aceptación controlado por Organization que vincula el hash de firma de un Signed Document, el ID de clave de firma, el firmante Principal y el tiempo de aceptación confiable. Es externo al Signed Document y su perfil de verificación.",
+          "avoid": "Hora local de primera visualización, marca de tiempo proporcionada por el firmante, autenticación automática Event"
+        },
+        {
+          "term": "Principal",
+          "description": "Un servicio Agent, humano o Organization autenticado que puede denominarse actor o propietario de un objeto de protocolo.",
+          "avoid": "Nombre para mostrar, usuario no autenticado"
+        },
+        {
+          "term": "Presence Record",
+          "description": "Información efímera sobre la disponibilidad, la capacidad y los latidos recientes de un Agent.",
+          "avoid": "confundirlo con Agent Card"
+        },
+        {
+          "term": "Capability",
+          "description": "Un tipo de trabajo versionado y gobernado por la organización que se verifica que realiza un Agent.",
+          "avoid": "Permiso, habilidad de forma libre"
+        },
+        {
+          "term": "Group Authority",
+          "description": "Infraestructura Organization que autentica actores, valida políticas y Membership, serializa transiciones Group y agrega Events sin actuar como administrador semántico de Mission.",
+          "avoid": "Coordinator, protocolo de consenso"
+        },
+        {
+          "term": "Authorization Service",
+          "description": "El servicio Organization que evalúa la política de ejecución y emite tokens de capacidad de alcance de corta duración después de que las comprobaciones de asignación, arrendamiento, presupuesto y aprobación se realicen correctamente.",
+          "avoid": "confundirlo con Agent Registry o Scheduler"
+        },
+        {
+          "term": "Capability Token",
+          "description": "Una subvención de ejecución de corta duración vinculada a una sesión Worker, WorkItem, Ownership Epoch, Execution Lease, operaciones y recursos permitidos, y presupuestos limitados.",
+          "avoid": "Capability, credencial reutilizable"
+        },
+        {
+          "term": "Membership Token",
+          "description": "Una autorización de corta duración vinculada a un conjunto de roles Principal, Group, Membership Epoch, Session Epoch y privilegios mínimos.",
+          "avoid": "Capability Token, suscripción"
+        },
+        {
+          "term": "Mission",
+          "description": "Un objetivo acotado con una definición de finalización, presupuesto, fecha límite y ciclo de vida de aprobación.",
+          "avoid": "proyecto, tarea"
+        },
+        {
+          "term": "Child Mission",
+          "description": "Un Mission creado para completar un WorkItem complejo de un Mission principal.",
+          "avoid": "Subtarea"
+        },
+        {
+          "term": "Follow-up Mission",
+          "description": "Un nuevo Mission vinculado a un Mission aprobado inmutable cuando se requiere una corrección posterior o trabajo adicional.",
+          "avoid": "Edición de un Mission aprobado"
+        },
+        {
+          "term": "Group",
+          "description": "El espacio de colaboración temporal y el historial compartido que pertenecen exactamente a un Mission.",
+          "avoid": "Canal, sala, equipo."
+        },
+        {
+          "term": "MissionOwner",
+          "description": "Principal responsable de un Mission. Un MissionOwner raíz es humano y tiene autoridad de aprobación final, cancelación y reemplazo de Coordinator. Un hijo MissionOwner es el padre Coordinator y aprueba el resultado hijo en nombre de su padre WorkItem; La política de riesgos de la organización también puede requerir aprobación humana directa.",
+          "avoid": "Usuario, administrador"
+        },
+        {
+          "term": "Coordinator",
+          "description": "El Agent reemplazable responsable de la planificación, asignación, monitoreo, integración y envío.",
+          "avoid": "POC Agent, servicio de administrador, secuenciador"
+        },
+        {
+          "term": "Worker",
+          "description": "Un Agent que acepta y ejecuta WorkItems utilizando sus propias colas y Scheduler.",
+          "avoid": "Subagente, herramienta"
+        },
+        {
+          "term": "Membership",
+          "description": "La autorización de alcance que conecta un Agent o MissionOwner a un Group.",
+          "avoid": "Suscripción, presencia"
+        },
+        {
+          "term": "Work Delegate",
+          "description": "Un miembro Group elegible para autorizar WorkItems de alcance limitado a través de un Delegation Grant explícito; el rol en sí no otorga autoridad de autoría de trabajo.",
+          "avoid": "Coordinator, administrador sin restricciones"
+        },
+        {
+          "term": "Delegation Grant",
+          "description": "Una autorización autorizada e intransferible del Coordinator actual a un Work Delegate para un subárbol WorkItem de destino, delimitada por versiones de capacidad, Resource Budget acumulativo, profundidad descendiente, vencimiento y Membership y Coordinator Epochs. Termina cuando su objetivo se vuelve terminal.",
+          "avoid": "Solo el nombre del rol, credencial transferible"
+        },
+        {
+          "term": "Conversation",
+          "description": "Un subproceso auditable de Messages cuyo ámbito es un Group o un WorkItem.",
+          "avoid": "Sesión, registro de chat"
+        },
+        {
+          "term": "Message",
+          "description": "Contexto conversacional comprometido que nunca otorga autoridad ejecutable por sí solo.",
+          "avoid": "Command, instrucción"
+        },
+        {
+          "term": "WorkItem",
+          "description": "Una unidad explícita de Mission funciona con un propietario, ciclo de vida, dependencias y Work Contract.",
+          "avoid": "Message, Mission, trabajo"
+        },
+        {
+          "term": "Work Proposal",
+          "description": "Una solicitud no ejecutable realizada por cualquier miembro de Group para crear un WorkItem; sólo un Coordinator o un delegado de alcance puede autorizarlo a convertirse en una obligación ejecutable.",
+          "avoid": "Asignación, autoridad exclusiva para Message"
+        },
+        {
+          "term": "Work Offer",
+          "description": "Una invitación que vence para que un Worker elegible acepte un WorkItem después del control de admisión local.",
+          "avoid": "Cesión, propiedad"
+        },
+        {
+          "term": "Admission Control",
+          "description": "La decisión del Worker de que un WorkItem ofrecido se ajusta a sus restricciones de capacidad, autorización, capacidad de cola, fecha límite, dependencia y presupuesto antes de la aceptación.",
+          "avoid": "Asignación Coordinator, prioridad de programación"
+        },
+        {
+          "term": "Selection Basis",
+          "description": "Los hechos auditables utilizados para elegir un Worker ofrecido, incluidas coincidencias de capacidad, elegibilidad de autorización, disponibilidad, costo, confiabilidad Evidence y política aplicada.",
+          "avoid": "Razonamiento privado, mensaje de clasificación"
+        },
+        {
+          "term": "Work Contract",
+          "description": "El objetivo, los entregables, los criterios de aceptación, las entradas, los permisos, la fecha límite y el presupuesto de reintento de un WorkItem.",
+          "avoid": "Prompt, solicitud"
+        },
+        {
+          "term": "Artifact",
+          "description": "Un producto entregable con contenido inmutable producido o al que hace referencia el trabajo Mission.",
+          "avoid": "Archivo adjunto, carga útil del mensaje"
+        },
+        {
+          "term": "Evidence",
+          "description": "Hechos registrados utilizados para evaluar un Artifact o WorkItem según sus criterios de aceptación.",
+          "avoid": "Opinión, cadena de pensamiento."
+        },
+        {
+          "term": "Checkpoint",
+          "description": "Una referencia de estado de ejecución estructurada, duradera y segura de reanudar que se utiliza para el bloqueo, la recuperación y la preferencia cooperativa.",
+          "avoid": "Progreso porcentual, volcado de memoria privada"
+        },
+        {
+          "term": "Context Package",
+          "description": "Un resumen versionado y firmado con procedencia que proporciona un contexto Mission con ámbito Agent.",
+          "avoid": "Volcado de memoria, transcripción"
+        },
+        {
+          "term": "Command",
+          "description": "Una solicitud firmada por un actor autorizado para realizar una transición de estado estructurada.",
+          "avoid": "confundirlo con Message o Event"
+        },
+        {
+          "term": "Action ID",
+          "description": "Un identificador estable elegido por un actor Command para que los reintentos de contenido firmado idéntico sean idempotentes y se rechace la reutilización conflictiva.",
+          "avoid": "Event ID, número de intento"
+        },
+        {
+          "term": "Correlation ID",
+          "description": "Un identificador que vincula Commands, Events y trabajo externo relacionados sin imponer un orden.",
+          "avoid": "Secuencia Group, Action ID"
+        },
+        {
+          "term": "Event",
+          "description": "Un hecho aceptado inmutable. Un Group Event pertenece a la historia monótona de un Group; los hechos de registro Agent Card y activación de sesión definidos explícitamente son Events con alcance Organization sin una secuencia Group.",
+          "avoid": "Command, notificación"
+        },
+        {
+          "term": "Cursor",
+          "description": "La posición Group Event contigua más alta procesada de forma duradera por un Agent.",
+          "avoid": "Compensación, marca de tiempo"
+        },
+        {
+          "term": "Attention Filter",
+          "description": "Una preferencia de entrega que limita el tráfico Group en vivo y al mismo tiempo preserva el derecho del miembro a recuperar el historial autorizado.",
+          "avoid": "Membership visibilidad, control de acceso"
+        },
+        {
+          "term": "Delivery",
+          "description": "Transporte al menos una vez de Events duradero a un miembro autorizado de Group, con deduplicación por ID de Event y progreso reconocido por Cursor.",
+          "avoid": "Efecto secundario exactamente una vez"
+        },
+        {
+          "term": "Replay",
+          "description": "Reentrega ordenada de los Events de un Group posteriores a un Cursor persistente, sujeta a la visibilidad de Membership.",
+          "avoid": "Orden entre Groups"
+        },
+        {
+          "term": "Membership Epoch",
+          "description": "Un valor monótono que protege Commands, tokens y Delegation Grants emitidos bajo una versión anterior de un Group Membership.",
+          "avoid": "Session Epoch, Presencia"
+        },
+        {
+          "term": "Coordinator Epoch",
+          "description": "Un valor monótono que protege un Coordinator reemplazado, su arrendamiento de función anterior y su Delegation Grants.",
+          "avoid": "Ownership Epoch, mandato de elección de líder"
+        },
+        {
+          "term": "Ownership Lease",
+          "description": "Una reserva limitada que mantiene un Worker asignado a un WorkItem exclusivo antes y entre períodos de ejecución activos.",
+          "avoid": "Execution Lease, asignación permanente"
+        },
+        {
+          "term": "Execution Lease",
+          "description": "Una concesión vallada y renovable que permite que una sesión Worker y Ownership Epoch ejecuten un WorkItem exclusivo. La ejecución Commands hace referencia a su ID de arrendamiento estable; Los tokens de capacidad de corta duración se vinculan a ese ID de arrendamiento y pueden rotar sin cambiar el arrendamiento.",
+          "avoid": "Bloqueo, asignación"
+        },
+        {
+          "term": "Session Epoch",
+          "description": "Una barrera de valor monótono reemplazó los tiempos de ejecución que comparten una identidad Agent a lo largo del tiempo.",
+          "avoid": "Arrendamiento WorkItem"
+        },
+        {
+          "term": "Ownership Epoch",
+          "description": "Un valor monótono que protege a los propietarios anteriores de un WorkItem exclusivo.",
+          "avoid": "época de sesión"
+        },
+        {
+          "term": "Scheduler",
+          "description": "La política propiedad de Worker que selecciona WorkItems elegible en sus colas y ranuras de capacidad por Group.",
+          "avoid": "Coordinator, cola"
+        },
+        {
+          "term": "Capacity Slot",
+          "description": "Una unidad aislada de simultaneidad Worker con su propio contexto, credenciales, punto de control y alcance de efectos secundarios Group.",
+          "avoid": "Agent identidad, hilo"
+        },
+        {
+          "term": "Resource Budget",
+          "description": "Límites estrictos de costos financieros, tokens de modelo, llamadas de herramientas, tiempo de cálculo, tiempo de pared y acciones externas asignadas a Mission, WorkItem o Delegation Grant.",
+          "avoid": "Estimación, prioridad"
+        },
+        {
+          "term": "Budget Ledger",
+          "description": "La cuenta jerárquica autorizada de límites asignados, uso acumulativo y capacidad restante para Missions y WorkItems.",
+          "avoid": "Medidor de token local, estimación de costos"
+        },
+        {
+          "term": "Resource Usage Record",
+          "description": "Un delta de recursos firmado distinto de cero vinculado a WorkItem, Ownership Epoch y Execution Lease y transferido atómicamente a través de su ascendencia presupuestaria.",
+          "avoid": "Porcentaje de avance, asignación presupuestaria"
+        },
+        {
+          "term": "Approval",
+          "description": "Una decisión firmada duradera que acepta una revisión Mission específica y un conjunto Artifact exacto.",
+          "avoid": "Coordinator revisión, verificación"
+        },
+        {
+          "term": "Execution Approval",
+          "description": "Una decisión humana firmada con un límite de tiempo que permite operaciones, recursos y presupuesto específicos de alto riesgo para un WorkItem Ownership Epoch antes de que se emita un token de capacidad.",
+          "avoid": "Approval final, Work Offer"
+        },
+        {
+          "term": "Cooperation Override Grant",
+          "description": "Una aprobación duradera y única para que un Principal supere un límite de cooperación a través de un Command exacto en un Mission Group antes de un vencimiento establecido.",
+          "avoid": "Anulación booleana, exención reutilizable"
+        },
+        {
+          "term": "Group Snapshot",
+          "description": "Una proyección de archivo firmada a través de una secuencia Group específica, vinculada al Event retenido y al historial del registro de políticas a partir del cual se produjo.",
+          "avoid": "Copia de seguridad de base de datos mutable"
+        },
+        {
+          "term": "Policy Log",
+          "description": "Un registro de solo anexar de decisiones de autorización, presupuesto, riesgo, escalamiento y redacción necesarias para auditar las transiciones de estado de un Group.",
+          "avoid": "Seguimiento de razonamiento Agent"
+        },
+        {
+          "term": "Extension Profile",
+          "description": "Un paquete de esquema y semántica versionado y aprobado por la organización que no puede anular las invariantes principales.",
+          "avoid": "Complemento, tipo de evento arbitrario"
+        },
+        {
+          "term": "Child Mission display name",
+          "description": "La prosa localizada usa `子任务` tanto en chino simplificado como en chino tradicional, `サブタスク` en japonés, `subtarea` en español, `sous-tâche` en francés y `Unteraufgabe` en alemán. Cada nombre designa un Child Mission completo con su propio Group, Coordinator, presupuesto y ciclo de Approval, nunca un WorkItem; la prosa china usa `工作项` en chino simplificado o `工作項` en chino tradicional para WorkItem.",
+          "avoid": "`子 Mission`, `子使命`, `子ミッション`, `Mission hija`, `Mission enfant`, formas alemanas basadas en `untergeordnete Mission`, `子任務` y el uso de `子任务` para WorkItem"
+        }
+      ]
+    },
+    "fr": {
+      "introduction": "Ce contexte définit la terminologie des Mission internes à une Organization accomplies par des Groups d’Agents autonomes dirigés par un Coordinator.",
+      "sectionTitles": [
+        "Identité du protocole",
+        "Organization et identité",
+        "Collaboration dans une Mission",
+        "Conversation et travail",
+        "Coordination et état",
+        "Terminologie localisée"
+      ],
+      "entries": [
+        {
+          "term": "MissionWeaveProtocol",
+          "description": "Le protocole canonique de coopération interne à l'organisation pour Agents autonome fonctionnant dans Mission Groups.",
+          "avoid": "Noms de produits abrégés, espacés ou alternatifs"
+        },
+        {
+          "term": "Organization",
+          "description": "La racine de gouvernance approuvée qui enregistre Agents, définit la stratégie et authentifie les humains.",
+          "avoid": "Réseau, fédération"
+        },
+        {
+          "term": "Agent",
+          "description": "Un seul environnement d'exécution planifié indépendamment avec une identité stable et au plus une session active.",
+          "avoid": "Service, réplique, pool de processus"
+        },
+        {
+          "term": "Agent Card",
+          "description": "Une description signée par l'organisation de l'identité stable et des capacités vérifiées d'un Agent.",
+          "avoid": "Profil, présence"
+        },
+        {
+          "term": "Agent Registry",
+          "description": "La source contrôlée par Organization du Agent Cards actuel, les liaisons de clé de signature immuables, leur historique de validité et les preuves de capacité pour le Principals enregistré.",
+          "avoid": "Service de présence, découverte par les pairs"
+        },
+        {
+          "term": "Signed Document",
+          "description": "Un objet de protocole durable dont la signature de niveau supérieur requise authentifie son contenu canonique sous un Signed Document Verification Profile.",
+          "avoid": "Authentification de session, trame de transport"
+        },
+        {
+          "term": "Signed Document Verification Profile",
+          "description": "Le mappage normatif d'un schéma de document signé durable à son heure de signature protégée et à son signataire attendu pour la vérification de la signature et de la validité des clés.",
+          "avoid": "Authentification de session, négociation d'algorithmes"
+        },
+        {
+          "term": "First-Admission Record",
+          "description": "Un enregistrement d'acceptation contrôlé par Organization qui lie le hachage de signature d'un Signed Document, l'ID de clé de signature, le signataire Principal et l’horodatage d’acceptation de confiance. Il est externe au Signed Document et à son profil de vérification.",
+          "avoid": "Heure locale de première connexion, horodatage fourni par le signataire, auto-authentification Event"
+        },
+        {
+          "term": "Principal",
+          "description": "Un service Agent, humain ou Organization authentifié qui peut être nommé comme acteur ou propriétaire d'un objet de protocole.",
+          "avoid": "Nom d'affichage, utilisateur non authentifié"
+        },
+        {
+          "term": "Presence Record",
+          "description": "Informations éphémères sur la disponibilité, la capacité et le battement de cœur récent d'un Agent.",
+          "avoid": "le confondre avec Agent Card"
+        },
+        {
+          "term": "Capability",
+          "description": "Un type de travail versionné et régi par l'organisation qu'un Agent est vérifié pour effectuer.",
+          "avoid": "Autorisation, compétence de forme libre"
+        },
+        {
+          "term": "Group Authority",
+          "description": "Infrastructure Organization qui authentifie les acteurs, valide la politique et Membership, sérialise les transitions Group et ajoute Events sans agir en tant que gestionnaire sémantique de Mission.",
+          "avoid": "Coordinator, protocole de consensus"
+        },
+        {
+          "term": "Authorization Service",
+          "description": "Le service Organization qui évalue la stratégie d'exécution et émet des jetons de capacité de courte durée après la réussite des vérifications d'affectation, de location, de budget et d'approbation.",
+          "avoid": "le confondre avec Agent Registry ou Scheduler"
+        },
+        {
+          "term": "Capability Token",
+          "description": "Une subvention d'exécution de courte durée liée à une session Worker, WorkItem, Ownership Epoch, Execution Lease, aux opérations et ressources autorisées et aux budgets limités.",
+          "avoid": "Capability, identifiant réutilisable"
+        },
+        {
+          "term": "Membership Token",
+          "description": "Autorisation de courte durée liée à un ensemble de rôles Principal, Group, Membership Epoch, Session Epoch et de moindre privilège.",
+          "avoid": "Capability Token, abonnement"
+        },
+        {
+          "term": "Mission",
+          "description": "Un objectif limité avec une définition du réalisé, du budget, du délai et du cycle de vie d'approbation.",
+          "avoid": "Projet, tâche"
+        },
+        {
+          "term": "Child Mission",
+          "description": "Un Mission créé pour compléter un complexe WorkItem d'un parent Mission.",
+          "avoid": "Sous-tâche"
+        },
+        {
+          "term": "Follow-up Mission",
+          "description": "Un nouveau Mission lié à un Mission approuvé immuable lorsqu'une correction ultérieure ou un travail supplémentaire est requis.",
+          "avoid": "Modification d'un Mission approuvé"
+        },
+        {
+          "term": "Group",
+          "description": "L'espace de collaboration temporaire et l'historique partagé appartenant à exactement un Mission.",
+          "avoid": "Chaîne, salle, équipe"
+        },
+        {
+          "term": "MissionOwner",
+          "description": "Principal responsable d'un Mission. Une racine MissionOwner est humaine et détient l’autorité d’approbation finale, d’annulation et de remplacement de Coordinator. Un enfant MissionOwner est le parent Coordinator et approuve le résultat enfant au nom de son parent WorkItem ; la politique de risque de l’organisation peut en outre nécessiter l’approbation humaine directe.",
+          "avoid": "Utilisateur, administrateur"
+        },
+        {
+          "term": "Coordinator",
+          "description": "Le Agent remplaçable responsable de la planification, de l'affectation, de la surveillance, de l'intégration et de la soumission.",
+          "avoid": "POC Agent, service gestionnaire, séquenceur"
+        },
+        {
+          "term": "Worker",
+          "description": "Un Agent qui accepte et exécute WorkItems à l'aide de ses propres files d'attente et de Scheduler.",
+          "avoid": "Sous-agent, outil"
+        },
+        {
+          "term": "Membership",
+          "description": "Autorisation étendue connectant un Agent ou un MissionOwner à un Group.",
+          "avoid": "Abonnement, présence"
+        },
+        {
+          "term": "Work Delegate",
+          "description": "Un membre du Group habilité à autoriser des WorkItems de portée limitée au moyen d’un Delegation Grant explicite ; le rôle lui-même ne confère aucun pouvoir de définition du travail.",
+          "avoid": "Coordinator, administrateur sans restriction"
+        },
+        {
+          "term": "Delegation Grant",
+          "description": "Une autorisation faisant autorité et non transférable du Coordinator actuel à un Work Delegate pour un sous-arbre WorkItem cible, délimitée par les versions de fonctionnalités, le Resource Budget cumulatif, la profondeur des descendants, l'expiration, ainsi que Membership et Coordinator Epochs. Il se termine lorsque sa cible devient terminale.",
+          "avoid": "Nom du rôle seul, informations d'identification transférables"
+        },
+        {
+          "term": "Conversation",
+          "description": "Un thread auditable de Messages étendu à un Group ou à un WorkItem.",
+          "avoid": "Session, journal de discussion"
+        },
+        {
+          "term": "Message",
+          "description": "Contexte conversationnel engagé qui n’accorde jamais d’autorité exécutable par lui-même.",
+          "avoid": "le confondre avec Command ou une instruction"
+        },
+        {
+          "term": "WorkItem",
+          "description": "Une unité explicite de Mission fonctionne avec un propriétaire, un cycle de vie, des dépendances et Work Contract.",
+          "avoid": "Message, Mission, tâche"
+        },
+        {
+          "term": "Work Proposal",
+          "description": "Une demande non exécutable de la part d'un membre Group pour créer un WorkItem ; seul un Coordinator ou un délégué étendu peut l'autoriser dans une obligation exécutable.",
+          "avoid": "Affectation, autorité Message uniquement"
+        },
+        {
+          "term": "Work Offer",
+          "description": "Une invitation expirant pour un Worker éligible à accepter un WorkItem après le contrôle d'admission local.",
+          "avoid": "Cession, propriété"
+        },
+        {
+          "term": "Admission Control",
+          "description": "Décision du Worker selon laquelle un WorkItem proposé correspond à ses contraintes de capacité, d'autorisation, de capacité de file d'attente, de délai, de dépendance et de budget avant acceptation.",
+          "avoid": "Affectation Coordinator, priorité de planification"
+        },
+        {
+          "term": "Selection Basis",
+          "description": "Faits vérifiables utilisés pour choisir un Worker proposé, y compris les correspondances de capacités, l'éligibilité à l'autorisation, la disponibilité, le coût, la fiabilité Evidence et la politique appliquée.",
+          "avoid": "Raisonnement privé, invite de classement"
+        },
+        {
+          "term": "Work Contract",
+          "description": "L'objectif, les livrables, les critères d'acceptation, les entrées, les autorisations, la date limite et le budget de nouvelle tentative d'un WorkItem.",
+          "avoid": "Invite, demande"
+        },
+        {
+          "term": "Artifact",
+          "description": "Un livrable immuable adressé au contenu produit ou référencé par l'œuvre Mission.",
+          "avoid": "Pièce jointe, charge utile du message"
+        },
+        {
+          "term": "Evidence",
+          "description": "Faits enregistrés utilisés pour évaluer un Artifact ou un WorkItem par rapport à ses critères d'acceptation.",
+          "avoid": "Opinion, chaîne de pensée"
+        },
+        {
+          "term": "Checkpoint",
+          "description": "Une référence d'état d'exécution structurée, durable et pouvant être reprise en toute sécurité, utilisée pour le blocage, la récupération et la préemption coopérative.",
+          "avoid": "Pourcentage de progression, vidage de la mémoire privée"
+        },
+        {
+          "term": "Context Package",
+          "description": "Un résumé signé et versionné avec provenance qui donne un contexte Mission de portée Agent.",
+          "avoid": "Vidage de mémoire, transcription"
+        },
+        {
+          "term": "Command",
+          "description": "Une demande signée par un acteur autorisé pour effectuer une transition d'état structurée.",
+          "avoid": "le confondre avec Message ou Event"
+        },
+        {
+          "term": "Action ID",
+          "description": "Un identifiant stable choisi par un acteur Command afin que les tentatives de contenu signé identique soient idempotentes et que la réutilisation conflictuelle soit rejetée.",
+          "avoid": "Event ID, numéro de tentative"
+        },
+        {
+          "term": "Correlation ID",
+          "description": "Un identifiant reliant Commands, Events et les travaux externes associés sans imposer d’ordre.",
+          "avoid": "Séquence Group, Action ID"
+        },
+        {
+          "term": "Event",
+          "description": "Un fait immuable et accepté. Un Group Event appartient à l'histoire monotone d'un Group ; les faits d'enregistrement Agent Card et d'activation de session explicitement définis sont Events de portée Organization sans séquence Group.",
+          "avoid": "le confondre avec Command ou une notification"
+        },
+        {
+          "term": "Cursor",
+          "description": "Position contiguë la plus élevée Group Event traitée durablement par un Agent.",
+          "avoid": "Décalage, horodatage"
+        },
+        {
+          "term": "Attention Filter",
+          "description": "Une préférence de livraison qui restreint le trafic Group en direct tout en préservant le droit du membre de récupérer l'historique autorisé.",
+          "avoid": "Membership visibilité, contrôle d'accès"
+        },
+        {
+          "term": "Delivery",
+          "description": "Transport au moins une fois de Events durable vers un membre Group autorisé, avec déduplication par ID Event et progression reconnue par Cursor.",
+          "avoid": "Effet secondaire exactement une fois"
+        },
+        {
+          "term": "Replay",
+          "description": "Remise en lecture ordonnée des Events d’un Group après un Cursor persistant, sous réserve de la visibilité de Membership.",
+          "avoid": "Ordonnancement inter-Group"
+        },
+        {
+          "term": "Membership Epoch",
+          "description": "Une valeur monotone séparant Commands, des jetons et Delegation Grants émis sous une ancienne version d'un Group Membership.",
+          "avoid": "Session Epoch, Présence"
+        },
+        {
+          "term": "Coordinator Epoch",
+          "description": "Une valeur monotone clôturant un Coordinator remplacé, son bail de rôle précédent et son Delegation Grants.",
+          "avoid": "Ownership Epoch, mandat d'élection du chef"
+        },
+        {
+          "term": "Ownership Lease",
+          "description": "Une réservation limitée qui conserve un Worker attribué à un WorkItem exclusif avant et entre les périodes d'exécution actives.",
+          "avoid": "Execution Lease, affectation permanente"
+        },
+        {
+          "term": "Execution Lease",
+          "description": "Une subvention renouvelable et clôturée permettant à une session Worker et à Ownership Epoch d'exécuter un WorkItem exclusif. L'exécution Commands fait référence à son ID de bail stable ; les jetons de capacité de courte durée sont liés à cet ID de bail et peuvent tourner sans modifier le bail.",
+          "avoid": "Verrouillage, affectation"
+        },
+        {
+          "term": "Session Epoch",
+          "description": "Une séparation de valeurs monotones a remplacé les environnements d'exécution qui partagent une identité Agent au fil du temps.",
+          "avoid": "Bail WorkItem"
+        },
+        {
+          "term": "Ownership Epoch",
+          "description": "Une valeur monotone clôturant les anciens propriétaires d’un WorkItem exclusif.",
+          "avoid": "Époque de la session"
+        },
+        {
+          "term": "Scheduler",
+          "description": "Stratégie appartenant à Worker qui sélectionne les WorkItems éligibles dans ses files d'attente et ses emplacements de capacité par Group.",
+          "avoid": "Coordinator, file d'attente"
+        },
+        {
+          "term": "Capacity Slot",
+          "description": "Une unité isolée de concurrence Worker avec son propre contexte Group, ses informations d'identification, son point de contrôle et sa portée d'effets secondaires.",
+          "avoid": "Agent identité, thread"
+        },
+        {
+          "term": "Resource Budget",
+          "description": "Limites strictes sur le coût financier, les jetons de modèle, les appels d'outils, le temps de calcul, le temps de mur et les actions externes allouées à un Mission, WorkItem ou Delegation Grant.",
+          "avoid": "Devis, priorité"
+        },
+        {
+          "term": "Budget Ledger",
+          "description": "Compte hiérarchique faisant autorité des limites allouées, de l'utilisation cumulée et de la capacité restante pour Missions et WorkItems.",
+          "avoid": "Compteur à jetons local, estimation des coûts"
+        },
+        {
+          "term": "Resource Usage Record",
+          "description": "Un delta de ressource signé différent de zéro lié à un WorkItem, Ownership Epoch et Execution Lease et déployé de manière atomique dans son ascendance budgétaire.",
+          "avoid": "Pourcentage d'avancement, allocation budgétaire"
+        },
+        {
+          "term": "Approval",
+          "description": "Une décision durable signée acceptant une révision Mission spécifique et un ensemble Artifact exact.",
+          "avoid": "Coordinator révision, vérification"
+        },
+        {
+          "term": "Execution Approval",
+          "description": "Décision humaine signée et limitée dans le temps autorisant des opérations, des ressources et un budget à haut risque spécifiés pour un WorkItem Ownership Epoch avant l'émission d'un jeton de capacité.",
+          "avoid": "Finale Approval, Work Offer"
+        },
+        {
+          "term": "Cooperation Override Grant",
+          "description": "Une approbation unique et durable pour qu'un Principal dépasse une limite de coopération via un Command exact dans un Mission Group avant une expiration indiquée.",
+          "avoid": "Remplacement booléen, exemption réutilisable"
+        },
+        {
+          "term": "Group Snapshot",
+          "description": "Une projection d'archives signée via une séquence Group spécifique, liée au Event conservé et à l'historique du journal de politique à partir duquel elle a été produite.",
+          "avoid": "Sauvegarde de base de données mutable"
+        },
+        {
+          "term": "Policy Log",
+          "description": "Un enregistrement en annexe uniquement des décisions d'autorisation, de budget, de risque, d'escalade et de rédaction nécessaires pour auditer les transitions d'état d'un Group.",
+          "avoid": "Trace de raisonnement Agent"
+        },
+        {
+          "term": "Extension Profile",
+          "description": "Un package de schéma et de sémantique versionné et approuvé par l’organisation qui ne peut pas remplacer les invariants principaux.",
+          "avoid": "Plugin, type d'événement arbitraire"
+        },
+        {
+          "term": "Child Mission display name",
+          "description": "La prose localisée emploie `子任务` en chinois simplifié comme en chinois traditionnel, `サブタスク` en japonais, `subtarea` en espagnol, `sous-tâche` en français et `Unteraufgabe` en allemand. Chaque nom désigne un Child Mission complet avec son propre Group, son Coordinator, son budget et son cycle d’Approval, jamais un WorkItem ; la prose chinoise emploie `工作项` en chinois simplifié ou `工作項` en chinois traditionnel pour WorkItem.",
+          "avoid": "`子 Mission`, `子使命`, `子ミッション`, `Mission hija`, `Mission enfant`, les formes allemandes fondées sur `untergeordnete Mission`, `子任務` et l’emploi de `子任务` pour WorkItem"
+        }
+      ]
+    },
+    "de": {
+      "introduction": "Dieser Kontext definiert die Terminologie für Organization-interne Missions, die von einem Coordinator geführte Groups autonomer Agents ausführen.",
+      "sectionTitles": [
+        "Protokollidentität",
+        "Organization und Identität",
+        "Zusammenarbeit in Missions",
+        "Conversation und Arbeit",
+        "Koordination und Zustand",
+        "Lokalisierte Terminologie"
+      ],
+      "entries": [
+        {
+          "term": "MissionWeaveProtocol",
+          "description": "Das kanonische organisationsinterne Kooperationsprotokoll für autonomes Agents Arbeiten in Mission Groups.",
+          "avoid": "Abgekürzte, mit Leerzeichen versehene oder alternative Produktnamen"
+        },
+        {
+          "term": "Organization",
+          "description": "Der vertrauenswürdige Governance-Stamm, der Agents registriert, Richtlinien definiert und Menschen authentifiziert.",
+          "avoid": "Netzwerk, Föderation"
+        },
+        {
+          "term": "Agent",
+          "description": "Eine einzelne, unabhängig geplante Laufzeit mit einer stabilen Identität und höchstens einer aktiven Sitzung.",
+          "avoid": "Dienst, Replikat, Prozesspool"
+        },
+        {
+          "term": "Agent Card",
+          "description": "Eine von der Organisation signierte Beschreibung der stabilen Identität und der überprüften Funktionen eines Agent.",
+          "avoid": "Profil, Präsenz"
+        },
+        {
+          "term": "Agent Registry",
+          "description": "Die von Organization kontrollierte Quelle des aktuellen Agent Cards, unveränderlicher Signaturschlüsselbindungen, deren Gültigkeitsverlauf und Fähigkeitsnachweise für registriertes Principals.",
+          "avoid": "Präsenzdienst, Peer Discovery"
+        },
+        {
+          "term": "Signed Document",
+          "description": "Ein dauerhaftes Protokollobjekt, dessen erforderliche Signatur der obersten Ebene seinen kanonischen Inhalt unter einem Signed Document Verification Profile authentifiziert.",
+          "avoid": "Sitzungsauthentifizierung, Transportrahmen"
+        },
+        {
+          "term": "Signed Document Verification Profile",
+          "description": "Die normative Zuordnung von einem dauerhaft signierten Dokumentschema zu seiner geschützten signierten Zeit und dem erwarteten Unterzeichner für die Überprüfung der Signatur und Schlüsselgültigkeit.",
+          "avoid": "Sitzungsauthentifizierung, Algorithmusverhandlung"
+        },
+        {
+          "term": "First-Admission Record",
+          "description": "Ein von Organization gesteuerter Akzeptanzdatensatz, der den Signatur-Hash, die Signaturschlüssel-ID, den Unterzeichner Principal und die vertrauenswürdige Akzeptanzzeit eines Signed Document bindet. Es liegt außerhalb des Signed Document und seines Verifizierungsprofils.",
+          "avoid": "Lokale Zeit des ersten Auftretens, vom Unterzeichner bereitgestellter Zeitstempel, Selbstauthentifizierung Event"
+        },
+        {
+          "term": "Principal",
+          "description": "Ein authentifizierter Agent-, menschlicher oder Organization-Dienst, der als Akteur oder Besitzer eines Protokollobjekts benannt werden kann.",
+          "avoid": "Anzeigename, nicht authentifizierter Benutzer"
+        },
+        {
+          "term": "Presence Record",
+          "description": "Kurzlebige Informationen über die Verfügbarkeit, Kapazität und den aktuellen Heartbeat eines Agent.",
+          "avoid": "Verwechslung mit Agent Card"
+        },
+        {
+          "term": "Capability",
+          "description": "Eine versionierte, organisationsgesteuerte Art von Arbeit, für deren Ausführung ein Agent verifiziert wird.",
+          "avoid": "Erlaubnis, Freiformfähigkeit"
+        },
+        {
+          "term": "Group Authority",
+          "description": "Organization-Infrastruktur, die Akteure authentifiziert, Richtlinien und Membership validiert, Group-Übergänge serialisiert und Events anhängt, ohne als semantischer Manager von Mission zu fungieren.",
+          "avoid": "Coordinator, Konsensprotokoll"
+        },
+        {
+          "term": "Authorization Service",
+          "description": "Der Organization-Dienst, der die Ausführungsrichtlinie auswertet und kurzlebige, bereichsbezogene Fähigkeitstoken ausgibt, nachdem Zuweisungs-, Leasing-, Budget- und Genehmigungsprüfungen erfolgreich waren.",
+          "avoid": "Verwechslung mit Agent Registry oder Scheduler"
+        },
+        {
+          "term": "Capability Token",
+          "description": "Eine kurzlebige Ausführungsgenehmigung, die an eine Worker-Sitzung, WorkItem, Ownership Epoch, Execution Lease, zulässige Vorgänge und Ressourcen sowie begrenzte Budgets gebunden ist.",
+          "avoid": "Capability, wiederverwendbare Anmeldeinformationen"
+        },
+        {
+          "term": "Membership Token",
+          "description": "Eine kurzlebige Autorisierung, die an einen Rollensatz Principal, Group, Membership Epoch, Session Epoch und die geringsten Rechte gebunden ist.",
+          "avoid": "Capability Token, Abonnement"
+        },
+        {
+          "term": "Mission",
+          "description": "Ein begrenztes Ziel mit einer Definition von erledigt, Budget, Frist und Genehmigungslebenszyklus.",
+          "avoid": "Projekt, Aufgabe"
+        },
+        {
+          "term": "Child Mission",
+          "description": "Ein Mission wurde erstellt, um einen komplexen WorkItem eines übergeordneten Mission zu vervollständigen.",
+          "avoid": "Unteraufgabe"
+        },
+        {
+          "term": "Follow-up Mission",
+          "description": "Ein neues Mission, das mit einem unveränderlichen genehmigten Mission verknüpft ist, wenn spätere Korrekturen oder zusätzliche Arbeiten erforderlich sind.",
+          "avoid": "Bearbeiten eines genehmigten Mission"
+        },
+        {
+          "term": "Group",
+          "description": "Der temporäre Kollaborationsraum und die gemeinsame Historie, die zu genau einem Mission gehören.",
+          "avoid": "Kanal, Raum, Team"
+        },
+        {
+          "term": "MissionOwner",
+          "description": "Der verantwortliche Prinzipal eines Mission. Ein Root-MissionOwner ist ein Mensch und verfügt über die endgültige Genehmigung, Löschung und Coordinator-Ersetzungsberechtigung. Ein untergeordnetes MissionOwner ist das übergeordnete Coordinator und genehmigt das untergeordnete Ergebnis im Namen seines übergeordneten WorkItem. Die Risikopolitik der Organisation erfordert möglicherweise zusätzlich eine direkte menschliche Genehmigung.",
+          "avoid": "Benutzer, Administrator"
+        },
+        {
+          "term": "Coordinator",
+          "description": "Der austauschbare Agent ist für Planung, Zuweisung, Überwachung, Integration und Übermittlung verantwortlich.",
+          "avoid": "POC Agent, Managerdienst, Sequenzer"
+        },
+        {
+          "term": "Worker",
+          "description": "Ein Agent, der WorkItems unter Verwendung seiner eigenen Warteschlangen und Scheduler akzeptiert und ausführt.",
+          "avoid": "Subagent, Werkzeug"
+        },
+        {
+          "term": "Membership",
+          "description": "Die bereichsbezogene Autorisierung, die einen Agent oder MissionOwner mit einem Group verbindet.",
+          "avoid": "Abonnement, Präsenz"
+        },
+        {
+          "term": "Work Delegate",
+          "description": "Ein Group-Mitglied, das berechtigt ist, WorkItems mit engem Gültigkeitsbereich über ein explizites Delegation Grant zu autorisieren; Die Rolle selbst gewährt keine Autorisierungsbefugnis.",
+          "avoid": "Coordinator, uneingeschränkter Administrator"
+        },
+        {
+          "term": "Delegation Grant",
+          "description": "Eine maßgebliche, nicht übertragbare Autorisierung vom aktuellen Coordinator auf einen Work Delegate für einen Ziel-WorkItem-Unterbaum, begrenzt durch Fähigkeitsversionen, kumulatives Resource Budget, Nachkommentiefe, Ablauf sowie Membership und Coordinator Epochs. Es endet, wenn sein Ziel zum Terminal wird.",
+          "avoid": "Nur Rollenname, übertragbare Anmeldeinformationen"
+        },
+        {
+          "term": "Conversation",
+          "description": "Ein überprüfbarer Thread von Messages, der auf einen Group oder einen WorkItem beschränkt ist.",
+          "avoid": "Sitzung, Chatprotokoll"
+        },
+        {
+          "term": "Message",
+          "description": "Engagierter Konversationskontext, der niemals selbst ausführbare Autorität gewährt.",
+          "avoid": "Command, Anweisung"
+        },
+        {
+          "term": "WorkItem",
+          "description": "Eine explizite Einheit von Mission arbeitet mit einem Besitzer, einem Lebenszyklus, Abhängigkeiten und Work Contract.",
+          "avoid": "Message, Mission, Auftrag"
+        },
+        {
+          "term": "Work Proposal",
+          "description": "Eine nicht ausführbare Anfrage eines Group-Mitglieds zum Erstellen eines WorkItem; Nur ein Coordinator oder ein bereichsbezogener Delegat kann es in eine ausführbare Verpflichtung autorisieren.",
+          "avoid": "Zuweisung, nur Message-Berechtigung"
+        },
+        {
+          "term": "Work Offer",
+          "description": "Eine ablaufende Einladung für einen berechtigten Worker, einen WorkItem nach der lokalen Zugangskontrolle anzunehmen.",
+          "avoid": "Abtretung, Eigentum"
+        },
+        {
+          "term": "Admission Control",
+          "description": "Die Entscheidung des Worker, dass ein angebotener WorkItem vor der Annahme seinen Fähigkeiten, Autorisierungen, Warteschlangenkapazitäten, Fristen, Abhängigkeiten und Budgetbeschränkungen entspricht.",
+          "avoid": "Coordinator-Zuweisung, Planungspriorität"
+        },
+        {
+          "term": "Selection Basis",
+          "description": "Die überprüfbaren Fakten, die zur Auswahl eines angebotenen Worker verwendet werden, einschließlich Fähigkeitsübereinstimmungen, Autorisierungsberechtigung, Verfügbarkeit, Kosten, Zuverlässigkeit Evidence und angewandte Richtlinie.",
+          "avoid": "Private Argumentation, Einstufungsaufforderung"
+        },
+        {
+          "term": "Work Contract",
+          "description": "Das Ziel, die Ergebnisse, die Akzeptanzkriterien, die Eingaben, die Berechtigungen, die Frist und das Wiederholungsbudget eines WorkItem.",
+          "avoid": "Prompt, Anfrage"
+        },
+        {
+          "term": "Artifact",
+          "description": "Ein unveränderlicher, inhaltsadressierter Liefergegenstand, der durch ein Mission-Werk erstellt oder referenziert wird.",
+          "avoid": "Anhang, Nachrichtennutzlast"
+        },
+        {
+          "term": "Evidence",
+          "description": "Aufgezeichnete Fakten, die zur Bewertung eines Artifact oder WorkItem anhand seiner Akzeptanzkriterien verwendet werden.",
+          "avoid": "Meinung, Gedankenkette"
+        },
+        {
+          "term": "Checkpoint",
+          "description": "Eine strukturierte, dauerhafte Referenz zum Ausführungsstatus, die sicher wiederaufgenommen werden kann und für Blockierung, Wiederherstellung und kooperative Präemption verwendet wird.",
+          "avoid": "Prozentualer Fortschritt, privater Speicherauszug"
+        },
+        {
+          "term": "Context Package",
+          "description": "Eine signierte, versionierte Zusammenfassung mit Herkunft, die einen Agent-kontextbezogenen Mission-Kontext angibt.",
+          "avoid": "Speicherauszug, Transkript"
+        },
+        {
+          "term": "Command",
+          "description": "Eine signierte Anfrage eines autorisierten Akteurs, einen strukturierten Zustandsübergang durchzuführen.",
+          "avoid": "Verwechslung mit Message oder Event"
+        },
+        {
+          "term": "Action ID",
+          "description": "Eine stabile Kennung, die von einem Command-Akteur ausgewählt wird, sodass Wiederholungsversuche identischer signierter Inhalte idempotent sind und eine widersprüchliche Wiederverwendung abgelehnt wird.",
+          "avoid": "Event ID, Versuchsnummer"
+        },
+        {
+          "term": "Correlation ID",
+          "description": "Eine Kennung, die verwandte Commands, Events und externe Arbeiten verknüpft, ohne eine Reihenfolge festzulegen.",
+          "avoid": "Group-Sequenz, Action ID"
+        },
+        {
+          "term": "Event",
+          "description": "Eine unveränderlich akzeptierte Tatsache. Ein Group Event gehört zur monotonen Geschichte eines Group; Die explizit definierten Agent Card-Registrierungs- und Sitzungsaktivierungsfakten sind Organization-gültig, Events ohne eine Group-Sequenz.",
+          "avoid": "Command, Benachrichtigung"
+        },
+        {
+          "term": "Cursor",
+          "description": "Die höchste zusammenhängende Group Event Position, die dauerhaft von einem Agent verarbeitet wird.",
+          "avoid": "Offset, Zeitstempel"
+        },
+        {
+          "term": "Attention Filter",
+          "description": "Eine Zustellungseinstellung, die den Live-Group-Verkehr einschränkt und gleichzeitig das Recht des Mitglieds auf den Abruf des autorisierten Verlaufs beibehält.",
+          "avoid": "Membership Sichtbarkeit, Zugriffskontrolle"
+        },
+        {
+          "term": "Delivery",
+          "description": "Mindestens einmaliger Transport von dauerhaftem Events zu einem autorisierten Group-Mitglied, mit Deduplizierung durch Event-ID und Fortschrittsbestätigung durch Cursor.",
+          "avoid": "Genau eine einmalige Nebenwirkung"
+        },
+        {
+          "term": "Replay",
+          "description": "Geordnete erneute Zustellung der Events eines Group nach einem dauerhaften Cursor, vorbehaltlich der Membership-Sichtbarkeit.",
+          "avoid": "Group-übergreifende Reihenfolge"
+        },
+        {
+          "term": "Membership Epoch",
+          "description": "Ein monotoner Wert, der Commands, Token und Delegation Grants unter einer älteren Version von Group und Membership abgrenzt.",
+          "avoid": "Session Epoch, Anwesenheit"
+        },
+        {
+          "term": "Coordinator Epoch",
+          "description": "Ein monotoner Wert, der einen ersetzten Coordinator, seinen vorherigen Rollenleasingvertrag und seinen Delegation Grants abgrenzt.",
+          "avoid": "Ownership Epoch, Wahlperiode des Leiters"
+        },
+        {
+          "term": "Ownership Lease",
+          "description": "Eine begrenzte Reservierung, die vor und zwischen aktiven Ausführungszeiträumen einen Worker einem exklusiven WorkItem zugewiesen hält.",
+          "avoid": "Execution Lease, permanente Zuweisung"
+        },
+        {
+          "term": "Execution Lease",
+          "description": "Ein verlängerbarer, abgegrenzter Zuschuss, der es einer Worker-Sitzung und Ownership Epoch ermöglicht, eine exklusive WorkItem-Sitzung auszuführen. Die Ausführung Commands verweist auf ihre stabile Lease-ID. Kurzlebige Funktionstokens sind an diese Lease-ID gebunden und können rotieren, ohne dass sich die Lease ändert.",
+          "avoid": "Sperre, Zuordnung"
+        },
+        {
+          "term": "Session Epoch",
+          "description": "Eine monotone Werteabgrenzung ersetzte Laufzeiten, die im Laufe der Zeit eine Agent-Identität teilen.",
+          "avoid": "WorkItem-Leasing"
+        },
+        {
+          "term": "Ownership Epoch",
+          "description": "Ein monotoner Wert, der Vorbesitzer eines exklusiven WorkItem abschirmt.",
+          "avoid": "Sitzungsepoche"
+        },
+        {
+          "term": "Scheduler",
+          "description": "Die Worker-eigene Richtlinie, die berechtigte WorkItems in ihren Warteschlangen und Kapazitätsslots pro Group auswählt.",
+          "avoid": "Coordinator, Warteschlange"
+        },
+        {
+          "term": "Capacity Slot",
+          "description": "Eine isolierte Einheit der Worker-Parallelität mit eigenem Group-Kontext, eigenen Anmeldeinformationen, Prüfpunkten und Nebeneffektbereich.",
+          "avoid": "Agent Identität, Thread"
+        },
+        {
+          "term": "Resource Budget",
+          "description": "Feste Grenzen für finanzielle Kosten, Modelltokens, Toolaufrufe, Rechenzeit, Wandzeit und externe Aktionen, die einem Mission, WorkItem oder Delegation Grant zugewiesen sind.",
+          "avoid": "Schätzung, Priorität"
+        },
+        {
+          "term": "Budget Ledger",
+          "description": "Das maßgebliche hierarchische Konto der zugewiesenen Grenzwerte, der kumulativen Nutzung und der verbleibenden Kapazität für Missions und WorkItems.",
+          "avoid": "Lokaler Wertmarkenzähler, Kostenvoranschlag"
+        },
+        {
+          "term": "Resource Usage Record",
+          "description": "Ein signiertes Ressourcendelta ungleich Null, das an WorkItem, Ownership Epoch und Execution Lease gebunden ist und seine Budget-Abstammung atomar durchläuft.",
+          "avoid": "Fortschrittsprozentsatz, Budgetzuweisung"
+        },
+        {
+          "term": "Approval",
+          "description": "Eine dauerhaft unterzeichnete Entscheidung, die eine bestimmte Mission-Revision und einen genauen Artifact-Satz akzeptiert.",
+          "avoid": "Coordinator Überprüfung, Verifizierung"
+        },
+        {
+          "term": "Execution Approval",
+          "description": "Eine zeitlich begrenzte, signierte menschliche Entscheidung, die bestimmte Vorgänge, Ressourcen und Budgets mit hohem Risiko für einen WorkItem Ownership Epoch zulässt, bevor ein Fähigkeitstoken ausgestellt wird.",
+          "avoid": "Endgültiges Approval, Work Offer"
+        },
+        {
+          "term": "Cooperation Override Grant",
+          "description": "Eine dauerhafte, einmalige Genehmigung für einen Principal zum Überschreiten eines Kooperationslimits um genau einen Command in einem Mission Group vor einem festgelegten Ablauf.",
+          "avoid": "Boolesche Überschreibung, wiederverwendbare Ausnahme"
+        },
+        {
+          "term": "Group Snapshot",
+          "description": "Eine signierte Archivprojektion über eine bestimmte Group-Sequenz, verknüpft mit dem beibehaltenen Event und dem Richtlinienprotokollverlauf, aus dem sie erstellt wurde.",
+          "avoid": "Veränderbare Datenbanksicherung"
+        },
+        {
+          "term": "Policy Log",
+          "description": "Ein Nur-Anhang-Datensatz von Autorisierungs-, Budget-, Risiko-, Eskalations- und Schwärzungsentscheidungen, die zum Überwachen der Statusübergänge eines Group erforderlich sind.",
+          "avoid": "Agent Argumentationsablaufverfolgung"
+        },
+        {
+          "term": "Extension Profile",
+          "description": "Ein von der Organisation genehmigtes, versioniertes Schema- und Semantikpaket, das Kerninvarianten nicht überschreiben kann.",
+          "avoid": "Plugin, beliebiger Ereignistyp"
+        },
+        {
+          "term": "Child Mission display name",
+          "description": "Lokalisierter Text verwendet `子任务` sowohl im vereinfachten als auch im traditionellen Chinesisch, `サブタスク` im Japanischen, `subtarea` im Spanischen, `sous-tâche` im Französischen und `Unteraufgabe` im Deutschen. Jede Bezeichnung steht für einen vollständigen Child Mission mit eigenem Group, Coordinator, Budget und Approval-Lebenszyklus, niemals für einen WorkItem; chinesischer Text verwendet `工作项` im vereinfachten oder `工作項` im traditionellen Chinesisch für WorkItem.",
+          "avoid": "`子 Mission`, `子使命`, `子ミッション`, `Mission hija`, `Mission enfant`, deutsche Formen auf Basis von `untergeordnete Mission`, `子任務` und die Verwendung von `子任务` für WorkItem"
+        }
+      ]
+    }
+  }
+}

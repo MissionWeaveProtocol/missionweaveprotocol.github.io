@@ -1,0 +1,29 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Python öffentliches API Inventar
+description: >-
+  Jedes öffentliche Python-Symbol wurde beim dokumentierten SDK-Commit in seine
+  genaue Quelldatei und Zeile aufgelöst.
+---
+
+import SdkApiInventory from "../../../../../../../components/SdkApiInventory.astro";
+
+# Python öffentliches API Inventar
+
+Dieses exakt festgeschriebene Inventar wird aus jedem
+`src/missionweaveprotocol/*.py`-Erstanbietermodul bei
+`9403cf1310914670506c56cbab363fdaa465d3cc` generiert. Es zeichnet öffentliche
+Klassen, Protokolle, Aufzählungen, Datenklassen, Funktionen, Methoden,
+Konstanten und Typaliase auf, einschließlich APIs, die über ein Submodul
+öffentlich sind, aber nicht von `missionweaveprotocol.__init__` erneut
+exportiert werden.
+
+Das Inventar ist die Benennungs- und Herkunftsreferenz und kein Ersatz für die
+lokale [Laufzeitsemantik](../runtime/) oder
+[Zulassungsaufruffluss](../admission/). Das Vorhandensein eines Symbols beweist,
+dass die angeheftete Quelle es deklariert; Eine erfolgreiche Nutzung hängt immer
+noch von den dokumentierten Validierungs-, Berechtigungs-, Status- und
+Bereitstellungsvoraussetzungen ab.
+
+<SdkApiInventory sdk="python" />

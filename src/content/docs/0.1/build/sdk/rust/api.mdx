@@ -1,0 +1,25 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Rust public API inventory"
+description:
+  "Every supported Rust crate-root declaration resolved to its exact source file
+  and line at the documented SDK commit."
+---
+
+import SdkApiInventory from "../../../../../../components/SdkApiInventory.astro";
+
+# Rust public API inventory
+
+This exact-commit inventory is generated from `src/lib.rs` and the modules it
+selectively re-exports at `2727f8777737265d98dde4ceaca306612ef54c52`. It
+contains 311 public structs, enums and variants, traits, aliases, functions,
+constants, public fields, and public methods reachable from the crate root.
+Private module paths and declarations not re-exported by the crate root are not
+application contracts.
+
+The inventory is the naming and exact source provenance reference, not a
+substitute for the local [runtime semantics](../runtime/) or
+[Admission call flow](../admission/).
+
+<SdkApiInventory sdk="rust" />

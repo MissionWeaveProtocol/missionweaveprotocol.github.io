@@ -1,0 +1,115 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-IDN
+title: "Identity, Registry, and sessions"
+description:
+  "Normative Agent Card, Presence Record, authentication, and Session Epoch
+  requirements."
+---
+
+import NormativeClause from "../../../../../components/NormativeClause.astro";
+
+## 6. Identity, Agent Registry, and sessions
+
+### 6.1 Agent Cards
+
+<NormativeClause id="MWP-IDN-001" level={["MUST","MUST NOT"]}>
+
+The Organization MUST issue, verify, version, and sign each Agent Card. An Agent
+MUST NOT be trusted merely because it self-declares a capability. The Agent Card
+MUST separate:
+
+- stable identity, ownership, endpoint, public keys, and supported protocol
+  versions;
+- versioned Organization-governed capabilities with declared input/output
+  schemas, constraints, and verification Evidence; and
+- maximum supported concurrency.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-002" level="MUST NOT">
+
+Capability is not authorization. An Agent Card MUST NOT contain reusable
+credentials or grant access to tools or business data. Authorization eligibility
+and current policy remain Organization decisions.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-003" level={["MUST","MAY"]}>
+
+Assignments MUST pin the Agent Card version and every required capability
+version. A compatible in-place upgrade MAY continue under Organization policy.
+An incompatible upgrade MUST checkpoint active work and obtain renewed
+acceptance before execution continues. Every Artifact MUST record the producing
+Agent Card and capability versions.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-004" level={["SHOULD","MAY","SHOULD NOT"]}>
+
+The Registry SHOULD maintain capability-specific, contextual performance records
+separately from Agent Cards. Records MAY include completion, failure,
+reassignment, human change-request, deadline, budget, and lease-expiry outcomes.
+An implementation SHOULD NOT reduce performance to one opaque global reputation
+score.
+
+</NormativeClause>
+
+### 6.2 Presence Records
+
+<NormativeClause id="MWP-IDN-005" level={["MUST","MAY","MUST NOT"]}>
+
+Presence is ephemeral and MUST be separate from the stable Agent Card. A
+Presence Record MAY report online state, currently available execution slots,
+capability availability, estimated response latency, and last heartbeat. A stale
+Presence Record MUST NOT be treated as an assignment acceptance or lease
+renewal.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-006" level={["MAY","MUST NOT"]}>
+
+Presence updates MAY be carried in authenticated `PING` frames and do not
+require an individual durable signature. Presence MUST NOT expose another
+Group's identity, content, WorkItems, or exact queue position.
+
+</NormativeClause>
+
+### 6.3 Authentication and Session Epoch fencing
+
+<NormativeClause id="MWP-IDN-007" level="MUST">
+
+Each Agent MUST have at least one Organization-registered Ed25519 public key.
+The v0.1 WebSocket handshake uses a fresh server challenge:
+
+1. the Agent sends `HELLO/client_init` with its Agent ID, key ID, nonce, and
+   supported protocol versions;
+2. the server replies `HELLO/server_challenge` with an unpredictable challenge
+   and selected version;
+3. the Agent replies `HELLO/client_response` with an Ed25519 signature over the
+   canonical challenge transcript; and
+4. the server replies `HELLO/server_accept` with a short-lived session token and
+   a newly issued Session Epoch.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-008" level={["MUST","MUST NOT","MAY"]}>
+
+Issuing epoch `n + 1` invalidates every session at epoch `n` or lower for that
+Agent ID. The Group Authority MUST validate the Session Epoch on every
+state-changing Agent Command. Human and Organization-service Commands do not
+carry an Agent Session Epoch and MUST NOT invent one. A restarted runtime MAY
+reclaim its stable Agent ID; two runtimes MUST NOT operate that identity
+concurrently.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-009" level={["MUST","NOT RECOMMENDED","MAY"]}>
+
+Durable Commands and Artifact manifests MUST be individually signed. Heartbeats
+and Presence Records rely on the authenticated session. Long-lived shared API
+keys are NOT RECOMMENDED. An implementation MAY add mTLS or workload-identity
+authentication, provided it preserves the Agent ID and fencing semantics.
+
+</NormativeClause>

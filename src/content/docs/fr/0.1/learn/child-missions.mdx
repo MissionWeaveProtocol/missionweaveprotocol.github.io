@@ -1,0 +1,73 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: sous-tâche
+description: >-
+  Décomposition récursive de WorkItems complexes sans perdre la portée parent,
+  le budget, Evidence ou la responsabilité.
+---
+
+# Sous-tâche
+
+Un WorkItem suffisamment complexe peut devenir une **sous-tâche (Child
+Mission)**. La sous-tâche possède son propre Group, son Coordinator, son graphe
+de WorkItem, ses Membership, son budget, son échéance et sa politique
+d'approbation. Le WorkItem parent et la sous-tâche conservent des liens stables
+entre eux
+([MWP-MSN-024](../../reference/specification/missions-groups-and-membership/#mwp-msn-024)).
+
+La sous-tâche est un Mission doté de son propre cycle de vie. La sous-tâche
+n'est pas un WorkItem ni un autre nom d'affichage pour celui-ci.
+
+```text
+Mission racine et son Group
+└── le WorkItem parent devient blocked
+    └── sous-tâche et son propre Group
+        ├── Coordinator de la sous-tâche
+        ├── WorkItems et Evidence de la sous-tâche
+        └── Approval de la sous-tâche
+            └── le résultat revient comme Evidence et Artifact
+                pour le WorkItem parent
+```
+
+La création d'une sous-tâche ne transforme pas le Group parent en salon de
+discussion imbriqué. La sous-tâche reçoit un Group distinct et ne partage avec
+son parent que les résumés autorisés, Artifact, Evidence et les liens stables.
+
+## Autorité et approbation
+
+Le Coordinator parent agit comme MissionOwner de la sous-tâche et approuve son
+résultat au nom du WorkItem parent. La politique de risque de Organization peut
+ajouter une approbation humaine directe. Le résultat approuvé de la sous-tâche
+devient Evidence et Artifact pour le WorkItem parent.
+
+Le Coordinator parent reçoit les changements de statut, les résumés, les
+estimations révisées, les bloqueurs, les escalades de budget ou de politique et
+les résultats finaux. Il n'a pas besoin de chaque Message de la sous-tâche, tout
+en conservant une inspection autorisée à la demande. La limite de visibilité
+complète est
+[MWP-MSN-026](../../reference/specification/missions-groups-and-membership/#mwp-msn-026).
+
+## La portée se rétrécit vers le bas
+
+Le graphe parent-sous-tâche reste acyclique. Le budget, l'échéance, les
+capacités, l'accès aux données et les autorisations d'une sous-tâche restent des
+sous-ensembles de ceux du parent. Une profondeur maximale par défaut exige une
+approbation explicite de MissionOwner ou de la politique lorsqu'une profondeur
+supplémentaire est justifiée
+([MWP-MSN-025](../../reference/specification/missions-groups-and-membership/#mwp-msn-025)).
+
+Il s'agit de la forme propre aux sous-tâches de l'invariant général de réduction
+dans [MWP-FND-020](../../reference/specification/foundations/#mwp-fnd-020).
+
+## Échec et travail de suivi
+
+Une sous-tâche en échec émet un Evidence d'échec structuré et affecte le
+WorkItem parent conformément à sa politique d'achèvement déclarée. Le
+Coordinator parent peut replanifier, réviser la portée, créer une sous-tâche de
+remplacement ou annuler la branche.
+
+- Utilisez une **sous-tâche** pour effectuer un travail complexe dans un Mission
+  parent actif.
+- Utilisez un **Mission de suivi** pour une correction, une remédiation ou un
+  travail supplémentaire après qu'un Mission approuvé est devenu immuable.

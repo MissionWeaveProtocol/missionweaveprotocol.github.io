@@ -1,0 +1,127 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Errores y observabilidad
+description: >-
+  Errores seguros para el protocolo, decisiones de reintento, diagnósticos de
+  verificación protegidos, registros de auditoría con acceso controlado,
+  métricas y límites de seguimiento.
+---
+
+# Errores y observabilidad
+
+El error de conexión es un resultado de protocolo estable, no un volcado de
+excepciones internas. Los errores se ajustan al esquema de error local, indican
+si el reintento es seguro y pueden identificar el marco relacionado o el ID de
+acción sin exponer datos no autorizados
+([MWP-EXT-004](../../../reference/specification/errors-extensions-and-security/#mwp-ext-004)).
+
+## Clasificar en la capa correcta
+
+| Capa                                                                          | Resultado público                                     |
+| ----------------------------------------------------------------------------- | ----------------------------------------------------- |
+| JSON no válido, miembros duplicados o valor JCS imposible                     | `PROTOCOL_VIOLATION`                                  |
+| esquema completo o falla del sobre requerido                                  | `SCHEMA_VALIDATION_FAILED`                            |
+| falla criptográfica etapa 3, 4 o 6                                            | `AUTH_INVALID_SIGNATURE`                              |
+| Admisión o Command-fallo de frescura                                          | `AUTH_INVALID_SIGNATURE`                              |
+| falta permiso o elegibilidad de póliza                                        | `AUTH_FORBIDDEN`                                      |
+| Sesión obsoleta, Membership, Coordinator, propiedad o estado de arrendamiento | el correspondiente código de vallado de establos      |
+| discrepancia de revisión agregada actual                                      | `REVISION_CONFLICT`                                   |
+| límite de presión aceptado                                                    | `BACKPRESSURE` o `RATE_LIMITED` con guía de reintento |
+
+Los fallos criptográficos y de admisión colapsan deliberadamente en el cable.
+Organization conserva la primera etapa semántica fallida y el motivo específico
+solo en un registro de auditoría protegido y con acceso controlado
+([MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)).
+Los números de etapa son clasificaciones semánticas en lugar de límites de
+funciones internas requeridas
+([MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016)).
+Cada falla después de completar las seis etapas en la ruta de Admisión utiliza
+la etapa protegida `admission` y el mismo código público
+`AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).
+
+## Reintentar decisiones
+
+El comportamiento de reintento depende del código estable y de si el contenido
+protegido sigue siendo válido:
+
+- un reintento Command aceptado sin cambios mantiene el ID de acción original y
+  está firmado contenido;
+- `AUTH_INVALID_SIGNATURE` no se reintenta sin cambios hasta que se solucione la
+  causa. corregido;
+- La frescura Command caducada requiere un nuevo Command, ID de acción, tiempo
+  protegido, y firma;
+- `ACTION_ID_COLLISION` siempre requiere un nuevo ID de acción y contenido
+  firmado; y
+- Los errores de valla obsoletos requieren épocas autorizadas actuales más un
+  nuevo Command y firma.
+
+Las reglas completas son
+[MWP-EXT-005](../../../reference/specification/errors-extensions-and-security/#mwp-ext-005)).
+Los tiempos de espera de transporte sin una respuesta autorizada son
+indeterminados: consulte o reproduzca por identidad estable antes de decidir si
+enviar una nueva transición.
+
+## Registro de auditoría protegido
+
+Organization conserva la primera etapa semántica fallida y su motivo específico
+en un registro de auditoría protegido y con acceso controlado, como lo exige
+[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018).
+
+No incluya secretos, tokens de capacidad, material de clave privada,
+credenciales sin procesar, existencia Group no autorizada ni distinciones
+protegidas de falla de confianza en la respuesta cablegráfica. Los tokens y las
+credenciales también están excluidos de Mensajes, Tarjetas Agent, Paquetes de
+contexto, Artefactos y Eventos
+([MWP-AUT-002](../../../reference/specification/authorization-and-budgets/#mwp-aut-002)).
+
+La evidencia de auditoría cubre decisiones, aportes, bloqueadores y resultados
+sin requerir una cadena de pensamiento privada, indicaciones ocultas o memoria
+interna sin procesar
+([MWP-FND-022](../../../reference/specification/foundations/#mwp-fnd-022)).
+
+## Fallos sensibles a la revisión
+
+No trate el comportamiento alternativo del byte de firma como una ruta de
+recuperación de compatibilidad. Una revisión que protege una parte diferente del
+sobre de firma cambia los bytes de firma del cable y no se puede generar ni
+aceptar silenciosamente como v0.1
+([MWP-SDV-019](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-019)).
+
+:::note[Implementation note]
+
+Utilice tipos de error público y de diagnóstico protegido separados para que el
+código de serialización no pueda exponer accidentalmente un motivo interno. Los
+registros y rastreos deben hacer referencia a ID y hashes estables en lugar de
+incorporar documentos de protocolo completos.
+
+Para un auditor autorizado, los campos estructurados útiles incluyen:
+
+- la primera etapa semántica fallida, la razón interna estable y el adaptador de
+  fuente;
+- lanzamiento exacto, esquema, perfil y versión de implementación;
+- Organization, Group, actor, ID de acción, ID de correlación y firma
+  autorizados referencias de hash;
+- revisión Registry relevante o identidad del resultado Admission Log; y
+- si el estado autoritario cambió.
+
+Los comandos ya llevan una acción estable y una identidad de correlación
+([MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001)),
+y los eventos aceptados conservan causa, actor, correlación, secuencia y
+contexto de revisión inmutables
+([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)).
+Prefiere esas referencias a una identidad de rastreo no relacionada.
+
+Las métricas útiles incluyen comandos aceptados y rechazados por código público,
+primera etapa protegida fallida en telemetría restringida, retraso de
+reproducción por Group, recuento de brechas del cursor, recuento duplicado de
+Event, recuentos de rechazos de arrendamiento y presupuesto, duración de la
+contrapresión, resultados del adaptador de admisión y latencia de transición de
+un extremo a otro. Defina la cardinalidad limitada antes de adjuntar
+Organization, Group, actor, acción, clave o identificadores de hash de firma.
+
+:::
+
+Termine con [Conformidad y actualizaciones](../conformance-and-upgrades/) antes
+de solicitar soporte para una versión.

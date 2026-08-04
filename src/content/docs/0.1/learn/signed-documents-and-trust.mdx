@@ -1,0 +1,80 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Signed Documents and trust"
+description:
+  "How protected content, Registry evidence, key history, canonicalization, and
+  Ed25519 verification produce a six-stage result."
+---
+
+# Signed Documents and trust
+
+A Signed Document is a durable protocol object whose signature authenticates
+canonical protected content under the Signed Document Verification Profile. The
+profile selects the protected time and the expected signer for each document
+kind.
+
+## The envelope binds back to protected content
+
+The v0.1 signing input omits the complete top-level signature envelope. The
+verifier binds the envelope through the protected-time and Ed25519 requirements
+in
+[MWP-SDV-002](../../reference/specification/signed-documents-and-trust/#mwp-sdv-002),
+selects the expected signer using
+[MWP-SDV-001](../../reference/specification/signed-documents-and-trust/#mwp-sdv-001),
+and follows the complete staged canonicalization and signing-byte rules in
+[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015).
+
+The signing hash is the lower-case SHA-256 identity of the exact RFC 8785 JCS
+bytes produced at stage 5. It identifies the protected content independently of
+Admission state
+([MWP-SDV-017](../../reference/specification/signed-documents-and-trust/#mwp-sdv-017)).
+
+## Registry evidence is wider than one selected key
+
+Stage 4 uses one coherent, authoritative Organization-scoped Registry revision.
+The evidence establishes immutable key bindings, Organization-wide no-reuse and
+no-alias invariants, and the retained validity history required by the profile
+([MWP-SDV-008](../../reference/specification/signed-documents-and-trust/#mwp-sdv-008)).
+
+A key-filtered cache is not sufficient merely because it contains the requested
+key. The key-resolution seam establishes evidence scope, revision applicability,
+completeness, and historical coverage, or reports that it cannot
+([MWP-SDV-010](../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)).
+
+The protected signed time is tested against the selected key's half-open
+validity interval. Registry time is compared as an instant, and retained history
+can make an earlier signature verifiable even after later expiry or revocation
+([MWP-SDV-014](../../reference/specification/signed-documents-and-trust/#mwp-sdv-014)).
+
+## Six-stage verification
+
+Verification follows the ordered stages in
+[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015):
+
+1. strict UTF-8 JSON parsing and duplicate-member rejection;
+2. complete normative JSON Schema validation;
+3. signature-envelope and protected-time validation;
+4. complete Registry evidence, key resolution, binding, and validity checks;
+5. RFC 8785 canonicalization and signing-hash production; and
+6. strict Ed25519 signature verification.
+
+The verifier stops at the first failing stage. Before all six stages succeed, it
+does not authorize an actor, append an Event, or execute a state transition.
+
+## What a successful result means
+
+A completed result retains the Organization, document kind, signing hash,
+resolved key ID, bound Principal, protected signed time, and effective key
+interval. It authenticates protected content and the Principal bound to the key.
+It does not by itself admit the document, prove current protocol authorization,
+or accept a state transition.
+
+The exact local schema artifacts are indexed in the
+[JSON Schema catalog](../../reference/schemas/), and the complete six-stage
+evidence bundle is published under
+[cryptography conformance](../../reference/conformance/cryptography/).
+
+Continue with
+[First Admission and Historical Trust](../first-admission-and-historical-trust/)
+for the authoritative acceptance layer above cryptography.

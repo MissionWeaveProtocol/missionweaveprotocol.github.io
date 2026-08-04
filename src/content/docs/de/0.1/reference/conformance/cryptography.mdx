@@ -1,0 +1,57 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Kryptographie-Konformität
+description:
+  Das vollständige lokale Signed Document-Verifizierungsprofil-Beweispaket.
+---
+
+import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
+import BundleArtifactCatalog from "../../../../../../components/BundleArtifactCatalog.astro";
+import release from "../../../../../../data/normative/0.1/release-source.json";
+
+# Kryptographie-Konformität
+
+Das Profil <code>{release.cryptography.profile}</code> bindet
+**{release.cryptography.artifacts}-Artefakte**,
+**{release.cryptography.cases}-Fälle** und
+**{release.cryptography.evaluations}-Auswertungen**. Genau
+**{release.cryptography.complete}**-Auswertungen abgeschlossen und
+**{release.cryptography.rejected}** abgelehnt. Sein RFC 8785-gebundener Digest
+ist
+
+<code>{release.cryptography.digest}</code>.
+
+- <ArtifactLink path="protocol/cryptography/manifest.json">
+    Kryptographie-Manifest
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/manifest.schema.json">
+    Manifest-Schema
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/README.md">
+    Lokale Bündelsemantik
+  </ArtifactLink>
+
+## Sechs semantische Stufen
+
+Jede Bewertung eines unterzeichneten Dokuments verwendet diese geordnete
+Klassifizierung:
+
+1. Strikte UTF-8 JSON Analyse;
+2. normative JSON Schemavalidierung;
+3. Signatur-Umschlag und geschützte Zeitvalidierung;
+4. Signaturschlüsselauflösung und Gültigkeitsvalidierung;
+5. RFC 8785 Kanonisierung und Signatur-Hash-Produktion; und
+6. Ed25519 Signaturüberprüfung.
+
+Die entsprechenden normativen Regeln sind auf der Seite
+[Signierte Dokumente und Trust](../../specification/signed-documents-and-trust/)
+veröffentlicht. `complete` bedeutet, dass alle sechs Phasen für diese Bewertung
+abgeschlossen sind.
+
+Das Übergeben dieses Pakets beweist nicht die First-Admission
+Record-Validierung, die historische Vertrauensvalidierung, die
+Command-Aktualität oder die Erzwingung der Taktabweichung oder die Autorisierung
+des Unterzeichners gemäß der entsprechenden Rolle und Richtlinie.
+
+<BundleArtifactCatalog bundle="cryptography" />

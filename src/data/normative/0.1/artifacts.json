@@ -1,0 +1,49 @@
+{
+  "protocolCommit": "f7e70a72c76bbeb5014c186cd820aac2112f0dde",
+  "publicBase": "/artifacts/0.1/protocol/",
+  "protocolPin": {
+    "sha256": "bfb11b76a989b9949844d3380c3b01cefcde6c01259167b922b6f30d151bac31",
+    "bundleSha256": "c95fc8f8334947dacf51a2c6e84d9b13f5b39b7d3827591569a1e2c5acfe47d7"
+  },
+  "context": {
+    "path": "CONTEXT.md",
+    "byteLength": 12330,
+    "sha256": "sha256:a16b598f4254545952b6c043e11f505cb14b58bb6a09797b14b15e1bd0e3b31a"
+  },
+  "specification": {
+    "path": "spec/PROTOCOL.md",
+    "byteLength": 83039,
+    "sha256": "sha256:9c7297a1d2973652641efe43ca352830d2dbd69b1782ef15c22e2470f105d235"
+  },
+  "schemas": {
+    "path": "schemas/",
+    "files": 22,
+    "digest": "sha256:941a5a19b8664207f1ff48b799219c2f981ecd491a5cca527d586028d976ec76"
+  },
+  "structural": {
+    "path": "conformance/",
+    "files": 59,
+    "vectors": 58,
+    "valid": 27,
+    "invalid": 31,
+    "digest": "sha256:2362acd8345e5860e605ed06984f1673a1ea0a00e76c1fe00fed222326782f24"
+  },
+  "cryptography": {
+    "path": "cryptography/",
+    "manifest": "cryptography/manifest.json",
+    "manifestSha256": "sha256:314f05d7aafee0d23654411c2f709b360cfde62a0079f654ae7ac01e105bdd16",
+    "artifacts": 98,
+    "digest": "sha256:5eade516e4bc5dcf04477727ebcccd11f33348b2d9135fb6fe0365c6e6cc2ea3"
+  },
+  "admission": {
+    "path": "admission/",
+    "manifest": "admission/manifest.json",
+    "manifestSha256": "sha256:140f75fed9ae4c9c180d6055b28ede99fe5c35eedbe7d22016c8022df50b6065",
+    "artifacts": 19,
+    "digest": "sha256:39971bfafb68ef6c18f9026220cccc4f023fd4d5c8074f8ff0276cb1129cd0a0"
+  },
+  "bundle": {
+    "files": 194,
+    "digest": "sha256:95a16adaab17df2626db0f35b470723558637fc496840ddd837ce68fbe234875"
+  }
+}

@@ -1,0 +1,83 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Python 運行時參考
+description: 精確固定的 Python 參考實現的完整公共模組和運行時表面。
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Python 運行時參考
+
+此頁面涵蓋完整的第一方 Python 由[精確表示的表面 API 存貨](../api/)。共享協定行為仍然由本地[運行時參考](../../../runtime/architecture-and-bootstrap/)
+和[參考條款](../../../../reference/specification/)。下面的名稱定義如何固定 Python 實現暴露了這種行為。
+
+<SupportStatus status="implemented" />
+適用於下面列出的包模組和進程內運行時合約。
+
+<SupportStatus status="deployment-adapter-required" />
+當成功操作依賴外部資料庫、經過驗證的機構、網路綁定、憑證、金鑰或部署提供的持久服務時適用。
+
+## 導入模型
+
+`missionweaveprotocol.__init__`
+為簽署的文件、存取、捆綁驗證、預算、租賃和授權提供精心策劃的頂級匯出。更廣泛的參考運行時是公共子模組 API： 進口
+`Core` 從 `missionweaveprotocol.core`, `AgentRuntime` 從
+`missionweaveprotocol.agent`, `Scheduler` 從
+`missionweaveprotocol.scheduler`，以及記錄在模組中的其他名稱 API 存貨。不要假設每個公共子模組類型都是從包根目錄重新匯出的。
+
+## 完整的模組圖
+
+| 運行時關注         | 公共模組                                                                                                                                                                         | 固定提交的合約                                                                                                                                                       |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 協定和語義模型     | `missionweaveprotocol.models`, `missionweaveprotocol.documents`, `missionweaveprotocol.artifacts`, `missionweaveprotocol.context`                                                | 類型化協定物件、文件助理、 Artifact 和 Evidence 處理，以及 Group-範圍上下文結構。模式有效的資料仍然需要本地規範定義的語義檢查。                                      |
+| 權威狀態轉換       | `missionweaveprotocol.core`, `missionweaveprotocol.control`, `missionweaveprotocol.auth`, `missionweaveprotocol.ingress`                                                         | `Core` 查詢、重播和執行路徑；接受操作控制、會話和簽署助理以及經過驗證的入口邊界。僅對話或模型輸出永遠不會授權狀態轉換。                                              |
+| Agent 執行         | `missionweaveprotocol.agent`, `missionweaveprotocol.execution`, `missionweaveprotocol.offline`                                                                                   | 一個活動 Agent 運行時會話、Group 上下文安裝、準備執行、檢查點感知工作執行和離線協調輔助程式。Session、Membership、Coordinator 和 Ownership Epoch 仍是 fencing 輸入。 |
+| 調度和恢復         | `missionweaveprotocol.scheduler`, `missionweaveprotocol.replay`                                                                                                                  | 工作準入、調度、搶佔、過渡應用、快照、確定性重建、 Event 投影、連續重播和 Agent- 地方和解。                                                                          |
+| 持久化             | `missionweaveprotocol.store`, `missionweaveprotocol.local_store`                                                                                                                 | `InMemoryStore`、SQL 支援的權威儲存，以及 `SQLiteAgentStore` 用於本機遊標、上下文、檢查點、排程器狀態、事件和待處理操作。權威狀態和 Agent 本地投影保持獨立。         |
+| 政策與有限權力     | `missionweaveprotocol.policy`, `missionweaveprotocol.lease`, `missionweaveprotocol.budget`, `missionweaveprotocol.delegation`                                                    | Membership 和 Capability Token 服務、策略保護、Execution Lease 轉換、可重建預算分類帳和授權縮小檢查。這些 API 不會取代部署必須控制的權威策略或金鑰服務。             |
+| 解析、規範化與簽章 | `missionweaveprotocol.schema_formats`, `missionweaveprotocol.canonical`, `missionweaveprotocol.crypto`, `missionweaveprotocol.signed_documents`, `missionweaveprotocol.registry` | 協議標量格式，嚴格的驗證助手， RFC 8785 規範化， Ed25519 原語，六階段 Signed Document 簽署並驗證，並完成 Organization-寬的 Registry-支持關鍵決議。                   |
+| 首次準入           | `missionweaveprotocol.admission`                                                                                                                                                 | 型別化電流-Registry, Admission Log，以及經過六階段驗證後分層的可信任上下文適配器。首次準入和歷史重播有不同的證據路徑。                                               |
+| 框架與網關         | `missionweaveprotocol.wire`, `missionweaveprotocol.gateway`                                                                                                                      | HELLO/CHALLENGE/AUTH/WELCOME 握手模型， Command/Event/ACK/PING 幀、解析與編碼、訂閱遊標、會話啟動、 Group 路由和網關與核心整合。                                     |
+| 捆綁包、檢查和命令 | `missionweaveprotocol.bundle`, `missionweaveprotocol.conformance`, `missionweaveprotocol.cli`, `missionweaveprotocol.poc`                                                        | 打包的協議包發現和摘要驗證、模式和向量執行、三個控制台入口點以及確定性概念驗證報告。                                                                                 |
+
+## 核心、商店和交易邊界
+
+`Core` 是權威的狀態機外觀。其公共 `query`、`replay` 和 `perform` 操作由
+`AuthoritativeStore`
+支援。商店合約揭露了交易、檢查和生命週期邊界；記憶體中、SQLite、通用 SQL 和 PostgreSQL 實作不會改變協議的原子性、修訂、冪等性或防護要求。
+
+`SQLiteAgentStore`
+是 Agent-本地。它儲存重播位置、Group 上下文、檢查點、調度程序狀態、已見事件和掛起的出站操作，以便 Agent 可以恢復。這些投影是可重建的，不能成為 Mission 或 Group 真相的權威。繼續使用[持久性和恢復](../../../runtime/persistence-and-recovery/)進行規範分離。
+
+外部資料庫是部署相依性。 `PostgreSQLStore`
+需要設定資料庫服務和驅動程式；連線可用性或本機快取命中並不能證明已提交權威轉換。
+
+## Agent，調度程序與重播
+
+`AgentRuntime.start_session` 建立單一活動本地會話並傳回
+`AgentRuntimeSession`。此會話接受 Group 範圍的上下文和憑證、準備執行並公開
+`Scheduler`。調度程序承認工作，應用轉換，調度或搶佔，並從快照重建。
+`AgentReplay` 和 `EventProjector`
+從有序事件恢復本地投影並拒絕間隙或不一致的投影狀態。
+
+Execution
+Lease、策略、預算和委託 API 是相互獨立的檢查。在產生副作用之前，已調度的 WorkItem 仍然需要目前 fencing、已接受的工作、適用策略、剩餘預算和有效的最小權限授權。
+
+## 驗證、信任和框架
+
+在受保護的處理之前，請先驗證嚴格的 JSON 和固定的草案 2020-12 架構，保留協議標量字節，規範化簽名投影，驗證 Ed25519 材料，並從完整的 Registry 金鑰中解析。確切的六階段順序在[驗證、標準化和簽章](../../../runtime/validation-canonicalization-and-signing/)中指定。
+
+`missionweaveprotocol.wire` 擁有類型化框架模型以及
+`parse_frame`、`parse_received_frame` 和 `encode_frame`。 `GroupGateway`
+將這些訊框綁定到會話啟動、訂閱、遊標、重播和核心操作。生產網路部署必須提供安全綁定、驗證輸入、TLS
+1.3 憑證和金鑰、背壓限制和操作隔離。 Python 套件提供網關執行時間；它不提供部署網路權限。
+
+## 一致性和升級
+
+`SchemaCatalog` 和 `run_manifest` 執行支援的本地驗證表面。
+`verify_cryptography_bundle` 和 `verify_admission_bundle`
+將打包的工件綁定到記錄的Pin和摘要。 `missionweaveprotocol-conformance`
+向操作員公開結構清單運作程序。在檢查打包的密碼學和準入工件身份時，分別呼叫兩個捆綁驗證函數。
+
+每當 SDK 提交、協定 pin、架構集、加密套件、存取包或部署適配器發生變更時，請再次執行一致性。傳遞一個子集僅證明該子集；它不建立資料庫持久性、網路安全性、硬體容量或生產準備。

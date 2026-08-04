@@ -1,0 +1,93 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 驗證、規範化和簽名
+description:
+  每個運行時共享的規範嚴格的 JSON、架構、JCS、Registry、簽章和六階段驗證管道。
+---
+
+# 驗證、標準化和簽名
+
+Signed
+Document 處理是一個有序的語意管道。內部功能邊界可能不同，但驗收和診斷分類必須保留規範的階段順序。
+
+跨越六個階段，執行共同的 JSON 和時間戳記設定檔（[MWP-FND-004](../../../reference/specification/foundations/#mwp-fnd-004)），保留時間戳詞彙文字（[MWP-FND-005](../../../reference/specification/foundations/#mwp-fnd-005)），需要規範的 base64url、哈希值和安全整數（[MWP-FND-007](../../../reference/specification/foundations/#mwp-fnd-007)），並啟用每個規範模式格式斷言（[MWP-FND-009](../../../reference/specification/foundations/#mwp-fnd-009)）。相同的規範線路規則適用於所有內容派生的雜湊值和簽章（[MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012)）。
+
+## 六階段驗證
+
+控制序列為[MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015):
+
+1. 嚴格解析恰好一個 UTF-8
+   JSON 值；拒絕位元組順序標記、尾隨資料、無效 UTF-8 和重複的解碼成員名稱；
+2. 依據規範 Schema 驗證完整文件；
+3. 驗證簽章信封、受保護時間、預期簽署者規則和嚴格的 Ed25519 簽章編碼；
+4. 驗證完整的 Organization 範圍 Registry 證據，解析金鑰和 Principal，並依保留的金鑰歷史檢查受保護簽署時間；
+5. 僅省略頂層 `signature` 成員並產生 RFC 8785 JCS 位元組；
+6. 驗證這些確切位元組上的純 Ed25519 簽章。
+
+驗證者在第一個失敗階段停止且不授權參與者，附加一個 Event，或在所有六個階段完成之前執行狀態轉換。
+
+## 無損 JSON 和 JCS
+
+JCS 輸入被限制為 RFC
+8785 我——JSON 數據模型。數字是用所需的最短往返形式序列化的有限 IEEE
+754 二進制 64 值；在發出規範字節之前，該域之外的不成對的 Unicode 代理和值會失敗（[MWP-FND-006](../../../reference/specification/foundations/#mwp-fnd-006)).
+
+不要將傳入線路 JSON 規範化來取代解析或架構驗證。規範化是第 5 階段，在控制階段分類的所有早期語義檢查之後對接收到的值進行操作。
+
+## 嚴格Ed25519接受
+
+提供者導入成功不是接受規則。驗證者：
+
+- 規範地解碼 `Renc`，需要素數階子組成員資格，接受僅
+  `0 <= S < L`，且不會減少超出範圍的標量 ([MWP-SDV-003](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-003))；
+- 強制執行不可變的金鑰 ID 到 Principal、演算法和公鑰綁定 Organization範圍的無重複使用和無別名不變量（[MWP-SDV-004](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-004)）；
+- 嚴格將 32 位元組公鑰解碼為規範的、非身分的，素數階 Edwards25519 點 ([MWP-SDV-005](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-005))；和
+- 檢查精確的 stage-5 位元組上的 pure-Ed25519 驗證方程（[MWP-SDV-006](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-006)）。
+
+Registry 保留足以證明綁定唯一性和不存在聲明的索引和歷史記錄 ([MWP-SDV-007](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-007))。
+
+## 保護時間與預期簽署者
+
+每個 Signed
+Document 架構對應到一個受保護的簽章時間欄位和一個預期簽署者。確切的簽署者在
+[MWP-SDV-001](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)
+下選擇。受保護時間和 `signature.createdAt` 使用大寫
+`Z`，必須逐字節相同，並且在比較之前無法修復或標準化 ([MWP-SDV-002](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-002))。
+
+## Registry支援的密鑰解析
+
+第 4 階段比選定鍵查找更寬：
+
+- 證據的範圍恰好是一個 Organization 和一個相干的權威Registry修訂；
+- Organization範圍內不可重複使用所需的每個綁定和保留的歷史記錄項，在選擇之前驗證無別名和完整性聲明（[MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008)）；
+- 部署適配器建立修訂的適用性、完整性和歷史報導或報告不能（[MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)）；和
+- 根據半開 `validFrom`、`validUntil` 檢查受保護時間，以及 `revokedAt`
+  邊界為瞬時 ([MWP-SDV-014](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-014))。
+
+不可用的證據、不完整的覆蓋範圍、權威的未知金鑰、無效的不相關綁定和無效的選定金鑰都在第 4 階段失敗關閉。 Evidence 可能來自完整快照或權威索引和查詢，但部分快取不能取代 Organization 範圍的證明（[MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009)）。僅在建立完整性後，未知密鑰才具有權威性 ([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011))。
+
+有效性歷史記錄是僅附加的或明確版本化的；保留其最早有效的 `validUntil` 和
+`revokedAt`
+邊界以供歷史驗證（[MWP-SDV-012](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-012)）。所選密鑰的綁定 Principal 必須等於確切的預期簽署者 ([MWP-SDV-013](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-013))。
+
+## 簽章和簽章哈希值
+
+簽署者建構的受保護值與驗證者將重建的保護值相同：
+
+1. 建構所有非簽章欄位，包括文件種類要求的受保護簽署時間欄位。
+2. 選擇受保護時間和預期簽署金鑰，保留也將成為 `signature.createdAt` 的大寫 `Z`
+   時間戳拼字。
+3. 從不含頂層 `signature` 成員的完整物件產生 RFC 8785 JCS 簽署位元組。
+4. 對這些確切位元組計算簽署雜湊和純 Ed25519 簽章，並將簽章編碼為規範的無填充 base64url。
+5. 附加完整簽章信封，其中包含
+   `Ed25519`、所選金鑰 ID、逐位元組相同的受保護時間和編碼後的簽章值。
+6. 發布前，依據完整的規範 Schema 和同一個六階段驗證器驗證最終 Signed Document。
+
+簽章哈希獨立於準入狀態，並具有
+[MWP-SDV-017](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-017)
+定義的確切形式。階段編號是語義分類，而不是所需的功能邊界，如
+[MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016)
+所闡明的。
+
+在將準入分層到六階段結果之上之前，針對本地[密碼學一致性捆綁包](../../../reference/conformance/cryptography/)運行每個實作。

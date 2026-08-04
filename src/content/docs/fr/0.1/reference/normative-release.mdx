@@ -1,0 +1,39 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Identité de la version normative
+description:
+  Entrées validées et champs d'identité générés pour MissionWeaveProtocol 0.1.
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import NormativeReleaseFacts from "../../../../../components/NormativeReleaseFacts.astro";
+
+# Identité de la version normative
+
+MissionWeaveProtocol 0.1 est publié sous la forme d'un site Web, d'un ensemble
+d'artefacts de protocole et de six pins SDK exactes. Le `release-source.json`
+validé enregistre chaque entrée non auto-référentielle : les validations de
+protocole et SDK, le nombre de versions, les identités de profil, les résumés,
+les paramètres régionaux et l'algorithme de résumé d'arbre construit.
+
+Le public
+
+<ArtifactLink path="normative-release.json">
+  <code>normative-release.json</code>
+</ArtifactLink>
+est généré lors de la construction de production. Il copie chaque champ source
+de version validé et ajoute :
+
+- `websiteCommit`, le commit Git exact du site Web ;
+- `buildIdentity`, soit la paire exécution/tentative GitHub, soit le commit
+  local identité; et
+- `contentDigests`, un résumé de l'arborescence HTML construite pour chaque
+  locale.
+
+Le manifeste généré n'est pas validé car un fichier validé ne peut pas contenir
+fidèlement l'identité Git du commit qui le contient. La vérification de la
+version reconstruit les champs générés et compare chaque champ validé avec
+`release-source.json`.
+
+<NormativeReleaseFacts />

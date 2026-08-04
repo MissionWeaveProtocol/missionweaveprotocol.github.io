@@ -1,0 +1,129 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Referencia de tiempo de ejecución Rust
+description: >-
+  La superficie completa de la raíz del crate y los límites de tiempo de
+  ejecución del Rust SDK fijado exactamente.
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Rust referencia de tiempo de ejecución
+
+Esta página cubre la superficie completa de la raíz del crate representada por
+el [exacto API inventario](../api/). El comportamiento del protocolo compartido
+permanece definido por la
+[referencia de tiempo de ejecución ](../../../runtime/architecture-and-bootstrap/)
+y las [cláusulas de referencia ](../../../../reference/specification/) locales.
+Los nombres de los módulos a continuación identifican el origen de la
+implementación; Las personas que llaman importan las reexportaciones públicas de
+`missionweaveprotocol` porque los módulos en sí son privados.
+
+<SupportStatus status="implemented" /> se aplica a las API de raíz del crate y
+al comportamiento en proceso que se enumeran a continuación.
+
+<SupportStatus status="deployment-adapter-required" /> se aplica a la autoridad
+Registry actual, al contexto de admisión confiable, al acceso a registros
+autenticados y a otros servicios de implementación.
+
+<SupportStatus status="not-implemented" /> significa que el crate fijado
+exactamente no tiene un tiempo de ejecución correspondiente.
+
+## Modelo del crate y ejecución
+
+El crate tiene la versión `0.1.0`, usa la edición 2024, declara Rust 1.85 como
+su cadena de herramientas mínima admitida y expone un binario:
+`missionweaveprotocol-conformance`. `src/lib.rs` es la única raíz de importación
+pública; Las rutas de los módulos internos no son API compatibles.
+
+La instalación del crate no inicia ningún servicio, no abre ningún socket, no
+persiste ningún estado y no otorga ninguna autoridad. Los fragmentos de bytes
+devueltos y los objetos de evidencia siguen siendo valores de proceso local a
+menos que la aplicación los almacene o transmita deliberadamente.
+
+## Mapa fuente completo
+
+| Preocupación por el tiempo de ejecución | Fuente de implementación pública                            | Contrato en el compromiso fijado                                                                                                                          |
+| --------------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Raíz del paquete y constantes           | `lib.rs`                                                    | Vuelve a exportar la superficie pública admitida y las versiones SDK, protocolo y cable.                                                                  |
+| Estricto JSON                           | `strict_json.rs`                                            | `parse_strict_json` rechaza UTF-8 no válido, miembros duplicados, JSON con formato incorrecto y datos finales.                                            |
+| Esquema y hora exacta                   | `schema.rs`, `signed_document.rs`                           | Validación del borrador sin conexión 2020-12, formatos de URI/fecha y hora afirmados, búsqueda de esquemas empaquetados y comparación instantánea exacta. |
+| Canonical JSON y Ed25519                | `canonical.rs`                                              | RFC 8785 bytes y hashes más `Ed25519Signer` ayudantes.                                                                                                    |
+| Documentos firmados y Registry          | `signed_document.rs`                                        | Nueve tipos de documentos, firma, verificación en seis etapas, resolución Organization Registry completa y evidencia de verificación inmutable.           |
+| Marcos                                  | `frame.rs`                                                  | `FrameCodec` decodifica, codifica y valida documentos. Este es un códec, no un servicio de puerta de enlace alojado.                                      |
+| Conformidad estructural                 | `conformance.rs`, `bin/missionweaveprotocol-conformance.rs` | Ejecución de vector de esquema integrado, resúmenes de informes, estado de salida de CLI y fallas detalladas opcionales.                                  |
+| Paquetes integrados                     | `bundle.rs`                                                 | Acceso exacto a PIN, búsqueda de artefactos y verificación de resumen para paquetes de protocolo, criptografía y admisión.                                |
+| Primera admisión                        | `admission.rs`                                              | Primera admisión y confianza histórica por encima de la verificación Signed Document exitosa.                                                             |
+
+## Validación, firma y evidencia Registry
+
+`SchemaCatalog::new`, `validate`, `validate_bytes` y `identifier` operan sobre
+los 22 esquemas incrustados exactos. El análisis estricto y la validación de
+esquemas son independientes de la canonicalización. `canonical_bytes`,
+`canonical_sha256` y `signature_input` implementan RFC 8785 y la construcción de
+entrada de firma.
+
+`SigningKey` es la costura de firma propiedad de la aplicación. `Ed25519Signer`
+proporciona ayudas de verificación y firma basadas en semillas para uso local
+controlado. `SignedDocumentCodec::sign` y `verify` seleccionan uno de los nueve
+valores `SignedDocumentKind` explícitos y ejecutan las etapas de análisis,
+esquema, sobre de firma, resolución de clave, canonicalización y firma en orden.
+
+`KeyResolver::resolve` debe devolver evidencia
+`KeyRegistrySnapshot::organization_wide` para una revisión Organization
+coherente y aplicable con el historial retenido completo. Una clave
+seleccionada, una proyección parcial, un acierto de caché o un indicador de
+confianza proporcionado por la persona que llama no son suficientes.
+`VerifiedSignedDocument` expone los bytes recibidos, la firma y los bytes y
+hashes canónicos completos, la hora protegida, la evidencia de firma y la
+evidencia Registry resuelta.
+
+## Marcos, paquetes y conformidad
+
+`FrameCodec::decode`, `encode` y `validate_document` validan los valores del
+marco; no poseen transporte, autenticación de sesión, persistencia del cursor,
+contrapresión, enrutamiento ni transiciones de estado autoritativas.
+
+`ProtocolBundle::verify` comprueba el paquete estructural de 22 esquemas y 59
+archivos. `verify_cryptography` verifica 98 artefactos, 22 casos y 62
+evaluaciones declaradas; `verify_admission` verifica 19 artefactos, 5 casos y 30
+evaluaciones declaradas. Esas dos llamadas verifican pines, recuentos y
+resúmenes. No ejecutan todas las criptografías o evaluaciones de admisión. El
+binario de conformidad y `ConformanceRunner::run` ejecutan solo los vectores
+estructurales.
+
+## Primera admisión
+
+`AdmissionService::new`, `prepare_first_admission`, `admit_first` y
+`verify_historical_admission` exponen el flujo de admisión exacto. Continúe con
+la [Rust Referencia de admisión](../admission/) para conocer los resultados del
+adaptador, el orden de llamadas y el ejemplo de consumidor de paquete
+ejecutable.
+
+## Límites de disponibilidad explícitos
+
+<SupportStatus status="deployment-adapter-required" /> **Autoridad de
+admisión**: la aplicación proporciona evidencia Registry actual, evidencia
+Registry histórica, contexto de aceptación confiable y un registro autenticado
+de solo agregar.
+
+<SupportStatus status="not-implemented" /> **Mission orquestación**: no se
+exporta ninguna máquina de estado Mission ni fachada de orquestación de alto
+nivel.
+
+<SupportStatus status="not-implemented" /> **Programador Worker**: no se exporta
+ninguna cola, programador, ejecutor de concesión ni bucle de recuperación
+Worker.
+
+<SupportStatus status="not-implemented" /> **Servicio de puerta de enlace
+alojado**: el crate proporciona un códec de trama, no un servicio de puerta de
+enlace con transporte, TLS, sesión, enrutamiento o propiedad de contrapresión.
+
+<SupportStatus status="not-implemented" /> **Runtime de persistencia
+autoritativa**: no se exporta ningún tiempo de ejecución de persistencia local
+respaldado por una base de datos o Agent.
+
+Estas ausencias son parte del contrato de soporte documentado; Las capacidades
+de tiempo de ejecución de referencia Python no se deben inferir de los nombres
+de protocolos compartidos.

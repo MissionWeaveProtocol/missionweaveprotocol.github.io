@@ -1,0 +1,55 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Conformidad criptográfica
+description:
+  El paquete completo de pruebas del perfil de verificación local Signed
+  Document.
+---
+
+import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
+import BundleArtifactCatalog from "../../../../../../components/BundleArtifactCatalog.astro";
+import release from "../../../../../../data/normative/0.1/release-source.json";
+
+# Conformidad criptográfica
+
+El perfil <code>{release.cryptography.profile}</code> vincula
+**{release.cryptography.artifacts} artefactos**, **{release.cryptography.cases}
+casos** y **{release.cryptography.evaluaciones} evaluaciones**. Exactamente
+**{release.cryptography.complete}** evaluaciones se completan y
+**{release.cryptography.rejected}** se rechazan. Su resumen vinculado a RFC 8785
+es
+
+<code>{release.cryptography.digest}</code>.
+
+- <ArtifactLink path="protocol/cryptography/manifest.json">
+    Manifiesto de criptografía
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/manifest.schema.json">
+    Esquema manifiesto
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/README.md">
+    Semántica del paquete local
+  </ArtifactLink>
+
+## Seis etapas semánticas
+
+Cada evaluación de documento firmado utiliza esta clasificación ordenada:
+
+1. análisis estricto UTF-8 JSON;
+2. validación del esquema normativo JSON;
+3. validación del sobre de firma y tiempo protegido;
+4. resolución de la clave de firma y validación de validez;
+5. RFC 8785 canonicalización y producción de hash de firma; y
+6. Verificación de firma Ed25519.
+
+Las normas normativas correspondientes están publicadas en la página
+[Documentos firmados y de confianza](../../specification/signed-documents-and-trust/).
+`complete` significa que se completaron las seis etapas para esa evaluación.
+
+Pasar este paquete no prueba la validación First-Admission Record, la validación
+de confianza histórica, la frescura de Command o la aplicación de la desviación
+horaria, ni la autorización del firmante según la función y la política
+aplicables.
+
+<BundleArtifactCatalog bundle="cryptography" />

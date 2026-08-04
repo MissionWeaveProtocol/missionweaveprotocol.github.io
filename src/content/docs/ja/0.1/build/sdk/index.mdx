@@ -1,0 +1,72 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 公式 SDK ランタイム リファレンス
+description: >-
+  6 つの公式 MissionWeaveProtocol SDK の正確なコミット
+  インストール、ランタイム、アドミッション、サポート、およびパブリック API
+  リファレンス。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkRuntimeMatrix from "../../../../../../components/SdkRuntimeMatrix.astro";
+
+# 公式 SDK ランタイム リファレンス
+
+:::caution[Draft Standard 0.1]
+
+これらのバージョン管理された SDK ページは、規範的な Web サイト公開物の一部です。各ページは、対応する正確な SDK コミットでサポートされる公開ランタイム面を定義します。正確なソースリンクは来歴を示しますが、リポジトリの README または
+`docs/` ページでは、不足している要件が提供されていません。
+
+:::
+
+共有された [ランタイム参照](../runtime/architecture-and-bootstrap/)
+は、言語に依存しない順序と信頼境界を定義します。各 SDK ツリーは、言語間のパリティを製造することなく、実際のパッケージ ID、ツールチェーン、パブリック名、アダプター、実行可能なサンプル、および明示的な可用性境界を追加します。
+
+## 正確なリリース マトリックス
+
+<SdkRuntimeMatrix />
+
+`Implemented`
+は、固定されたソースに文書化されたパブリック サーフェスが含まれていることを意味します。
+`Deployment adapter required`
+は、SDK がランタイム コントラクトを提供しますが、デプロイメントでは外部権限、永続性、またはネットワーク インフラストラクチャを提供する必要があることを意味します。
+`Not implemented`
+は、固定された SDK に対応するパブリック ランタイム サーフェスがないことを意味します。
+
+## ランタイム参照
+
+<CardGrid>
+  <LinkCard
+    title="Python リファレンス ランタイム"
+    description="正確なバージョンのパッケージをインストールし、完全なランタイムを構成して、First Admission と Historical Trust を実行し、各パブリック API エントリを確認します。"
+    href="./python/"
+  />
+  <LinkCard
+    title="TypeScript SDK"
+    description="正確なバージョンのパッケージルートランタイムをインストールし、First Admission と Historical Trust を実行して、サポートされるすべてのエクスポートを確認します。"
+    href="./typescript/"
+  />
+  <LinkCard
+    title="Go SDK"
+    description="正確なバージョンのモジュールをインストールし、型付きの First Admission と Historical Trust を実行して、各エクスポート API エントリを確認します。"
+    href="./go/"
+  />
+  <LinkCard
+    title="Rust SDK"
+    description="正確なバージョンの crate をインストールし、型付きの First Admission と Historical Trust を実行して、各 crate ルート API エントリを確認します。"
+    href="./rust/"
+  />
+  <LinkCard
+    title="Java SDK"
+    description="正確なバージョンの Maven アーティファクトをインストールし、型付きの First Admission と Historical Trust を実行して、各パブリック Java API エントリを確認します。"
+    href="./java/"
+  />
+  <LinkCard
+    title="C++ SDK"
+    description="正確なバージョンの CMake パッケージをインストールし、型付きの First Admission と Historical Trust を実行して、各インストール済みヘッダー API エントリを確認します。"
+    href="./cpp/"
+  />
+</CardGrid>
+
+上記のすべてのツリーは、同じ標準リリースの一部です。公開には依然として、正確に固定された各ネイティブ サンプルと、文書化された検証境界を満たすための Web サイトのリリース チェックが必要です。

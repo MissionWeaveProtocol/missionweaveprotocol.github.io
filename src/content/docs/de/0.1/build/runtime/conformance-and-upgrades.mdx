@@ -1,0 +1,115 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Konformität und Upgrades
+description: >-
+  So überprüfen Sie genaue Release-Artefakte, melden die bewährte
+  Support-Teilmenge, behalten Erweiterungen bei und führen ein Upgrade durch,
+  ohne die Semantik von v0.1 zu ändern.
+---
+
+# Konformität und Upgrades
+
+Die Konformität gehört zu einem genauen Artefaktsatz, nicht zu einem Zweignamen
+oder einer allgemeinen Behauptung, dass ein SDK MissionWeaveProtocol
+unterstützt. Beginnen Sie mit der lokalen
+[normativen Release-Identität](../../../reference/normative-release/),
+überprüfen Sie jeden angehefteten Digest und führen Sie dann die entsprechenden
+Beweisoberflächen aus.
+
+## Erforderliche Beweisebenen
+
+1. Der [JSON Schemakatalog](../../../reference/schemas/) definiert das genaue
+   dauerhafte Objektformen und behauptete Formate.
+2. Die [Strukturkonformitätspaket](../../../reference/conformance/structural/)
+   übt erwartet-gültige und erwartet-ungültige Protokolldokumente aus.
+3. Das [Kryptographie-Bundle](../../../reference/conformance/cryptography/) übt
+   jedes Signed Document-Profil durch die sechs semantischen Stufen aus.
+4. Die [Zulassungspaket](../../../reference/conformance/admission/) Übungen
+   Erstzulassung und historisches Vertrauen über dem angehefteten
+   Kryptografiepaket.
+5. Vollständige Laufzeitansprüche erfordern zusätzlich positive und negative
+   Beweise Befehle, Ereignisse, Zustandsübergänge, Wiedergabe, Abgrenzung,
+   Autorisierung, Budgets, Wiederherstellung nach Fehlern und veraltete oder
+   doppelte Nebenwirkungen.
+
+Die lokale [Konformitätsübersicht](../../../reference/conformance/) hält diese
+Oberflächen getrennt, sodass die Übergabe einer Ebene nicht stillschweigend in
+eine andere befördert wird.
+
+## Überprüfen Sie Manifeste vor Fällen
+
+Validieren Sie für das Kryptografiepaket die Fixture-Schemata und entfernen Sie
+genau die oberste Ebene `artifactDigest` Mitglied, JCS-Kanonisieren Sie das
+verbleibende Manifest und hashen Sie es mit SHA-256, und überprüfen Sie jeden
+deklarierten Artefakt-Byte-Hash, bevor Sie Fälle ausführen
+([MWP-EXT-011](../../../reference/specification/errors-extensions-and-security/#mwp-ext-011)).
+
+Das Zulassungsmanifest verwendet das gleiche Digest-Verfahren und fixiert
+zusätzlich den unveränderten Kryptographie-Digest. Überprüfen Sie alle
+referenzierten Artefakte und diesen Pin, bevor Sie Adapterergebnisse ausführen
+([MWP-EXT-012](../../../reference/specification/errors-extensions-and-security/#mwp-ext-012)).
+
+## Geben Sie die nachgewiesene Teilmenge an
+
+Schemavektoren beweisen Schema-und-Vektor-Verhalten. Die Kryptographie beweist
+die sechs Verifizierungsstufen. Die Zulassung beweist außerdem die erklärten
+Erstzulassungs- und historischen Wiederholungsfälle, jedoch nicht Command
+Aktualität, Unterzeichnerautorisierung, Zustandsautomatenakzeptanz oder ein
+portables Nachweisformat für ein bereitgestelltes Admission Log. Eine
+Referenzimplementierung kann den vollen Anspruch erheben MissionWeaveProtocol
+0,1-Konformität nur, wenn automatisierte positive und negative Beweise jeden
+Kern abdecken Command Art, jeder Kern Event Art und jede Übergangsreihe.
+Andernfalls wird die engere verifizierte Teilmenge explizit gemeldet
+([MWP-EXT-013](../../../reference/specification/errors-extensions-and-security/#mwp-ext-013)).
+
+## Erweiterungen und Kompatibilität
+
+Ein Extension Profile deklariert seinen global eindeutigen URI, seine
+semantische Version, seinen Schema-URI und seinen Hash, seine Fähigkeiten, seine
+Kritikalität und seine Organization-Genehmigungssignatur
+([MWP-EXT-001](../../../reference/specification/errors-extensions-and-security/#mwp-ext-001)).
+Unbekannte, nicht kritische Erweiterungsdaten können beibehalten und
+weitergeleitet werden, während ein Übergang abhängig von einem unbekannten
+kritischen Profil abgelehnt wird
+([MWP-EXT-002](../../../reference/specification/errors-extensions-and-security/#mwp-ext-002)).
+Kein Profil kann Identität, Ordnung, Idempotenz, Abgrenzung, Budgets, Approval,
+Herkunft, Isolation oder die Message/Nicht-Autoritäts-Invariante
+([MWP-EXT-003](../../../reference/specification/errors-extensions-and-security/#mwp-ext-003))
+schwächen.
+
+Die v0.1-Schemas lehnen unbekannte Kerneigenschaften ab und lassen
+Erweiterbarkeit nur durch explizite Erweiterungsmitglieder zu. Behalten Sie nach
+Möglichkeit unbekannte, nicht kritische Erweiterungsbytes für das kanonische
+Relay bei
+([MWP-EXT-010](../../../reference/specification/errors-extensions-and-security/#mwp-ext-010)).
+
+Zuweisungspin Agent Card und erforderliche Funktionsversionen. Ein inkompatibles
+Funktionsupgrade führt zu Prüfpunkten für die aktive Arbeit und erfordert eine
+erneute Akzeptanz, bevor die Ausführung fortgesetzt wird
+([MWP-IDN-003](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-003)).
+
+## Upgrade-Regel
+
+Der Draht `protocolVersion` bleibt für abwärtskompatible Spezifikationsklärungen
+`0.1`. Eine Änderung der Kernsemantik, erforderlicher Felder oder Signaturbytes
+erfordert eine ausgehandelte neue Wire-Neben- oder Hauptversion. Führen Sie
+niemals eine neue Signatur-Umschlag-Schutzregel als stilles v0.1-Verhalten ein
+([MWP-SDV-019](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-019)).
+
+:::note[Implementation note]
+
+Behandeln Sie ein Upgrade als einen neuen unveränderlichen Release-Satz. Stellen
+Sie die neue Website-Version, Schemata, Manifeste, SDK-Pins und generierte
+Inventare gemeinsam bereit. Überprüfen Sie sie in einer isolierten Umgebung.
+Verhandeln oder rollen Sie dann den Datenverkehr nur dort, wo beide Seiten die
+erforderliche Kabelversion und die erforderlichen Erweiterungsprofile
+unterstützen.
+
+Halten Sie alte Validatoren und historische Registry/Zulassungsnachweise für die
+Wiedergabe von Datensätzen verfügbar, die unter ihrer genauen Version erstellt
+wurden. Canarying, Rollback-Fenster, Datenbankmigrationstools und
+Bereitstellungssequenzierung sind betriebliche Optionen, aber ein Rollback kann
+bereits akzeptierte Signaturbytes oder Ereignisse nicht neu interpretieren.
+
+:::

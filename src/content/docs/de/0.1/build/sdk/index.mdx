@@ -1,0 +1,80 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Offizielle SDK Laufzeitreferenzen
+description: >-
+  Exact-Commit-Installation, Laufzeit, Zulassung, Support und öffentliche
+  API-Referenzen für die sechs offiziellen MissionWeaveProtocol SDKs.
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkRuntimeMatrix from "../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Offizielle SDK Laufzeitreferenzen
+
+:::caution[Draft Standard 0.1]
+
+Diese versionierten SDK-Seiten sind Teil der normativen
+Website-Veröffentlichung. Sie definieren die unterstützte öffentliche
+Laufzeitoberfläche bei jedem genauen SDK-Commit. Genaue Quellenlinks legen die
+Herkunft fest; Die Repository-README- oder `docs/`-Seiten enthalten keine
+fehlenden Anforderungen.
+
+:::
+
+Die gemeinsame [Laufzeitreferenz](../runtime/architecture-and-bootstrap/)
+definiert die sprachunabhängige Reihenfolge und Vertrauensgrenzen. Jeder
+SDK-Baum fügt seine echte Paketidentität, Toolchain, öffentliche Namen, Adapter,
+ausführbare Beispiele und explizite Verfügbarkeitsgrenzen hinzu, ohne
+sprachübergreifende Parität herzustellen.
+
+## Genaue Release-Matrix
+
+<SdkRuntimeMatrix />
+
+`Implemented` bedeutet, dass die angeheftete Quelle die dokumentierte
+öffentliche Oberfläche enthält. `Deployment adapter required` bedeutet, dass SDK
+den Laufzeitvertrag bereitstellt, die Bereitstellung jedoch externe Autorität,
+Persistenz oder Netzwerkinfrastruktur bereitstellen muss. `Not implemented`
+bedeutet, dass der angeheftete SDK keine entsprechende öffentliche
+Laufzeitoberfläche hat.
+
+## Laufzeitreferenzen
+
+<CardGrid>
+  <LinkCard
+    title="Python Referenzlaufzeit"
+    description="Installieren Sie die exakte Paketversion, konfigurieren Sie die vollständige Laufzeit, führen Sie Erstzulassung und historisches Vertrauen aus und prüfen Sie jeden öffentlichen API-Eintrag."
+    href="./python/"
+  />
+  <LinkCard
+    title="TypeScript SDK"
+    description="Installieren Sie die exakte Version der Paket-Root-Laufzeit, führen Sie Erstzulassung und historisches Vertrauen aus und prüfen Sie jeden unterstützten Export."
+    href="./typescript/"
+  />
+  <LinkCard
+    title="Go SDK"
+    description="Installieren Sie die exakte Modulversion, führen Sie Erstzulassung und historisches Vertrauen über typisierte Schnittstellen aus und prüfen Sie jeden exportierten API-Eintrag."
+    href="./go/"
+  />
+  <LinkCard
+    title="Rust SDK"
+    description="Installieren Sie die exakte Crate-Version, führen Sie Erstzulassung und historisches Vertrauen über typisierte Schnittstellen aus und prüfen Sie jeden Crate-Root-API-Eintrag."
+    href="./rust/"
+  />
+  <LinkCard
+    title="Java SDK"
+    description="Installieren Sie die exakte Maven-Artefaktversion, führen Sie Erstzulassung und historisches Vertrauen über typisierte Schnittstellen aus und prüfen Sie jeden öffentlichen Java-API-Eintrag."
+    href="./java/"
+  />
+  <LinkCard
+    title="C++ SDK"
+    description="Installieren Sie die exakte CMake-Paketversion, führen Sie Erstzulassung und historisches Vertrauen über typisierte Schnittstellen aus und prüfen Sie jeden API-Eintrag der installierten Header."
+    href="./cpp/"
+  />
+</CardGrid>
+
+Jeder Baum oben ist Teil derselben normativen Version. Für die Veröffentlichung
+sind weiterhin jedes exakt angeheftete native Beispiel und die
+Website-Releaseprüfungen erforderlich, um die dokumentierten
+Verifizierungsgrenzen einzuhalten.

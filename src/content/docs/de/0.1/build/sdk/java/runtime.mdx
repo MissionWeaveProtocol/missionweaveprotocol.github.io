@@ -1,0 +1,130 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Java Laufzeitreferenz
+description: >-
+  Die vollständige öffentliche Paketoberfläche und die Laufzeitgrenzen des exakt
+  angehefteten Java SDK.
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Java Laufzeitreferenz
+
+Diese Seite deckt die vollständige Java-Oberfläche ab, die durch das
+[exakte API Inventar](../api/). Das Verhalten des gemeinsam genutzten Protokolls
+bleibt durch die lokalen
+[Laufzeitreferenz](../../../runtime/architecture-and-bootstrap/) und
+[Referenzklauseln](../../../../reference/specification/) definiert. Öffentliche
+Anwendungstypen leben unter `org.missionweaveprotocol.sdk`; Der
+Konformitätseinstiegspunkt befindet sich unter
+`org.missionweaveprotocol.sdk.cli`.
+
+<SupportStatus status="implemented" /> gilt für die unten aufgeführten
+öffentlichen Klassen und das In-Process-Verhalten.
+
+<SupportStatus status="deployment-adapter-required" /> gilt für die aktuelle
+Registry-Autorität, den vertrauenswürdigen Zulassungskontext, den
+authentifizierten Protokollzugriff und andere Bereitstellungsdienste.
+
+<SupportStatus status="not-implemented" /> bedeutet, dass das exakt angeheftete
+Artefakt keine entsprechende Laufzeit hat.
+
+## Artifact und Ausführungsmodell
+
+Das Maven-Artefakt ist
+`org.missionweaveprotocol:missionweaveprotocol-sdk:0.1.0-SNAPSHOT`, kompiliert
+für Java 21 und erstellt mit Maven 3.9. Es deklariert den automatischen
+Modulnamen `org.missionweaveprotocol.sdk` und packt das genaue Protokoll, die
+Kryptografie und die Zugangsressourcen in die JAR.
+
+Durch die Installation des Artefakts wird kein Dienst gestartet, kein Socket
+geöffnet, kein dauerhafter Speicher erstellt und keine Autorität gewährt.
+Überprüft `IOException`, Verifizierungsausnahmen und Zulassungsausnahmen bleiben
+Teil der Java-Aufrufgrenze.
+
+## Vollständige Quellkarte
+
+| Laufzeitproblem                  | Öffentliche Implementierungsquelle                                                        | Vertrag beim angehefteten Commit                                                                                                      |
+| -------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| Versionen und Metadaten          | `MissionWeaveProtocol.java`, `ProtocolBundle.java`                                        | Protokollidentität, Wire-Version, Namespace und genaue Protokoll- und Bundle-Herkunft.                                                |
+| Strikt JSON                      | `StrictJson.java`                                                                         | UTF-8 Parsen mit doppeltem Mitglied, Stückliste, fehlerhafter Eingabe und Ablehnung nachfolgender Daten.                              |
+| Schema und genaue Zeit           | `SchemaCatalog.java`, `ExactInstant.java`                                                 | Offline-Entwurfsvalidierung 2020-12, bestätigte Formate, Zugriff auf gepackte Schemata und genauer RFC 3339-Vergleich.                |
+| Kanonisch JSON und Ed25519       | `CanonicalJson.java`, `Ed25519.java`, `Base64Url.java`                                    | RFC 8785 Bytes und Hashes plus strenge Ed25519 Helfer.                                                                                |
+| Signierte Dokumente und Registry | `SignedDocumentCodec.java`, `AgentRegistryKeyResolution.java`, `KeyRegistrySnapshot.java` | Neun Dokumentarten, Signierung, vollständige Registry Validierung, sechsstufige Verifizierung und unveränderliche Beweise.            |
+| Rahmen                           | `FrameCodec.java`                                                                         | Strikte Dekodierung und kanonische Kodierung für generische WebSocket-Framewerte. Dies ist ein Codec, kein gehosteter Gateway-Dienst. |
+| Strukturkonformität              | `ConformanceRunner.java`, `cli/ConformanceCli.java`                                       | Ausführungs- und Prozess-Exit-Status des gepackten oder expliziten Root-Schema-Vektors.                                               |
+| Eingebettete Pakete              | `ProtocolBundle.java`                                                                     | Quell-Root- und Paketverifizierung von Protokoll-, Kryptografie- und Zulassungsartefaktsätzen.                                        |
+| Erstzulassung                    | `AdmissionService.java` und die Zulassungsdatensätze/Schnittstellen                       | Erste Zulassung und historisches Vertrauen über erfolgreiche Signed Document-Verifizierung.                                           |
+
+## Validierung, Signierung und Registry Beweis
+
+`StrictJson.parse` akzeptiert genau einen UTF-8 JSON Wert.
+`SchemaCatalog.packaged` lädt die 22 genauen Schemata, während `validate` prüft
+einen ausgewählten Vertragsentwurf 2020-12. `CanonicalJson.canonicalize`,
+`canonicalString`, `sha256Hex`, Und `canonicalHash` das umsetzen RFC 8785 und
+Digest-Funktionalität.
+
+`SigningKey` ist die anwendungseigene Signaturnaht. `SignedDocumentCodec.sign`
+Und `verify` Wählen Sie eine von neun aus `SignedDocumentKind` Werte und führen
+Sie Parse-, Schema-, Signatur-Envelope-, Schlüsselauflösungs-, Kanonisierungs-
+und Signaturphasen aus. `KeyResolver.resolve` muss zurückkehren
+`KeyRegistrySnapshot.organizationWide` Beweise für eine kohärente Anwendbarkeit
+Organization Revision mit vollständig erhaltener Historie. Ein ausgewählter
+Schlüssel, eine Teilprojektion, ein Cache-Treffer oder ein vom Aufrufer
+bereitgestelltes Vertrauensflag ist unzureichend.
+
+`VerifiedSignedDocument` stellt defensive Kopien der empfangenen, signierten und
+kanonischen Bytes sowie Hashes, geschützte Zeit, Signaturmaterial und die
+aufgelösten Bytes bereit Registry Schlüssel und Principal.
+
+## Frames, Bundles und Konformität
+
+`FrameCodec.decode` Und `encode` Frame-Werte validieren, aber nicht über
+Transport, TLS, Sitzungsauthentifizierung, Cursor-Persistenz, Routing,
+Gegendruck oder maßgebliche Zustandsübergänge verfügen.
+
+`ProtocolBundle.verifyPackaged`, `verifyPackagedCryptographyBundle` und
+`verifyPackagedAdmissionBundle` validieren die genauen Pins, Anzahlen, Pfade,
+Bytelängen und Digests des JAR. Die entsprechenden `Path`-Überladungen
+validieren einen Quell- oder Release-Bundle-Stamm. Diese Methoden führen nicht
+jede Kryptografie oder Zulassungsbewertung durch.
+
+`ConformanceRunner.runPackaged` und `ConformanceCli` führen nur die
+strukturellen Schemavektoren aus. Durch die Angabe von `--root PATH` wird ein
+explizites Protokoll oder Release-Bundle anstelle von gepackten Ressourcen
+ausgewählt.
+
+## Erster Einlass
+
+`AdmissionService` macht `prepareFirstAdmission`, `admitFirst` und
+`verifyHistoricalAdmission` verfügbar. Fahren Sie mit der
+[Java Zulassungsreferenz](../admission/) für genaue Adapterergebnisse,
+Aufrufreihenfolge und das ausführbare Paketbeispiel fort.
+
+## Explizite Verfügbarkeitsgrenzen
+
+<SupportStatus status="deployment-adapter-required" />
+**Admission-Authority-Grenze** – die Anwendung stellt aktuelle Registry-Beweise,
+historische Registry-Beweise, vertrauenswürdigen Akzeptanzkontext und ein
+authentifiziertes Nur-Anhänge-Protokoll bereit.
+
+<SupportStatus status="not-implemented" /> **Mission Orchestrierung** – es wird
+keine übergeordnete Mission Zustandsmaschine oder Orchestrierungsfassade
+exportiert.
+
+<SupportStatus status="not-implemented" /> **Worker Scheduler** – keine Worker
+Warteschlange, kein Scheduler, Lease Runner oder Wiederherstellungsschleife wird
+exportiert.
+
+<SupportStatus status="not-implemented" /> **Gehosteter Gateway-Dienst** – das
+Artefakt stellt `FrameCodec` bereit, keinen Gateway-Dienst mit Transport-, TLS-,
+Sitzungs-, Routing- oder Gegendruckbesitz.
+
+<SupportStatus status="not-implemented" /> **Autoritative Persistenzlaufzeit** –
+es wird keine datenbankgestützte oder Agent-lokale Persistenzlaufzeit
+exportiert.
+
+Diese Abwesenheiten sind Bestandteil des dokumentierten Betreuungsvertrages;
+Python Referenzlaufzeitfunktionen dürfen nicht aus gemeinsam genutzten
+Protokollnamen abgeleitet werden.

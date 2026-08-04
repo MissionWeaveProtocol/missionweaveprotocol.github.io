@@ -1,0 +1,2011 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": "0.1",
+  "source": {
+    "repository": "https://github.com/missionweaveprotocol/missionweaveprotocol",
+    "commit": "f7e70a72c76bbeb5014c186cd820aac2112f0dde",
+    "path": "public/artifacts/0.1/protocol/spec/PROTOCOL.md",
+    "sha256": "sha256:9c7297a1d2973652641efe43ca352830d2dbd69b1782ef15c22e2470f105d235",
+    "lines": 1343,
+    "bcp14Paragraphs": 157,
+    "mixedLevelParagraphs": 85,
+    "unmappedBlankLines": [537]
+  },
+  "prefixes": {
+    "MWP-FND": "foundations",
+    "MWP-IDN": "identity, Registry, sessions",
+    "MWP-SDV": "Signed Document verification",
+    "MWP-ADM": "First Admission and Historical Trust",
+    "MWP-MSN": "Missions, Groups, Membership, Conversations, and child Missions",
+    "MWP-WRK": "WorkItems, scheduling, execution, recovery, Artifacts, and replay",
+    "MWP-AUT": "authorization, budgets, and side effects",
+    "MWP-EVT": "Commands, Events, and WebSocket binding",
+    "MWP-EXT": "extensions, errors, controls, compatibility, and conformance"
+  },
+  "pages": [
+    {
+      "page": "reference/specification/foundations",
+      "prefix": "MWP-FND",
+      "title": "Foundations",
+      "sectionMappings": ["Preamble and §§1–5"],
+      "sourceSegments": [
+        {
+          "startLine": 1,
+          "endLine": 184,
+          "sha256": "sha256:ea357eb506d1e547911e06eb11ab604c34cfe9cda548c5acbc1db34f5244b4e6",
+          "clauseIds": [
+            "MWP-FND-001",
+            "MWP-FND-002",
+            "MWP-FND-003",
+            "MWP-FND-004",
+            "MWP-FND-005",
+            "MWP-FND-006",
+            "MWP-FND-007",
+            "MWP-FND-008",
+            "MWP-FND-009",
+            "MWP-FND-010",
+            "MWP-FND-011",
+            "MWP-FND-012",
+            "MWP-FND-013",
+            "MWP-FND-014",
+            "MWP-FND-015",
+            "MWP-FND-016",
+            "MWP-FND-017",
+            "MWP-FND-018",
+            "MWP-FND-019",
+            "MWP-FND-020",
+            "MWP-FND-021",
+            "MWP-FND-022",
+            "MWP-FND-023",
+            "MWP-FND-024"
+          ],
+          "firstClauseId": "MWP-FND-001",
+          "lastClauseId": "MWP-FND-024",
+          "clauseCount": 24
+        }
+      ],
+      "firstClauseId": "MWP-FND-001",
+      "lastClauseId": "MWP-FND-024",
+      "clauseCount": 24
+    },
+    {
+      "page": "reference/specification/identity-registry-and-sessions",
+      "prefix": "MWP-IDN",
+      "title": "Identity, Registry, and sessions",
+      "sectionMappings": ["§§6.1–6.3"],
+      "sourceSegments": [
+        {
+          "startLine": 185,
+          "endLine": 246,
+          "sha256": "sha256:da5aea6e9c5073cc1d205015d04be38d7bcb728a441c426ae704fdc5977b80cc",
+          "clauseIds": [
+            "MWP-IDN-001",
+            "MWP-IDN-002",
+            "MWP-IDN-003",
+            "MWP-IDN-004",
+            "MWP-IDN-005",
+            "MWP-IDN-006",
+            "MWP-IDN-007",
+            "MWP-IDN-008",
+            "MWP-IDN-009"
+          ],
+          "firstClauseId": "MWP-IDN-001",
+          "lastClauseId": "MWP-IDN-009",
+          "clauseCount": 9
+        }
+      ],
+      "firstClauseId": "MWP-IDN-001",
+      "lastClauseId": "MWP-IDN-009",
+      "clauseCount": 9
+    },
+    {
+      "page": "reference/specification/signed-documents-and-trust",
+      "prefix": "MWP-SDV",
+      "title": "Signed Documents and trust verification",
+      "sectionMappings": [
+        "§6.4 verification profile and six stages",
+        "§6.4 diagnostics and forward compatibility"
+      ],
+      "sourceSegments": [
+        {
+          "startLine": 247,
+          "endLine": 410,
+          "sha256": "sha256:c4c480c035be422db97deed1640ccea7ecad3455efa5dcae9d9520b61cba21f0",
+          "clauseIds": [
+            "MWP-SDV-001",
+            "MWP-SDV-002",
+            "MWP-SDV-003",
+            "MWP-SDV-004",
+            "MWP-SDV-005",
+            "MWP-SDV-006",
+            "MWP-SDV-007",
+            "MWP-SDV-008",
+            "MWP-SDV-009",
+            "MWP-SDV-010",
+            "MWP-SDV-011",
+            "MWP-SDV-012",
+            "MWP-SDV-013",
+            "MWP-SDV-014",
+            "MWP-SDV-015",
+            "MWP-SDV-016",
+            "MWP-SDV-017"
+          ],
+          "firstClauseId": "MWP-SDV-001",
+          "lastClauseId": "MWP-SDV-017",
+          "clauseCount": 17
+        },
+        {
+          "startLine": 521,
+          "endLine": 536,
+          "sha256": "sha256:fea1adb77a694be5c08676dd68ca924716f0ffb538f6096395b2386c060973d6",
+          "clauseIds": ["MWP-SDV-018", "MWP-SDV-019"],
+          "firstClauseId": "MWP-SDV-018",
+          "lastClauseId": "MWP-SDV-019",
+          "clauseCount": 2
+        }
+      ],
+      "firstClauseId": "MWP-SDV-001",
+      "lastClauseId": "MWP-SDV-019",
+      "clauseCount": 19
+    },
+    {
+      "page": "reference/specification/first-admission-and-historical-trust",
+      "prefix": "MWP-ADM",
+      "title": "First Admission and Historical Trust",
+      "sectionMappings": ["§6.4 First Admission and Historical Trust"],
+      "sourceSegments": [
+        {
+          "startLine": 411,
+          "endLine": 520,
+          "sha256": "sha256:e812448caf11facc343305c0fc146b83b80eb18e4c8d58b7ed1042a9a4b07406",
+          "clauseIds": [
+            "MWP-ADM-001",
+            "MWP-ADM-002",
+            "MWP-ADM-003",
+            "MWP-ADM-004",
+            "MWP-ADM-005",
+            "MWP-ADM-006",
+            "MWP-ADM-007",
+            "MWP-ADM-008",
+            "MWP-ADM-009",
+            "MWP-ADM-010",
+            "MWP-ADM-011",
+            "MWP-ADM-012",
+            "MWP-ADM-013",
+            "MWP-ADM-014"
+          ],
+          "firstClauseId": "MWP-ADM-001",
+          "lastClauseId": "MWP-ADM-014",
+          "clauseCount": 14
+        }
+      ],
+      "firstClauseId": "MWP-ADM-001",
+      "lastClauseId": "MWP-ADM-014",
+      "clauseCount": 14
+    },
+    {
+      "page": "reference/specification/missions-groups-and-membership",
+      "prefix": "MWP-MSN",
+      "title": "Missions, Groups, Membership, and Conversations",
+      "sectionMappings": [
+        "§§7–9 Mission, Group, Membership, and Conversation",
+        "§14 Parent and child Missions"
+      ],
+      "sourceSegments": [
+        {
+          "startLine": 538,
+          "endLine": 691,
+          "sha256": "sha256:8648de6ecf4f804b883cf61fec88a881aa643951f8494568df85a6d35b2645f5",
+          "clauseIds": [
+            "MWP-MSN-001",
+            "MWP-MSN-002",
+            "MWP-MSN-003",
+            "MWP-MSN-004",
+            "MWP-MSN-005",
+            "MWP-MSN-006",
+            "MWP-MSN-007",
+            "MWP-MSN-008",
+            "MWP-MSN-009",
+            "MWP-MSN-010",
+            "MWP-MSN-011",
+            "MWP-MSN-012",
+            "MWP-MSN-013",
+            "MWP-MSN-014",
+            "MWP-MSN-015",
+            "MWP-MSN-016",
+            "MWP-MSN-017",
+            "MWP-MSN-018",
+            "MWP-MSN-019",
+            "MWP-MSN-020",
+            "MWP-MSN-021",
+            "MWP-MSN-022",
+            "MWP-MSN-023"
+          ],
+          "firstClauseId": "MWP-MSN-001",
+          "lastClauseId": "MWP-MSN-023",
+          "clauseCount": 23
+        },
+        {
+          "startLine": 951,
+          "endLine": 976,
+          "sha256": "sha256:88aef3ad16a1db302d19882f655f794151aad55d274a3302488737e9bc0c3445",
+          "clauseIds": ["MWP-MSN-024", "MWP-MSN-025", "MWP-MSN-026"],
+          "firstClauseId": "MWP-MSN-024",
+          "lastClauseId": "MWP-MSN-026",
+          "clauseCount": 3
+        }
+      ],
+      "firstClauseId": "MWP-MSN-001",
+      "lastClauseId": "MWP-MSN-026",
+      "clauseCount": 26
+    },
+    {
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "prefix": "MWP-WRK",
+      "title": "Work, scheduling, and recovery",
+      "sectionMappings": [
+        "§§10–11 WorkItems, scheduling, execution, and recovery",
+        "§13 Artifacts, Evidence, and Context Packages",
+        "§16 Delivery, replay, and acknowledgement"
+      ],
+      "sourceSegments": [
+        {
+          "startLine": 692,
+          "endLine": 869,
+          "sha256": "sha256:e43e77b31e619da1a41fc2ca6b80e639b625609010ae91f9e32000babeca65d7",
+          "clauseIds": [
+            "MWP-WRK-001",
+            "MWP-WRK-002",
+            "MWP-WRK-003",
+            "MWP-WRK-004",
+            "MWP-WRK-005",
+            "MWP-WRK-006",
+            "MWP-WRK-007",
+            "MWP-WRK-008",
+            "MWP-WRK-009",
+            "MWP-WRK-010",
+            "MWP-WRK-011",
+            "MWP-WRK-012",
+            "MWP-WRK-013",
+            "MWP-WRK-014",
+            "MWP-WRK-015",
+            "MWP-WRK-016",
+            "MWP-WRK-017",
+            "MWP-WRK-018",
+            "MWP-WRK-019",
+            "MWP-WRK-020",
+            "MWP-WRK-021",
+            "MWP-WRK-022"
+          ],
+          "firstClauseId": "MWP-WRK-001",
+          "lastClauseId": "MWP-WRK-022",
+          "clauseCount": 22
+        },
+        {
+          "startLine": 911,
+          "endLine": 950,
+          "sha256": "sha256:79b43851b2654c9f75f106bbc6a9202eee7b89209bb1a56af1fef5a5cff0bff3",
+          "clauseIds": [
+            "MWP-WRK-023",
+            "MWP-WRK-024",
+            "MWP-WRK-025",
+            "MWP-WRK-026",
+            "MWP-WRK-027",
+            "MWP-WRK-028"
+          ],
+          "firstClauseId": "MWP-WRK-023",
+          "lastClauseId": "MWP-WRK-028",
+          "clauseCount": 6
+        },
+        {
+          "startLine": 1099,
+          "endLine": 1117,
+          "sha256": "sha256:cc9aa387ff3b474091523614f8128d9c7d1df7cf80790a27e24f981721449cb1",
+          "clauseIds": ["MWP-WRK-029", "MWP-WRK-030", "MWP-WRK-031"],
+          "firstClauseId": "MWP-WRK-029",
+          "lastClauseId": "MWP-WRK-031",
+          "clauseCount": 3
+        }
+      ],
+      "firstClauseId": "MWP-WRK-001",
+      "lastClauseId": "MWP-WRK-031",
+      "clauseCount": 31
+    },
+    {
+      "page": "reference/specification/authorization-and-budgets",
+      "prefix": "MWP-AUT",
+      "title": "Authorization, budgets, and side effects",
+      "sectionMappings": ["§12 Authorization, budgets, and side effects"],
+      "sourceSegments": [
+        {
+          "startLine": 870,
+          "endLine": 910,
+          "sha256": "sha256:54fab657406cd8054d639bfb5ed64bba6fbd57bb070ad10c2d50eb7183141de1",
+          "clauseIds": [
+            "MWP-AUT-001",
+            "MWP-AUT-002",
+            "MWP-AUT-003",
+            "MWP-AUT-004",
+            "MWP-AUT-005",
+            "MWP-AUT-006"
+          ],
+          "firstClauseId": "MWP-AUT-001",
+          "lastClauseId": "MWP-AUT-006",
+          "clauseCount": 6
+        }
+      ],
+      "firstClauseId": "MWP-AUT-001",
+      "lastClauseId": "MWP-AUT-006",
+      "clauseCount": 6
+    },
+    {
+      "page": "reference/specification/commands-events-and-ordering",
+      "prefix": "MWP-EVT",
+      "title": "Commands, Events, and ordering",
+      "sectionMappings": [
+        "§15 Commands, Events, and concurrency",
+        "§17 WebSocket binding"
+      ],
+      "sourceSegments": [
+        {
+          "startLine": 977,
+          "endLine": 1098,
+          "sha256": "sha256:cb6ecbbd934e96b3713263608b8364a2c8c79b5accfbec830304207c63cf5276",
+          "clauseIds": [
+            "MWP-EVT-001",
+            "MWP-EVT-002",
+            "MWP-EVT-003",
+            "MWP-EVT-004",
+            "MWP-EVT-005",
+            "MWP-EVT-006",
+            "MWP-EVT-007"
+          ],
+          "firstClauseId": "MWP-EVT-001",
+          "lastClauseId": "MWP-EVT-007",
+          "clauseCount": 7
+        },
+        {
+          "startLine": 1118,
+          "endLine": 1159,
+          "sha256": "sha256:e62b4382176b7caef3112117a45e7f1a7ca2bb3b66a5960cb43b208d6eb001f5",
+          "clauseIds": [
+            "MWP-EVT-008",
+            "MWP-EVT-009",
+            "MWP-EVT-010",
+            "MWP-EVT-011",
+            "MWP-EVT-012"
+          ],
+          "firstClauseId": "MWP-EVT-008",
+          "lastClauseId": "MWP-EVT-012",
+          "clauseCount": 5
+        }
+      ],
+      "firstClauseId": "MWP-EVT-001",
+      "lastClauseId": "MWP-EVT-012",
+      "clauseCount": 12
+    },
+    {
+      "page": "reference/specification/errors-extensions-and-security",
+      "prefix": "MWP-EXT",
+      "title": "Extensions, errors, controls, and conformance",
+      "sectionMappings": [
+        "§§18–23 Extensions, errors, controls, compatibility, conformance, and licensing"
+      ],
+      "sourceSegments": [
+        {
+          "startLine": 1160,
+          "endLine": 1343,
+          "sha256": "sha256:24182a00b319a5e8bc57e6e6614cd06972011ad5be493857b9a7ffc527f2ed73",
+          "clauseIds": [
+            "MWP-EXT-001",
+            "MWP-EXT-002",
+            "MWP-EXT-003",
+            "MWP-EXT-004",
+            "MWP-EXT-005",
+            "MWP-EXT-006",
+            "MWP-EXT-007",
+            "MWP-EXT-008",
+            "MWP-EXT-009",
+            "MWP-EXT-010",
+            "MWP-EXT-011",
+            "MWP-EXT-012",
+            "MWP-EXT-013",
+            "MWP-EXT-014",
+            "MWP-EXT-015",
+            "MWP-EXT-016"
+          ],
+          "firstClauseId": "MWP-EXT-001",
+          "lastClauseId": "MWP-EXT-016",
+          "clauseCount": 16
+        }
+      ],
+      "firstClauseId": "MWP-EXT-001",
+      "lastClauseId": "MWP-EXT-016",
+      "clauseCount": 16
+    }
+  ],
+  "clauses": [
+    {
+      "id": "MWP-FND-001",
+      "page": "reference/specification/foundations",
+      "level": [
+        "MUST",
+        "MUST NOT",
+        "REQUIRED",
+        "SHALL",
+        "SHALL NOT",
+        "SHOULD",
+        "SHOULD NOT",
+        "RECOMMENDED",
+        "NOT RECOMMENDED",
+        "MAY",
+        "OPTIONAL"
+      ],
+      "source": {
+        "startLine": 5,
+        "endLine": 8,
+        "sha256": "sha256:c7be37c0f5682eeafd6d0b12c1776aab3e55029d86d912bd313c57c0a0bad913"
+      }
+    },
+    {
+      "id": "MWP-FND-002",
+      "page": "reference/specification/foundations",
+      "level": "MAY",
+      "source": {
+        "startLine": 18,
+        "endLine": 21,
+        "sha256": "sha256:85fe735c569b364e243ad38e99987b1ff3b3924d9801ebc735942949b1d608a8"
+      }
+    },
+    {
+      "id": "MWP-FND-003",
+      "page": "reference/specification/foundations",
+      "level": "MUST",
+      "source": {
+        "startLine": 43,
+        "endLine": 43,
+        "sha256": "sha256:67db27b0df20b7bf0667bb082e0e030fa95de69c6a4758d5fdabb2d81e894b36"
+      }
+    },
+    {
+      "id": "MWP-FND-004",
+      "page": "reference/specification/foundations",
+      "level": "MUST",
+      "source": {
+        "startLine": 56,
+        "endLine": 61,
+        "sha256": "sha256:033ad5266b04006dc7d412e3abe204bd80e5b63d290c686da4b7dc39affa661e"
+      }
+    },
+    {
+      "id": "MWP-FND-005",
+      "page": "reference/specification/foundations",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 71,
+        "endLine": 78,
+        "sha256": "sha256:9a6159fcbb6cbd8683c4424c10e865e234993609e98d779eb18b4aca7b04dde8"
+      }
+    },
+    {
+      "id": "MWP-FND-006",
+      "page": "reference/specification/foundations",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 80,
+        "endLine": 85,
+        "sha256": "sha256:35421dd45b06494c8e824199037cdb61d06dd3c2e9e08bd0affa94f40f0f9bed"
+      }
+    },
+    {
+      "id": "MWP-FND-007",
+      "page": "reference/specification/foundations",
+      "level": "MUST",
+      "source": {
+        "startLine": 87,
+        "endLine": 91,
+        "sha256": "sha256:22397ac2fca0b800fce21781f25f1f77f7772d707cf586098315bf0b022942c9"
+      }
+    },
+    {
+      "id": "MWP-FND-008",
+      "page": "reference/specification/foundations",
+      "level": ["MUST", "SHOULD", "MUST NOT"],
+      "source": {
+        "startLine": 93,
+        "endLine": 98,
+        "sha256": "sha256:cd1bc22425baa2e7eec1e00d679faedf754bc30451f237fcad1515b39758a070"
+      }
+    },
+    {
+      "id": "MWP-FND-009",
+      "page": "reference/specification/foundations",
+      "level": "MUST",
+      "source": {
+        "startLine": 100,
+        "endLine": 102,
+        "sha256": "sha256:68c640f120c04a804fbf8746f807a034063c21e95423c515d28971004e9c95ba"
+      }
+    },
+    {
+      "id": "MWP-FND-010",
+      "page": "reference/specification/foundations",
+      "level": "MAY",
+      "source": {
+        "startLine": 115,
+        "endLine": 116,
+        "sha256": "sha256:02e4b3f97275951d0425eb4cb5c6ddec36bf3d896debab010fe8f6489f3f6391"
+      }
+    },
+    {
+      "id": "MWP-FND-011",
+      "page": "reference/specification/foundations",
+      "level": "MAY",
+      "source": {
+        "startLine": 117,
+        "endLine": 118,
+        "sha256": "sha256:5e50394465f0573611afe21df597a5ce89ea92aefd69a0bf0d7c8675026ea5ab"
+      }
+    },
+    {
+      "id": "MWP-FND-012",
+      "page": "reference/specification/foundations",
+      "level": ["MAY", "MUST NOT"],
+      "source": {
+        "startLine": 123,
+        "endLine": 126,
+        "sha256": "sha256:1b2303a5074496e11d115ca8ef646f402d55b1afc71d7bab8d665e1ddad682ae"
+      }
+    },
+    {
+      "id": "MWP-FND-013",
+      "page": "reference/specification/foundations",
+      "level": "MUST",
+      "source": {
+        "startLine": 130,
+        "endLine": 130,
+        "sha256": "sha256:43e0a5a53d710a37badf029d4d62a4c21ced920f1ba23962ce1aa191c4efc75e"
+      }
+    },
+    {
+      "id": "MWP-FND-014",
+      "page": "reference/specification/foundations",
+      "level": "MUST NOT",
+      "source": {
+        "startLine": 134,
+        "endLine": 136,
+        "sha256": "sha256:d11230cad6ba3f45206982dc0bf6beb71a143d95f6771a6dbace1b142fd4f459"
+      }
+    },
+    {
+      "id": "MWP-FND-015",
+      "page": "reference/specification/foundations",
+      "level": "MUST",
+      "source": {
+        "startLine": 137,
+        "endLine": 139,
+        "sha256": "sha256:ced807183a0b7999efa9d8d012d7900df4cfa3de9c0cb03e27a06b9a6d3cfd5b"
+      }
+    },
+    {
+      "id": "MWP-FND-016",
+      "page": "reference/specification/foundations",
+      "level": "MUST",
+      "source": {
+        "startLine": 140,
+        "endLine": 141,
+        "sha256": "sha256:7311d8ce87ea8af1285f66168c276639236897600536e1b2cffae3d1d1404ff3"
+      }
+    },
+    {
+      "id": "MWP-FND-017",
+      "page": "reference/specification/foundations",
+      "level": ["MAY", "MUST NOT"],
+      "source": {
+        "startLine": 142,
+        "endLine": 144,
+        "sha256": "sha256:a69d6983bfe804b3aeba64e0dcf6602b0e9f494359d3d1ec7cafa60cfe21780c"
+      }
+    },
+    {
+      "id": "MWP-FND-018",
+      "page": "reference/specification/foundations",
+      "level": ["MAY", "MUST"],
+      "source": {
+        "startLine": 149,
+        "endLine": 150,
+        "sha256": "sha256:7ed25ef48bd1f45e4ef59d6347fa442507378b9ebef45831531e531134eb9512"
+      }
+    },
+    {
+      "id": "MWP-FND-019",
+      "page": "reference/specification/foundations",
+      "level": "MUST",
+      "source": {
+        "startLine": 151,
+        "endLine": 152,
+        "sha256": "sha256:9986ee2e6a6f282243835f45b89646b4c6ad9b12f34ff51ecd01b24b2c4defa2"
+      }
+    },
+    {
+      "id": "MWP-FND-020",
+      "page": "reference/specification/foundations",
+      "level": "MUST NOT",
+      "source": {
+        "startLine": 156,
+        "endLine": 157,
+        "sha256": "sha256:abf1ba0e58206d081cf923f2826ea946183495ee4d3203d889e5b70e1877a48a"
+      }
+    },
+    {
+      "id": "MWP-FND-021",
+      "page": "reference/specification/foundations",
+      "level": "MUST",
+      "source": {
+        "startLine": 158,
+        "endLine": 160,
+        "sha256": "sha256:4190034e744e04527f71f3310625e25168d0eaea5dfff30d7286797c037ef63f"
+      }
+    },
+    {
+      "id": "MWP-FND-022",
+      "page": "reference/specification/foundations",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 161,
+        "endLine": 163,
+        "sha256": "sha256:55fc399ae9beffbc50f22bbb9557f686783b624c95517cc6e6ca1301e7ecf149"
+      }
+    },
+    {
+      "id": "MWP-FND-023",
+      "page": "reference/specification/foundations",
+      "level": "MUST NOT",
+      "source": {
+        "startLine": 176,
+        "endLine": 179,
+        "sha256": "sha256:59f0618fbf290d3dfeec07cd0f788391e291b9d5768e4f849b361bf56da4cf2f"
+      }
+    },
+    {
+      "id": "MWP-FND-024",
+      "page": "reference/specification/foundations",
+      "level": "RECOMMENDED",
+      "source": {
+        "startLine": 181,
+        "endLine": 183,
+        "sha256": "sha256:603d1de163c766181e87166bf9186572760a53d5b15ae6c6a382d332fdc9a9ef"
+      }
+    },
+    {
+      "id": "MWP-IDN-001",
+      "page": "reference/specification/identity-registry-and-sessions",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 189,
+        "endLine": 190,
+        "sha256": "sha256:aedc5433d3bfa2d4ea7eb8a255d6d317b905f24d96463e1f36c32b562fab46ea"
+      }
+    },
+    {
+      "id": "MWP-IDN-002",
+      "page": "reference/specification/identity-registry-and-sessions",
+      "level": "MUST NOT",
+      "source": {
+        "startLine": 197,
+        "endLine": 199,
+        "sha256": "sha256:906c310b02c1201e7e2b17c05fa9a3f0ab735f5fdd39c8f3b7b23e7bf920f978"
+      }
+    },
+    {
+      "id": "MWP-IDN-003",
+      "page": "reference/specification/identity-registry-and-sessions",
+      "level": ["MUST", "MAY"],
+      "source": {
+        "startLine": 201,
+        "endLine": 204,
+        "sha256": "sha256:9cc600a7891820cfff48725d7b49de0f14e935d29f2450d2fbc306c27111d8ae"
+      }
+    },
+    {
+      "id": "MWP-IDN-004",
+      "page": "reference/specification/identity-registry-and-sessions",
+      "level": ["SHOULD", "MAY", "SHOULD NOT"],
+      "source": {
+        "startLine": 206,
+        "endLine": 209,
+        "sha256": "sha256:bb57fee9ad97fcc93cdc667686f485bc0fec7bd8eb3c101c39139e77d694b447"
+      }
+    },
+    {
+      "id": "MWP-IDN-005",
+      "page": "reference/specification/identity-registry-and-sessions",
+      "level": ["MUST", "MAY", "MUST NOT"],
+      "source": {
+        "startLine": 213,
+        "endLine": 216,
+        "sha256": "sha256:20d70b3a55c6b3b5755c8b7c157b96d16e0624dbd79e637e617a4e756129953e"
+      }
+    },
+    {
+      "id": "MWP-IDN-006",
+      "page": "reference/specification/identity-registry-and-sessions",
+      "level": ["MAY", "MUST NOT"],
+      "source": {
+        "startLine": 218,
+        "endLine": 220,
+        "sha256": "sha256:df52d6ae371f5f47ae22af4924e22a0115a04976a2cdbe9d53be66391b8d342d"
+      }
+    },
+    {
+      "id": "MWP-IDN-007",
+      "page": "reference/specification/identity-registry-and-sessions",
+      "level": "MUST",
+      "source": {
+        "startLine": 224,
+        "endLine": 225,
+        "sha256": "sha256:53d8b3d6f0bf52fa425cfac97d839917d7118f6281f230a48fe6d12ff5cdd902"
+      }
+    },
+    {
+      "id": "MWP-IDN-008",
+      "page": "reference/specification/identity-registry-and-sessions",
+      "level": ["MUST", "MUST NOT", "MAY"],
+      "source": {
+        "startLine": 236,
+        "endLine": 240,
+        "sha256": "sha256:d53e0dd2fecfac54441aece9a21c4ff1bd2b70e29bddb1057cc2fbdbcf17f465"
+      }
+    },
+    {
+      "id": "MWP-IDN-009",
+      "page": "reference/specification/identity-registry-and-sessions",
+      "level": ["MUST", "NOT RECOMMENDED", "MAY"],
+      "source": {
+        "startLine": 242,
+        "endLine": 245,
+        "sha256": "sha256:789cf898c76d430621592cbb9b28e010c571b98c341da9a9fbc449a1ac8cfcf8"
+      }
+    },
+    {
+      "id": "MWP-SDV-001",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": "MUST",
+      "source": {
+        "startLine": 265,
+        "endLine": 268,
+        "sha256": "sha256:b412526548e8b16a3478230922a14627c32d8da1ec8a1839e773434a5e12f03a"
+      }
+    },
+    {
+      "id": "MWP-SDV-002",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 278,
+        "endLine": 282,
+        "sha256": "sha256:823913d39488684705238beb576247049108046008981bb9f97ddcc62d934db1"
+      }
+    },
+    {
+      "id": "MWP-SDV-003",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 288,
+        "endLine": 293,
+        "sha256": "sha256:a96a5b42bd7f1c9ef4402ceb09aaa9c44de41fb41d1e1ef4f105a48093e54cc4"
+      }
+    },
+    {
+      "id": "MWP-SDV-004",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": ["MUST NOT", "MUST"],
+      "source": {
+        "startLine": 295,
+        "endLine": 301,
+        "sha256": "sha256:2ff66b9b69f4d991cb6488997ea124ce4296eddba10878c48c58e21b964f2c4e"
+      }
+    },
+    {
+      "id": "MWP-SDV-005",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 303,
+        "endLine": 309,
+        "sha256": "sha256:8f2108dfb30eb02c4e061ef4e6d855856b3038b03e0a97205d5ca6713251d2f4"
+      }
+    },
+    {
+      "id": "MWP-SDV-006",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": "MUST",
+      "source": {
+        "startLine": 311,
+        "endLine": 315,
+        "sha256": "sha256:803529f93f48297a012abdea79a152a2e7f61ec2d0f19bf4b71f9a5a1e592a6f"
+      }
+    },
+    {
+      "id": "MWP-SDV-007",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": "MUST",
+      "source": {
+        "startLine": 317,
+        "endLine": 320,
+        "sha256": "sha256:a297bc927efa99d2e21a75b21dc0e2b2a5001451e94a94a184f40f010dc24525"
+      }
+    },
+    {
+      "id": "MWP-SDV-008",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": "MUST",
+      "source": {
+        "startLine": 322,
+        "endLine": 328,
+        "sha256": "sha256:076f20c71447ddf253f6d93566f6b81c45721210b2fca9937e9823cc4632bef8"
+      }
+    },
+    {
+      "id": "MWP-SDV-009",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": ["MAY", "MUST NOT"],
+      "source": {
+        "startLine": 330,
+        "endLine": 335,
+        "sha256": "sha256:8f7cbcec3493a5fb7267f380d9afa9497ce0b5ef8daa47416f5ee118b8518edf"
+      }
+    },
+    {
+      "id": "MWP-SDV-010",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 337,
+        "endLine": 344,
+        "sha256": "sha256:443678a0923278c883b3cd6d140f5689d3bf1bfda14a75c53d1fa6133f0b3ac5"
+      }
+    },
+    {
+      "id": "MWP-SDV-011",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": ["MUST", "MAY"],
+      "source": {
+        "startLine": 346,
+        "endLine": 350,
+        "sha256": "sha256:89af273b0bb83f16996cd3fba08bef3f61ad28c550344237372324053cce5cbd"
+      }
+    },
+    {
+      "id": "MWP-SDV-012",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": ["MUST", "MAY", "MUST NOT"],
+      "source": {
+        "startLine": 352,
+        "endLine": 358,
+        "sha256": "sha256:aeca96c7ba6039665c9735dbf4810ba0c31ca0744fb3fa4215b26853f76eb55d"
+      }
+    },
+    {
+      "id": "MWP-SDV-013",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": "MUST",
+      "source": {
+        "startLine": 360,
+        "endLine": 363,
+        "sha256": "sha256:aecbbce6646338acf3e409f310d006424d998ef2ab058d341cf143f63ee0aaf3"
+      }
+    },
+    {
+      "id": "MWP-SDV-014",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": "MUST",
+      "source": {
+        "startLine": 365,
+        "endLine": 370,
+        "sha256": "sha256:96332fe111e35d0dec879f2afef5f1f7aa0fcc19d1365cfb4456096dc6a6b2d5"
+      }
+    },
+    {
+      "id": "MWP-SDV-015",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 372,
+        "endLine": 373,
+        "sha256": "sha256:245e6cceec8db29720cf122b43241385dad63946e8030208a4e7e083d6d65b94"
+      }
+    },
+    {
+      "id": "MWP-SDV-016",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": ["MAY", "MUST", "SHOULD"],
+      "source": {
+        "startLine": 397,
+        "endLine": 404,
+        "sha256": "sha256:ed1ca3195b57731600c6ee1f93783a96f5fcbf10a562fdc5d1a9db45f549b2ad"
+      }
+    },
+    {
+      "id": "MWP-SDV-017",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": "MUST NOT",
+      "source": {
+        "startLine": 406,
+        "endLine": 409,
+        "sha256": "sha256:a810efe23ff4d0b0b04623e17fd0282936ed85febf13b629a4ba0e82d7699e36"
+      }
+    },
+    {
+      "id": "MWP-ADM-001",
+      "page": "reference/specification/first-admission-and-historical-trust",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 411,
+        "endLine": 417,
+        "sha256": "sha256:c305d5774d78ebdb522975b7ebd003dd032ed79f345c2b00d143e41cfc6e91c7"
+      }
+    },
+    {
+      "id": "MWP-ADM-002",
+      "page": "reference/specification/first-admission-and-historical-trust",
+      "level": "MUST",
+      "source": {
+        "startLine": 433,
+        "endLine": 434,
+        "sha256": "sha256:c120ec091a45b4915cbbcd77bf24406a3a3d8aae0a7dca0c81e9abce80dd596d"
+      }
+    },
+    {
+      "id": "MWP-ADM-003",
+      "page": "reference/specification/first-admission-and-historical-trust",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 436,
+        "endLine": 443,
+        "sha256": "sha256:b6f89372c51061ad2b27b29784a9b1cd89f356f65c20b589eda8065b033613d8"
+      }
+    },
+    {
+      "id": "MWP-ADM-004",
+      "page": "reference/specification/first-admission-and-historical-trust",
+      "level": ["MUST NOT", "MUST"],
+      "source": {
+        "startLine": 445,
+        "endLine": 449,
+        "sha256": "sha256:3db12be14d3d8bfa59c531a555c7fa342a20eb0fbc8aff54b33f19a5be8d09b9"
+      }
+    },
+    {
+      "id": "MWP-ADM-005",
+      "page": "reference/specification/first-admission-and-historical-trust",
+      "level": "MUST",
+      "source": {
+        "startLine": 451,
+        "endLine": 456,
+        "sha256": "sha256:3b39670182999f16a11d31bb1ff53df4f905423273018ea70f92600445fe3ec3"
+      }
+    },
+    {
+      "id": "MWP-ADM-006",
+      "page": "reference/specification/first-admission-and-historical-trust",
+      "level": "MUST",
+      "source": {
+        "startLine": 458,
+        "endLine": 465,
+        "sha256": "sha256:ade3c5e6f8fe43f8bf277064d52a102198cae9ed9b778fd13325b1947badbe09"
+      }
+    },
+    {
+      "id": "MWP-ADM-007",
+      "page": "reference/specification/first-admission-and-historical-trust",
+      "level": ["MUST NOT", "MAY"],
+      "source": {
+        "startLine": 467,
+        "endLine": 470,
+        "sha256": "sha256:6d022f8b95f34dc49e2e3a06223dcf1d3ec9d1f5a8f9d6d5ec3b55d596dc197d"
+      }
+    },
+    {
+      "id": "MWP-ADM-008",
+      "page": "reference/specification/first-admission-and-historical-trust",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 472,
+        "endLine": 478,
+        "sha256": "sha256:93667b8086f8d73bd72718a010210bf76394be0b3499252aeb1fe3429392673e"
+      }
+    },
+    {
+      "id": "MWP-ADM-009",
+      "page": "reference/specification/first-admission-and-historical-trust",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 480,
+        "endLine": 486,
+        "sha256": "sha256:5a09aa68eb1e2c436a863ef8a52279a693e0a247cfb8569360b01842b4dcf6d7"
+      }
+    },
+    {
+      "id": "MWP-ADM-010",
+      "page": "reference/specification/first-admission-and-historical-trust",
+      "level": "MUST NOT",
+      "source": {
+        "startLine": 488,
+        "endLine": 493,
+        "sha256": "sha256:aa32a85f120141c7e576a9ccfed29318a6eae9891db72c3530f29321bd7eb55c"
+      }
+    },
+    {
+      "id": "MWP-ADM-011",
+      "page": "reference/specification/first-admission-and-historical-trust",
+      "level": ["MUST NOT", "MAY"],
+      "source": {
+        "startLine": 495,
+        "endLine": 498,
+        "sha256": "sha256:f133a09eb6f00d33c90a1c0b3584fc20bc348c4ddc53a1f092cad0901fcf15df"
+      }
+    },
+    {
+      "id": "MWP-ADM-012",
+      "page": "reference/specification/first-admission-and-historical-trust",
+      "level": "MUST",
+      "source": {
+        "startLine": 500,
+        "endLine": 504,
+        "sha256": "sha256:eece8e4e943f603d37f503a0e8d98e9cc45e3bf4d33f2d825c829c37bb6b0153"
+      }
+    },
+    {
+      "id": "MWP-ADM-013",
+      "page": "reference/specification/first-admission-and-historical-trust",
+      "level": "MUST",
+      "source": {
+        "startLine": 506,
+        "endLine": 508,
+        "sha256": "sha256:7754cd2811d701fa653aaf45192d0f34f5ad5a9e68aafcbd6da8125fcee874e0"
+      }
+    },
+    {
+      "id": "MWP-ADM-014",
+      "page": "reference/specification/first-admission-and-historical-trust",
+      "level": "MUST",
+      "source": {
+        "startLine": 510,
+        "endLine": 519,
+        "sha256": "sha256:9ac2a58234993aeab50beb7f7d5599a0d6b06345400724b5b0d1023d0994293a"
+      }
+    },
+    {
+      "id": "MWP-SDV-018",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": ["MUST NOT", "MUST"],
+      "source": {
+        "startLine": 521,
+        "endLine": 531,
+        "sha256": "sha256:291bc7177fc365480d6dc1f87ad6e5083386158971e95b19373651b72aab0350"
+      }
+    },
+    {
+      "id": "MWP-SDV-019",
+      "page": "reference/specification/signed-documents-and-trust",
+      "level": "MUST NOT",
+      "source": {
+        "startLine": 533,
+        "endLine": 536,
+        "sha256": "sha256:6a90a2aea0c55371f7a21c2c72e19d6e7112274e638a45d17bd0ba954601d1fe"
+      }
+    },
+    {
+      "id": "MWP-MSN-001",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": "MUST",
+      "source": {
+        "startLine": 542,
+        "endLine": 545,
+        "sha256": "sha256:95ccbc52488bd1a73b11554d23df1a09b3c55bb122c703932d7dfbc889e02ed5"
+      }
+    },
+    {
+      "id": "MWP-MSN-002",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MUST NOT", "MUST"],
+      "source": {
+        "startLine": 560,
+        "endLine": 562,
+        "sha256": "sha256:e163d048945569da09951c3966ebf3d4f544c5827200245fa50e66c4839ee952"
+      }
+    },
+    {
+      "id": "MWP-MSN-003",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MAY", "MUST NOT", "MUST"],
+      "source": {
+        "startLine": 564,
+        "endLine": 567,
+        "sha256": "sha256:06239bb7c8866c8e34925e779227727a4d62913b7972ee7418dc4342c389bdde"
+      }
+    },
+    {
+      "id": "MWP-MSN-004",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": "MAY",
+      "source": {
+        "startLine": 571,
+        "endLine": 574,
+        "sha256": "sha256:7444852a511223ef74da150928e241e5fca1ac435c70250759d3d794f48987fd"
+      }
+    },
+    {
+      "id": "MWP-MSN-005",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MAY", "MUST"],
+      "source": {
+        "startLine": 576,
+        "endLine": 580,
+        "sha256": "sha256:561af5b66270538e89992715e844ca51ee9988eba43b08a54db6a338c1a595f4"
+      }
+    },
+    {
+      "id": "MWP-MSN-006",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["SHOULD", "MAY", "MUST NOT"],
+      "source": {
+        "startLine": 582,
+        "endLine": 584,
+        "sha256": "sha256:4d20467273b11be738dcecb75f10dd4fc978a677a46073b23197467323749428"
+      }
+    },
+    {
+      "id": "MWP-MSN-007",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MUST", "MAY", "MUST NOT"],
+      "source": {
+        "startLine": 588,
+        "endLine": 591,
+        "sha256": "sha256:b2b53127c80202b4c56f1a154792e0eda9ff739732f1e1261e186c72f251c765"
+      }
+    },
+    {
+      "id": "MWP-MSN-008",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": "MUST",
+      "source": {
+        "startLine": 593,
+        "endLine": 597,
+        "sha256": "sha256:6cbae6705e3b9c3fb831a9d22ec962cab409fdbc63c9faa1bde3847c2ba3464f"
+      }
+    },
+    {
+      "id": "MWP-MSN-009",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MUST", "MUST NOT", "MAY"],
+      "source": {
+        "startLine": 601,
+        "endLine": 605,
+        "sha256": "sha256:32e3a0ba218e2be839c817074285ed7a665d7721b613b3e556f0e718fe9b21a3"
+      }
+    },
+    {
+      "id": "MWP-MSN-010",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": "MUST",
+      "source": {
+        "startLine": 609,
+        "endLine": 614,
+        "sha256": "sha256:357d10627c3c83262e77e3d5576f5528db196c30ebc01a6facd54c0344af400e"
+      }
+    },
+    {
+      "id": "MWP-MSN-011",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": "SHOULD",
+      "source": {
+        "startLine": 616,
+        "endLine": 616,
+        "sha256": "sha256:c72bb12615212270397b5167eb44f4e1b93d8dbd320a8d9be6c08e7ec66d797a"
+      }
+    },
+    {
+      "id": "MWP-MSN-012",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MUST NOT", "MAY"],
+      "source": {
+        "startLine": 624,
+        "endLine": 626,
+        "sha256": "sha256:01d5d87e8ec44e4c7d275c12cce14f67b409f99933e3fe46e3bbb5f8c02e1c06"
+      }
+    },
+    {
+      "id": "MWP-MSN-013",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MUST", "SHOULD", "MAY"],
+      "source": {
+        "startLine": 628,
+        "endLine": 632,
+        "sha256": "sha256:4ce60f486ca516fc33b09c60b092a05b35e19a58afc74459a5d46eee9dde25df"
+      }
+    },
+    {
+      "id": "MWP-MSN-014",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MUST NOT", "MUST", "SHOULD"],
+      "source": {
+        "startLine": 634,
+        "endLine": 635,
+        "sha256": "sha256:24e3f67ef0f94da7d54aec8ca4f0c451acfc67a0ddcc8407f5e614de5494cbc1"
+      }
+    },
+    {
+      "id": "MWP-MSN-015",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MUST", "MAY"],
+      "source": {
+        "startLine": 639,
+        "endLine": 642,
+        "sha256": "sha256:ae87b40e80b1502db4fa5abf0c6690f88ec241f710295c65e8f8bae855709b97"
+      }
+    },
+    {
+      "id": "MWP-MSN-016",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MAY", "MUST NOT"],
+      "source": {
+        "startLine": 644,
+        "endLine": 647,
+        "sha256": "sha256:9972de0b64e5f403d65144005b7d9bf4d4567eb67fee2cc4cf134d2f51e827b6"
+      }
+    },
+    {
+      "id": "MWP-MSN-017",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": "MUST NOT",
+      "source": {
+        "startLine": 649,
+        "endLine": 651,
+        "sha256": "sha256:deb0a91ade3a9950e772f7d5d71238c4e065382d3c434212ed810094f701f4fa"
+      }
+    },
+    {
+      "id": "MWP-MSN-018",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": "MAY",
+      "source": {
+        "startLine": 653,
+        "endLine": 653,
+        "sha256": "sha256:09f01c641624e2a0a8913a37f1753ea20c0b5f4e31fca28dcd40d596477bd69c"
+      }
+    },
+    {
+      "id": "MWP-MSN-019",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MAY", "MUST"],
+      "source": {
+        "startLine": 662,
+        "endLine": 665,
+        "sha256": "sha256:c88c789f5fb3fca776fb63cf69ed9a949c89beee02d3a78df655b26f8d79da1d"
+      }
+    },
+    {
+      "id": "MWP-MSN-020",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MAY", "MUST"],
+      "source": {
+        "startLine": 667,
+        "endLine": 671,
+        "sha256": "sha256:88907957fa7e4e47d6dfc5d1ea9c85cc90abc9dd0e010552e089b60493bf5565"
+      }
+    },
+    {
+      "id": "MWP-MSN-021",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MAY", "MUST"],
+      "source": {
+        "startLine": 673,
+        "endLine": 678,
+        "sha256": "sha256:8a7d80d3a32491adb83323db86c56f70e01f2d8b6b64b7c49b85bd87838fe295"
+      }
+    },
+    {
+      "id": "MWP-MSN-022",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 680,
+        "endLine": 686,
+        "sha256": "sha256:e0350bef5caec67f188ab04be8d786dbf01922d3c1b2be509fc7bb4378c449de"
+      }
+    },
+    {
+      "id": "MWP-MSN-023",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MUST", "MAY"],
+      "source": {
+        "startLine": 688,
+        "endLine": 690,
+        "sha256": "sha256:d709a35b7cf512932eeea3904b92a9723e64aed1bdc949f80557453d63070c63"
+      }
+    },
+    {
+      "id": "MWP-WRK-001",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": "MUST",
+      "source": {
+        "startLine": 696,
+        "endLine": 696,
+        "sha256": "sha256:e9ab99ca906e61ca8fb9444d826845da73807f50da162c1c066d5aabd8660874"
+      }
+    },
+    {
+      "id": "MWP-WRK-002",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["MUST", "MUST NOT", "MAY"],
+      "source": {
+        "startLine": 708,
+        "endLine": 712,
+        "sha256": "sha256:2e16aa0955e155d982b23d3a50948c0372d97ea01e8efe2d4742b5f1b30dc1ed"
+      }
+    },
+    {
+      "id": "MWP-WRK-003",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["MAY", "MUST"],
+      "source": {
+        "startLine": 739,
+        "endLine": 742,
+        "sha256": "sha256:80d8c12b8b2ad3065f8e5b346bfdbc8b575be92612e413aef8e9bf9524493fc0"
+      }
+    },
+    {
+      "id": "MWP-WRK-004",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["MAY", "MUST NOT", "SHOULD"],
+      "source": {
+        "startLine": 746,
+        "endLine": 750,
+        "sha256": "sha256:74bcd82c065e45e033fe94482c1e5d5be9241ad5d84b8e200eaef0468c49acab"
+      }
+    },
+    {
+      "id": "MWP-WRK-005",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["MUST", "SHOULD"],
+      "source": {
+        "startLine": 752,
+        "endLine": 756,
+        "sha256": "sha256:3753ce6ed58ca45f57580a575a7533ad8bed831c187172def634ddf3de468d59"
+      }
+    },
+    {
+      "id": "MWP-WRK-006",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 758,
+        "endLine": 760,
+        "sha256": "sha256:027f54574f7b51f44e9e319a8f6ac824531c750f5788884b19da91a010d54688"
+      }
+    },
+    {
+      "id": "MWP-WRK-007",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["MAY", "MUST"],
+      "source": {
+        "startLine": 764,
+        "endLine": 767,
+        "sha256": "sha256:676182bdcc2c11720ea9b5e6ff625833dc5b39e5a9ae41dbbf94dbb40c9e43d3"
+      }
+    },
+    {
+      "id": "MWP-WRK-008",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": "MUST",
+      "source": {
+        "startLine": 776,
+        "endLine": 778,
+        "sha256": "sha256:7d2ef742f4938a5f8158e204ea97950a592f905a29f07a468b5844839377c829"
+      }
+    },
+    {
+      "id": "MWP-WRK-009",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": "MUST NOT",
+      "source": {
+        "startLine": 780,
+        "endLine": 784,
+        "sha256": "sha256:6cbe9a150aaec10163f75bce1c1792d114cf60bafca7ec3d1ccb6e935ee6680d"
+      }
+    },
+    {
+      "id": "MWP-WRK-010",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["MUST", "SHOULD"],
+      "source": {
+        "startLine": 786,
+        "endLine": 788,
+        "sha256": "sha256:ed973e3dbb3aa82f395efb64fc97d011c2748681a2fbd2b9e108517579031c41"
+      }
+    },
+    {
+      "id": "MWP-WRK-011",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": "MUST",
+      "source": {
+        "startLine": 790,
+        "endLine": 792,
+        "sha256": "sha256:111d241b72c185060bfc2864e6720cfd3fe6a6e85a3031c3e2b39dd26c43462d"
+      }
+    },
+    {
+      "id": "MWP-WRK-012",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["SHOULD", "MUST NOT"],
+      "source": {
+        "startLine": 796,
+        "endLine": 798,
+        "sha256": "sha256:9e47a60539ede267fd6b91224cf9fb651a4f5988177d9fe16bbe2727a980e527"
+      }
+    },
+    {
+      "id": "MWP-WRK-013",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": "MUST",
+      "source": {
+        "startLine": 802,
+        "endLine": 807,
+        "sha256": "sha256:9f7c244489d45c6477d978e1bc8cc1b54cbc001454d5ca04c7d662d9a233a328"
+      }
+    },
+    {
+      "id": "MWP-WRK-014",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": "MUST",
+      "source": {
+        "startLine": 809,
+        "endLine": 814,
+        "sha256": "sha256:e411934fb0ca6144007e139e2d817e3cc30e24f465276400938ff3a1ab15415e"
+      }
+    },
+    {
+      "id": "MWP-WRK-015",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": "MUST NOT",
+      "source": {
+        "startLine": 816,
+        "endLine": 817,
+        "sha256": "sha256:bdc58c9d03ff64d54a88b28877629242eb427b63a91cc07129b7629bf1dc4d8f"
+      }
+    },
+    {
+      "id": "MWP-WRK-016",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["MUST", "SHOULD"],
+      "source": {
+        "startLine": 827,
+        "endLine": 830,
+        "sha256": "sha256:2e4d22eadc4d005df725b365cbfd3edc3ef82e73ae4d7992061a1e76bab3d490"
+      }
+    },
+    {
+      "id": "MWP-WRK-017",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["MUST", "MAY"],
+      "source": {
+        "startLine": 832,
+        "endLine": 835,
+        "sha256": "sha256:79a6f0a0f8e33870b1b1da92ca39b0ef25694e4eddc0473ab96b6b01a1816f7a"
+      }
+    },
+    {
+      "id": "MWP-WRK-018",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": "MUST",
+      "source": {
+        "startLine": 837,
+        "endLine": 839,
+        "sha256": "sha256:e34cb2643aa24f09eeabd5e296dbb4bb379fb6a2ee7d8d6267f20e72517f928a"
+      }
+    },
+    {
+      "id": "MWP-WRK-019",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["MAY", "MUST NOT"],
+      "source": {
+        "startLine": 843,
+        "endLine": 845,
+        "sha256": "sha256:d08f817927857e7a8e430723f70c5a2d63c631582e649014dc04d6897b5a2ddd"
+      }
+    },
+    {
+      "id": "MWP-WRK-020",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["MAY", "MUST NOT", "MUST"],
+      "source": {
+        "startLine": 847,
+        "endLine": 851,
+        "sha256": "sha256:90eb0deafb1e784be61730403d1a504817381c6e11332a36fa4fa9cb7f23ff79"
+      }
+    },
+    {
+      "id": "MWP-WRK-021",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": "MUST",
+      "source": {
+        "startLine": 853,
+        "endLine": 861,
+        "sha256": "sha256:2e8b14bbb3201b4429078fefde7886df5cf7601ca6b2d5fa052d2617f211652f"
+      }
+    },
+    {
+      "id": "MWP-WRK-022",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": "MUST",
+      "source": {
+        "startLine": 863,
+        "endLine": 868,
+        "sha256": "sha256:0350854abd4504575dbd1011e2f8b681b8ed26b396eb47e974b5798baa8b51b2"
+      }
+    },
+    {
+      "id": "MWP-AUT-001",
+      "page": "reference/specification/authorization-and-budgets",
+      "level": "MUST",
+      "source": {
+        "startLine": 872,
+        "endLine": 873,
+        "sha256": "sha256:9572099d79d3a681191c3a9a2055d240aac05c9ccf80342907aae5f061cb1008"
+      }
+    },
+    {
+      "id": "MWP-AUT-002",
+      "page": "reference/specification/authorization-and-budgets",
+      "level": ["MAY", "MUST NOT", "MUST"],
+      "source": {
+        "startLine": 882,
+        "endLine": 885,
+        "sha256": "sha256:b0b1455dd591860ec0b6a42efadf47e4e77f613ec2b06c63e124ccd051984d8e"
+      }
+    },
+    {
+      "id": "MWP-AUT-003",
+      "page": "reference/specification/authorization-and-budgets",
+      "level": ["MUST", "MAY"],
+      "source": {
+        "startLine": 887,
+        "endLine": 891,
+        "sha256": "sha256:822d8e59e9f112b6aabea585b8eeae708d9ed466a9b2a94cf3271058742155ad"
+      }
+    },
+    {
+      "id": "MWP-AUT-004",
+      "page": "reference/specification/authorization-and-budgets",
+      "level": "MUST NOT",
+      "source": {
+        "startLine": 893,
+        "endLine": 896,
+        "sha256": "sha256:b732cd2b580f84d5c432bf26f37934432d01812dc693a1e36464d945a6447367"
+      }
+    },
+    {
+      "id": "MWP-AUT-005",
+      "page": "reference/specification/authorization-and-budgets",
+      "level": "MUST",
+      "source": {
+        "startLine": 898,
+        "endLine": 905,
+        "sha256": "sha256:e1766dc784671c1ac8bd4c6561ccc43644f66740d687b50710091b77c24b8a63"
+      }
+    },
+    {
+      "id": "MWP-AUT-006",
+      "page": "reference/specification/authorization-and-budgets",
+      "level": "MUST",
+      "source": {
+        "startLine": 907,
+        "endLine": 909,
+        "sha256": "sha256:b3ec557f6cb2d3d2e4895fdcf9a41c3f81fb2ea89df3b3854a01ff609a50db3e"
+      }
+    },
+    {
+      "id": "MWP-WRK-023",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": "MUST",
+      "source": {
+        "startLine": 915,
+        "endLine": 919,
+        "sha256": "sha256:ffcd1a31e7f329e5bee76ab8919e84e2534afa461e6719d9f09dda0604e73bcb"
+      }
+    },
+    {
+      "id": "MWP-WRK-024",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 921,
+        "endLine": 922,
+        "sha256": "sha256:d9d09da274a779531d5b61c92d611d11ad059f0986c18d0b0f7e0f0796c07d84"
+      }
+    },
+    {
+      "id": "MWP-WRK-025",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["MUST", "SHOULD"],
+      "source": {
+        "startLine": 926,
+        "endLine": 927,
+        "sha256": "sha256:a3a3d5b64fe1a25a609a11dc179cbe41ebb8bb49220055daf91f1d8f48585757"
+      }
+    },
+    {
+      "id": "MWP-WRK-026",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 935,
+        "endLine": 936,
+        "sha256": "sha256:43d51e6242607405b161571f375f64fa897c742997d28194d4c9306a4ddddee1"
+      }
+    },
+    {
+      "id": "MWP-WRK-027",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": "MUST",
+      "source": {
+        "startLine": 940,
+        "endLine": 944,
+        "sha256": "sha256:0ced426cb0a711e918280efb73925689ecce46d8c9016192a84aa91ee4b88e65"
+      }
+    },
+    {
+      "id": "MWP-WRK-028",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": "MUST NOT",
+      "source": {
+        "startLine": 946,
+        "endLine": 949,
+        "sha256": "sha256:960e185cea436e2b8a29d4944e6bedb655b34bbfddd5f4799666030c9ebbc1e1"
+      }
+    },
+    {
+      "id": "MWP-MSN-024",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MAY", "MUST"],
+      "source": {
+        "startLine": 953,
+        "endLine": 955,
+        "sha256": "sha256:6f7960d626b9afc60631eb336107644904cea6e57fd9afce049726c53364f0bb"
+      }
+    },
+    {
+      "id": "MWP-MSN-025",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": "MUST",
+      "source": {
+        "startLine": 957,
+        "endLine": 960,
+        "sha256": "sha256:e0830113dac287f7f6012307626478b7c33dd614a86b9ef93f6103c39c822382"
+      }
+    },
+    {
+      "id": "MWP-MSN-026",
+      "page": "reference/specification/missions-groups-and-membership",
+      "level": ["MUST NOT", "MUST"],
+      "source": {
+        "startLine": 972,
+        "endLine": 975,
+        "sha256": "sha256:2c2b0c6e7bc0441efceb46e48eec952c4d47f26af2c4680dac2caca78ccbf989"
+      }
+    },
+    {
+      "id": "MWP-EVT-001",
+      "page": "reference/specification/commands-events-and-ordering",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 981,
+        "endLine": 986,
+        "sha256": "sha256:a7a163853b68cd39192b970e1bfbb1b7d75bc1c747750a9fed2f4c6bd267779a"
+      }
+    },
+    {
+      "id": "MWP-EVT-002",
+      "page": "reference/specification/commands-events-and-ordering",
+      "level": ["MUST", "SHOULD"],
+      "source": {
+        "startLine": 997,
+        "endLine": 1004,
+        "sha256": "sha256:929fb7894abce16e51ffaa6177028e26eaf5b8cb8b9763894a7d0c83db0a4f7e"
+      }
+    },
+    {
+      "id": "MWP-EVT-003",
+      "page": "reference/specification/commands-events-and-ordering",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 1006,
+        "endLine": 1008,
+        "sha256": "sha256:614cb8da8979b0e263faa605f50847c46ba3249f1d316a3cb37d43f7bb3539b5"
+      }
+    },
+    {
+      "id": "MWP-EVT-004",
+      "page": "reference/specification/commands-events-and-ordering",
+      "level": "MUST",
+      "source": {
+        "startLine": 1010,
+        "endLine": 1012,
+        "sha256": "sha256:a75dc3e444f41885bd5d832b0c9295b02275614b09300054d8fb7815772a71e0"
+      }
+    },
+    {
+      "id": "MWP-EVT-005",
+      "page": "reference/specification/commands-events-and-ordering",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 1044,
+        "endLine": 1050,
+        "sha256": "sha256:d5c105d92a1137ede709ad18ca53423402a44d89496e111bbe63cfe7f82fe9e4"
+      }
+    },
+    {
+      "id": "MWP-EVT-006",
+      "page": "reference/specification/commands-events-and-ordering",
+      "level": "MAY",
+      "source": {
+        "startLine": 1088,
+        "endLine": 1089,
+        "sha256": "sha256:4156b773c13e42f39afcc76a8e056a0bcaf0639cb96fff4795a71099a973ad3c"
+      }
+    },
+    {
+      "id": "MWP-EVT-007",
+      "page": "reference/specification/commands-events-and-ordering",
+      "level": ["SHOULD", "MUST", "MUST NOT"],
+      "source": {
+        "startLine": 1093,
+        "endLine": 1097,
+        "sha256": "sha256:681a81f864379237db19ec1ef7a4dbb4e2402c857fd4326db553bab9c2688fb7"
+      }
+    },
+    {
+      "id": "MWP-WRK-029",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": ["MUST", "MAY", "MUST NOT"],
+      "source": {
+        "startLine": 1101,
+        "endLine": 1103,
+        "sha256": "sha256:675d40bb34d2ccc1cda6c0c2ad7378dbcc82eb313463e298b5ccd100153db9d1"
+      }
+    },
+    {
+      "id": "MWP-WRK-030",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": "MUST NOT",
+      "source": {
+        "startLine": 1105,
+        "endLine": 1108,
+        "sha256": "sha256:27876a5e8d49e158d2913f09b9fb51d97cc472d2bad662865e9e6a4f7e222c4c"
+      }
+    },
+    {
+      "id": "MWP-WRK-031",
+      "page": "reference/specification/work-scheduling-and-recovery",
+      "level": "MUST",
+      "source": {
+        "startLine": 1114,
+        "endLine": 1116,
+        "sha256": "sha256:2827780e59670633724578c1bf5e2438bb28c31673440e459f891ebce5c59a42"
+      }
+    },
+    {
+      "id": "MWP-EVT-008",
+      "page": "reference/specification/commands-events-and-ordering",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 1122,
+        "endLine": 1125,
+        "sha256": "sha256:ad9ad21a26313e03ac5078af41bcdb2b107bdf07311e9d7b55007c9d63599f28"
+      }
+    },
+    {
+      "id": "MWP-EVT-009",
+      "page": "reference/specification/commands-events-and-ordering",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 1132,
+        "endLine": 1135,
+        "sha256": "sha256:640059bbc664350ac5725f5b38fe6ae6f08b82ab19703e4ce495b36ef8d684df"
+      }
+    },
+    {
+      "id": "MWP-EVT-010",
+      "page": "reference/specification/commands-events-and-ordering",
+      "level": ["MAY", "MUST"],
+      "source": {
+        "startLine": 1137,
+        "endLine": 1138,
+        "sha256": "sha256:675715726b08371928dbfaec871e92a6bf9d9060c4de3fc7639f3c331c004c23"
+      }
+    },
+    {
+      "id": "MWP-EVT-011",
+      "page": "reference/specification/commands-events-and-ordering",
+      "level": ["MAY", "MUST", "SHOULD"],
+      "source": {
+        "startLine": 1142,
+        "endLine": 1145,
+        "sha256": "sha256:6ba9de8ccf62310642bb51895cbe9c689ddc6da268bc061caa049a861e7efbd1"
+      }
+    },
+    {
+      "id": "MWP-EVT-012",
+      "page": "reference/specification/commands-events-and-ordering",
+      "level": "MUST",
+      "source": {
+        "startLine": 1149,
+        "endLine": 1153,
+        "sha256": "sha256:d377646fde8a0368f660a84739539c7411cfb499a5e62c9bebc1b30a7fc7168e"
+      }
+    },
+    {
+      "id": "MWP-EXT-001",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": ["MAY", "MUST"],
+      "source": {
+        "startLine": 1162,
+        "endLine": 1165,
+        "sha256": "sha256:dd4bf4c02d47f827c431d9b17e794f0707df187db684df815a8467d3b24e8857"
+      }
+    },
+    {
+      "id": "MWP-EXT-002",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": ["MUST", "MAY"],
+      "source": {
+        "startLine": 1167,
+        "endLine": 1170,
+        "sha256": "sha256:7cd32c27e0c14a65b2e406f2e6b1bbaba6b893e56e14bb977e564e977a6f80b2"
+      }
+    },
+    {
+      "id": "MWP-EXT-003",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": "MUST NOT",
+      "source": {
+        "startLine": 1172,
+        "endLine": 1174,
+        "sha256": "sha256:73fa33c02c7e6c7c879f198372bf5f881ecfc14e636233579b89a943ef877b90"
+      }
+    },
+    {
+      "id": "MWP-EXT-004",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": ["MUST", "SHOULD"],
+      "source": {
+        "startLine": 1178,
+        "endLine": 1180,
+        "sha256": "sha256:42789e4dca7b60278f38ed2489ab6ee78b8bee648cac6891bcd9789773418333"
+      }
+    },
+    {
+      "id": "MWP-EXT-005",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": ["MUST", "MUST NOT", "MAY"],
+      "source": {
+        "startLine": 1212,
+        "endLine": 1219,
+        "sha256": "sha256:6afce3d2344426cb0d48f089a2e8d0744f9802291019541c832fb1973783f943"
+      }
+    },
+    {
+      "id": "MWP-EXT-006",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": ["MUST", "SHOULD"],
+      "source": {
+        "startLine": 1223,
+        "endLine": 1226,
+        "sha256": "sha256:72075fa80f74a1ae8684de4a93d773c5e3cf422c6bf55344a75368604422bc0b"
+      }
+    },
+    {
+      "id": "MWP-EXT-007",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 1228,
+        "endLine": 1230,
+        "sha256": "sha256:6a12cd783dcbcd2abd0dfc62c2f75d336b1888fb604fdab045595ad6e0a9087f"
+      }
+    },
+    {
+      "id": "MWP-EXT-008",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": "MUST",
+      "source": {
+        "startLine": 1232,
+        "endLine": 1237,
+        "sha256": "sha256:f31c35cf9f9810b395334de4815259671367d248672ed13d758dbd6509c7c287"
+      }
+    },
+    {
+      "id": "MWP-EXT-009",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": "MUST",
+      "source": {
+        "startLine": 1239,
+        "endLine": 1244,
+        "sha256": "sha256:e894ef1358a1ad473181472f83d0d7d5cdffffc97fa956319f9d12c000e4cb42"
+      }
+    },
+    {
+      "id": "MWP-EXT-010",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": "MUST",
+      "source": {
+        "startLine": 1248,
+        "endLine": 1251,
+        "sha256": "sha256:738b87ceb2eb883fa1deecda437c0a1470973fb82bf87c82187499d98834f4b4"
+      }
+    },
+    {
+      "id": "MWP-EXT-011",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": "MUST",
+      "source": {
+        "startLine": 1297,
+        "endLine": 1302,
+        "sha256": "sha256:0fe570841b8f2d57db5f1f02d407f0f7f72fb647661e2c94e50d8715a924bb3b"
+      }
+    },
+    {
+      "id": "MWP-EXT-012",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": "MUST",
+      "source": {
+        "startLine": 1304,
+        "endLine": 1309,
+        "sha256": "sha256:fbb6f3f8b4280ff6a483fe5622bd8022be26bcf25de3f5452b80ef62553978e4"
+      }
+    },
+    {
+      "id": "MWP-EXT-013",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": "MUST",
+      "source": {
+        "startLine": 1311,
+        "endLine": 1322,
+        "sha256": "sha256:1e7bc8612f661573d98b515aace5682e61f5b3027a54c1e8fbf7e42b57377deb"
+      }
+    },
+    {
+      "id": "MWP-EXT-014",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": "MUST",
+      "source": {
+        "startLine": 1324,
+        "endLine": 1329,
+        "sha256": "sha256:5623f8d95f0086bbf42a9a987dc40fd846af12ad48b998607938c39e6b628b94"
+      }
+    },
+    {
+      "id": "MWP-EXT-015",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": "MUST",
+      "source": {
+        "startLine": 1331,
+        "endLine": 1334,
+        "sha256": "sha256:40dc18dcf1f5f2b5585852921d11002452d078e15bbd1fc3b4038462ef2dfcf5"
+      }
+    },
+    {
+      "id": "MWP-EXT-016",
+      "page": "reference/specification/errors-extensions-and-security",
+      "level": ["MUST", "MUST NOT"],
+      "source": {
+        "startLine": 1336,
+        "endLine": 1338,
+        "sha256": "sha256:0acbee65581ff55be6f22a421d33b0797749853f381ffae00373e1935b0f69dc"
+      }
+    }
+  ]
+}

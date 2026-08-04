@@ -1,0 +1,2360 @@
+{
+  "schemaVersion": 1,
+  "sdk": "java",
+  "name": "Java",
+  "repository": "https://github.com/MissionWeaveProtocol/java-sdk",
+  "commit": "3b2798c21d906c81887c54fe80e5bca8a19ddac7",
+  "package": "org.missionweaveprotocol:missionweaveprotocol-sdk",
+  "toolchain": ["Java 21", "Maven 3.9"],
+  "sourceFiles": [
+    "src/main/java/org/missionweaveprotocol/sdk/AdmissionAdapterException.java",
+    "src/main/java/org/missionweaveprotocol/sdk/AdmissionContextValue.java",
+    "src/main/java/org/missionweaveprotocol/sdk/AdmissionCurrentKeyResolver.java",
+    "src/main/java/org/missionweaveprotocol/sdk/AdmissionDiagnostic.java",
+    "src/main/java/org/missionweaveprotocol/sdk/AdmissionException.java",
+    "src/main/java/org/missionweaveprotocol/sdk/AdmissionLog.java",
+    "src/main/java/org/missionweaveprotocol/sdk/AdmissionLookup.java",
+    "src/main/java/org/missionweaveprotocol/sdk/AdmissionReason.java",
+    "src/main/java/org/missionweaveprotocol/sdk/AdmissionService.java",
+    "src/main/java/org/missionweaveprotocol/sdk/AdmittedSignedDocument.java",
+    "src/main/java/org/missionweaveprotocol/sdk/AgentRegistryKeyResolution.java",
+    "src/main/java/org/missionweaveprotocol/sdk/AuthenticatedAdmissionRecord.java",
+    "src/main/java/org/missionweaveprotocol/sdk/Base64Url.java",
+    "src/main/java/org/missionweaveprotocol/sdk/CanonicalJson.java",
+    "src/main/java/org/missionweaveprotocol/sdk/ConformanceReport.java",
+    "src/main/java/org/missionweaveprotocol/sdk/ConformanceRunner.java",
+    "src/main/java/org/missionweaveprotocol/sdk/DocumentSignatures.java",
+    "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java",
+    "src/main/java/org/missionweaveprotocol/sdk/Ed25519Point.java",
+    "src/main/java/org/missionweaveprotocol/sdk/ExactInstant.java",
+    "src/main/java/org/missionweaveprotocol/sdk/FirstAdmissionRecord.java",
+    "src/main/java/org/missionweaveprotocol/sdk/FrameCodec.java",
+    "src/main/java/org/missionweaveprotocol/sdk/KeyRegistryCompleteness.java",
+    "src/main/java/org/missionweaveprotocol/sdk/KeyRegistrySnapshot.java",
+    "src/main/java/org/missionweaveprotocol/sdk/KeyResolutionException.java",
+    "src/main/java/org/missionweaveprotocol/sdk/KeyResolutionRequest.java",
+    "src/main/java/org/missionweaveprotocol/sdk/KeyResolver.java",
+    "src/main/java/org/missionweaveprotocol/sdk/MissionWeaveProtocol.java",
+    "src/main/java/org/missionweaveprotocol/sdk/PreparedFirstAdmission.java",
+    "src/main/java/org/missionweaveprotocol/sdk/Principal.java",
+    "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+    "src/main/java/org/missionweaveprotocol/sdk/ResolvedKey.java",
+    "src/main/java/org/missionweaveprotocol/sdk/SchemaCatalog.java",
+    "src/main/java/org/missionweaveprotocol/sdk/SchemaValidationException.java",
+    "src/main/java/org/missionweaveprotocol/sdk/SignatureMaterial.java",
+    "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentCodec.java",
+    "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentKind.java",
+    "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentVerificationException.java",
+    "src/main/java/org/missionweaveprotocol/sdk/SigningKey.java",
+    "src/main/java/org/missionweaveprotocol/sdk/StrictJson.java",
+    "src/main/java/org/missionweaveprotocol/sdk/TrustedAdmissionContext.java",
+    "src/main/java/org/missionweaveprotocol/sdk/VectorResult.java",
+    "src/main/java/org/missionweaveprotocol/sdk/VerificationDiagnostic.java",
+    "src/main/java/org/missionweaveprotocol/sdk/VerificationStage.java",
+    "src/main/java/org/missionweaveprotocol/sdk/VerifiedSignedDocument.java",
+    "src/main/java/org/missionweaveprotocol/sdk/cli/ConformanceCli.java"
+  ],
+  "symbols": [
+    "ADMISSION_ARTIFACT_COUNT",
+    "ADMISSION_ARTIFACT_DIGEST",
+    "ADMISSION_CASE_COUNT",
+    "ADMISSION_CRYPTOGRAPHY_ARTIFACT_DIGEST",
+    "ADMISSION_EVALUATION_COUNT",
+    "ADMISSION_MANIFEST_VERSION",
+    "ADMISSION_PATH",
+    "ADMISSION_PROFILE_ID",
+    "ADMISSION_SOURCE_COMMIT",
+    "AGENT_CARD",
+    "APPEND_INTEGRITY_NOT_ESTABLISHED",
+    "APPROVAL",
+    "ARTIFACT",
+    "AdmissionAdapterException",
+    "AdmissionContextValue",
+    "AdmissionCurrentKeyResolver",
+    "AdmissionDiagnostic",
+    "AdmissionException",
+    "AdmissionLog",
+    "AdmissionLookup",
+    "AdmissionReason",
+    "AdmissionService",
+    "AdmissionVerification",
+    "AdmittedSignedDocument",
+    "AuthenticatedAdmissionRecord",
+    "AuthoritativeAbsence",
+    "BUNDLE_SHA256",
+    "Base64Url",
+    "CANONICALIZATION",
+    "COMMAND",
+    "COMMIT",
+    "COMMIT_FAILED",
+    "COMPLETE",
+    "CONFORMANCE_SHA256",
+    "CONTEXT_PACKAGE",
+    "CRYPTOGRAPHY_ARTIFACT_COUNT",
+    "CRYPTOGRAPHY_ARTIFACT_DIGEST",
+    "CRYPTOGRAPHY_CASE_COUNT",
+    "CRYPTOGRAPHY_EVALUATION_COUNT",
+    "CRYPTOGRAPHY_MANIFEST_VERSION",
+    "CRYPTOGRAPHY_PATH",
+    "CRYPTOGRAPHY_PROFILE_ID",
+    "CRYPTOGRAPHY_SOURCE_COMMIT",
+    "CanonicalJson",
+    "ConformanceCli",
+    "ConformanceReport",
+    "ConformanceRunner",
+    "CryptographyVerification",
+    "DocumentSignatures",
+    "EVENT",
+    "EVENT_SELF_ANCHORING",
+    "EVIDENCE",
+    "EXTENSION_PROFILE",
+    "Ed25519",
+    "EncodedKeyPair",
+    "ExactInstant",
+    "FirstAdmissionRecord",
+    "Found",
+    "FrameCodec",
+    "GROUP_SNAPSHOT",
+    "KEY_RESOLUTION",
+    "KeyRegistryCompleteness",
+    "KeyRegistrySnapshot",
+    "KeyResolutionException",
+    "KeyResolutionRequest",
+    "KeyResolver",
+    "LOG_AUTHENTICATION_FAILED",
+    "LOG_INDETERMINATE",
+    "LOG_UNAVAILABLE",
+    "MALFORMED_TRUSTED_TIME",
+    "MissionWeaveProtocol",
+    "NAME",
+    "ORGANIZATION_WIDE",
+    "PARSE",
+    "PARTIAL",
+    "PROTOCOL_VERSION",
+    "PreparedFirstAdmission",
+    "Principal",
+    "ProtocolBundle",
+    "RECORD_BINDING_MISMATCH",
+    "RECORD_CONFLICT",
+    "RECORD_MISSING",
+    "RECORD_SCHEMA_INVALID",
+    "REPOSITORY",
+    "ResolvedKey",
+    "SCHEMA",
+    "SCHEMAS_SHA256",
+    "SIGNATURE",
+    "SIGNATURE_ENVELOPE",
+    "SchemaCatalog",
+    "SchemaValidationException",
+    "SignatureMaterial",
+    "SignedDocumentCodec",
+    "SignedDocumentKind",
+    "SignedDocumentVerificationException",
+    "SigningKey",
+    "StrictJson",
+    "TRUSTED_TIME_OUTSIDE_KEY_INTERVAL",
+    "TrustedAdmissionContext",
+    "VectorResult",
+    "Verification",
+    "VerificationDiagnostic",
+    "VerificationStage",
+    "VerifiedSignedDocument",
+    "WIRE_NAMESPACE",
+    "WIRE_VERSION",
+    "acceptedBy",
+    "actualValid",
+    "admissionRecordId",
+    "admitFirst",
+    "algorithm",
+    "appendOrReturnExisting",
+    "artifactCount",
+    "artifactDigest",
+    "authenticatedService",
+    "bundleSha256",
+    "bytes",
+    "canonicalBytes",
+    "canonicalHash",
+    "canonicalString",
+    "caseCount",
+    "compareTo",
+    "completeness",
+    "conformanceFiles",
+    "createdAt",
+    "cryptographyArtifactDigest",
+    "decode",
+    "detail",
+    "diagnostic",
+    "document",
+    "documentKind",
+    "encode",
+    "encodePrivateKey",
+    "encodePublicKey",
+    "epochSecond",
+    "error",
+    "errors",
+    "evaluationCount",
+    "expectedPrincipal",
+    "expectedValid",
+    "fractionalDigits",
+    "from",
+    "generateKeyPair",
+    "id",
+    "issue",
+    "keyId",
+    "kind",
+    "loadPrivateKey",
+    "loadPublicKey",
+    "lookup",
+    "main",
+    "manifestVersion",
+    "name",
+    "organizationId",
+    "organizationWide",
+    "packaged",
+    "parse",
+    "passed",
+    "prepareFirstAdmission",
+    "principal",
+    "privateKey",
+    "profileId",
+    "protectedInstant",
+    "protectedTime",
+    "protocolCommit",
+    "protocolVersion",
+    "publicKey",
+    "reason",
+    "receivedBytes",
+    "record",
+    "recordBytes",
+    "registryBytes",
+    "resolve",
+    "resolveCurrent",
+    "resolvedKey",
+    "resolvedPrincipal",
+    "results",
+    "revokedAt",
+    "revokedAtInstant",
+    "run",
+    "runPackaged",
+    "schemaFiles",
+    "schemaName",
+    "schemaNames",
+    "servicePrincipalRequired",
+    "sha256",
+    "sha256Hex",
+    "sign",
+    "signature",
+    "signingBytes",
+    "signingHash",
+    "signingPayload",
+    "sourceCommit",
+    "stage",
+    "summary",
+    "trustedAcceptedAt",
+    "type",
+    "validFrom",
+    "validFromInstant",
+    "validUntil",
+    "validUntilInstant",
+    "validate",
+    "value",
+    "verified",
+    "verify",
+    "verifyAdmissionBundle",
+    "verifyCryptographyBundle",
+    "verifyHistoricalAdmission",
+    "verifyPackaged",
+    "verifyPackagedAdmissionBundle",
+    "verifyPackagedCryptographyBundle",
+    "wireCode",
+    "write"
+  ],
+  "entries": [
+    {
+      "name": "AdmissionAdapterException",
+      "qualifiedName": "AdmissionAdapterException",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionAdapterException.java",
+      "line": 7
+    },
+    {
+      "name": "AdmissionAdapterException",
+      "qualifiedName": "AdmissionAdapterException.AdmissionAdapterException",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionAdapterException.java",
+      "line": 14
+    },
+    {
+      "name": "detail",
+      "qualifiedName": "AdmissionAdapterException.detail",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionAdapterException.java",
+      "line": 26
+    },
+    {
+      "name": "reason",
+      "qualifiedName": "AdmissionAdapterException.reason",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionAdapterException.java",
+      "line": 21
+    },
+    {
+      "name": "AdmissionContextValue",
+      "qualifiedName": "AdmissionContextValue",
+      "kind": "record",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionContextValue.java",
+      "line": 6
+    },
+    {
+      "name": "AdmissionContextValue",
+      "qualifiedName": "AdmissionContextValue.AdmissionContextValue",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionContextValue.java",
+      "line": 8
+    },
+    {
+      "name": "acceptedBy",
+      "qualifiedName": "AdmissionContextValue.acceptedBy",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionContextValue.java",
+      "line": 7
+    },
+    {
+      "name": "admissionRecordId",
+      "qualifiedName": "AdmissionContextValue.admissionRecordId",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionContextValue.java",
+      "line": 6
+    },
+    {
+      "name": "trustedAcceptedAt",
+      "qualifiedName": "AdmissionContextValue.trustedAcceptedAt",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionContextValue.java",
+      "line": 7
+    },
+    {
+      "name": "AdmissionCurrentKeyResolver",
+      "qualifiedName": "AdmissionCurrentKeyResolver",
+      "kind": "interface",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionCurrentKeyResolver.java",
+      "line": 5
+    },
+    {
+      "name": "resolveCurrent",
+      "qualifiedName": "AdmissionCurrentKeyResolver.resolveCurrent",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionCurrentKeyResolver.java",
+      "line": 7
+    },
+    {
+      "name": "AdmissionDiagnostic",
+      "qualifiedName": "AdmissionDiagnostic",
+      "kind": "record",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionDiagnostic.java",
+      "line": 8
+    },
+    {
+      "name": "AdmissionDiagnostic",
+      "qualifiedName": "AdmissionDiagnostic.AdmissionDiagnostic",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionDiagnostic.java",
+      "line": 11
+    },
+    {
+      "name": "reason",
+      "qualifiedName": "AdmissionDiagnostic.reason",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionDiagnostic.java",
+      "line": 8
+    },
+    {
+      "name": "stage",
+      "qualifiedName": "AdmissionDiagnostic.stage",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionDiagnostic.java",
+      "line": 16
+    },
+    {
+      "name": "AdmissionException",
+      "qualifiedName": "AdmissionException",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionException.java",
+      "line": 7
+    },
+    {
+      "name": "diagnostic",
+      "qualifiedName": "AdmissionException.diagnostic",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionException.java",
+      "line": 23
+    },
+    {
+      "name": "wireCode",
+      "qualifiedName": "AdmissionException.wireCode",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionException.java",
+      "line": 18
+    },
+    {
+      "name": "AdmissionLog",
+      "qualifiedName": "AdmissionLog",
+      "kind": "interface",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionLog.java",
+      "line": 4
+    },
+    {
+      "name": "appendOrReturnExisting",
+      "qualifiedName": "AdmissionLog.appendOrReturnExisting",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionLog.java",
+      "line": 10
+    },
+    {
+      "name": "lookup",
+      "qualifiedName": "AdmissionLog.lookup",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionLog.java",
+      "line": 6
+    },
+    {
+      "name": "AdmissionLookup",
+      "qualifiedName": "AdmissionLookup",
+      "kind": "interface",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionLookup.java",
+      "line": 6
+    },
+    {
+      "name": "AuthoritativeAbsence",
+      "qualifiedName": "AdmissionLookup.AuthoritativeAbsence",
+      "kind": "record",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionLookup.java",
+      "line": 16
+    },
+    {
+      "name": "Found",
+      "qualifiedName": "AdmissionLookup.Found",
+      "kind": "record",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionLookup.java",
+      "line": 9
+    },
+    {
+      "name": "Found",
+      "qualifiedName": "AdmissionLookup.Found.Found",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionLookup.java",
+      "line": 10
+    },
+    {
+      "name": "record",
+      "qualifiedName": "AdmissionLookup.Found.record",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionLookup.java",
+      "line": 9
+    },
+    {
+      "name": "AdmissionReason",
+      "qualifiedName": "AdmissionReason",
+      "kind": "enum",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionReason.java",
+      "line": 4
+    },
+    {
+      "name": "APPEND_INTEGRITY_NOT_ESTABLISHED",
+      "qualifiedName": "AdmissionReason.APPEND_INTEGRITY_NOT_ESTABLISHED",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionReason.java",
+      "line": 12
+    },
+    {
+      "name": "COMMIT_FAILED",
+      "qualifiedName": "AdmissionReason.COMMIT_FAILED",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionReason.java",
+      "line": 15
+    },
+    {
+      "name": "EVENT_SELF_ANCHORING",
+      "qualifiedName": "AdmissionReason.EVENT_SELF_ANCHORING",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionReason.java",
+      "line": 16
+    },
+    {
+      "name": "LOG_AUTHENTICATION_FAILED",
+      "qualifiedName": "AdmissionReason.LOG_AUTHENTICATION_FAILED",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionReason.java",
+      "line": 11
+    },
+    {
+      "name": "LOG_INDETERMINATE",
+      "qualifiedName": "AdmissionReason.LOG_INDETERMINATE",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionReason.java",
+      "line": 14
+    },
+    {
+      "name": "LOG_UNAVAILABLE",
+      "qualifiedName": "AdmissionReason.LOG_UNAVAILABLE",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionReason.java",
+      "line": 13
+    },
+    {
+      "name": "MALFORMED_TRUSTED_TIME",
+      "qualifiedName": "AdmissionReason.MALFORMED_TRUSTED_TIME",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionReason.java",
+      "line": 8
+    },
+    {
+      "name": "RECORD_BINDING_MISMATCH",
+      "qualifiedName": "AdmissionReason.RECORD_BINDING_MISMATCH",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionReason.java",
+      "line": 6
+    },
+    {
+      "name": "RECORD_CONFLICT",
+      "qualifiedName": "AdmissionReason.RECORD_CONFLICT",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionReason.java",
+      "line": 9
+    },
+    {
+      "name": "RECORD_MISSING",
+      "qualifiedName": "AdmissionReason.RECORD_MISSING",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionReason.java",
+      "line": 5
+    },
+    {
+      "name": "RECORD_SCHEMA_INVALID",
+      "qualifiedName": "AdmissionReason.RECORD_SCHEMA_INVALID",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionReason.java",
+      "line": 10
+    },
+    {
+      "name": "TRUSTED_TIME_OUTSIDE_KEY_INTERVAL",
+      "qualifiedName": "AdmissionReason.TRUSTED_TIME_OUTSIDE_KEY_INTERVAL",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionReason.java",
+      "line": 7
+    },
+    {
+      "name": "id",
+      "qualifiedName": "AdmissionReason.id",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionReason.java",
+      "line": 25
+    },
+    {
+      "name": "AdmissionService",
+      "qualifiedName": "AdmissionService",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionService.java",
+      "line": 10
+    },
+    {
+      "name": "AdmissionService",
+      "qualifiedName": "AdmissionService.AdmissionService",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionService.java",
+      "line": 15
+    },
+    {
+      "name": "admitFirst",
+      "qualifiedName": "AdmissionService.admitFirst",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionService.java",
+      "line": 72
+    },
+    {
+      "name": "prepareFirstAdmission",
+      "qualifiedName": "AdmissionService.prepareFirstAdmission",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionService.java",
+      "line": 21
+    },
+    {
+      "name": "verifyHistoricalAdmission",
+      "qualifiedName": "AdmissionService.verifyHistoricalAdmission",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmissionService.java",
+      "line": 111
+    },
+    {
+      "name": "AdmittedSignedDocument",
+      "qualifiedName": "AdmittedSignedDocument",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmittedSignedDocument.java",
+      "line": 6
+    },
+    {
+      "name": "record",
+      "qualifiedName": "AdmittedSignedDocument.record",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmittedSignedDocument.java",
+      "line": 19
+    },
+    {
+      "name": "recordBytes",
+      "qualifiedName": "AdmittedSignedDocument.recordBytes",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmittedSignedDocument.java",
+      "line": 24
+    },
+    {
+      "name": "verified",
+      "qualifiedName": "AdmittedSignedDocument.verified",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AdmittedSignedDocument.java",
+      "line": 15
+    },
+    {
+      "name": "AuthenticatedAdmissionRecord",
+      "qualifiedName": "AuthenticatedAdmissionRecord",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AuthenticatedAdmissionRecord.java",
+      "line": 6
+    },
+    {
+      "name": "AuthenticatedAdmissionRecord",
+      "qualifiedName": "AuthenticatedAdmissionRecord.AuthenticatedAdmissionRecord",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AuthenticatedAdmissionRecord.java",
+      "line": 11
+    },
+    {
+      "name": "authenticatedService",
+      "qualifiedName": "AuthenticatedAdmissionRecord.authenticatedService",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AuthenticatedAdmissionRecord.java",
+      "line": 26
+    },
+    {
+      "name": "recordBytes",
+      "qualifiedName": "AuthenticatedAdmissionRecord.recordBytes",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/AuthenticatedAdmissionRecord.java",
+      "line": 21
+    },
+    {
+      "name": "Base64Url",
+      "qualifiedName": "Base64Url",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Base64Url.java",
+      "line": 7
+    },
+    {
+      "name": "decode",
+      "qualifiedName": "Base64Url.decode",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Base64Url.java",
+      "line": 18
+    },
+    {
+      "name": "encode",
+      "qualifiedName": "Base64Url.encode",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Base64Url.java",
+      "line": 11
+    },
+    {
+      "name": "CanonicalJson",
+      "qualifiedName": "CanonicalJson",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/CanonicalJson.java",
+      "line": 17
+    },
+    {
+      "name": "canonicalHash",
+      "qualifiedName": "CanonicalJson.canonicalHash",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/CanonicalJson.java",
+      "line": 66
+    },
+    {
+      "name": "canonicalHash",
+      "qualifiedName": "CanonicalJson.canonicalHash",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/CanonicalJson.java",
+      "line": 71
+    },
+    {
+      "name": "canonicalString",
+      "qualifiedName": "CanonicalJson.canonicalString",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/CanonicalJson.java",
+      "line": 51
+    },
+    {
+      "name": "sha256",
+      "qualifiedName": "CanonicalJson.sha256",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/CanonicalJson.java",
+      "line": 56
+    },
+    {
+      "name": "sha256Hex",
+      "qualifiedName": "CanonicalJson.sha256Hex",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/CanonicalJson.java",
+      "line": 61
+    },
+    {
+      "name": "ConformanceCli",
+      "qualifiedName": "ConformanceCli",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/cli/ConformanceCli.java",
+      "line": 12
+    },
+    {
+      "name": "main",
+      "qualifiedName": "ConformanceCli.main",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/cli/ConformanceCli.java",
+      "line": 16
+    },
+    {
+      "name": "run",
+      "qualifiedName": "ConformanceCli.run",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/cli/ConformanceCli.java",
+      "line": 24
+    },
+    {
+      "name": "ConformanceReport",
+      "qualifiedName": "ConformanceReport",
+      "kind": "record",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ConformanceReport.java",
+      "line": 7
+    },
+    {
+      "name": "ConformanceReport",
+      "qualifiedName": "ConformanceReport.ConformanceReport",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ConformanceReport.java",
+      "line": 8
+    },
+    {
+      "name": "passed",
+      "qualifiedName": "ConformanceReport.passed",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ConformanceReport.java",
+      "line": 13
+    },
+    {
+      "name": "results",
+      "qualifiedName": "ConformanceReport.results",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ConformanceReport.java",
+      "line": 7
+    },
+    {
+      "name": "summary",
+      "qualifiedName": "ConformanceReport.summary",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ConformanceReport.java",
+      "line": 18
+    },
+    {
+      "name": "ConformanceRunner",
+      "qualifiedName": "ConformanceRunner",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ConformanceRunner.java",
+      "line": 16
+    },
+    {
+      "name": "run",
+      "qualifiedName": "ConformanceRunner.run",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ConformanceRunner.java",
+      "line": 43
+    },
+    {
+      "name": "runPackaged",
+      "qualifiedName": "ConformanceRunner.runPackaged",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ConformanceRunner.java",
+      "line": 22
+    },
+    {
+      "name": "runPackaged",
+      "qualifiedName": "ConformanceRunner.runPackaged",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ConformanceRunner.java",
+      "line": 27
+    },
+    {
+      "name": "DocumentSignatures",
+      "qualifiedName": "DocumentSignatures",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/DocumentSignatures.java",
+      "line": 11
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "DocumentSignatures.sign",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/DocumentSignatures.java",
+      "line": 31
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "DocumentSignatures.sign",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/DocumentSignatures.java",
+      "line": 36
+    },
+    {
+      "name": "signingPayload",
+      "qualifiedName": "DocumentSignatures.signingPayload",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/DocumentSignatures.java",
+      "line": 15
+    },
+    {
+      "name": "signingPayload",
+      "qualifiedName": "DocumentSignatures.signingPayload",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/DocumentSignatures.java",
+      "line": 20
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "DocumentSignatures.verify",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/DocumentSignatures.java",
+      "line": 41
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "DocumentSignatures.verify",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/DocumentSignatures.java",
+      "line": 47
+    },
+    {
+      "name": "Ed25519",
+      "qualifiedName": "Ed25519",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java",
+      "line": 16
+    },
+    {
+      "name": "EncodedKeyPair",
+      "qualifiedName": "Ed25519.EncodedKeyPair",
+      "kind": "record",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java",
+      "line": 146
+    },
+    {
+      "name": "EncodedKeyPair",
+      "qualifiedName": "Ed25519.EncodedKeyPair.EncodedKeyPair",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java",
+      "line": 147
+    },
+    {
+      "name": "privateKey",
+      "qualifiedName": "Ed25519.EncodedKeyPair.privateKey",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java",
+      "line": 146
+    },
+    {
+      "name": "publicKey",
+      "qualifiedName": "Ed25519.EncodedKeyPair.publicKey",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java",
+      "line": 146
+    },
+    {
+      "name": "encodePrivateKey",
+      "qualifiedName": "Ed25519.encodePrivateKey",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java",
+      "line": 58
+    },
+    {
+      "name": "encodePublicKey",
+      "qualifiedName": "Ed25519.encodePublicKey",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java",
+      "line": 64
+    },
+    {
+      "name": "generateKeyPair",
+      "qualifiedName": "Ed25519.generateKeyPair",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java",
+      "line": 26
+    },
+    {
+      "name": "loadPrivateKey",
+      "qualifiedName": "Ed25519.loadPrivateKey",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java",
+      "line": 37
+    },
+    {
+      "name": "loadPublicKey",
+      "qualifiedName": "Ed25519.loadPublicKey",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java",
+      "line": 48
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "Ed25519.sign",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java",
+      "line": 70
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "Ed25519.sign",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java",
+      "line": 84
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "Ed25519.verify",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java",
+      "line": 89
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "Ed25519.verify",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Ed25519.java",
+      "line": 112
+    },
+    {
+      "name": "ExactInstant",
+      "qualifiedName": "ExactInstant",
+      "kind": "record",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ExactInstant.java",
+      "line": 10
+    },
+    {
+      "name": "ExactInstant",
+      "qualifiedName": "ExactInstant.ExactInstant",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ExactInstant.java",
+      "line": 18
+    },
+    {
+      "name": "compareTo",
+      "qualifiedName": "ExactInstant.compareTo",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ExactInstant.java",
+      "line": 77
+    },
+    {
+      "name": "epochSecond",
+      "qualifiedName": "ExactInstant.epochSecond",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ExactInstant.java",
+      "line": 10
+    },
+    {
+      "name": "fractionalDigits",
+      "qualifiedName": "ExactInstant.fractionalDigits",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ExactInstant.java",
+      "line": 10
+    },
+    {
+      "name": "parse",
+      "qualifiedName": "ExactInstant.parse",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ExactInstant.java",
+      "line": 28
+    },
+    {
+      "name": "FirstAdmissionRecord",
+      "qualifiedName": "FirstAdmissionRecord",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FirstAdmissionRecord.java",
+      "line": 6
+    },
+    {
+      "name": "acceptedBy",
+      "qualifiedName": "FirstAdmissionRecord.acceptedBy",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FirstAdmissionRecord.java",
+      "line": 78
+    },
+    {
+      "name": "admissionRecordId",
+      "qualifiedName": "FirstAdmissionRecord.admissionRecordId",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FirstAdmissionRecord.java",
+      "line": 50
+    },
+    {
+      "name": "bytes",
+      "qualifiedName": "FirstAdmissionRecord.bytes",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FirstAdmissionRecord.java",
+      "line": 42
+    },
+    {
+      "name": "documentKind",
+      "qualifiedName": "FirstAdmissionRecord.documentKind",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FirstAdmissionRecord.java",
+      "line": 58
+    },
+    {
+      "name": "keyId",
+      "qualifiedName": "FirstAdmissionRecord.keyId",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FirstAdmissionRecord.java",
+      "line": 66
+    },
+    {
+      "name": "organizationId",
+      "qualifiedName": "FirstAdmissionRecord.organizationId",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FirstAdmissionRecord.java",
+      "line": 54
+    },
+    {
+      "name": "principal",
+      "qualifiedName": "FirstAdmissionRecord.principal",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FirstAdmissionRecord.java",
+      "line": 70
+    },
+    {
+      "name": "protocolVersion",
+      "qualifiedName": "FirstAdmissionRecord.protocolVersion",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FirstAdmissionRecord.java",
+      "line": 46
+    },
+    {
+      "name": "signingHash",
+      "qualifiedName": "FirstAdmissionRecord.signingHash",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FirstAdmissionRecord.java",
+      "line": 62
+    },
+    {
+      "name": "trustedAcceptedAt",
+      "qualifiedName": "FirstAdmissionRecord.trustedAcceptedAt",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FirstAdmissionRecord.java",
+      "line": 74
+    },
+    {
+      "name": "FrameCodec",
+      "qualifiedName": "FrameCodec",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FrameCodec.java",
+      "line": 9
+    },
+    {
+      "name": "FrameCodec",
+      "qualifiedName": "FrameCodec.FrameCodec",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FrameCodec.java",
+      "line": 15
+    },
+    {
+      "name": "FrameCodec",
+      "qualifiedName": "FrameCodec.FrameCodec",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FrameCodec.java",
+      "line": 20
+    },
+    {
+      "name": "decode",
+      "qualifiedName": "FrameCodec.decode",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FrameCodec.java",
+      "line": 25
+    },
+    {
+      "name": "decode",
+      "qualifiedName": "FrameCodec.decode",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FrameCodec.java",
+      "line": 35
+    },
+    {
+      "name": "encode",
+      "qualifiedName": "FrameCodec.encode",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/FrameCodec.java",
+      "line": 45
+    },
+    {
+      "name": "KeyRegistryCompleteness",
+      "qualifiedName": "KeyRegistryCompleteness",
+      "kind": "enum",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyRegistryCompleteness.java",
+      "line": 4
+    },
+    {
+      "name": "ORGANIZATION_WIDE",
+      "qualifiedName": "KeyRegistryCompleteness.ORGANIZATION_WIDE",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyRegistryCompleteness.java",
+      "line": 6
+    },
+    {
+      "name": "PARTIAL",
+      "qualifiedName": "KeyRegistryCompleteness.PARTIAL",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyRegistryCompleteness.java",
+      "line": 9
+    },
+    {
+      "name": "KeyRegistrySnapshot",
+      "qualifiedName": "KeyRegistrySnapshot",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyRegistrySnapshot.java",
+      "line": 14
+    },
+    {
+      "name": "KeyRegistrySnapshot",
+      "qualifiedName": "KeyRegistrySnapshot.KeyRegistrySnapshot",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyRegistrySnapshot.java",
+      "line": 19
+    },
+    {
+      "name": "completeness",
+      "qualifiedName": "KeyRegistrySnapshot.completeness",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyRegistrySnapshot.java",
+      "line": 35
+    },
+    {
+      "name": "organizationWide",
+      "qualifiedName": "KeyRegistrySnapshot.organizationWide",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyRegistrySnapshot.java",
+      "line": 25
+    },
+    {
+      "name": "registryBytes",
+      "qualifiedName": "KeyRegistrySnapshot.registryBytes",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyRegistrySnapshot.java",
+      "line": 30
+    },
+    {
+      "name": "KeyResolutionException",
+      "qualifiedName": "KeyResolutionException",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyResolutionException.java",
+      "line": 10
+    },
+    {
+      "name": "KeyResolutionException",
+      "qualifiedName": "KeyResolutionException.KeyResolutionException",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyResolutionException.java",
+      "line": 14
+    },
+    {
+      "name": "KeyResolutionException",
+      "qualifiedName": "KeyResolutionException.KeyResolutionException",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyResolutionException.java",
+      "line": 19
+    },
+    {
+      "name": "KeyResolutionRequest",
+      "qualifiedName": "KeyResolutionRequest",
+      "kind": "record",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyResolutionRequest.java",
+      "line": 6
+    },
+    {
+      "name": "KeyResolutionRequest",
+      "qualifiedName": "KeyResolutionRequest.KeyResolutionRequest",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyResolutionRequest.java",
+      "line": 20
+    },
+    {
+      "name": "expectedPrincipal",
+      "qualifiedName": "KeyResolutionRequest.expectedPrincipal",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyResolutionRequest.java",
+      "line": 8
+    },
+    {
+      "name": "keyId",
+      "qualifiedName": "KeyResolutionRequest.keyId",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyResolutionRequest.java",
+      "line": 7
+    },
+    {
+      "name": "kind",
+      "qualifiedName": "KeyResolutionRequest.kind",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyResolutionRequest.java",
+      "line": 6
+    },
+    {
+      "name": "protectedInstant",
+      "qualifiedName": "KeyResolutionRequest.protectedInstant",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyResolutionRequest.java",
+      "line": 11
+    },
+    {
+      "name": "protectedTime",
+      "qualifiedName": "KeyResolutionRequest.protectedTime",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyResolutionRequest.java",
+      "line": 10
+    },
+    {
+      "name": "servicePrincipalRequired",
+      "qualifiedName": "KeyResolutionRequest.servicePrincipalRequired",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyResolutionRequest.java",
+      "line": 9
+    },
+    {
+      "name": "KeyResolver",
+      "qualifiedName": "KeyResolver",
+      "kind": "interface",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyResolver.java",
+      "line": 5
+    },
+    {
+      "name": "resolve",
+      "qualifiedName": "KeyResolver.resolve",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/KeyResolver.java",
+      "line": 15
+    },
+    {
+      "name": "MissionWeaveProtocol",
+      "qualifiedName": "MissionWeaveProtocol",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/MissionWeaveProtocol.java",
+      "line": 4
+    },
+    {
+      "name": "NAME",
+      "qualifiedName": "MissionWeaveProtocol.NAME",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/MissionWeaveProtocol.java",
+      "line": 6
+    },
+    {
+      "name": "WIRE_VERSION",
+      "qualifiedName": "MissionWeaveProtocol.WIRE_VERSION",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/MissionWeaveProtocol.java",
+      "line": 9
+    },
+    {
+      "name": "PreparedFirstAdmission",
+      "qualifiedName": "PreparedFirstAdmission",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/PreparedFirstAdmission.java",
+      "line": 6
+    },
+    {
+      "name": "record",
+      "qualifiedName": "PreparedFirstAdmission.record",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/PreparedFirstAdmission.java",
+      "line": 19
+    },
+    {
+      "name": "recordBytes",
+      "qualifiedName": "PreparedFirstAdmission.recordBytes",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/PreparedFirstAdmission.java",
+      "line": 24
+    },
+    {
+      "name": "verified",
+      "qualifiedName": "PreparedFirstAdmission.verified",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/PreparedFirstAdmission.java",
+      "line": 15
+    },
+    {
+      "name": "Principal",
+      "qualifiedName": "Principal",
+      "kind": "record",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Principal.java",
+      "line": 6
+    },
+    {
+      "name": "Principal",
+      "qualifiedName": "Principal.Principal",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Principal.java",
+      "line": 7
+    },
+    {
+      "name": "id",
+      "qualifiedName": "Principal.id",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Principal.java",
+      "line": 6
+    },
+    {
+      "name": "type",
+      "qualifiedName": "Principal.type",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/Principal.java",
+      "line": 6
+    },
+    {
+      "name": "ProtocolBundle",
+      "qualifiedName": "ProtocolBundle",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 32
+    },
+    {
+      "name": "ADMISSION_ARTIFACT_COUNT",
+      "qualifiedName": "ProtocolBundle.ADMISSION_ARTIFACT_COUNT",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 107
+    },
+    {
+      "name": "ADMISSION_ARTIFACT_DIGEST",
+      "qualifiedName": "ProtocolBundle.ADMISSION_ARTIFACT_DIGEST",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 103
+    },
+    {
+      "name": "ADMISSION_CASE_COUNT",
+      "qualifiedName": "ProtocolBundle.ADMISSION_CASE_COUNT",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 110
+    },
+    {
+      "name": "ADMISSION_CRYPTOGRAPHY_ARTIFACT_DIGEST",
+      "qualifiedName": "ProtocolBundle.ADMISSION_CRYPTOGRAPHY_ARTIFACT_DIGEST",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 99
+    },
+    {
+      "name": "ADMISSION_EVALUATION_COUNT",
+      "qualifiedName": "ProtocolBundle.ADMISSION_EVALUATION_COUNT",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 113
+    },
+    {
+      "name": "ADMISSION_MANIFEST_VERSION",
+      "qualifiedName": "ProtocolBundle.ADMISSION_MANIFEST_VERSION",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 96
+    },
+    {
+      "name": "ADMISSION_PATH",
+      "qualifiedName": "ProtocolBundle.ADMISSION_PATH",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 86
+    },
+    {
+      "name": "ADMISSION_PROFILE_ID",
+      "qualifiedName": "ProtocolBundle.ADMISSION_PROFILE_ID",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 92
+    },
+    {
+      "name": "ADMISSION_SOURCE_COMMIT",
+      "qualifiedName": "ProtocolBundle.ADMISSION_SOURCE_COMMIT",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 89
+    },
+    {
+      "name": "AdmissionVerification",
+      "qualifiedName": "ProtocolBundle.AdmissionVerification",
+      "kind": "record",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 833
+    },
+    {
+      "name": "artifactCount",
+      "qualifiedName": "ProtocolBundle.AdmissionVerification.artifactCount",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 838
+    },
+    {
+      "name": "artifactDigest",
+      "qualifiedName": "ProtocolBundle.AdmissionVerification.artifactDigest",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 837
+    },
+    {
+      "name": "caseCount",
+      "qualifiedName": "ProtocolBundle.AdmissionVerification.caseCount",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 839
+    },
+    {
+      "name": "cryptographyArtifactDigest",
+      "qualifiedName": "ProtocolBundle.AdmissionVerification.cryptographyArtifactDigest",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 836
+    },
+    {
+      "name": "evaluationCount",
+      "qualifiedName": "ProtocolBundle.AdmissionVerification.evaluationCount",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 840
+    },
+    {
+      "name": "manifestVersion",
+      "qualifiedName": "ProtocolBundle.AdmissionVerification.manifestVersion",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 835
+    },
+    {
+      "name": "profileId",
+      "qualifiedName": "ProtocolBundle.AdmissionVerification.profileId",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 834
+    },
+    {
+      "name": "sourceCommit",
+      "qualifiedName": "ProtocolBundle.AdmissionVerification.sourceCommit",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 833
+    },
+    {
+      "name": "BUNDLE_SHA256",
+      "qualifiedName": "ProtocolBundle.BUNDLE_SHA256",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 55
+    },
+    {
+      "name": "COMMIT",
+      "qualifiedName": "ProtocolBundle.COMMIT",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 38
+    },
+    {
+      "name": "CONFORMANCE_SHA256",
+      "qualifiedName": "ProtocolBundle.CONFORMANCE_SHA256",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 51
+    },
+    {
+      "name": "CRYPTOGRAPHY_ARTIFACT_COUNT",
+      "qualifiedName": "ProtocolBundle.CRYPTOGRAPHY_ARTIFACT_COUNT",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 77
+    },
+    {
+      "name": "CRYPTOGRAPHY_ARTIFACT_DIGEST",
+      "qualifiedName": "ProtocolBundle.CRYPTOGRAPHY_ARTIFACT_DIGEST",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 73
+    },
+    {
+      "name": "CRYPTOGRAPHY_CASE_COUNT",
+      "qualifiedName": "ProtocolBundle.CRYPTOGRAPHY_CASE_COUNT",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 80
+    },
+    {
+      "name": "CRYPTOGRAPHY_EVALUATION_COUNT",
+      "qualifiedName": "ProtocolBundle.CRYPTOGRAPHY_EVALUATION_COUNT",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 83
+    },
+    {
+      "name": "CRYPTOGRAPHY_MANIFEST_VERSION",
+      "qualifiedName": "ProtocolBundle.CRYPTOGRAPHY_MANIFEST_VERSION",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 70
+    },
+    {
+      "name": "CRYPTOGRAPHY_PATH",
+      "qualifiedName": "ProtocolBundle.CRYPTOGRAPHY_PATH",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 59
+    },
+    {
+      "name": "CRYPTOGRAPHY_PROFILE_ID",
+      "qualifiedName": "ProtocolBundle.CRYPTOGRAPHY_PROFILE_ID",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 66
+    },
+    {
+      "name": "CRYPTOGRAPHY_SOURCE_COMMIT",
+      "qualifiedName": "ProtocolBundle.CRYPTOGRAPHY_SOURCE_COMMIT",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 62
+    },
+    {
+      "name": "CryptographyVerification",
+      "qualifiedName": "ProtocolBundle.CryptographyVerification",
+      "kind": "record",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 823
+    },
+    {
+      "name": "artifactCount",
+      "qualifiedName": "ProtocolBundle.CryptographyVerification.artifactCount",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 827
+    },
+    {
+      "name": "artifactDigest",
+      "qualifiedName": "ProtocolBundle.CryptographyVerification.artifactDigest",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 826
+    },
+    {
+      "name": "caseCount",
+      "qualifiedName": "ProtocolBundle.CryptographyVerification.caseCount",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 828
+    },
+    {
+      "name": "evaluationCount",
+      "qualifiedName": "ProtocolBundle.CryptographyVerification.evaluationCount",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 829
+    },
+    {
+      "name": "manifestVersion",
+      "qualifiedName": "ProtocolBundle.CryptographyVerification.manifestVersion",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 825
+    },
+    {
+      "name": "profileId",
+      "qualifiedName": "ProtocolBundle.CryptographyVerification.profileId",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 824
+    },
+    {
+      "name": "sourceCommit",
+      "qualifiedName": "ProtocolBundle.CryptographyVerification.sourceCommit",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 823
+    },
+    {
+      "name": "PROTOCOL_VERSION",
+      "qualifiedName": "ProtocolBundle.PROTOCOL_VERSION",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 41
+    },
+    {
+      "name": "REPOSITORY",
+      "qualifiedName": "ProtocolBundle.REPOSITORY",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 34
+    },
+    {
+      "name": "SCHEMAS_SHA256",
+      "qualifiedName": "ProtocolBundle.SCHEMAS_SHA256",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 47
+    },
+    {
+      "name": "Verification",
+      "qualifiedName": "ProtocolBundle.Verification",
+      "kind": "record",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 815
+    },
+    {
+      "name": "bundleSha256",
+      "qualifiedName": "ProtocolBundle.Verification.bundleSha256",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 819
+    },
+    {
+      "name": "conformanceFiles",
+      "qualifiedName": "ProtocolBundle.Verification.conformanceFiles",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 818
+    },
+    {
+      "name": "protocolCommit",
+      "qualifiedName": "ProtocolBundle.Verification.protocolCommit",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 815
+    },
+    {
+      "name": "protocolVersion",
+      "qualifiedName": "ProtocolBundle.Verification.protocolVersion",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 816
+    },
+    {
+      "name": "schemaFiles",
+      "qualifiedName": "ProtocolBundle.Verification.schemaFiles",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 817
+    },
+    {
+      "name": "WIRE_NAMESPACE",
+      "qualifiedName": "ProtocolBundle.WIRE_NAMESPACE",
+      "kind": "constant",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 44
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "ProtocolBundle.verify",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 154
+    },
+    {
+      "name": "verifyAdmissionBundle",
+      "qualifiedName": "ProtocolBundle.verifyAdmissionBundle",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 254
+    },
+    {
+      "name": "verifyCryptographyBundle",
+      "qualifiedName": "ProtocolBundle.verifyCryptographyBundle",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 213
+    },
+    {
+      "name": "verifyPackaged",
+      "qualifiedName": "ProtocolBundle.verifyPackaged",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 187
+    },
+    {
+      "name": "verifyPackaged",
+      "qualifiedName": "ProtocolBundle.verifyPackaged",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 192
+    },
+    {
+      "name": "verifyPackagedAdmissionBundle",
+      "qualifiedName": "ProtocolBundle.verifyPackagedAdmissionBundle",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 268
+    },
+    {
+      "name": "verifyPackagedAdmissionBundle",
+      "qualifiedName": "ProtocolBundle.verifyPackagedAdmissionBundle",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 273
+    },
+    {
+      "name": "verifyPackagedCryptographyBundle",
+      "qualifiedName": "ProtocolBundle.verifyPackagedCryptographyBundle",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 226
+    },
+    {
+      "name": "verifyPackagedCryptographyBundle",
+      "qualifiedName": "ProtocolBundle.verifyPackagedCryptographyBundle",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java",
+      "line": 231
+    },
+    {
+      "name": "ResolvedKey",
+      "qualifiedName": "ResolvedKey",
+      "kind": "record",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ResolvedKey.java",
+      "line": 6
+    },
+    {
+      "name": "ResolvedKey",
+      "qualifiedName": "ResolvedKey.ResolvedKey",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ResolvedKey.java",
+      "line": 15
+    },
+    {
+      "name": "algorithm",
+      "qualifiedName": "ResolvedKey.algorithm",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ResolvedKey.java",
+      "line": 9
+    },
+    {
+      "name": "keyId",
+      "qualifiedName": "ResolvedKey.keyId",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ResolvedKey.java",
+      "line": 7
+    },
+    {
+      "name": "organizationId",
+      "qualifiedName": "ResolvedKey.organizationId",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ResolvedKey.java",
+      "line": 6
+    },
+    {
+      "name": "principal",
+      "qualifiedName": "ResolvedKey.principal",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ResolvedKey.java",
+      "line": 8
+    },
+    {
+      "name": "publicKey",
+      "qualifiedName": "ResolvedKey.publicKey",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ResolvedKey.java",
+      "line": 10
+    },
+    {
+      "name": "revokedAt",
+      "qualifiedName": "ResolvedKey.revokedAt",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ResolvedKey.java",
+      "line": 13
+    },
+    {
+      "name": "revokedAtInstant",
+      "qualifiedName": "ResolvedKey.revokedAtInstant",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ResolvedKey.java",
+      "line": 35
+    },
+    {
+      "name": "validFrom",
+      "qualifiedName": "ResolvedKey.validFrom",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ResolvedKey.java",
+      "line": 11
+    },
+    {
+      "name": "validFromInstant",
+      "qualifiedName": "ResolvedKey.validFromInstant",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ResolvedKey.java",
+      "line": 25
+    },
+    {
+      "name": "validUntil",
+      "qualifiedName": "ResolvedKey.validUntil",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ResolvedKey.java",
+      "line": 12
+    },
+    {
+      "name": "validUntilInstant",
+      "qualifiedName": "ResolvedKey.validUntilInstant",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/ResolvedKey.java",
+      "line": 30
+    },
+    {
+      "name": "SchemaCatalog",
+      "qualifiedName": "SchemaCatalog",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SchemaCatalog.java",
+      "line": 31
+    },
+    {
+      "name": "from",
+      "qualifiedName": "SchemaCatalog.from",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SchemaCatalog.java",
+      "line": 106
+    },
+    {
+      "name": "packaged",
+      "qualifiedName": "SchemaCatalog.packaged",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SchemaCatalog.java",
+      "line": 82
+    },
+    {
+      "name": "packaged",
+      "qualifiedName": "SchemaCatalog.packaged",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SchemaCatalog.java",
+      "line": 87
+    },
+    {
+      "name": "schemaNames",
+      "qualifiedName": "SchemaCatalog.schemaNames",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SchemaCatalog.java",
+      "line": 152
+    },
+    {
+      "name": "validate",
+      "qualifiedName": "SchemaCatalog.validate",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SchemaCatalog.java",
+      "line": 130
+    },
+    {
+      "name": "validate",
+      "qualifiedName": "SchemaCatalog.validate",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SchemaCatalog.java",
+      "line": 135
+    },
+    {
+      "name": "SchemaValidationException",
+      "qualifiedName": "SchemaValidationException",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SchemaValidationException.java",
+      "line": 8
+    },
+    {
+      "name": "errors",
+      "qualifiedName": "SchemaValidationException.errors",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SchemaValidationException.java",
+      "line": 26
+    },
+    {
+      "name": "schemaName",
+      "qualifiedName": "SchemaValidationException.schemaName",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SchemaValidationException.java",
+      "line": 21
+    },
+    {
+      "name": "SignatureMaterial",
+      "qualifiedName": "SignatureMaterial",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignatureMaterial.java",
+      "line": 6
+    },
+    {
+      "name": "algorithm",
+      "qualifiedName": "SignatureMaterial.algorithm",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignatureMaterial.java",
+      "line": 21
+    },
+    {
+      "name": "bytes",
+      "qualifiedName": "SignatureMaterial.bytes",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignatureMaterial.java",
+      "line": 37
+    },
+    {
+      "name": "createdAt",
+      "qualifiedName": "SignatureMaterial.createdAt",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignatureMaterial.java",
+      "line": 29
+    },
+    {
+      "name": "keyId",
+      "qualifiedName": "SignatureMaterial.keyId",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignatureMaterial.java",
+      "line": 25
+    },
+    {
+      "name": "value",
+      "qualifiedName": "SignatureMaterial.value",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignatureMaterial.java",
+      "line": 33
+    },
+    {
+      "name": "SignedDocumentCodec",
+      "qualifiedName": "SignedDocumentCodec",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentCodec.java",
+      "line": 10
+    },
+    {
+      "name": "SignedDocumentCodec",
+      "qualifiedName": "SignedDocumentCodec.SignedDocumentCodec",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentCodec.java",
+      "line": 14
+    },
+    {
+      "name": "SignedDocumentCodec",
+      "qualifiedName": "SignedDocumentCodec.SignedDocumentCodec",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentCodec.java",
+      "line": 19
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "SignedDocumentCodec.sign",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentCodec.java",
+      "line": 24
+    },
+    {
+      "name": "verify",
+      "qualifiedName": "SignedDocumentCodec.verify",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentCodec.java",
+      "line": 67
+    },
+    {
+      "name": "SignedDocumentKind",
+      "qualifiedName": "SignedDocumentKind",
+      "kind": "enum",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentKind.java",
+      "line": 4
+    },
+    {
+      "name": "AGENT_CARD",
+      "qualifiedName": "SignedDocumentKind.AGENT_CARD",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentKind.java",
+      "line": 5
+    },
+    {
+      "name": "APPROVAL",
+      "qualifiedName": "SignedDocumentKind.APPROVAL",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentKind.java",
+      "line": 6
+    },
+    {
+      "name": "ARTIFACT",
+      "qualifiedName": "SignedDocumentKind.ARTIFACT",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentKind.java",
+      "line": 7
+    },
+    {
+      "name": "COMMAND",
+      "qualifiedName": "SignedDocumentKind.COMMAND",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentKind.java",
+      "line": 8
+    },
+    {
+      "name": "CONTEXT_PACKAGE",
+      "qualifiedName": "SignedDocumentKind.CONTEXT_PACKAGE",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentKind.java",
+      "line": 9
+    },
+    {
+      "name": "EVENT",
+      "qualifiedName": "SignedDocumentKind.EVENT",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentKind.java",
+      "line": 11
+    },
+    {
+      "name": "EVIDENCE",
+      "qualifiedName": "SignedDocumentKind.EVIDENCE",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentKind.java",
+      "line": 12
+    },
+    {
+      "name": "EXTENSION_PROFILE",
+      "qualifiedName": "SignedDocumentKind.EXTENSION_PROFILE",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentKind.java",
+      "line": 13
+    },
+    {
+      "name": "GROUP_SNAPSHOT",
+      "qualifiedName": "SignedDocumentKind.GROUP_SNAPSHOT",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentKind.java",
+      "line": 15
+    },
+    {
+      "name": "id",
+      "qualifiedName": "SignedDocumentKind.id",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentKind.java",
+      "line": 37
+    },
+    {
+      "name": "SignedDocumentVerificationException",
+      "qualifiedName": "SignedDocumentVerificationException",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentVerificationException.java",
+      "line": 7
+    },
+    {
+      "name": "diagnostic",
+      "qualifiedName": "SignedDocumentVerificationException.diagnostic",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentVerificationException.java",
+      "line": 23
+    },
+    {
+      "name": "wireCode",
+      "qualifiedName": "SignedDocumentVerificationException.wireCode",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SignedDocumentVerificationException.java",
+      "line": 18
+    },
+    {
+      "name": "SigningKey",
+      "qualifiedName": "SigningKey",
+      "kind": "interface",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SigningKey.java",
+      "line": 4
+    },
+    {
+      "name": "keyId",
+      "qualifiedName": "SigningKey.keyId",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SigningKey.java",
+      "line": 6
+    },
+    {
+      "name": "sign",
+      "qualifiedName": "SigningKey.sign",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/SigningKey.java",
+      "line": 9
+    },
+    {
+      "name": "StrictJson",
+      "qualifiedName": "StrictJson",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/StrictJson.java",
+      "line": 16
+    },
+    {
+      "name": "parse",
+      "qualifiedName": "StrictJson.parse",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/StrictJson.java",
+      "line": 23
+    },
+    {
+      "name": "parse",
+      "qualifiedName": "StrictJson.parse",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/StrictJson.java",
+      "line": 42
+    },
+    {
+      "name": "write",
+      "qualifiedName": "StrictJson.write",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/StrictJson.java",
+      "line": 50
+    },
+    {
+      "name": "TrustedAdmissionContext",
+      "qualifiedName": "TrustedAdmissionContext",
+      "kind": "interface",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/TrustedAdmissionContext.java",
+      "line": 5
+    },
+    {
+      "name": "issue",
+      "qualifiedName": "TrustedAdmissionContext.issue",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/TrustedAdmissionContext.java",
+      "line": 7
+    },
+    {
+      "name": "VectorResult",
+      "qualifiedName": "VectorResult",
+      "kind": "record",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VectorResult.java",
+      "line": 6
+    },
+    {
+      "name": "VectorResult",
+      "qualifiedName": "VectorResult.VectorResult",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VectorResult.java",
+      "line": 7
+    },
+    {
+      "name": "actualValid",
+      "qualifiedName": "VectorResult.actualValid",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VectorResult.java",
+      "line": 6
+    },
+    {
+      "name": "error",
+      "qualifiedName": "VectorResult.error",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VectorResult.java",
+      "line": 6
+    },
+    {
+      "name": "expectedValid",
+      "qualifiedName": "VectorResult.expectedValid",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VectorResult.java",
+      "line": 6
+    },
+    {
+      "name": "name",
+      "qualifiedName": "VectorResult.name",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VectorResult.java",
+      "line": 6
+    },
+    {
+      "name": "passed",
+      "qualifiedName": "VectorResult.passed",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VectorResult.java",
+      "line": 12
+    },
+    {
+      "name": "VerificationDiagnostic",
+      "qualifiedName": "VerificationDiagnostic",
+      "kind": "record",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerificationDiagnostic.java",
+      "line": 8
+    },
+    {
+      "name": "VerificationDiagnostic",
+      "qualifiedName": "VerificationDiagnostic.VerificationDiagnostic",
+      "kind": "constructor",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerificationDiagnostic.java",
+      "line": 12
+    },
+    {
+      "name": "reason",
+      "qualifiedName": "VerificationDiagnostic.reason",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerificationDiagnostic.java",
+      "line": 8
+    },
+    {
+      "name": "stage",
+      "qualifiedName": "VerificationDiagnostic.stage",
+      "kind": "record-component",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerificationDiagnostic.java",
+      "line": 8
+    },
+    {
+      "name": "VerificationStage",
+      "qualifiedName": "VerificationStage",
+      "kind": "enum",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerificationStage.java",
+      "line": 4
+    },
+    {
+      "name": "CANONICALIZATION",
+      "qualifiedName": "VerificationStage.CANONICALIZATION",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerificationStage.java",
+      "line": 9
+    },
+    {
+      "name": "COMPLETE",
+      "qualifiedName": "VerificationStage.COMPLETE",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerificationStage.java",
+      "line": 11
+    },
+    {
+      "name": "KEY_RESOLUTION",
+      "qualifiedName": "VerificationStage.KEY_RESOLUTION",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerificationStage.java",
+      "line": 8
+    },
+    {
+      "name": "PARSE",
+      "qualifiedName": "VerificationStage.PARSE",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerificationStage.java",
+      "line": 5
+    },
+    {
+      "name": "SCHEMA",
+      "qualifiedName": "VerificationStage.SCHEMA",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerificationStage.java",
+      "line": 6
+    },
+    {
+      "name": "SIGNATURE",
+      "qualifiedName": "VerificationStage.SIGNATURE",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerificationStage.java",
+      "line": 10
+    },
+    {
+      "name": "SIGNATURE_ENVELOPE",
+      "qualifiedName": "VerificationStage.SIGNATURE_ENVELOPE",
+      "kind": "enum-member",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerificationStage.java",
+      "line": 7
+    },
+    {
+      "name": "id",
+      "qualifiedName": "VerificationStage.id",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerificationStage.java",
+      "line": 22
+    },
+    {
+      "name": "wireCode",
+      "qualifiedName": "VerificationStage.wireCode",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerificationStage.java",
+      "line": 27
+    },
+    {
+      "name": "VerifiedSignedDocument",
+      "qualifiedName": "VerifiedSignedDocument",
+      "kind": "class",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerifiedSignedDocument.java",
+      "line": 7
+    },
+    {
+      "name": "canonicalBytes",
+      "qualifiedName": "VerifiedSignedDocument.canonicalBytes",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerifiedSignedDocument.java",
+      "line": 66
+    },
+    {
+      "name": "canonicalHash",
+      "qualifiedName": "VerifiedSignedDocument.canonicalHash",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerifiedSignedDocument.java",
+      "line": 70
+    },
+    {
+      "name": "document",
+      "qualifiedName": "VerifiedSignedDocument.document",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerifiedSignedDocument.java",
+      "line": 50
+    },
+    {
+      "name": "kind",
+      "qualifiedName": "VerifiedSignedDocument.kind",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerifiedSignedDocument.java",
+      "line": 45
+    },
+    {
+      "name": "protectedInstant",
+      "qualifiedName": "VerifiedSignedDocument.protectedInstant",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerifiedSignedDocument.java",
+      "line": 78
+    },
+    {
+      "name": "protectedTime",
+      "qualifiedName": "VerifiedSignedDocument.protectedTime",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerifiedSignedDocument.java",
+      "line": 74
+    },
+    {
+      "name": "receivedBytes",
+      "qualifiedName": "VerifiedSignedDocument.receivedBytes",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerifiedSignedDocument.java",
+      "line": 54
+    },
+    {
+      "name": "resolvedKey",
+      "qualifiedName": "VerifiedSignedDocument.resolvedKey",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerifiedSignedDocument.java",
+      "line": 86
+    },
+    {
+      "name": "resolvedPrincipal",
+      "qualifiedName": "VerifiedSignedDocument.resolvedPrincipal",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerifiedSignedDocument.java",
+      "line": 90
+    },
+    {
+      "name": "signature",
+      "qualifiedName": "VerifiedSignedDocument.signature",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerifiedSignedDocument.java",
+      "line": 82
+    },
+    {
+      "name": "signingBytes",
+      "qualifiedName": "VerifiedSignedDocument.signingBytes",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerifiedSignedDocument.java",
+      "line": 58
+    },
+    {
+      "name": "signingHash",
+      "qualifiedName": "VerifiedSignedDocument.signingHash",
+      "kind": "method",
+      "sourceFile": "src/main/java/org/missionweaveprotocol/sdk/VerifiedSignedDocument.java",
+      "line": 62
+    }
+  ]
+}

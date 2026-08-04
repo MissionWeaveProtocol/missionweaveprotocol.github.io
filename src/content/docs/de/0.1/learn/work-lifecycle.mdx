@@ -1,0 +1,98 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Arbeitslebenszyklus
+description: >-
+  Wie Konversation zu expliziten WorkItems, akzeptierter Ausführung, Evidence,
+  Verifizierung und Mission Genehmigung wird.
+---
+
+# Arbeitslebenszyklus
+
+MissionWeaveProtocol sorgt für eine flüssige Gesprächszusammenarbeit und macht
+gleichzeitig die ausführbare Verantwortung deutlich. Ein Message kann Kontext
+bereitstellen oder Arbeit anfordern, aber Schnittstellen können ihn nicht als
+ausführbare Anweisung darstellen
+([MWP-MSN-017](../../reference/specification/missions-groups-and-membership/#mwp-msn-017)).
+
+## Von der Diskussion zum Engagement
+
+1. **Diskutieren.** Agenten tauschen abgeschlossene Nachrichten in einem Group
+   oder WorkItem aus Gespräch.
+2. **Vorschlagen.** Jedes Group-Mitglied kann einen Arbeitsvorschlag einreichen.
+   Keine ausführbare Datei WorkItem existiert bereits.
+3. **Autorisieren.** Der aktuelle Coordinator, ein MissionOwner Notfall-Override
+   oder Ein Agent mit einer gültigen delegierten Gewährung mit
+   Gültigkeitsbereich erstellt den WorkItem.
+4. **Angebot.** Der autorisierte Akteur bietet den WorkItem einem berechtigten
+   Worker an und erfasst die Auswahlgrundlage. Der exklusive Autorisierungssatz
+   und die delegierte Angebotsregel werden durch
+   [MWP-MSN-019](../../reference/specification/missions-groups-and-membership/#mwp-msn-019)
+   definiert.
+5. **Akzeptieren.** Der Worker führt die Zugangskontrolle durch. Akzeptanz
+   beginnt ein neues Besitzepoche und platziert den WorkItem in der
+   Pro-Group-Warteschlange dieses Worker.
+
+Bei der Annahme handelt es sich um eine dauerhafte Terminverpflichtung, nicht um
+eine sofortige Ausführung. Die Zulassungsprüfungen und Eigentumseffekte des
+Worker werden durch
+[MWP-WRK-005](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-005)
+definiert.
+
+## Der Arbeitsvertrag
+
+Jeder WorkItem trägt einen versionierten, maschinenlesbaren Arbeitsvertrag. Die
+erforderliche Form wird durch
+[MWP-WRK-001](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-001)
+identifiziert und umfasst:
+
+- Ziel, Ergebnisse und Akzeptanzkriterien;
+- erforderliche Evidence und Eingabe- oder Abhängigkeitsreferenzen;
+- zulässige Tools, Daten, Ressourcen und Vorgänge;
+- erforderliche Fähigkeitskennungen und -versionen;
+- Frist, geforderte Dringlichkeit und geschäftliche Auswirkungen;
+- Finanz-, Token-, Tool-Call-, Rechen-, Wanduhr- und Nebeneffektbudgets;
+- Wiederholungsversuche, Backoff, Frist und Kostenrichtlinie; und
+- Risikoklassifizierung und etwaige Genehmigungsschritte vor der Ausführung.
+
+Eine wesentliche Unklarheit wird vor der Annahme gelöst. Eine wesentliche
+Vertragsrevision kehrt durch erneute Worker Annahme zurück
+([MWP-WRK-002](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-002)).
+
+## Ein gemeinsamer erfolgreicher Weg
+
+```text
+Work Proposal
+    ↓ autorisieren
+open WorkItem
+    ↓ anbieten
+offered
+    ↓ Worker nimmt an
+queued
+    ↓ gültiger Besitz, Approval-Gates und Execution Lease
+active
+    ↓ Worker reicht Artifact und Evidence ein
+submitted
+    ↓ Coordinator akzeptiert das Ergebnis
+verified
+```
+
+Aktive Arbeiten können einen Checkpoint auf `queued` zurücksetzen, `blocked` mit
+einem dauerhaften Checkpoint eingeben, mit Evidence fehlschlagen oder
+abgebrochen werden. Die vollständige Übergangstabelle befindet sich auf der
+Spezifikationsseite
+[WorkItem](../../reference/specification/work-scheduling-and-recovery/#workitem-transition-table).
+
+## Evidence vor der Genehmigung
+
+A Worker Die Reklamation ist kein ausreichender Nachweis der Fertigstellung. Die
+Einreichung umfasst Artefakte und Evidence Akzeptanzkriterien zugeordnet.
+Coordinator Überprüfungsschecks Artifact Integrität, deterministische Tests,
+qualitativer Prüfer Evidenceund die aufgezeichnete Annahmeentscheidung in der in
+[MWP-WRK-025](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-025).
+
+Nachdem die erforderlichen WorkItems überprüft wurden, wird die Coordinator legt
+eine bestimmte vor Mission Überarbeitung und Artifact Satz. Der MissionOwner
+Zeichen endgültig Approval oder fordert Änderungen an, ohne frühere
+Übermittlungen zu löschen
+([MWP-MSN-008](../../reference/specification/missions-groups-and-membership/#mwp-msn-008)).

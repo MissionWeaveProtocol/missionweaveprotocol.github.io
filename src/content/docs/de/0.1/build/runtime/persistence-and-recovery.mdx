@@ -1,0 +1,173 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Persistenz und Wiederherstellung
+description: >-
+  Maßgeblicher Zustand, wiederherstellbare Projektionen, Belege, optimistische
+  Parallelität, Wiedergabe, Cursor, Snapshots und Wiederherstellung externer
+  Nebeneffekte.
+---
+
+# Persistenz und Wiederherstellung
+
+Beharrlichkeit wird durch Autorität gespalten. Missionen, Mitgliedschaften,
+WorkItems, Eigentums- und Leasing-Epochen, Deduplizierungsbelege, Genehmigungen
+und Group Ereignisse sind maßgebend. Agent-lokale Cursor, Warteschlangen,
+Kontrollpunkte, Posteingänge, Postausgänge und der Scheduler-Status sind
+wiederhergestellte Projektionen; Wenn man sie verliert, kann sich das nicht
+ändern Mission Wahrheit
+([MWP-FND-023](../../../reference/specification/foundations/#mwp-fnd-023)).
+
+## Maßgebliche Annahmetransaktion
+
+Zum einen Group Übergang muss die Behörde die akzeptierte Zustandsänderung
+vornehmen, Event Anhängen, aggregierte Revision, Zaunaktualisierungen, Budget-
+oder Genehmigungseffekte und Idempotenzempfang, sichtbar als ein atomares
+Ergebnis. Ein Event ist die unveränderliche akzeptierte Tatsache, die ihr trägt
+Group Sequenz- und Aggregatrevision
+([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)).
+
+Das gleiche `(actor ID, Action ID)` und byteäquivalenter kanonischer Inhalt gibt
+die ursprüngliche Quittung zurück, anstatt einen weiteren Übergang anzuhängen;
+unterschiedliche Inhalte unter derselben Aktions-ID schlagen fehl
+`ACTION_ID_COLLISION`
+([MWP-EVT-003](../../../reference/specification/commands-events-and-ordering/#mwp-evt-003)).
+
+Strukturierte Updates nutzen optimistische Parallelität. Revisionsinkongruenz
+lehnt das Ganze ab Command, während Erstbesitz, Mietverlängerung, Membership
+ändern, und Approval Verwenden Sie immer die Compare-and-Set-Akzeptanz
+([MWP-EVT-007](../../../reference/specification/commands-events-and-ordering/#mwp-evt-007)).
+
+## Projektionstransaktion
+
+Die Lieferung von Event erfolgt mindestens einmal, daher dedupliziert jeder
+Verbraucher anhand der ID Event und verarbeitet jeden Group nacheinander. Es
+kann spätere Ereignisse puffern, seinen dauerhaften Cursor jedoch nicht über
+eine Lücke vorrücken lassen
+([MWP-WRK-029](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)).
+Dies ist die Laufzeitform der Mindesteinmal-Invariante
+([MWP-FND-018](../../../reference/specification/foundations/#mwp-fnd-018)).
+Jeder Worker behält einen eigenen dauerhaften Event-Posteingang, einen Cursor
+und eine Arbeitswarteschlange pro Group bei, die alle aus akzeptierten
+Group-Ereignissen
+([MWP-WRK-008](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008))
+wiederhergestellt werden können.
+
+`ACK` meldet den höchsten zusammenhängenden dauerhaften Cursor. Es ermöglicht
+möglicherweise die Bereinigung der Zustellung, löscht jedoch niemals den
+maßgeblichen Group-Verlauf. Die Wiedergabe der erneuten Verbindung kann
+Duplikate rund um eine Verbindungsunterbrechung enthalten
+([MWP-WRK-030](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)).
+
+## Schnappschüsse und lange Lücken
+
+Wenn die Online-Wiedergabe den angeforderten Cursor nicht mehr enthält, gibt der
+Server `CURSOR_TOO_OLD` mit einer signierten Snapshot-Referenz zurück. Stellen
+Sie die Wiederherstellung erst wieder her, nachdem Schema, Hash, Signatur,
+Organization- und Group-Bindung und Sequenz des Snapshots validiert wurden.
+Setzen Sie dann die Wiedergabe streng nach der Snapshot-Sequenz fort. Der lokale
+[Zustellungs-, Wiedergabe- und Bestätigungsabschnitt](../../../reference/specification/work-scheduling-and-recovery/#16-delivery-replay-and-acknowledgement)
+definiert diesen Wiederherstellungspfad.
+
+Aktive Gruppen bleiben vollständig Event Geschichte. Die Archivierung erstellt
+einen signierten endgültigen Snapshot und behält das verschlüsselte
+Prüfprotokoll darunter bei Organization Richtlinie und zeichnet rechtsgültige
+Löschungen oder Sicherheitsschwärzungen durch überprüfbare Tombstones auf,
+anstatt frühere IDs oder Sequenzen neu zu schreiben
+([MWP-MSN-009](../../../reference/specification/missions-groups-and-membership/#mwp-msn-009)).
+
+## Checkpoints, Leasing und Neustart
+
+Das Eigentum in der Warteschlange und die aktive Ausführung sind eingegrenzt.
+Der Ausführungsvertrag bindet die Agent, Session Epoch, WorkItem, Besitzepoche,
+stabile Leasing-ID und Zeitgrenzen; Jeder Prüfpunkt, Block, jede
+Veröffentlichung, jede Übermittlung und jeder gemeldete Fehler verweist auf die
+aktuelle Lease-ID
+([MWP-WRK-013](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013)).
+
+Checkpoint, Block und Übermittlung geben den Lease frei. Sitzungsersatz,
+Neuzuweisung, Stornierung und Fehler widerrufen; Eine Ersatzsitzung gibt die
+betroffene Arbeit an zurück `queued` bevor die Ausführung unter neuen
+Mietverträgen wieder aufgenommen wird
+([MWP-WRK-014](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-014)).
+
+Blockierte Arbeitskontrollpunkte, gibt die erforderliche Auflösung aus, gibt
+seinen Steckplatz frei und kehrt nach der Auflösung zur
+Bereitschaftswarteschlange zurück
+([MWP-WRK-017](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-017)).
+Automatische Wiederholungsversuche bleiben innerhalb der Budgets für
+Arbeitsvertragsversuche, Backoffs, Kosten und Fristen und verwenden stabile
+externe Versuchsschlüssel
+([MWP-WRK-018](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-018)).
+
+Wenn ein Worker Wenn die Startfrist oder die Mietvertragsverlängerung versäumt
+wird, kann ein neuer Eigentümer am letzten Kontrollpunkt unter einer höheren
+Eigentümerepoche fortfahren. Späte Ergebnisse bleiben nicht maßgebend Evidence
+([MWP-WRK-019](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-019)).
+
+## Begrenzte Ausfallwiederherstellung
+
+Während Group-Nichtverfügbarkeit des Dienstes, a Worker darf nur bereits aktive,
+umkehrbare Berechnungen innerhalb der begrenzten Kulanzfrist fortsetzen. Ohne
+eine aktuelle Lease und ein aktuelles Token kann es keine neue Arbeit beginnen
+oder neue risikoreiche, irreversible oder von außen sichtbare Vorgänge ausführen
+und es wird vor der Übermittlung oder weiteren Nebenwirkungen abgeglichen
+([MWP-WRK-020](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-020)).
+
+Gepufferte Befehle behalten die kritische Bounded-Offline-Execution-Bindung bei,
+basieren dann auf aktuellen Sitzungsfeldern und werden bei erneuter Verbindung
+neu signiert
+([MWP-WRK-021](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-021)).
+Die Versöhnung und ihre Ressourcengebühr sind eine maßgebliche Transaktion;
+Budgetüberlauf lehnt sowohl die Gebühr als auch den Fortschritt ohne Teilstatus
+ab
+([MWP-WRK-022](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-022)).
+
+Wenn für einen erneuten Versuch eine geänderte Aktualität oder ein aktueller
+Zaun erforderlich ist, befolgen Sie die neuen Aktions-ID- und Signaturregeln in
+[MWP-EXT-005](../../../reference/specification/errors-extensions-and-security/#mwp-ext-005).
+
+## Äußere Nebenwirkungen
+
+Die Netzwerkbereitstellung kann keine genau einmaligen externen Effekte liefern.
+Werkzeugoperationen verwenden einen stabilen Idempotenzschlüssel, der von
+abgeleitet ist Mission AUSWEIS, WorkItem ID, Besitzepoche und logische
+Operations-ID
+([MWP-WRK-031](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-031)).
+
+:::note[Implementation note]
+
+Ein sicherer lokaler Anwendungszyklus ist:
+
+```text
+lokale Transaktion beginnen
+→ doppelte Event ID ablehnen oder ignorieren
+→ nächste zusammenhängende Group-Sequenz prüfen
+→ Group-Projektion und Warteschlange pro Group aktualisieren
+→ Checkpoint- oder Postausgangsabsicht persistieren
+→ dauerhaften Cursor fortschreiben
+→ festschreiben
+```
+
+Behalten Sie bei einem externen Nebeneffekt die Absicht vor dem Versand bei,
+bewahren Sie die externe Quittung auf und gleichen Sie ein ungewisses Ergebnis
+ab, bevor Sie es erneut versuchen.
+
+Verwenden Sie separate Speicherabstraktionen für den maßgeblichen Dienststatus
+und Agent-lokale Projektionen, auch wenn beide von einem Datenbankprodukt
+unterstützt werden. Machen Sie Transaktionsgrenzen im sichtbar API:
+`accept transition`, `apply Event`, `advance Cursor`, Und
+`record side-effect receipt` sollte nicht in nicht verwandten
+Objektspeicherungen ausgeblendet werden.
+
+Ein Postausgang ist für die Transportveröffentlichung nach einem maßgeblichen
+Commit nützlich, und ein Posteingang oder eine verarbeitete Datei ist
+nützlich.Event Die Tabelle ist für die lokale Deduplizierung nützlich.
+Aufbewahrung, Snapshot-Kadenz, Partitionierung, Komprimierung und
+Datenbankauswahl sind betriebliche Entscheidungen; Sie können die Append-Only-
+und Replay-Verpflichtungen nicht aufheben.
+
+:::
+
+Weiter mit [Transport und Framing](../transport-and-framing/) um eine dauerhafte
+Wiedergabe mit dem Wire-Protokoll zu verbinden.

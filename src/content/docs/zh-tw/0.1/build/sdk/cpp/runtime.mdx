@@ -1,0 +1,102 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: C++ 運行時參考
+description: 精確固定的 C++ SDK 的完整安裝標頭表面和運行時邊界。
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# C++ 運行時參考
+
+此页面涵盖了由[确切的 API inventory](../api/)
+表示的完整 C++ 表面。共享协议行为仍然由本地[运行时参考](../../../runtime/architecture-and-bootstrap/)和[参考子句](../../../../reference/specification/)定义。公共声明位于命名空间
+`missionweaveprotocol` 中；下游 CMake 目标链接 `MissionWeaveProtocol::sdk`。
+
+<SupportStatus status="implemented" /> 适用于下面列出的已安装标头和进程内行为。
+
+<SupportStatus status="deployment-adapter-required" /> 適用於目前 Registry
+權威性、可信任準入情境、經過驗證的日誌存取和其他部署服務。
+
+<SupportStatus status="not-implemented" /> 表示精确固定的库没有相应的运行时。
+
+## 库和执行模型
+
+安装的包需要 C++20、CMake 3.24、OpenSSL 3 和 jsoncons
+1.8.1。其导出目标为`MissionWeaveProtocol::sdk`；安装的公共标头位于
+`include/missionweaveprotocol` 下。单独安装的可执行文件是
+`missionweaveprotocol-conformance`。
+
+链接库不会启动任何服务，不会打开套接字，不会创建持久存储，并且不会授予任何权限。
+`std::span`
+結果根據聲明 API 引用 SDK 擁有的或物件擁有的位元組，並且不得比其所有者壽命更長。
+
+## 完整的标题图
+
+| 運行時關注            | 安裝的公共標頭                      | 固定提交的合約                                                                          |
+| --------------------- | ----------------------------------- | --------------------------------------------------------------------------------------- |
+| 版本與資產類型        | `version.hpp`, `bundle.hpp`         | SDK 協定身分、不可變的嵌入式資產範圍、確切的Pin和捆綁摘要。                             |
+| 嚴格的 JSON           | `json.hpp`                          | `parse_strict_json` 超過重複成員、格式錯誤的文字或位元組 UTF-8/JSON，以及尾隨數據拒絕。 |
+| 架構與確切時間        | `schema.hpp`, `signed_document.hpp` | 離線草案 2020-12 驗證、斷言格式和確切的受保護時間證據。                                 |
+| 典範 JSON 和 Ed25519  | `canonical.hpp`, `crypto.hpp`       | RFC 8785 字串和哈希加上嚴格 Ed25519 簽名和驗證助手。                                    |
+| 簽署的文件和 Registry | `signed_document.hpp`               | 九種文檔，簽名，完整Registry驗證，六階段驗證，證據不可變。                              |
+| 框架                  | `frame.hpp`                         | WebSocket 幀值的嚴格解碼、規範編碼和文件驗證。這是編解碼器，而不是託管網關服務。        |
+| 結構一致性            | `conformance.hpp`                   | 嵌入式模式向量執行、向量結果和報告摘要。                                                |
+| 嵌入式捆綁包          | `bundle.hpp`                        | 協定、密碼學和準入包的精確資產存取和摘要驗證。                                          |
+| 首次準入              | `admission.hpp`                     | 首次準入和歷史信任高於成功的 Signed Document 驗證。                                     |
+
+## 驗證、簽名和 Registry 證據
+
+`parse_strict_json` 只接受一個 JSON 值。 `SchemaCatalog::validate`
+檢查 22 個嵌入式草案 2020-12 架構。
+`canonical_json`、`canonicalize_json`、`canonical_sha256` 和
+`canonical_sha256_document` 實現 RFC 8785 表面。
+
+`SigningKey` 是應用程式擁有的簽章介面。 `Ed25519`
+公開嚴格的金鑰、簽章和文件幫助程序。 `SignedDocumentCodec::sign` 和 `verify`
+選擇九個 `SignedDocumentKind`
+值之一併執行解析、架構、簽章信封、金鑰解析、規範化和簽章階段。
+
+`KeyResolver::resolve` 必須回傳 `KeyRegistrySnapshot::organization_wide`
+證據，以取得具有完整保留歷史記錄的一個連貫的適用 Organization 修訂版。選定的金鑰、部分投影、快取命中或呼叫者提供的信任標誌是不夠的。
+`VerifiedSignedDocument`
+公開接收到的位元組、簽章和規範字串和雜湊值、受保護的時間、簽章資料以及解析的 Registry 金鑰和 Principal。
+
+## 框架、捆綁包和一致性
+
+`FrameCodec::decode`、`encode` 和 `validate_document`
+驗證訊框值；它們不擁有傳輸、TLS、會話驗證、遊標持久性、路由、背壓或權威狀態轉換。
+
+`ProtocolBundle::verify` 檢查 22 個架構和 59 個檔案結構套件。
+`verify_cryptography` 檢查 98 個工件、22 個案例和 62 個聲明的評估；
+`verify_admission`
+檢查 19 個工件、5 個案例和 30 個聲明的評估。這些呼叫驗證固定值、計數、路徑、位元組長度和摘要，但不執行每個加密或存取評估。
+
+`ConformanceRunner::run` 和 `missionweaveprotocol-conformance`
+僅執行嵌入的結構模式向量。只有當所有向量都符合其預期有效性時，可執行檔才會傳回零。
+
+## 首次準入
+
+`AdmissionService` 公開 `prepare_first_admission`、`admit_first` 和
+`verify_historical_admission`。繼續使用
+[C++ 準入參考 ](../admission/)，以了解確切的適配器結果、呼叫順序和可運行的連結範例。
+
+## 明確的可用性邊界
+
+<SupportStatus status="deployment-adapter-required" /> **準入權威服務** —
+應用程式提供當前 Registry 證據、歷史 Registry
+證據、可信任接受上下文以及經過驗證的僅附加日誌。
+
+<SupportStatus status="not-implemented" /> **Mission 編排** — 不匯出進階 Mission
+狀態機或編排外觀。
+
+<SupportStatus status="not-implemented" /> **Worker 排程器** — 不匯出 Worker
+佇列、排程器、租用執行程式或復原循環。
+
+<SupportStatus status="not-implemented" /> **託管閘道服務** — 庫提供
+`FrameCodec`，而非具有傳輸、TLS、會話、路由或反壓所有權的閘道服務。
+
+<SupportStatus status="not-implemented" /> **權威持久性運行時** —
+不匯出資料庫支援或 Agent 本地持久性運行時。
+
+這些未實作項目是書面支援合約的一部分；不得從共享協定名稱推斷 Python 參考執行階段能力。

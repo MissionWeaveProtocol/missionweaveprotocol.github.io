@@ -1,0 +1,129 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: TypeScript 首次准入和历史信任
+description:
+  输入 TypeScript 适配器、精确的异步调用顺序、信任边界和可运行的准入示例。
+---
+
+import typescriptAdmissionExample from "../../../../../../../../examples/sdk/typescript/admission.ts?raw";
+
+# TypeScript 首次准入和历史信任
+
+TypeScript `AdmissionService` 在六阶段 Signed
+Document 验证器 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)) 之上分层首次准入和历史信任。与语言无关的流程见本地[首次准入和历史信任运行时页面](../../../runtime/first-admission-and-historical-trust/)，确切要求见本地[首次准入和历史信任条款](../../../../reference/specification/first-admission-and-historical-trust/)。
+
+## 公共适配器和结果
+
+| 公开 API                                     | 责任                                                                                                                                                                                                                                               |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.resolveCurrent` | 同步返回完整的 Organization 范围的 Registry 证据，表明部署断言对于该决策是最新的。                                                                                                                                                                 |
+| `TrustedAdmissionContext.issue`              | 同步或异步下发可信记录ID、受理即时、权威不在后才接受服务。                                                                                                                                                                                         |
+| `AdmissionLog.lookup`                        | 异步返回`{ status: "found", record }`或`{ status: "authoritative-absence" }`。缓存未命中、超时、未经身份验证的缺席和不确定状态在 [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003) 下关闭失败。 |
+| `AdmissionLog.appendOrReturnExisting`        | 以原子方式追加候选字节或通过经过身份验证的服务身份返回并发权威获胜者。                                                                                                                                                                             |
+| `AuthenticatedAdmissionRecord`               | 将 `recordBytes` 绑定到适配器验证的服务，以便 [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) 可以验证返回的记录。                                                                            |
+| `AdmissionService.prepareFirstAdmission`     | 从 SDK 生成的 `VerifiedSignedDocument` 创建并验证候选证据。它并不附加或暗示承认。                                                                                                                                                                  |
+| `AdmissionService.admitFirst`                | 在 [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006) 下执行当前验证、权威查找、候选创建、原子附加或返回现有以及返回记录验证。                                                                   |
+| `AdmissionService.verifyHistoricalAdmission` | 根据 [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) 的要求，使用历史 Registry 证据重新运行六阶段验证，并需要现有记录而不发布上下文或附加。                                                   |
+| `AdmittedSignedDocument`                     | 返回不可变的 `verified` 和 `record` 证据以及防御性 `recordBytes` 副本。                                                                                                                                                                            |
+
+确切的权威缺席值为
+`{ status: "authoritative-absence" }`。调用者提供的信任布尔值不是准入查找结果，并且绝不能选择成功路径。
+
+## 首次准入调用顺序
+
+:::note[Informative example]
+
+```ts
+const first = await new AdmissionService().admitFirst(
+  SignedDocumentKind.Command,
+  documentBytes,
+  currentRegistry,
+  admissionLog,
+  trustedContext,
+);
+```
+
+:::
+
+`admitFirst`
+在查阅日志之前完成所有六个签名文档阶段。找到的记录经过验证并返回，无需发出可信上下文或附加。权威缺席后，服务发布可信上下文，准备规范候选字节，调用
+`appendOrReturnExisting`，并验证实际返回的记录。仅当其架构、经过身份验证的服务、文档绑定和可信时间通过
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+和
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)
+时，并发获胜者才是可接受的。
+
+## 历史回放
+
+:::note[Informative example]
+
+```ts
+const historical = await new AdmissionService().verifyHistoricalAdmission(
+  SignedDocumentKind.Command,
+  documentBytes,
+  historicalRegistry,
+  admissionLog,
+);
+```
+
+:::
+
+历史重放使用保留的 Registry 历史记录重新运行验证，需要
+`status: "found"`，并且从不调用 `TrustedAdmissionContext.issue` 或
+`AdmissionLog.appendOrReturnExisting`。匹配的记录ID表明恢复了相同的权威记录；它们不证明 Command 新鲜度、签名者授权、状态机接受或便携式日志证明验证。这些在
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+和
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)
+下保持独立。
+
+## 误差面
+
+`AdmissionError` 公开 `wireCode: "AUTH_INVALID_SIGNATURE"` 并受保护的
+`auditDetail.stage: "admission"`。稳定的受保护原因可区分缺失、冲突、畸形、未经验证、不可用、不确定和自锚证据，同时保留
+[MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)
+所需的非神谕线结果。
+
+适配器可能会抛出 `AdmissionLogError`
+以及受支持的准入原因。其他适配器例外不会自动重新分类。部署必须刻意映射其失败，并且不得将一般成功、可用性或缓存状态视为经过身份验证的证据。
+
+## 可运行的精确固定示例
+
+:::note[Informative example]
+
+该示例确定性地派生一个 Ed25519 密钥，构造完整的 Registry 快照和签名的 Command，并提供类型化的内存适配器。固定种子是演示材料，绝不能在示例之外使用。
+
+<pre>
+  <code>{typescriptAdmissionExample}</code>
+</pre>
+
+从精确的 SDK 签出中，进行类型检查并运行它，如下所示：
+
+```bash
+npm ci
+cp /absolute/path/to/examples/sdk/typescript/admission.ts examples/website-admission.ts
+npm run typecheck:examples
+npm run build
+node --experimental-strip-types examples/website-admission.ts
+```
+
+该软件包支持 Node.js 20。直接仅剥离执行此 `.ts` 源需要 Node.js
+22 或更高版本；在 Node.js
+20 上，在运行发出的 ESM 之前使用项目 TypeScript 工具链对其进行转译。预期输出包含
+`first admission` 和 `historical replay`
+的相同记录 ID。该程序还断言匹配的签名哈希值和记录字节以及精确的一个附加。
+
+:::
+
+:::note[Implementation note]
+
+将 `CurrentRegistryFixture` 替换为经过身份验证的当前和历史 Registry 适配器，将
+`InMemoryAdmissionLog`
+替换为经过身份验证的持久日志，其追加或返回现有操作是原子的，并将
+`FixedTrustedAdmissionContext`
+替换为 Organization 控制的可信时间和接受服务发行。
+
+将 `DeterministicSigningKey`
+替换为部署拥有的密钥服务。保留防御性字节副本，并且不要将权限边界折叠为调用者提供的信任布尔值。
+
+:::

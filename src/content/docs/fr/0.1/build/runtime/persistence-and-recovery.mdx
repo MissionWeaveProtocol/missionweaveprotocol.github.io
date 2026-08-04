@@ -1,0 +1,171 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Persistance et récupération
+description: >-
+  État faisant autorité, projections reconstructibles, reçus, concurrence
+  optimiste, relecture, curseurs, instantanés et récupération des effets
+  secondaires externes.
+---
+
+# Persistance et récupération
+
+La persistance est divisée par autorité. Les missions, les adhésions, les
+éléments de travail, les époques de propriété et de location, les reçus de
+déduplication, les approbations et les événements Group font autorité.
+Agent-local Les curseurs, les files d'attente, les points de contrôle, les
+boîtes de réception, les boîtes d'envoi et l'état du planificateur sont des
+projections reconstructibles ; les perdre ne peut pas changer la vérité Mission
+([MWP-FND-023](../../../reference/specification/foundations/#mwp-fnd-023)).
+
+## Transaction d'acceptation faisant autorité
+
+Pour une transition Group, l'autorité doit effectuer le changement d'état
+accepté, l'ajout Event, la révision globale, les mises à jour de clôture, les
+effets de budget ou d'approbation et la réception d'idempotence visibles comme
+un résultat atomique. Un Event est le fait accepté immuable portant sa séquence
+Group et sa révision globale
+([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)).
+
+Le même contenu canonique `(actor ID, Action ID)` et équivalent en octets
+renvoie le reçu d'origine au lieu d'ajouter une autre transition ; un contenu
+différent sous le même ID d'action échoue avec `ACTION_ID_COLLISION`
+([MWP-EVT-003](../../../reference/specification/commands-events-and-ordering/#mwp-evt-003)).
+
+Les mises à jour structurées utilisent la concurrence optimiste. L'inadéquation
+des révisions rejette l'intégralité de Command, tandis que la première
+propriété, le renouvellement du bail, la modification Membership et Approval
+utilisent toujours l'acceptation de comparaison et d'ensemble
+([MWP-EVT-007](../../../reference/specification/commands-events-and-ordering/#mwp-evt-007)).
+
+## Transaction de projection
+
+La livraison Event s'effectue au moins une fois, de sorte que chaque
+consommateur déduplique par ID Event et traite chaque Group dans l'ordre. Il
+peut mettre en mémoire tampon des événements ultérieurs mais ne peut pas faire
+avancer son curseur durable sur un espace
+([MWP-WRK-029](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)).
+Il s'agit de la forme d'exécution de l'invariant au moins une fois
+([MWP-FND-018](../../../reference/specification/foundations/#mwp-fnd-018)).
+Chaque Worker conserve une boîte de réception, un curseur et une file d'attente
+de travail Event durables distincts par Group, tous reconstructibles à partir
+des événements Group acceptés
+([MWP-WRK-008](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008)).
+
+`ACK` signale le curseur durable contigu le plus élevé. Il peut permettre le
+nettoyage de la diffusion, mais ne supprime jamais l'historique Group faisant
+autorité ; La relecture de reconnexion peut inclure des doublons autour d'une
+déconnexion
+([MWP-WRK-030](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)).
+
+## Instantanés et longues lacunes
+
+Lorsque la relecture en ligne ne contient plus le curseur demandé, le serveur
+renvoie `CURSOR_TOO_OLD` avec une référence d'instantané signée. Restaurez
+uniquement après avoir validé le schéma, le hachage, la signature, la liaison
+Organization et Group et la séquence de l'instantané. Reprenez ensuite la
+relecture strictement après la séquence d'instantanés. La section locale
+[de livraison, de relecture et d'accusé de réception ](../../../reference/specification/work-scheduling-and-recovery/#16-delivery-replay-and-acknowledgement)
+définit ce chemin de récupération.
+
+Les groupes actifs conservent l'historique complet de Event. L'archivage produit
+un instantané final signé, conserve le journal d'audit chiffré selon la
+politique Organization et enregistre la suppression légale ou la rédaction de
+sécurité via des pierres tombales vérifiables plutôt que de réécrire les ID ou
+séquences antérieurs
+([MWP-MSN-009](../../../reference/specification/missions-groups-and-membership/#mwp-msn-009)).
+
+## Points de contrôle, baux et redémarrage
+
+La propriété en file d'attente et l'exécution active sont clôturées. Le bail
+d'exécution lie les Agent, Session Epoch, WorkItem, l'époque de propriété, l'ID
+de bail stable et les limites temporelles ; chaque point de contrôle, blocage,
+publication, soumission et échec signalé fait référence à l'ID de bail actuel
+([MWP-WRK-013](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013)).
+
+Le point de contrôle, le blocage et la soumission libèrent le bail. Le
+remplacement, la réaffectation, l'annulation et l'échec de la session la
+révoquent ; une session de remplacement renvoie le travail affecté à `queued`
+avant la reprise de l'exécution sous de nouveaux baux
+([MWP-WRK-014](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-014)).
+
+Points de contrôle de travail bloqués, émet la résolution requise, libère son
+emplacement et revient à sa file d'attente prête après la résolution
+([MWP-WRK-017](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-017)).
+Les tentatives automatiques restent dans les limites des budgets de tentative,
+d'interruption, de coût et de délai du contrat de travail et utilisent des clés
+de tentative externes stables
+([MWP-WRK-018](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-018)).
+
+Si un Worker manque sa date limite de début ou de renouvellement de bail, un
+nouveau propriétaire peut reprendre à partir du dernier point de contrôle sous
+une époque de propriété supérieure ; les résultats tardifs ne font pas autorité
+Evidence
+([MWP-WRK-019](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-019)).
+
+## Récupération après panne limitée
+
+Pendant l'indisponibilité du service Group, un Worker peut continuer uniquement
+le calcul réversible déjà actif pendant sa période de grâce limitée. Il ne peut
+pas démarrer de nouveaux travaux ou effectuer de nouvelles opérations à haut
+risque, irréversibles ou visibles de l'extérieur sans un bail et un jeton en
+cours, et il se réconcilie avant la soumission ou d'autres effets secondaires
+([MWP-WRK-020](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-020)).
+
+Les commandes mises en mémoire tampon conservent la liaison critique d'exécution
+hors ligne limitée, puis rebasent les champs de session en cours et sont
+re-signées lors de la reconnexion
+([MWP-WRK-021](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-021)).
+La réconciliation et ses frais de ressources constituent une seule transaction
+faisant autorité ; le dépassement de budget rejette à la fois la charge et la
+progression sans état partiel
+([MWP-WRK-022](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-022)).
+
+Lorsqu'une nouvelle tentative nécessite une fraîcheur modifiée ou une clôture
+actuelle, suivez les nouvelles règles d'ID d'action et de signature dans
+[MWP-EXT-005](../../../reference/specification/errors-extensions-and-security/#mwp-ext-005).
+
+## Effets secondaires externes
+
+La fourniture du réseau ne peut pas produire des effets externes ponctuels. Les
+opérations de l'outil utilisent une clé d'idempotence stable dérivée de l'ID
+Mission, de l'ID WorkItem, de l'époque de propriété et de l'ID d'opération
+logique
+([MWP-WRK-031](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-031)).
+
+:::note[Implementation note]
+
+Un cycle d’application locale sûr est :
+
+```text
+démarrer la transaction locale
+→ rejeter ou ignorer un Event ID dupliqué
+→ vérifier la prochaine séquence Group contiguë
+→ mettre à jour la projection Group et la file de chaque Group
+→ persister tout point de contrôle ou intention de boîte d’envoi
+→ avancer le Cursor durable
+→ valider
+```
+
+En cas d'effet secondaire externe, conservez l'intention avant l'envoi,
+conservez le reçu externe et rapprochez un résultat incertain avant de
+réessayer.
+
+Utilisez des abstractions de stockage distinctes pour l'état de service faisant
+autorité et les projections locales Agent, même si les deux sont sauvegardées
+par un seul produit de base de données. Rendre les limites des transactions
+visibles dans API : `accept transition`, `apply Event`, `advance Cursor` et
+`record side-effect receipt` ne doivent pas être masqués dans les sauvegardes
+d'objets non liés.
+
+Une boîte d'envoi est utile pour la publication de transport après une
+validation faisant autorité, et une table de boîte de réception ou de
+traitement-Event est utile pour la déduplication locale. La rétention, la
+cadence des instantanés, le partitionnement, le compactage et le choix de la
+base de données sont des décisions opérationnelles ; ils ne peuvent pas effacer
+les obligations d'ajout et de relecture.
+
+:::
+
+Continuez avec [Transport and framing](../transport-and-framing/) pour connecter
+la relecture durable au protocole filaire.

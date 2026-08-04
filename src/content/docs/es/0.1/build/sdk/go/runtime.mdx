@@ -1,0 +1,121 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Referencia de runtime de Go
+description: >-
+  La superficie completa del paquete exportado y los límites de tiempo de
+  ejecución del Go SDK fijado exactamente.
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Referencia de runtime de Go
+
+Esta página cubre el paquete Go completo representado por el
+[exacto API inventario](../api/). El comportamiento del protocolo compartido
+permanece definido por la
+[referencia de tiempo de ejecución ](../../../runtime/architecture-and-bootstrap/)
+y las [cláusulas de referencia ](../../../../reference/specification/) locales.
+Los nombres siguientes definen cómo el módulo anclado expone ese comportamiento.
+
+<SupportStatus status="implemented" /> se aplica a las API de paquetes
+exportados y a los códecs en proceso que se enumeran a continuación.
+
+<SupportStatus status="deployment-adapter-required" /> se aplica a la autoridad
+Registry actual, al contexto de admisión confiable, al acceso al registro
+atómico autenticado y a otros servicios externos proporcionados por una
+implementación.
+
+<SupportStatus status="not-implemented" /> significa que el módulo fijado
+exactamente no tiene un tiempo de ejecución exportado correspondiente.
+
+## Modelo de importación y ejecución.
+
+Importe el paquete único como
+`missionweaveprotocol "github.com/missionweaveprotocol/go-sdk"`. El módulo
+requiere Go 1.24. Los nombres públicos siguen las reglas de exportación de Go;
+Los ayudantes y adaptadores de implementación no exportados no son contratos de
+aplicación.
+
+El módulo utiliza la biblioteca estándar para JSON, criptografía, incrustación y
+E/S, además de su esquema declarado y dependencias RFC 8785. La instalación del
+paquete por sí sola no inicia un proceso ni crea autoridad.
+
+## Mapa fuente completo
+
+| Preocupación por el tiempo de ejecución | Archivos fuente públicos                                                                         | Contrato en el compromiso fijado                                                                                                                                  |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Identidad y documentación del paquete   | `doc.go`                                                                                         | Alcance a nivel de paquete y límite de implementación admitido.                                                                                                   |
+| JSON estricto y valores de tiempo       | `json.go`, `rfc3339.go`                                                                          | Estricta decodificación JSON y superficie de comparación instantánea RFC 3339 exportada utilizada por verificación y admisión.                                    |
+| Catálogo de esquemas                    | `schema.go`                                                                                      | Borrador 2020-12 Carga, validación y acceso exacto al esquema empaquetado.                                                                                        |
+| Canónico JSON                           | `canonical.go`                                                                                   | RFC 8785 canonicalización y producción de bytes canónicos.                                                                                                        |
+| Firma y Documentos Firmados             | `signing.go`, `signed_document_codec.go`, `signed_document_verification.go`, `ed25519_strict.go` | Ayudantes Ed25519, nueve perfiles de documentos firmados, resolución Registry completa, controles estrictos de puntos y evidencia de verificación de seis etapas. |
+| Marcos                                  | `frame.go`                                                                                       | Operaciones de análisis y codificación para valores de fotograma WebSocket admitidos. Este es un códec, no un servicio de puerta de enlace alojado.               |
+| Conformidad y paquetes                  | `conformance.go`, `bundle.go`                                                                    | Identidad de paquete integrada, verificación de resumen, ejecución de manifiesto y compatibilidad con comandos.                                                   |
+| Primera admisión                        | `admission.go`                                                                                   | Primera admisión y confianza histórica con adaptadores de implementación escritos por encima de la verificación exitosa.                                          |
+
+## Validación y criptografía
+
+`DecodeJSON` aplica el estricto modelo de datos JSON admitido y `SchemaCatalog`
+valida el conjunto de esquemas Borrador 2020-12 incrustado exacto.
+`CanonicalizeJSON` y `MarshalCanonicalJSON` producen RFC 8785 bytes. Estas son
+puertas separadas: el éxito del esquema no implica evidencia canónica o firmada.
+
+`SignedDocumentCodec.Sign` selecciona el tipo de documento explícito, valida la
+hora protegida, canonicaliza la proyección sin firmar, llama a `SigningKey`,
+verifica la codificación Ed25519, adjunta el sobre y valida el resultado.
+`Verify` consume bytes sin procesar y ejecuta las etapas de análisis, esquema,
+sobre de firma, resolución de clave, canonicalización y firma en orden. El
+`VerifiedSignedDocument` devuelto expone copias de bytes defensivas, hashes
+completos y de firma, hora protegida, evidencia de firma y la clave resuelta.
+
+`KeyResolver` debe devolver evidencia Organization completa de Registry. Una
+clave seleccionada, una entrada de mapa o un indicador de confianza
+proporcionado por la persona que llama no es suficiente.
+
+## Marcos, paquetes y conformidad
+
+Las funciones de marco analizan y codifican valores, pero no abren sockets, no
+autentican una sesión, persisten cursores, programan trabajo ni aplican
+transiciones autoritativas. Esas son responsabilidades de implementación o de
+tiempo de ejecución de nivel superior.
+
+`VerifyProtocolBundle`, `VerifyCryptographyBundle` y `VerifyAdmissionBundle`
+vinculan cada conjunto de artefactos incrustados a su identidad registrada.
+`RunEmbeddedConformance` ejecuta los vectores estructurales incrustados.
+Ejecútelos nuevamente cuando cambie la confirmación SDK, el pin de protocolo, el
+conjunto de esquemas, el paquete de criptografía, el paquete de admisión o el
+adaptador de implementación. Pasarlos prueba sólo la superficie del paquete
+ejercitada.
+
+## Primera admisión
+
+`NewAdmissionService` construye el servicio de esquema exacto.
+`PrepareFirstAdmission`, `AdmitFirst` y `VerifyHistoricalAdmission` son llamadas
+Go sincrónicas que pueden devolver errores de adaptador o de validación.
+`AdmissionCurrentKeyResolver`, `TrustedAdmissionContext` y `AdmissionLog` siguen
+siendo interfaces de implementación. Continúe con la
+[Referencia de admisión ](../admission/) para conocer los resultados exactos,
+los requisitos de atomicidad y la ruta histórica.
+
+## Límites de disponibilidad explícitos
+
+<SupportStatus status="not-implemented" /> **Mission orquestación**: no se
+exporta ninguna máquina de estado Mission ni fachada de orquestación de alto
+nivel.
+
+<SupportStatus status="not-implemented" /> **Programador Worker**: no se exporta
+ninguna cola, programador, ejecutor de concesión ni bucle de recuperación
+Worker.
+
+<SupportStatus status="not-implemented" /> **Servicio de puerta de enlace
+alojado**: el módulo proporciona códecs de marco, no un servicio de puerta de
+enlace con transporte, sesión, TLS, enrutamiento o propiedad de contrapresión.
+
+<SupportStatus status="not-implemented" /> **Runtime de persistencia
+autoritativa**: no se exporta ningún tiempo de ejecución de persistencia local
+respaldado por una base de datos o Agent.
+
+Esas ausencias son parte del contrato de ejecución soportado. Las aplicaciones
+no deben inferir capacidades de tiempo de ejecución de referencia Python a
+partir de nombres de protocolos compartidos.

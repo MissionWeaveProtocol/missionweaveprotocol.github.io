@@ -1,0 +1,126 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Tipos de protocolo
+description: >-
+  Cómo encajan el JSON del protocolo, los perfiles escalares, los tipos de
+  lenguaje generados, los objetos duraderos, los comandos, los eventos y el
+  estado semántico.
+---
+
+# tipos de protocolo
+
+Trate un objeto de protocolo como algo más que una clase deserializada. Un
+tiempo de ejecución conforme conserva cuatro capas distintas:
+
+```text
+bytes UTF-8 recibidos
+→ valor JSON analizado sin pérdidas
+→ objeto de protocolo válido según Schema
+→ estado autoritativo o proyección local aceptados semánticamente
+```
+
+Omitir una capa crea errores de normalización, orden de validación o autoridad.
+
+## Perfiles escalares
+
+Todos los objetos de protocolo son JSON, los objetos duraderos se ajustan a los
+esquemas normativos locales y las marcas de tiempo de protocolo usan RFC 3339
+con reglas deterministas adicionales donde se aplica la verificación Signed
+Document
+([MWP-FND-004](../../../reference/specification/foundations/#mwp-fnd-004)).
+
+- Preservar la ortografía de la marca de tiempo por separado del instante
+  analizado. no reescribir antes del hash o la verificación
+  ([MWP-FND-005](../../../reference/specification/foundations/#mwp-fnd-005)).
+- Decodifica base64url canónicamente sin relleno, usa minúsculas
+  `sha256:<64 hex digits>` hashes y mantiene secuencias, revisiones, épocas y
+  presupuestos dentro del rango de enteros JSON seguro y no negativo
+  ([MWP-FND-007](../../../reference/specification/foundations/#mwp-fnd-007)).
+- Validar identificadores como URI RFC 3986 absolutos completos y comparar sus
+  bytes retenidos sin inventar la normalización del lado del destinatario
+  ([MWP-FND-008](../../../reference/specification/foundations/#mwp-fnd-008)).
+- Habilite cada palabra clave del esquema `format` como una aserción, incluidas
+  `uri` y `date-time`
+  ([MWP-FND-009](../../../reference/specification/foundations/#mwp-fnd-009)).
+
+## Tipos de esquemas y tipos semánticos
+
+Los tipos de lenguaje generados son proyecciones útiles de los esquemas JSON,
+pero no reemplazan la validación. Los esquemas v0.1 utilizan el borrador
+2020-12, rechazan propiedades principales desconocidas y admiten extensibilidad
+solo a través de miembros de extensión declarados y perfiles aprobados
+([MWP-EXT-010](../../../reference/specification/errors-extensions-and-security/#mwp-ext-010)).
+
+Mantenga estas categorías separadas:
+
+| Categoría          | Ejemplos                                                                            | Límite de aceptación                                                   |
+| ------------------ | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Escalar            | identificador, marca de tiempo, hash, base64url, entero seguro                      | validación léxica y de perfil de valores                               |
+| Documento duradero | Mission, WorkItem, Artifact, Evidence, Agent Card                                   | estricto JSON más esquema normativo completo                           |
+| Signed Document    | Command, Event, Approval, Agent Card, Artifact manifiesto                           | Esquema más verificación de seis etapas                                |
+| Estado autoritario | revisión agregada, Membership, propiedad, arrendamiento, libro mayor de presupuesto | transición actual Organization o Group Authority                       |
+| Proyección local   | Cursor, bandeja de entrada, bandeja de salida, cola per-Group, punto de control     | reconstruible a partir de eventos autorizados y trabajo duradero local |
+
+Cada tipo Signed Document selecciona una hora protegida y un firmante esperado
+en
+[MWP-SDV-001](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-001).
+First-Admission Record es un objeto independiente de nueve campos sin firmar y
+no puede autenticar sus propios bytes
+([MWP-ADM-001](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001)).
+
+## Comandos y eventos
+
+Un Command es una solicitud firmada para una transición estructurada. Su sobre
+vincula el ID de acción estable, la versión, el actor, el tipo, la carga útil,
+la correlación, el tiempo de emisión y los campos Group y época aplicables
+([MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001)).
+Por lo tanto, un objeto Command válido aún no es una transición aceptada.
+
+Un Event es un hecho aceptado inmutable. Group Los eventos contienen la
+secuencia monótona Group y la revisión agregada asignada por Group Authority;
+los dos tipos Event de arranque con ámbito Organization omiten los campos de
+orden Group
+([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)).
+
+## Preservar la evidencia necesaria para etapas posteriores
+
+Un decodificador debe retener suficiente información para:
+
+- rechazar nombres de miembros decodificados duplicados antes de la validación
+  del esquema;
+- comparar byte por byte el texto de la marca de tiempo protegida;
+- aplicar el modelo de datos binario64 y Unicode RFC 8785;
+- omitir exactamente el miembro de nivel superior `signature` al generar bytes
+  de firma;
+- distinguir datos ausentes de datos autorizados no disponibles o indeterminados
+  evidencia; y
+- informar la primera etapa semántica fallida sin exponer detalles protegidos en
+  el alambre.
+
+El rechazo de nombres duplicados y los bytes canónicos derivados del contenido
+siguen a
+[MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012).
+Las entradas de verificación ordenadas y el escaneo completo de etapa 4 Registry
+siguen a
+[MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015),
+incluida la validación de evidencia completa antes de la búsqueda de clave
+seleccionada en
+[MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008).
+Un caché parcial no puede reemplazar la integridad autorizada
+([MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009));
+el adaptador debe establecer la revisión aplicable, la integridad y la cobertura
+histórica o informar que no puede
+([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)),
+y una clave desconocida tiene autoridad solo después de que se establece esa
+integridad
+([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011)).
+La retención sin pérdidas preserva la clasificación de etapa normativa según
+[MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016),
+mientras que el manejo de diagnóstico protegido y el límite de falla seguro para
+cables siguen
+[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018).
+
+Explore los tipos locales exactos en el catálogo de esquemas
+[JSON](../../../reference/schemas/). Luego implemente
+[Validación, canonicalización y firma](../validation-canonicalization-and-signing/).

@@ -1,0 +1,48 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Primera Admisión y Cumplimiento de la Confianza Histórica
+description: >-
+  El paquete completo de pruebas de admisión local superpuesto a la verificación
+  de seis etapas.
+---
+
+import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
+import BundleArtifactCatalog from "../../../../../../components/BundleArtifactCatalog.astro";
+import release from "../../../../../../data/normative/0.1/release-source.json";
+
+# Primera Admisión y Conformidad de la Confianza Histórica
+
+El perfil <code>{release.admission.profile}</code> vincula
+**{release.admission.artifacts} artefactos**, **{release.admission.cases}
+casos** y **{release.admission.evaluations} evaluaciones**. Exactamente
+**{release.admission.complete}** evaluaciones se completan y
+**{release.admission.rejected}** se rechazan. Su resumen es
+
+<code>{release.admission.digest}</code> y fija el resumen de criptografía sin
+cambios <code>{release.admission.cryptographyDigest}</code>.
+
+- <ArtifactLink path="protocol/admission/manifest.json">
+    Manifiesto de admisión
+  </ArtifactLink>
+- <ArtifactLink path="protocol/admission/manifest.schema.json">
+    Esquema manifiesto
+  </ArtifactLink>
+- <ArtifactLink path="protocol/admission/README.md">
+    Semántica del paquete local
+  </ArtifactLink>
+
+Cada evaluación repite primero la misma verificación criptográfica de seis
+etapas y luego realiza la primera admisión o la repetición histórica. La
+orquestación normativa y el mapeo de fallas se encuentran en la
+[página de especificación de confianza histórica y de primera admisión](../../specification/first-admission-and-historical-trust/).
+
+## Exclusiones de alcance
+
+Este paquete no demuestra la frescura de Command ni la aplicación de la
+tolerancia al desfase de reloj, la autorización del firmante, las transiciones
+de la máquina de estados, la creación de Event, un formato portátil de prueba de
+Admission Log ni una política de retención y autorización específica del
+despliegue. Esas cuestiones requieren pruebas separadas.
+
+<BundleArtifactCatalog bundle="admission" />

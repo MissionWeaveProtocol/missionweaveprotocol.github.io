@@ -1,0 +1,127 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Référence d'exécution Java
+description: >-
+  Surface complète du package public et limites d’exécution du Java SDK
+  exactement épinglé.
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Référence d'exécution Java
+
+Cette page couvre la surface complète Java représentée par l'inventaire
+[exact API](../api/). Le comportement du protocole partagé reste défini par la
+[référence d'exécution ](../../../runtime/architecture-and-bootstrap/) et les
+[clauses de référence ](../../../../reference/specification/) locales. Les types
+d'applications publiques se trouvent sous `org.missionweaveprotocol.sdk` ; le
+point d'entrée de conformité se trouve sous `org.missionweaveprotocol.sdk.cli`.
+
+<SupportStatus status="implemented" /> s'applique aux classes publiques et au
+comportement en cours répertoriés ci-dessous.
+
+<SupportStatus status="deployment-adapter-required" /> s'applique à l'autorité
+Registry actuelle, au contexte d'acceptation fiable, à l'accès au journal
+authentifié et à d'autres services de déploiement.
+
+<SupportStatus status="not-implemented" /> signifie que l’artefact exactement
+épinglé n’a pas de runtime correspondant.
+
+## Artifact et modèle d'exécution
+
+L'artefact Maven est
+`org.missionweaveprotocol:missionweaveprotocol-sdk:0.1.0-SNAPSHOT`, compilé pour
+Java 21 et construit avec Maven 3.9. Il déclare le nom de module automatique
+`org.missionweaveprotocol.sdk` et regroupe le protocole exact, la cryptographie
+et les ressources d'admission dans le JAR.
+
+L'installation de l'artefact ne démarre aucun service, n'ouvre aucun socket, ne
+crée aucun magasin durable et n'accorde aucune autorité. `IOException` coché,
+les exceptions de vérification et les exceptions d'admission font toujours
+partie de la limite d'appel Java.
+
+## Carte source complète
+
+| Fonctionnalité d'exécution   | Source de mise en œuvre publique                                                          | Contrat au commit épinglé                                                                                                                             |
+| ---------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Versions et métadonnées      | `MissionWeaveProtocol.java`, `ProtocolBundle.java`                                        | Identité du protocole, version filaire, espace de noms et provenance exacte du protocole et du bundle.                                                |
+| Stricte JSON                 | `StrictJson.java`                                                                         | Analyse UTF-8 avec membre en double, nomenclature, entrée mal formée et rejet des données de fin.                                                     |
+| Schéma et heure exacte       | `SchemaCatalog.java`, `ExactInstant.java`                                                 | Validation hors ligne Draft 2020-12, formats affirmés, accès au schéma packagé et comparaison exacte RFC 3339.                                        |
+| JSON canonique et Ed25519    | `CanonicalJson.java`, `Ed25519.java`, `Base64Url.java`                                    | RFC 8785 octets et hachages ainsi que des assistants Ed25519 stricts.                                                                                 |
+| Documents signés et Registry | `SignedDocumentCodec.java`, `AgentRegistryKeyResolution.java`, `KeyRegistrySnapshot.java` | Neuf types de documents, signature, validation complète Registry, vérification en six étapes et preuves immuables.                                    |
+| Cadres                       | `FrameCodec.java`                                                                         | Décodage strict et encodage canonique pour les valeurs de trame génériques WebSocket. Il s'agit d'un codec et non d'un service de passerelle hébergé. |
+| Conformité structurelle      | `ConformanceRunner.java`, `cli/ConformanceCli.java`                                       | Exécution du vecteur de schéma packagé ou à racine explicite et état de sortie du processus.                                                          |
+| Bundles intégrés             | `ProtocolBundle.java`                                                                     | Vérification source-racine et packagée des ensembles d'artefacts de protocole, de cryptographie et d'admission.                                       |
+| Première admission           | `AdmissionService.java` et les enregistrements/interfaces d'admission                     | Première admission et confiance historique au-dessus de la vérification Signed Document réussie.                                                      |
+
+## Validation, signature et preuves Registry
+
+`StrictJson.parse` accepte exactement une valeur UTF-8 JSON.
+`SchemaCatalog.packaged` charge les 22 schémas exacts, tandis que `validate`
+vérifie un projet de contrat 2020-12 sélectionné. `CanonicalJson.canonicalize`,
+`canonicalString`, `sha256Hex` et `canonicalHash` implémentent RFC 8785 et la
+surface de digestion.
+
+`SigningKey` est la couture de signature appartenant à l'application.
+`SignedDocumentCodec.sign` et `verify` sélectionnent l'une des neuf valeurs
+`SignedDocumentKind` et exécutent les étapes d'analyse, de schéma, d'enveloppe
+de signature, de résolution de clé, de canonisation et de signature.
+`KeyResolver.resolve` doit renvoyer la preuve
+`KeyRegistrySnapshot.organizationWide` pour une révision Organization cohérente
+et applicable avec un historique complet conservé. Une clé sélectionnée, une
+projection partielle, un accès au cache ou un indicateur de confiance fourni par
+l'appelant est insuffisant.
+
+`VerifiedSignedDocument` expose des copies défensives des octets reçus, de
+signature et canoniques ainsi que des hachages, de l'heure protégée, du matériel
+de signature et de la clé Registry résolue et Principal.
+
+## Cadres, bundles et conformité
+
+`FrameCodec.decode` et `encode` valident les valeurs de trame mais ne possèdent
+pas le transport, TLS, l'authentification de session, la persistance du curseur,
+le routage, la contre-pression ou les transitions d'état faisant autorité.
+
+`ProtocolBundle.verifyPackaged`, `verifyPackagedCryptographyBundle` et
+`verifyPackagedAdmissionBundle` valident les pins, les décomptes, les chemins,
+les longueurs d'octets et les résumés exacts du JAR. Les surcharges `Path`
+correspondantes valident une racine source ou un bundle de versions. Ces
+méthodes n’exécutent pas chaque cryptographie ou évaluation d’admission.
+
+`ConformanceRunner.runPackaged` et `ConformanceCli` exécutent uniquement les
+vecteurs de schéma structurels. La fourniture de `--root PATH` sélectionne un
+protocole explicite ou un ensemble de versions au lieu de ressources packagées.
+
+## Première admission
+
+`AdmissionService` expose `prepareFirstAdmission`, `admitFirst` et
+`verifyHistoricalAdmission`. Continuez avec la
+[référence d'admission Java](../admission/) pour connaître les résultats exacts
+de l'adaptateur, l'ordre d'appel et l'exemple de package exécutable.
+
+## Limites de disponibilité explicites
+
+<SupportStatus status="deployment-adapter-required" /> **Autorité
+d'admission** : l'application fournit des preuves Registry actuelles, des
+preuves historiques Registry, un contexte d'acceptation fiable et un journal
+authentifié en ajout uniquement.
+
+<SupportStatus status="not-implemented" /> **Orchestration Mission** — aucune
+machine à états Mission de haut niveau ou façade d'orchestration n'est exportée.
+
+<SupportStatus status="not-implemented" /> **Planificateur Worker** : aucune
+file d'attente Worker, planificateur, exécuteur de bail ou boucle de
+récupération n'est exporté.
+
+<SupportStatus status="not-implemented" /> **Service de passerelle hébergée** :
+l'artefact fournit `FrameCodec`, et non un service de passerelle avec propriété
+de transport, TLS, session, routage ou contre-pression.
+
+<SupportStatus status="not-implemented" /> **Exécution de persistance faisant
+autorité** : aucune exécution de persistance basée sur une base de données ou
+Agent locale n'est exportée.
+
+Ces absences font partie du contrat de support documenté ; Les capacités
+d'exécution de référence Python ne doivent pas être déduites des noms de
+protocole partagés.

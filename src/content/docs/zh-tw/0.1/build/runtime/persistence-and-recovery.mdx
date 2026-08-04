@@ -1,0 +1,92 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 持久化與復原
+description: 權威狀態、可重建預測、收據、樂觀並發、重播、遊標、快照和外部副作用恢復。
+---
+
+# 持久性和恢復
+
+持久性被權威所分割。任務、會員資格、工作項目、所有權和租賃期間、重複資料刪除收據、批准和 Group 事件具有權威性。 Agent-本地遊標、佇列、檢查點、收件匣、寄件匣和排程器狀態是可重建的投影；失去他們無法改變 Mission 真相（[MWP-FND-023](../../../reference/specification/foundations/#mwp-fnd-023)）。
+
+## 權威承兌交易
+
+對於一個 Group 過渡，當局必須改變接受的狀態， Event 附加、聚合修訂、屏蔽更新、預算或批准效果以及冪等收據作為一個原子結果可見。一個 Event 是不可改變的、公認的事實，承載著它的 Group 序列和聚合修訂（[MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)）。
+
+相同 `(actor ID, Action ID)`
+位元組等效規範內容傳回原始收據，而不是附加另一個轉換；同一 Action
+ID 下的不同內容失敗 `ACTION_ID_COLLISION`
+([MWP-EVT-003](../../../reference/specification/commands-events-and-ordering/#mwp-evt-003)）。
+
+結構化更新使用樂觀並發。修訂不匹配拒絕整個 Command，同時首次擁有、續租、 Membership 改變，並且 Approval 始終使用比較並設定接受（[MWP-EVT-007](../../../reference/specification/commands-events-and-ordering/#mwp-evt-007)).
+
+## 投影交易
+
+Event 傳遞至少一次，因此每個消費者透過 Event
+ID 進行重複資料刪除，並依序處理每個 Group。它可能會緩衝稍後的事件，但無法將其持久遊標前進超過間隙（[MWP-WRK-029](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)）。這是至少一次不變量的運行時形式 ([MWP-FND-018](../../../reference/specification/foundations/#mwp-fnd-018))。每個 Worker 為每個 Group 保留一個獨特的持久 Event 收件匣、遊標和工作佇列，所有這些都可以從接受的 Group事件（[MWP-WRK-008](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008)）中重建。
+
+`ACK`
+報告最高的連續持久遊標。它可能允許傳遞清理，但永遠不會刪除權威的 Group 歷史記錄；重新連接重播可能包含斷開連接周圍的重複內容 ([MWP-WRK-030](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030))。
+
+## 快照和長間隙
+
+當線上重播不再包含請求的遊標時，伺服器將傳回 `CURSOR_TOO_OLD`
+以及簽署的快照引用。僅在驗證快照的架構、雜湊、簽章、Organization 和 Group 綁定和序列後進行復原。然後嚴格在快照序列之後恢復重播。本地[傳遞、重播和確認部分](../../../reference/specification/work-scheduling-and-recovery/#16-delivery-replay-and-acknowledgement)
+定義了此恢復路徑。
+
+活動組保留完整的 Event 歷史記錄。檔案產生簽章的最終快照，並根據 Organization 策略保留加密的審核日誌，並透過可審核的邏輯刪除記錄合法刪除或安全編輯，而不是重寫先前的 ID 或序列 ([MWP-MSN-009](../../../reference/specification/missions-groups-and-membership/#mwp-msn-009))。
+
+## 檢查點、租約和重啟
+
+排隊所有權和主動執行受到隔離。執行租約綁定了 Agent、Session
+Epoch、WorkItem、所有權 Epoch、穩定租約 ID 和時間邊界；每個檢查點、區塊、發布、提交和報告的失敗引用當前的 ID
+([MWP-WRK-013](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013))。
+
+檢查點、阻止和提交釋放租約。會話替換、重新分配、取消、失敗撤銷；在新租約下恢復執行之前，替換會話將受影響的工作返回到
+`queued`
+([MWP-WRK-014](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-014))。
+
+阻塞的工作檢查點，發出其所需的分辨率，釋放其插槽，並在分辨率後返回其就緒佇列（[MWP-WRK-017](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-017)）。自動重試保留在工作合約嘗試、回退、成本和截止日期預算內，並使用穩定的外部嘗試密鑰 ([MWP-WRK-018](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-018))。
+
+如果一個 Worker 錯過了開始期限或租約續訂，新所有者可以從更高所有權紀元下的最新檢查點恢復；最新結果仍不具權威性 Evidence
+([MWP-WRK-019](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-019)）。
+
+## 有界中斷恢復
+
+期間 Group- 服務不可用， Worker 只能在其有限的寬限期內繼續已經活動的、可逆的計算。如果沒有當前的租約和代幣，它無法開始新的工作或執行新的高風險、不可逆或外部可見的操作，並且它會在提交或進一步的副作用之前進行協調（[MWP-WRK-020](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-020)）。
+
+緩衝指令保留關鍵的有界離線執行綁定，然後重新設定當前會話欄位的基準並在重新連接時重新簽署（[MWP-WRK-021](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-021)）。對帳及其資源費用是一項權威交易；預算溢出拒絕費用和進度，沒有部分狀態（[MWP-WRK-022](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-022)）。
+
+當重試需要更改新鮮度或目前防護時，請遵循
+[MWP-EXT-005 中的新 Action-ID 和簽名規則](../../../reference/specification/errors-extensions-and-security/#mwp-ext-005)。
+
+## 外部副作用
+
+網路傳遞無法提供一次性的外部效果。工具操作使用從 Mission ID、WorkItem
+ID、所有權 Epoch 和邏輯操作 ID
+([MWP-WRK-031](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-031)) 衍生的穩定冪等金鑰。
+
+:::note[Implementation note]
+
+安全的本地應用週期是：
+
+```text
+開始本機交易
+→ 拒絕或忽略重複的 Event ID
+→ 驗證下一個連續的 Group 序列
+→ 更新 Group 投影和每個 Group 的佇列
+→ 持久化任何檢查點或寄件匣意圖
+→ 推進持久 Cursor
+→ 提交
+```
+
+對於外部副作用，請在發送前堅持意圖，保留外部收據，並在重試前協調不確定的結果。
+
+對權威服務狀態和 Agent 本地投影使用單獨的儲存抽象，即使兩者均由一種資料庫產品支援。使交易邊界在 API 中可見：`accept transition`、`apply Event`、`advance Cursor`
+和 `record side-effect receipt` 不應隱藏在不相關的物件儲存操作內。
+
+寄件匣對於權威提交後的傳輸發布非常有用，而收件匣或processed-Event 表對於本地重複資料刪除非常有用。保留、快照節奏、分區、壓縮和資料庫選擇都是操作決策；他們無法消除僅附加和重播義務。
+
+:::
+
+繼續使用 [傳輸和成幀](../transport-and-framing/)，將持久重播連接到有線協定。

@@ -1,0 +1,111 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Apprendre MissionWeaveProtocol 0.1
+description: >-
+  Un chemin conceptuel normatif à travers MissionWeaveProtocol 0.1, des missions
+  et groupes jusqu'aux limites de confiance, d'admission et de sécurité.
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+# Apprendre MissionWeaveProtocol 0.1
+
+:::caution[Draft Standard 0.1]
+
+Ce parcours d'apprentissage versionné fait partie de la publication normative du
+site Web. Il explique le modèle dans l'ordre du lecteur et relie chaque règle à
+sa clause stable dans la spécification de référence locale.
+
+:::
+
+MissionWeaveProtocol coordonne les agents autonomes au sein d'un Organization de
+confiance. Il sépare la conversation de l'autorité d'exécution, maintient l'état
+et les informations d'identification de chaque Mission isolés et enregistre les
+faits durables nécessaires à la relecture, à la récupération, à Evidence et à la
+responsabilité humaine. Ces limites commencent par
+[MWP-FND-002](../reference/specification/foundations/#mwp-fnd-002) et les
+[core invariants](../reference/specification/foundations/#mwp-fnd-013).
+
+## La version courte
+
+1. Un MissionOwner humain crée un Mission délimité avec une définition de
+   terminé, délai, budget et politique d’approbation.
+2. Le Mission reçoit exactement un Group principal, un historique Event durable,
+   et un Coordinator remplaçable.
+3. Les membres Group échangent des messages durables et peuvent proposer du
+   travail, mais un Message ne crée jamais d'autorité exécutable par lui-même
+   ([MWP-FND-014](../reference/specification/foundations/#mwp-fnd-014)).
+4. Un acteur autorisé crée un WorkItem avec un contrat de travail lisible par
+   machine.
+5. Un Worker effectue le contrôle d'admission, accepte l'offre dans son
+   per-Group file d'attente et le planifie dans les groupes via son propre
+   planificateur.
+6. Le travail produit des artefacts adressés au contenu et Evidence mappés à
+   l'acceptation critères.
+7. Le Coordinator vérifie les résultats avant que le MissionOwner n'approuve un
+   résultat exact. Révision Mission et ensemble Artifact.
+
+## Suivez le modèle
+
+<CardGrid>
+  <LinkCard
+    title="Modèle de base"
+    description="Missions, Groups, enregistrements durables, projections locales et invariants qui les relient."
+    href="./core-model/"
+  />
+  <LinkCard
+    title="Identité, rôles et autorité"
+    description="Identité Organization, Agent Cards, présence, sessions, clôture et autorité partagée."
+    href="./identity-roles-and-authority/"
+  />
+  <LinkCard
+    title="Cycle de vie du travail"
+    description="Conversation, propositions, Work Contracts, acceptation, exécution, Evidence et approbation."
+    href="./work-lifecycle/"
+  />
+  <LinkCard
+    title="Groups et planification"
+    description="Files d'attente par Group, planification globale Worker, emplacements isolés, préemption et relecture."
+    href="./groups-and-scheduling/"
+  />
+  <LinkCard
+    title="Sous-tâches"
+    description="Décomposition récursive sans perdre la portée, le budget, Evidence ni la responsabilité du parent."
+    href="./child-missions/"
+  />
+  <LinkCard
+    title="Signed Documents et confiance"
+    description="Contenu protégé, preuves de Registry, vérification en six étapes et hachages de signature."
+    href="./signed-documents-and-trust/"
+  />
+  <LinkCard
+    title="Première admission et confiance historique"
+    description="Recherche faisant autorité, admission atomique, validation des enregistrements renvoyés et relecture historique."
+    href="./first-admission-and-historical-trust/"
+  />
+  <LinkCard
+    title="Limites de sécurité"
+    description="Ce que la cryptographie et l'admission établissent, et quelles préoccupations restent distinctes."
+    href="./security-boundaries/"
+  />
+</CardGrid>
+
+## Limites du protocole
+
+MissionWeaveProtocol ne définit pas Agent-to-Agent RPC, fédération
+inter-organisations, routage physique peer-to-peer, consensus distribué, invites
+de modèle ou raisonnement de modèle privé. Un Organization fournit l'identité,
+la politique, l'autorisation, la commande Group durable et la responsabilité
+humaine. Le contenu Mission reste limité à Group par défaut
+([MWP-FND-019](../reference/specification/foundations/#mwp-fnd-019)), tandis que
+les décisions et les résultats vérifiables ne nécessitent pas la divulgation
+d'une chaîne de pensée privée
+([MWP-FND-022](../reference/specification/foundations/#mwp-fnd-022)).
+
+Pour la formulation exacte des exigences, utilisez les
+[Spécifications de référence ](../reference/specification/),
+[terminologie](../reference/terminology/), [schemas](../reference/schemas/) et
+[surfaces de conformité](../reference/conformance/). Les validations exactes,
+les profils, les résumés et l'identité du site construit sont publiés sur la
+[page de version normative locale ](../reference/normative-release/).

@@ -1,0 +1,65 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Límites de seguridad
+description: >-
+  Qué establecen la verificación y la admisión Signed Document, y qué decisiones
+  de seguridad permanecen separadas.
+---
+
+# Límites de seguridad
+
+MissionWeaveProtocol separa las capas de evidencia para que una verificación
+exitosa nunca se convierta silenciosamente en una afirmación de confianza más
+amplia.
+
+## Evidencia Registry actual e histórica
+
+**La evidencia Registry actual** representa una revisión autorizada aplicable a
+una nueva verificación o decisión de primera admisión. Una revisión reemplazada
+no puede presentarse como actual. La costura de implementación establece la
+moneda de revisión, el alcance de Organization, la integridad y la cobertura
+histórica como se describe en
+[MWP-SDV-010](../../reference/specification/signed-documents-and-trust/#mwp-sdv-010).
+Por lo tanto, la primera admisión depende de la evidencia Registry actual, no
+simplemente de la última revisión visible en un caché no especificado.
+
+**La evidencia histórica autoritativa del Registry** conserva el `validFrom`
+original y todos los cambios efectivos de `validUntil` o `revokedAt` necesarios
+para evaluar una hora firmada protegida anterior. Ese historial se puede agregar
+únicamente o se versiona explícitamente
+([MWP-SDV-012](../../reference/specification/signed-documents-and-trust/#mwp-sdv-012)).
+
+La primera admisión utiliza evidencia actual; La repetición histórica utiliza
+evidencia histórica autorizada y también requiere un First-Admission Record
+existente.
+
+## Preocupaciones separadas y excluidas
+
+| Preocupación                                                   | Límite                                                                                                                                                                                                                                                                                    |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Command frescura                                               | Un Command recién presentado tiene una verificación de frescura y sesgo de reloj `issuedAt` delimitada separada ([MWP-ADM-013](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)).                                                                         |
+| autorización del firmante                                      | Un Principal vinculado a clave verificada aún necesita autorización de política y función autorizada antes de la aceptación estatal ([MWP-ADM-014](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)).                                                     |
+| prueba portátil de Admission Log                               | La versión 0.1 define resultados tipados del adaptador y validación de registros, no un formato portátil para una prueba desplegada ([MWP-EXT-013](../../reference/specification/errors-extensions-and-security/#mwp-ext-013)).                                                           |
+| aceptación de la máquina de estados                            | La criptografía y la admisión finalizan antes de que Organization o Group Authority validen la revisión, las funciones, la política, las épocas, los presupuestos y los arrendamientos actuales ([MWP-EVT-004](../../reference/specification/commands-events-and-ordering/#mwp-evt-004)). |
+| booleanos de confianza proporcionados por la persona que llama | Un valor booleano proporcionado por la persona que llama no puede reemplazar los resultados tipados y autenticados del Admission Log ni sus distinciones de integridad y ausencia ([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).       |
+
+## Modelo de resultados en capas
+
+```text
+JSON y Schema válidos
+        ↓
+resultado criptográfico de seis etapas
+        ↓
+resultado de primera admisión o confianza histórica
+        ↓
+frescura de Command cuando corresponda
+        ↓
+rol del firmante y autorización de política
+        ↓
+validación actual de la máquina de estados y anexado atómico de Event
+```
+
+Cada flecha añade evidencia; ninguno cambia retroactivamente lo que demostró la
+capa anterior. En particular, la admisión no se convierte en una séptima etapa
+criptográfica y un First-Admission Record no se autentica.

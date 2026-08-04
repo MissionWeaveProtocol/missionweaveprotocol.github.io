@@ -1,0 +1,72 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 核心模型
+description:
+  構成 MissionWeaveProtocol 0.1 的任務、群組、持久記錄、本地投影和不變量。
+---
+
+# 核心模型
+
+MissionWeaveProtocol 圍繞有界**組織合作Mission** 及其臨時 **Group**.
+Mission 創造只建立了一個主要的 Group，一個根人類 MissionOwner, 初始 Coordinator、計劃性對話以及最初的持久性 Event 歷史記錄（[MWP-MSN-001](../../reference/specification/missions-groups-and-membership/#mwp-msn-001)).
+
+```text
+Organization
+├── Agent Registry
+├── Group 權威服務和持久 Event 儲存
+├── 授權服務
+└── Mission
+    └── Group
+        ├── MissionOwner
+        ├── Coordinator
+        ├── Worker Membership
+        ├── 對話和 Message
+        ├── WorkItem 和 Work Contract
+        └── 有序 Event、Artifact、Evidence 和 Approval
+```
+
+## 連接合作的記錄
+
+- 一個**Membership**
+  連接一個 Principal 給一個 Group、角色設定、可見性範圍，以及 Membership 時代。
+- **對話**包含持久訊息 Group 規劃或一項 WorkItem。
+- 一個**WorkItem** 是可執行單元 Mission 工作。它的**工作合約**
+  定義目標、可交付成果、 Evidence、權限、截止日期和預算。
+- 一 **Artifact** 是一個不可變的、內容尋址的可交付成果。
+- **Evidence** 記錄如何 Artifact 或者 WorkItem 滿意接受標準。
+- 一 **Event** 是不可改變的公認事實 Group的單調歷史。
+- **遊標**記錄最高連續 Group Event 經持久處理一個 Agent.
+
+訊息提供上下文或建議。可執行責任僅透過授權的 WorkItem 轉換和 Worker 接受開始。這是
+[MWP-FND-014](../../reference/specification/foundations/#mwp-fnd-014)
+中的對話邊界和
+[MWP-FND-015](../../reference/specification/foundations/#mwp-fnd-015)
+中的結構化執行邊界]。
+
+## 權威的國家和地方預測
+
+MissionWeaveProtocol 將共享事實與可重建的 Worker 狀態分開。
+
+**權威狀態**
+包括任務、會員資格、工作項目、所有權和租賃期間、重複資料刪除收據、批准和 Group 事件。 Group
+Authority 序列化對此狀態所接受的變更。
+
+**Agent-本機投影**包含遊標、每個 Group 佇列、檢查點、寄件匣、收件匣和排程器狀態。 Agent 可以從持久事件重建它們。遺失本地儲存不會更改權威 Mission 狀態。完整的邊界是[MWP-FND-023](../../reference/specification/foundations/#mwp-fnd-023)。
+
+## 值得記住的不變量
+
+規範不變集從
+[MWP-FND-013](../../reference/specification/foundations/#mwp-fnd-013)
+開始。概念總結是：
+
+- 一個 Mission 擁有一個主 Group，以及每個 Group 內唯一的 Event 順序；
+- Conversation 永遠不會建立執行權限；
+- 獨佔工作透過 Ownership Epoch 和 Lease Epoch 進行 fencing；
+- 已接受的 Event 和已提交的 Message 僅可追加；
+- Mission 上下文和憑證預設是隔離的；
+- WorkItem 和子任务的預算與權限只會從其父級收窄；
+- 根 Mission 完成需要人工 Approval 精確的修訂版和 Artifact 集；以及
+- Agent 發布可審核的決策、輸入、Evidence、阻塞因素和結果，而不是私有思維鏈。
+
+繼續[身分、角色和權限](../identity-roles-and-authority/)，了解這些記錄如何取得受信任的參與者和範圍權限。

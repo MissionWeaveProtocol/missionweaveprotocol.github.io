@@ -1,0 +1,120 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Python 初回アドミッションと履歴信頼
+description:
+  型付きの Python
+  アダプター、正確な呼び出し順序、信​​頼境界、および実行可能なアドミッションの例。
+---
+
+import admissionExample from "../../../../../../../../examples/sdk/python/admission.py?raw";
+
+# Python 初回アドミッションと履歴信頼
+
+Python `AdmissionService` レイヤーは、6 段階の Signed
+Document 検証者 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)) の上に、初回アドミッションと履歴信頼を重ねます。言語に依存しない制御フローはローカルの
+[初回アドミッションと履歴信頼のランタイムページ](../../../runtime/first-admission-and-historical-trust/)
+であり、正確な要件はローカルの
+[First-Admission and Historical-Trust 句 ](../../../../reference/specification/first-admission-and-historical-trust/).
+
+## パブリック型
+
+| パブリック API                                 | 責任                                                                                                                                                                                                                                                                                                                                                |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.resolve_current`  | デプロイメントが新しい初回許可の決定に対して最新であるとアサートする完全な Organization 全体の Registry 証拠を返します。                                                                                                                                                                                                                            |
+| `TrustedAdmissionContext.issue`                | 権威ある不存在判定の後にだけ、信頼できるレコード ID、信頼できる受け入れ時刻、および受け入れサービスを発行します。                                                                                                                                                                                                                                   |
+| `AdmissionLog.lookup`                          | 認証されたバイトを含む `AdmissionLookupStatus.FOUND` または `AdmissionLookupStatus.AUTHORITATIVE_ABSENCE` を返します。 [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003) に基づいて、トランスポート エラー、キャッシュ ミス、不定状態、および認証されていない不在がフェイル クローズされました。 |
+| `AdmissionLog.append_or_return_existing`       | 候補バイトをアトミックに追加するか、同時に権威のある勝者を返します。                                                                                                                                                                                                                                                                                |
+| `AuthenticatedAdmissionRecord`                 | 返されたレコード バイトを、[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) 検証] のためにアダプターによって認証された受け入れサービス ID にバインドします。                                                                                                                                    |
+| `AdmissionService.prepare_first_admission`     | 検証済みのドキュメントと信頼できるコンテキストから候補バイトを作成して検証します。追加したり、受け入れを暗示したりするものではありません。                                                                                                                                                                                                          |
+| `AdmissionService.admit_first`                 | 現在の証拠、権威ある不存在判定、アトミックな追加、および返されたレコードのフローを [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006) に従って実装します。                                                                                                                                        |
+| `AdmissionService.verify_historical_admission` | 過去の Registry 証拠を使用して検証を再実行し、[MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                                                                                                                                                                                                 |
+
+アダプターの結果は型付きの証拠です。呼び出し元が提供する信頼ブール値は信頼できる検索結果ではないため、成功パスを選択してはなりません。
+
+## 初診時の電話
+
+:::note[Informative example]
+
+```python
+admitted = AdmissionService().admit_first(
+    SignedDocumentKind.COMMAND,
+    document_bytes,
+    current_registry,
+    admission_log,
+    trusted_context,
+)
+```
+
+:::
+
+`admit_first` は、ログを呼び出す前に検証します。 lookup が
+`AdmissionLookupStatus.AUTHORITATIVE_ABSENCE`
+を返すと、`prepare_first_admission` を呼び出し、`append_or_return_existing`
+を呼び出して、実際に返されたレコードを検証します。同時勝者は、そのバイト、認証されたサービス、ドキュメント バインディング、および信頼できる時間がすべて検証された場合にのみ受け入れられます ([MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)、[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010))。
+
+## 履歴リプレイ呼び出し
+
+:::note[Informative example]
+
+```python
+historical = AdmissionService().verify_historical_admission(
+    SignedDocumentKind.COMMAND,
+    document_bytes,
+    historical_registry,
+    admission_log,
+)
+```
+
+:::
+
+ヒストリカル リプレイでは、保持されている Registry 履歴を使用し、見つかったアドミッション レコードを必要とし、`TrustedAdmissionContext.issue`
+または `AdmissionLog.append_or_return_existing`
+を呼び出すことはありません。この例のレコード ID の一致は、リプレイによって最初の信頼できるレコードが回復されたことを示しています。それら自体では、Command の鮮度、署名者の認可、ステートマシンの受け入れ、ポータブル ログプルーフ検証を証明するものではありません。 Command の鮮度および署名者の認可は、[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+および
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)
+に基づく別個の要件のままです。
+
+## 実行可能な完全に固定された例
+
+:::note[Informative example]
+
+この例では、パブリック SDK API と宣言された `cryptography`
+ランタイム依存関係のみを使用します。 Ed25519 キー、完全な Organization 全体の Registry、署名付き Command、および型指定されたメモリ内アダプターを決定的に作成します。固定プライベート シードはデモンストレーション資料であり、サンプル以外では決して使用しないでください。
+
+<pre>
+  <code>{admissionExample}</code>
+</pre>
+
+すべての SDK エクストラをインストールした後、正確なチェックアウトから実行します。
+
+```bash
+uv sync --all-extras
+uv run python /absolute/path/to/examples/sdk/python/admission.py
+```
+
+予期される出力には、`first admission` と `historical replay`
+に対して同じ First-Admission Record
+ID が含まれています。また、このプログラムは、署名ハッシュとレコード バイトが一致していること、およびログが 1 回だけ追加されたことをアサートします。
+
+:::
+
+:::note[Implementation note]
+
+デプロイメント内のサンプル・アダプターを置き換えます。
+
+- `CurrentRegistryFixture` と認証された現在の Registry リゾルバー。
+- `InMemoryAdmissionLog` と認証された追加専用のアトミック Admission Log。そして
+- `FixedTrustedAdmissionContext`
+  (Organization で制御される信頼できる時間) および受付サービス発行者。
+
+`DeterministicSigningKey`
+を、デプロイメント所有の署名サービスまたはキー アダプターに置き換えます。実稼働コードにはプライベート署名シードを決して埋め込まないでください。
+
+これらの境界を 1 つの可用性フラグまたは信頼フラグにまとめないでください。
+
+:::
+
+暗号検証後のアドミッション拒否は、ステージ `admission` およびワイヤー コード
+`AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)) で保護されたままです。

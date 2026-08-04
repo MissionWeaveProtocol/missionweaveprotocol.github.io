@@ -1,0 +1,213 @@
+---
+import contextSource from "../../public/artifacts/0.1/protocol/CONTEXT.md?raw";
+import localizedGlossary from "../data/normative/0.1/context-glossary-locales.json";
+import {
+  localeForPathname,
+  localizedText,
+  uiCopyForPathname,
+} from "../lib/normative-locale";
+
+interface GlossaryTerm {
+  term: string;
+  description: string;
+  avoid: string;
+}
+
+interface ContextSection {
+  title: string;
+  terms: GlossaryTerm[];
+}
+
+const lines = contextSource.split(/\r?\n/u);
+if (lines[0] !== "# MissionWeaveProtocol") {
+  throw new Error("unexpected protocol/CONTEXT.md title");
+}
+
+const introduction: string[] = [];
+const contextSections: ContextSection[] = [];
+let currentSection: ContextSection | undefined;
+
+for (let index = 1; index < lines.length;) {
+  const line = lines[index];
+  if (line.trim().length === 0) {
+    index += 1;
+    continue;
+  }
+  if (line.startsWith("## ")) {
+    currentSection = { title: line.slice(3), terms: [] };
+    contextSections.push(currentSection);
+    index += 1;
+    continue;
+  }
+  const termMatch = line.match(/^\*\*(.+)\*\*:\s*$/u);
+  if (!termMatch) {
+    if (currentSection) {
+      throw new Error(`unexpected context glossary line: ${line}`);
+    }
+    introduction.push(line.trim());
+    index += 1;
+    continue;
+  }
+  if (!currentSection) {
+    throw new Error(`context glossary term has no section: ${termMatch[1]}`);
+  }
+  const block: string[] = [];
+  index += 1;
+  while (
+    index < lines.length &&
+    !lines[index].startsWith("## ") &&
+    !/^\*\*(.+)\*\*:\s*$/u.test(lines[index])
+  ) {
+    if (lines[index].trim().length > 0) block.push(lines[index].trim());
+    index += 1;
+  }
+  const avoidIndex = block.findIndex((entry) => entry.startsWith("_Avoid_:"));
+  if (avoidIndex < 0) {
+    throw new Error(`context glossary term lacks _Avoid_: ${termMatch[1]}`);
+  }
+  currentSection.terms.push({
+    term: termMatch[1],
+    description: block.slice(0, avoidIndex).join(" "),
+    avoid: [
+      block[avoidIndex].slice("_Avoid_:".length),
+      ...block.slice(avoidIndex + 1),
+    ]
+      .join(" ")
+      .trim(),
+  });
+}
+
+const termCount = contextSections.reduce(
+  (count, section) => count + section.terms.length,
+  0,
+);
+if (termCount === 0) throw new Error("protocol context glossary is empty");
+
+const locale = localeForPathname(Astro.url.pathname);
+const copy = uiCopyForPathname(Astro.url.pathname);
+const translation =
+  locale === "en"
+    ? undefined
+    : localizedGlossary.locales[
+        locale as keyof typeof localizedGlossary.locales
+      ];
+if (locale !== "en" && !translation) {
+  throw new Error(`${locale} context glossary translation is missing`);
+}
+if (translation) {
+  if (translation.sectionTitles.length !== contextSections.length) {
+    throw new Error(`${locale} context glossary section count differs`);
+  }
+  if (translation.entries.length !== termCount) {
+    throw new Error(`${locale} context glossary term count differs`);
+  }
+}
+let localizedEntryIndex = 0;
+const displayedSections = contextSections.map((section, sectionIndex) => ({
+  id: slug(section.title),
+  title: translation?.sectionTitles[sectionIndex] ?? section.title,
+  terms: section.terms.map((entry) => {
+    const localizedEntry = translation?.entries[localizedEntryIndex];
+    localizedEntryIndex += 1;
+    if (translation && !localizedEntry) {
+      throw new Error(`${locale} context glossary entry is missing`);
+    }
+    if (localizedEntry && localizedEntry.term !== entry.term) {
+      throw new Error(
+        `${locale} context glossary term mismatch: expected ${entry.term}, found ${localizedEntry.term}`,
+      );
+    }
+    const description = translation
+      ? localizedEntry!.description
+      : entry.description;
+    const avoid = translation ? localizedEntry!.avoid : entry.avoid;
+    if (!description.trim() || !avoid.trim()) {
+      throw new Error(
+        `${locale} context glossary contains empty localized text`,
+      );
+    }
+    return { ...entry, description, avoid };
+  }),
+}));
+const displayedIntroduction = translation
+  ? translation.introduction
+  : introduction.join(" ");
+const avoidLabel = localizedText(copy, "avoid");
+
+function slug(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/gu, "-")
+    .replace(/^-|-$/gu, "");
+}
+
+function inlineParts(value: string) {
+  return value.split(/(`[^`]+`)/gu).map((part) => ({
+    code: part.startsWith("`") && part.endsWith("`"),
+    value:
+      part.startsWith("`") && part.endsWith("`") ? part.slice(1, -1) : part,
+  }));
+}
+---
+
+<div class="context-glossary" data-term-count={termCount}>
+  <p>{displayedIntroduction}</p>
+
+  {
+    displayedSections.map((section) => (
+      <section aria-labelledby={section.id}>
+        <h2 id={section.id}>{section.title}</h2>
+        <dl>
+          {section.terms.map((entry) => (
+            <div>
+              <dt>{entry.term}</dt>
+              <dd>
+                <p>
+                  {inlineParts(entry.description).map((part) =>
+                    part.code ? <code>{part.value}</code> : part.value,
+                  )}
+                </p>
+                <p class="avoid">
+                  <strong>{avoidLabel}:</strong>{" "}
+                  {inlineParts(entry.avoid).map((part) =>
+                    part.code ? <code>{part.value}</code> : part.value,
+                  )}
+                </p>
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .context-glossary dl {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .context-glossary dl > div {
+    padding: 1rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.65rem;
+    background: color-mix(in srgb, var(--sl-color-gray-6) 24%, transparent);
+  }
+
+  .context-glossary dt {
+    color: var(--sl-color-white);
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+
+  .context-glossary dd,
+  .context-glossary p {
+    margin: 0.45rem 0 0;
+  }
+
+  .context-glossary .avoid {
+    color: var(--sl-color-gray-2);
+    font-size: 0.92rem;
+  }
+</style>

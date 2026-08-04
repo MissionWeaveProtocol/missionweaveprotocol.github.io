@@ -1,0 +1,87 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Core model"
+description:
+  "The Missions, Groups, durable records, local projections, and invariants that
+  make up MissionWeaveProtocol 0.1."
+---
+
+# Core model
+
+MissionWeaveProtocol organizes cooperation around a bounded **Mission** and its
+temporary **Group**. Mission creation establishes exactly one primary Group, a
+root human MissionOwner, an initial Coordinator, a planning Conversation, and
+the initial durable Event history
+([MWP-MSN-001](../../reference/specification/missions-groups-and-membership/#mwp-msn-001)).
+
+```text
+Organization
+├── Agent Registry
+├── Group Authority and durable Event store
+├── Authorization Service
+└── Mission
+    └── Group
+        ├── MissionOwner
+        ├── Coordinator
+        ├── Worker Memberships
+        ├── Conversations and Messages
+        ├── WorkItems and Work Contracts
+        └── ordered Events, Artifacts, Evidence, and Approvals
+```
+
+## The records that connect cooperation
+
+- A **Membership** connects a Principal to one Group, role set, visibility
+  range, and Membership Epoch.
+- A **Conversation** contains durable Messages for Group planning or one
+  WorkItem.
+- A **WorkItem** is an executable unit of Mission work. Its **Work Contract**
+  defines the goal, deliverables, Evidence, permissions, deadline, and budget.
+- An **Artifact** is an immutable, content-addressed deliverable.
+- **Evidence** records how an Artifact or WorkItem satisfies acceptance
+  criteria.
+- An **Event** is an immutable accepted fact in one Group's monotonic history.
+- A **Cursor** records the highest contiguous Group Event durably processed by
+  an Agent.
+
+Messages provide context or proposals. Executable responsibility begins only
+through an authorized WorkItem transition and Worker acceptance. This is the
+conversation boundary in
+[MWP-FND-014](../../reference/specification/foundations/#mwp-fnd-014) and the
+structured execution boundary in
+[MWP-FND-015](../../reference/specification/foundations/#mwp-fnd-015).
+
+## Authoritative state and local projections
+
+MissionWeaveProtocol separates shared truth from rebuildable Worker state.
+
+**Authoritative state** includes Missions, Memberships, WorkItems, ownership and
+lease epochs, deduplication receipts, Approvals, and Group Events. The Group
+Authority serializes accepted changes to this state.
+
+**Agent-local projections** include Cursors, per-Group queues, checkpoints,
+outboxes, inboxes, and Scheduler state. An Agent can rebuild them from durable
+Events. Losing local storage does not change authoritative Mission state. The
+complete boundary is
+[MWP-FND-023](../../reference/specification/foundations/#mwp-fnd-023).
+
+## Invariants worth remembering
+
+The normative invariant set begins at
+[MWP-FND-013](../../reference/specification/foundations/#mwp-fnd-013). The
+conceptual summary is:
+
+- one Mission has one primary Group and one per-Group Event order;
+- conversation never creates execution authority;
+- exclusive work is fenced by ownership and lease epochs;
+- accepted Events and committed Messages are append-only;
+- Mission context and credentials are isolated by default;
+- WorkItem and child-Mission budgets and permissions narrow from their parents;
+- root Mission completion requires human approval of an exact revision and
+  Artifact set; and
+- Agents publish auditable decisions, inputs, Evidence, blockers, and outcomes,
+  not private chain-of-thought.
+
+Continue with [Identity, roles, and authority](../identity-roles-and-authority/)
+to see how these records acquire trusted actors and scoped authority.

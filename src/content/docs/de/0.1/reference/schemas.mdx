@@ -1,0 +1,31 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: JSON Schemakatalog
+description:
+  Durchsuchen Sie jedes normative MissionWeaveProtocol 0.1 JSON Schema lokal.
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import SchemaCatalog from "../../../../../components/SchemaCatalog.astro";
+import release from "../../../../../data/normative/0.1/release-source.json";
+
+# JSON Schemakatalog
+
+MissionWeaveProtocol 0.1 veröffentlicht **{release.schemas.count}** normative
+JSON Schema Draft 2020-12-Dateien. Die folgenden Dateien sind die genauen
+Artefakte der lokalen Version. Ihre gemeinsamen Validierungsnotizen sind im
+verfügbar
+
+<ArtifactLink path="protocol/schemas/README.md">
+  <code>schemas/README.md</code> Artefakt
+</ArtifactLink>
+.
+
+Die Schemavalidierung basiert auf Behauptungen und umfasst alle deklarierten
+`format`. Die vollständige lokale Regel lautet
+[MWP-FND-009](../specification/foundations/#mwp-fnd-009). Das Bestehen dieser
+Schemata beweist nur die strukturelle Form; Es ersetzt nicht die Verhaltens-,
+Kryptografie- oder Zulassungsvoraussetzungen.
+
+<SchemaCatalog />

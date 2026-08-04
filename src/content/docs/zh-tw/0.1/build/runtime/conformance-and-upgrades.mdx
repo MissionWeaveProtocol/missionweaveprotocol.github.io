@@ -1,0 +1,62 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 一致性和升級
+description:
+  如何驗證確切的發布工件、報告經過驗證的支援子集、保留擴充功能以及在不更改 v0.1
+  語義的情況下進行升級。
+---
+
+# 一致性和升級
+
+一致性屬於精確的工件集，而不是分支名稱或 SDK 支援 MissionWeaveProtocol 的一般聲明。從本地[規範發布identity](../../../reference/normative-release/)開始，驗證每個固定的摘要，然後運行適用的證據表面。
+
+## 所需的證據層
+
+1. [JSON 架構目錄](../../../reference/schemas/)
+   定義了確切的持久的对象形状和断言格式。
+2. 的 [結構一致性捆綁包](../../../reference/conformance/structural/)
+   練習預期有效且預期無效的協定文件。
+3. [加密包](../../../reference/conformance/cryptography/)
+   透過六個語意階段練習每個 Signed Document 配置。
+4. [準入套件](../../../reference/conformance/admission/)以固定密碼學套件為基礎，驗證首次準入與歷史信任。
+5. 完整運行時聲明也需要正面和負面證據指令、事件、狀態轉換、重播、防護、授權、預算、故障復原以及陳舊或重複的副作用。
+
+本地[一致性概述](../../../reference/conformance/)將這些表面分開，因此通過一層不會默默地提升到另一層。
+
+## 在案例之前验证清单
+
+對於加密包，驗證固定架構，準確刪除頂級 `artifactDigest`
+成員，JCS - 規範化剩餘清單，使用 SHA-256對其進行雜湊處理，並在執行案例之前驗證每個聲明的工件位元組雜湊（[MWP-EXT-011](../../../reference/specification/errors-extensions-and-security/#mwp-ext-011)）。
+
+準入清單使用相同的摘要流程，並另外固定未變更的加密摘要。在執行適配器結果之前驗證所有引用的工件和該Pin
+([MWP-EXT-012](../../../reference/specification/errors-extensions-and-security/#mwp-ext-012))。
+
+## 陈述已证明的子集
+
+模式向量證明了模式和向量的行為。密碼學證明了六個驗證階段。準入也證明其聲明的首次準入和歷史重播案例，但不能證明 Command 新鮮度、簽署者授權、狀態機接受或可攜式的已部署 Admission
+Log 證明格式。只有當自動正面和負面證據覆蓋每個核心 Command 類型、每個核心 Event 類型以及每個轉換行時，參考實作才可以聲稱完全符合 MissionWeaveProtocol
+0.1 一致性。否則，它會明確報告較窄的已驗證子集 ([MWP-EXT-013](../../../reference/specification/errors-extensions-and-security/#mwp-ext-013))。
+
+## 擴充功能和相容性
+
+Extension
+Profile 聲明其全球唯一的 URI、語義版本、架構 URI 和哈希、功能、關鍵性以及 Organization 批准簽章 ([MWP-EXT-001](../../../reference/specification/errors-extensions-and-security/#mwp-ext-001))。可以保留和中繼未知的非關鍵擴展數據，同時拒絕依賴未知關鍵配置文件的轉換 ([MWP-EXT-002](../../../reference/specification/errors-extensions-and-security/#mwp-ext-002))。任何設定檔都不能削弱身分、排序、冪等性、屏蔽、預算、Approval、來源、隔離或 Message/非權威不變性 ([MWP-EXT-003](../../../reference/specification/errors-extensions-and-security/#mwp-ext-003))。
+
+v0.1 模式拒絕未知的核心屬性，並且僅透過明確擴展成員承認可擴展性。盡可能保留規範中繼的未知非關鍵擴充位元組（[MWP-EXT-010](../../../reference/specification/errors-extensions-and-security/#mwp-ext-010)）。
+
+分配固定 Agent
+Card 和所需的功能版本。不相容的功能升級檢查點活動工作，並需要在繼續執行之前重新接受 ([MWP-IDN-003](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-003))。
+
+## 升級規則
+
+為了向後相容的規格說明，線路 `protocolVersion` 保留為
+`0.1`。核心語意、必填欄位或簽名字節的變更需要協商新的線路次要或主要版本。切勿將新的簽章信封保護規則引入為靜默 v0.1 行為 ([MWP-SDV-019](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-019))。
+
+:::note[Implementation note]
+
+將升級視為新的不可變版本集。將新網站版本、架構、清單、SDK 固定版本和生成的清單放在一起；在隔離環境中驗證它們；然後僅在雙方都支援所需的有線版本和擴展配置文件的情況下協商或滾動流量。
+
+保留舊驗證器和歷史 Registry/準入證據，以便重播在其確切版本下建立的記錄。金絲雀、回滾視窗、資料庫遷移工具和部署排序都是操作選擇，但回滾無法重新解釋已接受的簽名字節或事件。
+
+:::

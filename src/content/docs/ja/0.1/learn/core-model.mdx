@@ -1,0 +1,78 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: コアモデル
+description:
+  MissionWeaveProtocol 0.1
+  を構成するミッション、グループ、永続レコード、ローカル投影、および不変条件。
+---
+
+# コアモデル
+
+MissionWeaveProtocol は、制限された **Mission** とその一時的な **Group**
+を中心とした連携を組織します。 Mission の作成により、プライマリ Group が 1 つだけ、ルート人間の MissionOwner、初期の Coordinator、計画中の会話、および初期の永続的な Event 履歴が確立されます。 ([MWP-MSN-001](../../reference/specification/missions-groups-and-membership/#mwp-msn-001))。
+
+```text
+Organization
+├── Agent Registry
+├── Group Authority と永続 Event ストア
+├── 認可サービス
+└── Mission
+    └── Group
+        ├── MissionOwner
+        ├── Coordinator
+        ├── Worker Membership
+        ├── 会話と Message
+        ├── WorkItem と Work Contract
+        └── 順序付けられた Event、Artifact、Evidence、Approval
+```
+
+## 協力をつなぐ記録
+
+- **Membership**
+  は、Principal を 1 つの Group、ロール セット、可視性に接続します。範囲、および Membership エポック。
+- **会話**には、Group 計画または 1 つの永続的なメッセージが含まれています WorkItem。
+- **WorkItem** は、Mission 作業の実行可能単位です。 **労働契約**
+  目標、成果物、Evidence、権限、期限、予算を定義します。
+- **Artifact** は、不変のコンテンツアドレス指定された成果物です。
+- **Evidence**
+  は、Artifact または WorkItem がどのように承認を満たすかを記録します。基準。
+- **Event** は、1 つの Group の単調な履歴において不変に認められた事実です。
+- **カーソル**は、永続的に処理される連続した最大の Group
+  Event を記録します。Agent。
+
+メッセージはコンテキストや提案を提供します。実行可能な責任は、承認された WorkItem 移行と Worker の受け入れを通じてのみ開始されます。これは、[MWP-FND-014](../../reference/specification/foundations/#mwp-fnd-014)
+の会話境界と
+[MWP-FND-015](../../reference/specification/foundations/#mwp-fnd-015)
+の構造化実行境界です。
+
+## 権威ある州と地方の予測
+
+MissionWeaveProtocol は、共有された真実を再構築可能な Worker 状態から分離します。
+
+**権威ある状態**には、ミッション、メンバーシップ、作業項目、所有権とリースのエポック、重複排除の受領書、承認、および Group イベントが含まれます。 Group
+Authority は、受け入れられた変更をこの状態にシリアル化します。
+
+**Agent ローカル プロジェクション**
+には、カーソル、Group ごとのキュー、チェックポイント、送信ボックス、受信ボックス、およびスケジューラの状態が含まれます。 Agent は、永続的なイベントからイベントを再構築できます。ローカル ストレージを失っても、権威ある Mission 状態は変わりません。完全な境界は
+[MWP-FND-023](../../reference/specification/foundations/#mwp-fnd-023) です。
+
+## 覚えておく価値のある不変式
+
+規範的不変式セットは
+[MWP-FND-013](../../reference/specification/foundations/#mwp-fnd-013)
+で始まります。概念的な概要は次のとおりです。
+
+- 1 つの Mission には、1 つのプライマリ Group と 1 つの Group
+  Event ごとの注文があります。
+- 会話が実行権限を生み出すことはありません。
+- 排他的な作業は、所有権とリース期間によって制限されます。
+- 受け入れられたイベントとコミットされたメッセージは追加のみです。
+- Mission コンテキストと資格情報はデフォルトで分離されています。
+- WorkItem とサブタスクの予算と権限は、親の範囲を超えてはなりません。
+- root
+  Mission の完了には、正確なリビジョンに対する人間の承認が必要です。Artifact セット;そして
+- エージェントは、監査可能な決定、入力、Evidence、ブロッカー、および結果を公開します。プライベートな思考連鎖ではありません。
+
+[ID、役割、および権限](../identity-roles-and-authority/)
+に進み、これらのレコードが信頼できるアクターと範囲指定された権限をどのように取得するかを確認します。

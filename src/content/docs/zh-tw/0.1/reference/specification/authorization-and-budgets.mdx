@@ -1,0 +1,70 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-AUT
+title: 授權、預算和副作用
+description: 規範授權、能力、審批、預算和副作用控制。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 12. 授權、預算與副作用
+
+<NormativeClause id="MWP-AUT-001" level="MUST">
+
+在 WorkItem 被接受且所有必要的 Approval 均已取得後，Authorization
+Service 會簽發短期、最小權限的 capability token。該 token MUST 綁定到：
+
+- Worker Agent ID 和目前 Session Epoch；
+- WorkItem ID 與 Ownership Epoch；
+- 目前 Execution Lease ID；
+- 允許的工具、資源、資料和操作；
+- 財務、token、呼叫、運算、時間與副作用限制；以及
+- 不晚於適用 Execution Lease 的到期時刻。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-002" level={["MAY","MUST NOT","MUST"]}>
+
+Coordinator MAY 請求授權，但 MUST
+NOT 製造、複製或轉送 Worker 的憑證。Token 與 secret MUST
+NOT 出現在 Message、Agent Card、Context Package、Artifact 或 Group
+Event 中。過期、已撤銷、不相符或超出預算的 token MUST 被拒絕。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-003" level={["MUST","MAY"]}>
+
+Organization 政策 MUST 能夠在生產部署、付款、外部通訊、破壞性變更或存取敏感資料之前，將 WorkItem 置為
+`awaiting_execution_approval`。在簽署的 Approval gate 滿足之前，Authorization
+Service MUST 暫不簽發 capability token。低風險工作 MAY 依政策自動繼續。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-004" level="MUST NOT">
+
+Mission 與 WorkItem
+budget 是強制性的協定概念。MissionOwner 設定 Mission 上限；Coordinator 分配給 WorkItem 與子任务的預算不得超過這些上限；Authorization
+Service 強制執行硬上限。預算耗盡會暫停受影響的工作，並要求明確升級；Agent MUST
+NOT 靜默超過任何上限。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-005" level="MUST">
+
+Group Authority MUST 持久化一份聚合的六維 budget ledger。一個已簽署的
+`ext.missionweaveprotocol.core.resource_usage_record`
+Command 針對一個 WorkItem、Ownership Epoch 與 Execution Lease
+ID 記錄非零增量；相應的 `ext.missionweaveprotocol.core.resource_usage_recorded`
+Event 包含該增量、累計用量與剩餘預算。消耗 MUST 在一次原子轉換中更新該 WorkItem 及其完整的 WorkItem/Mission 祖先鏈。任一維度溢出時，整個轉換 MUST 以
+`BUDGET_EXCEEDED` 拒絕。Capability-token budget MUST 同時受 Work
+Contract 與權威剩餘預算的上限約束。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-006" level="MUST">
+
+取消或緊急終止 MUST 撤銷相關 lease 與 capability
+token，停止新的分配，並在需要時啟動合約定義的清理或補償 WorkItem。
+
+</NormativeClause>

@@ -1,0 +1,78 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: "Python SDK"
+description:
+  "Install and navigate the complete Python 3.12 reference runtime at its exact
+  MissionWeaveProtocol 0.1 commit."
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Python SDK
+
+The `missionweaveprotocol` package is the Python reference runtime. This page
+describes commit `9403cf1310914670506c56cbab363fdaa465d3cc`, package version
+`0.1.0`, and Python 3.12 or newer. A different commit or package build is a
+different documented implementation input, even when its version string is
+unchanged.
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="python"
+  command={`uv add "missionweaveprotocol @ git+https://github.com/MissionWeaveProtocol/python-sdk.git@9403cf1310914670506c56cbab363fdaa465d3cc"`}
+  verifyCommand={`uv run python -c "import missionweaveprotocol as mwp; print(mwp.__version__)"
+uv run missionweaveprotocol-conformance --help`}
+>
+  <p slot="notes">
+    The exact VCS requirement builds the package from the documented commit. A
+    deployment may instead install a wheel whose build provenance is bound to
+    that commit and whose bundled artifacts pass the same digest checks.
+  </p>
+</SdkInstall>
+
+:::
+
+The package declares these console commands at the documented commit:
+
+| Command                            | Public purpose                                                        |
+| ---------------------------------- | --------------------------------------------------------------------- |
+| `missionweaveprotocol-server`      | Start the configured Group gateway service.                           |
+| `missionweaveprotocol-demo`        | Run the deterministic reference-runtime demonstration.                |
+| `missionweaveprotocol-conformance` | Run the implementation-neutral structural Schema and vector manifest. |
+
+Starting a command does not create deployment authority. The server still
+requires deployment-owned Registry material, persistence, Session credentials,
+network binding, and production TLS configuration.
+
+## Use this reference
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every public module, runtime responsibility, persistence boundary, transport surface, and conformance entry point."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, Admission Log, and trusted-context adapters with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="All public classes, protocols, functions, methods, constants, and types resolved to exact source lines."
+    href="./api/"
+  />
+</CardGrid>
+
+## Support at the documented commit
+
+<SdkRuntimeMatrix sdk="python" />
+
+The Python SDK implements the complete reference runtime represented by the
+matrix. Database services, network serving, certificates, and Admission
+authority are deployment dependencies, not guarantees created by installing the
+package.

@@ -1,0 +1,129 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Référence d'exécution C++
+description: >-
+  Surface complète de l'en-tête installé et limites d'exécution du C++ SDK
+  épinglé exactement.
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Référence d'exécution C++
+
+Cette page couvre la surface complète C++ représentée par l'inventaire
+[exact API](../api/). Le comportement du protocole partagé reste défini par la
+[référence d'exécution ](../../../runtime/architecture-and-bootstrap/) et les
+[clauses de référence ](../../../../reference/specification/) locales. Les
+déclarations publiques se trouvent dans l'espace de noms
+`missionweaveprotocol` ; CMake en aval cible le lien
+`MissionWeaveProtocol::sdk`.
+
+<SupportStatus status="implemented" /> s'applique aux en-têtes installés et au
+comportement en cours répertoriés ci-dessous.
+
+<SupportStatus status="deployment-adapter-required" /> s'applique à l'autorité
+Registry actuelle, au contexte d'acceptation fiable, à l'accès au journal
+authentifié et à d'autres services de déploiement.
+
+<SupportStatus status="not-implemented" /> signifie que la bibliothèque
+exactement épinglée n’a pas de runtime correspondant.
+
+## Bibliothèque et modèle d'exécution
+
+Le package installé nécessite C++20, CMake 3.24, OpenSSL 3 et jsoncons 1.8.1. Sa
+cible exportée est `MissionWeaveProtocol::sdk` ; les en-têtes publics installés
+se trouvent sous `include/missionweaveprotocol`. L'exécutable installé distinct
+est `missionweaveprotocol-conformance`.
+
+La liaison de la bibliothèque ne démarre aucun service, n'ouvre aucun socket, ne
+crée aucun magasin durable et n'accorde aucune autorité. Les résultats
+`std::span` font référence à des octets appartenant à SDK ou à un objet selon la
+déclaration API et ne doivent pas survivre à leur propriétaire.
+
+## Carte d'en-tête complète
+
+| Fonctionnalité d'exécution   | En-têtes publics installés          | Contrat au niveau du commit épinglé                                                                                                                                |
+| ---------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Versions et types d'actifs   | `version.hpp`, `bundle.hpp`         | SDK et identité de protocole, étendues d'actifs intégrés immuables, pins exactes et résumés des bundles.                                                           |
+| Stricte JSON                 | `json.hpp`                          | `parse_strict_json` sur du texte ou des octets avec un membre en double, un UTF-8/JSON mal formé et un rejet des données de fin.                                   |
+| Schéma et heure exacte       | `schema.hpp`, `signed_document.hpp` | Validation hors ligne du projet 2020-12, formats affirmés et preuves exactes en temps protégé.                                                                     |
+| JSON canonique et Ed25519    | `canonical.hpp`, `crypto.hpp`       | Chaînes et hachages RFC 8785 ainsi que des aides strictes à la signature et à la vérification Ed25519.                                                             |
+| Documents signés et Registry | `signed_document.hpp`               | Neuf types de documents, signature, validation complète Registry, vérification en six étapes et preuves immuables.                                                 |
+| Cadres                       | `frame.hpp`                         | Décodage strict, encodage canonique et validation de document pour les valeurs de trame WebSocket. Il s'agit d'un codec et non d'un service de passerelle hébergé. |
+| Conformité structurelle      | `conformance.hpp`                   | Exécution de schéma-vecteur intégrée, résultats vectoriels et résumé du rapport.                                                                                   |
+| Bundles intégrés             | `bundle.hpp`                        | Accès exact aux actifs et vérification du résumé pour les bundles de protocole, de cryptographie et d'admission.                                                   |
+| Première admission           | `admission.hpp`                     | Première admission et confiance historique au-dessus de la vérification réussie Signed Document.                                                                   |
+
+## Validation, signature et preuves Registry
+
+`parse_strict_json` accepte exactement une valeur JSON.
+`SchemaCatalog::validate` vérifie les 22 schémas Draft 2020-12 intégrés.
+`canonical_json`, `canonicalize_json`, `canonical_sha256` et
+`canonical_sha256_document` implémentent la surface RFC 8785.
+
+`SigningKey` est l'interface de signature appartenant à l'application. `Ed25519`
+expose les assistants stricts de clé, de signature et de document.
+`SignedDocumentCodec::sign` et `verify` sélectionnent l'une des neuf valeurs
+`SignedDocumentKind` et exécutent les étapes d'analyse, de schéma, d'enveloppe
+de signature, de résolution de clé, de canonisation et de signature.
+
+`KeyResolver::resolve` doit renvoyer la preuve
+`KeyRegistrySnapshot::organization_wide` pour une révision Organization
+cohérente et applicable avec un historique complet conservé. Une clé
+sélectionnée, une projection partielle, un accès au cache ou un indicateur de
+confiance fourni par l'appelant est insuffisant. `VerifiedSignedDocument` expose
+les octets reçus, les chaînes et hachages de signature et canoniques, l'heure
+protégée, le matériel de signature et la clé Registry résolue et Principal.
+
+## Cadres, bundles et conformité
+
+`FrameCodec::decode`, `encode` et `validate_document` valident les valeurs de
+trame ; ils ne possèdent pas le transport, TLS, l'authentification de session,
+la persistance du curseur, le routage, la contre-pression ou les transitions
+d'état faisant autorité.
+
+`ProtocolBundle::verify` vérifie le groupe structurel de 22 schémas et de 59
+fichiers. `verify_cryptography` vérifie 98 artefacts, 22 cas et 62 évaluations
+déclarées ; `verify_admission` vérifie 19 artefacts, 5 cas et 30 évaluations
+déclarées. Ces appels vérifient les pins, les décomptes, les chemins, les
+longueurs d'octets et les résumés, mais n'exécutent pas chaque cryptographie ou
+évaluation d'admission.
+
+`ConformanceRunner::run` et `missionweaveprotocol-conformance` exécutent
+uniquement les vecteurs de schéma structurels intégrés. L'exécutable renvoie
+zéro uniquement lorsque tous les vecteurs correspondent à leur validité
+attendue.
+
+## Première admission
+
+`AdmissionService` expose `prepare_first_admission`, `admit_first` et
+`verify_historical_admission`. Continuez avec la
+[référence d'admission C++](../admission/) pour connaître les résultats exacts
+de l'adaptateur, l'ordre d'appel et l'exemple lié exécutable.
+
+## Limites de disponibilité explicites
+
+<SupportStatus status="deployment-adapter-required" /> **Autorité
+d'admission** : l'application fournit des preuves Registry actuelles, des
+preuves historiques Registry, un contexte d'acceptation fiable et un journal
+authentifié en ajout uniquement.
+
+<SupportStatus status="not-implemented" /> **Orchestration Mission** — aucune
+machine à états Mission de haut niveau ou façade d'orchestration n'est exportée.
+
+<SupportStatus status="not-implemented" /> **Planificateur Worker** : aucune
+file d'attente Worker, planificateur, exécuteur de bail ou boucle de
+récupération n'est exporté.
+
+<SupportStatus status="not-implemented" /> **Service de passerelle hébergée** :
+la bibliothèque fournit `FrameCodec`, et non un service de passerelle avec
+propriété de transport, TLS, session, routage ou contre-pression.
+
+<SupportStatus status="not-implemented" /> **Exécution de persistance faisant
+autorité** : aucune exécution de persistance basée sur une base de données ou
+Agent locale n'est exportée.
+
+Ces absences font partie du contrat de support documenté ; Les capacités
+d'exécution de référence Python ne doivent pas être déduites des noms de
+protocole partagés.

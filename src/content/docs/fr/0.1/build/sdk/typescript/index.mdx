@@ -1,0 +1,83 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: TypeScript SDK
+description: >-
+  Installez et parcourez la référence d'exécution complète TypeScript épinglée
+  avec précision pour MissionWeaveProtocol 0.1.
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# TypeScript SDK
+
+`@missionweaveprotocol/sdk` est le package d'implémentation officiel de
+TypeScript. Cette référence décrit le commit exact
+`6d53ebfcf8350ae81d89fd818611b07f7373685c`, la version du package `0.1.0` et
+Node.js 20 ou version ultérieure. Une construction de commit ou de package
+différente est une entrée d'implémentation documentée différente, même lorsque
+sa chaîne de version est inchangée.
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="typescript"
+  command={`git clone https://github.com/MissionWeaveProtocol/typescript-sdk.git missionweaveprotocol-typescript-sdk
+cd missionweaveprotocol-typescript-sdk
+git checkout --detach 6d53ebfcf8350ae81d89fd818611b07f7373685c
+npm ci
+npm run build
+npm pack --pack-destination ..
+cd ..
+npm install ./missionweaveprotocol-sdk-0.1.0.tgz`}
+  verifyCommand={`node -e 'import("@missionweaveprotocol/sdk").then(({ sdkMetadata }) => console.log(sdkMetadata()))' npx --no-install missionweaveprotocol-conformance --json`}
+>
+  <p slot="notes">
+    La racine du package fournit à la fois les versions ESM et CommonJS. Seuls
+    la racine du package et <code>package.json</code> sont des exportations
+    prises en charge ; les chemins internes des fichiers sources ne sont pas des
+    API de sous-chemins publics. Le package source épinglé ne génère pas{" "}
+    <code>dist/</code> lors d'une installation directe de dépendance Git, de
+    sorte que le flux documenté crée et installe explicitement une archive tar.
+    Une autre archive tar peut la remplacer uniquement lorsque sa provenance est
+    liée exactement au même commit.
+  </p>
+</SdkInstall>
+
+:::
+
+La commande `missionweaveprotocol-conformance` installée exécute le schéma et
+les surfaces vectorielles packagés. Il n'établit pas l'autorité de déploiement,
+la durabilité Admission Log, la sécurité du réseau ou la préparation à la
+production.
+
+## Utilisez cette référence
+
+<CardGrid>
+  <LinkCard
+    title="Runtime complet"
+    description="Chaque module racine du package pris en charge, limite d'exécution Node.js, point d'entrée de conformité et non-implémentation explicite."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="Première admission et confiance historique"
+    description="Adaptateurs typés pour le Registry actuel, le contexte de confiance et l’Admission Log, avec un exemple exécutable."
+    href="./admission/"
+  />
+  <LinkCard
+    title="API publique exacte"
+    description="Chaque déclaration publique de racine de package est résolue selon sa ligne source exacte."
+    href="./api/"
+  />
+</CardGrid>
+
+## Support lors du commit documenté
+
+<SdkRuntimeMatrix sdk="typescript" />
+
+La matrice distingue la mise en œuvre en cours de l’autorité détenue par le
+déploiement. L'installation du package ne fournit pas de service Registry
+actuel, de Admission Log atomique authentifié, de passerelle hébergée ou de
+persistance d'exécution durable.

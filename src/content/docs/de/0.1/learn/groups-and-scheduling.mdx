@@ -1,0 +1,85 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Gruppen und Terminplanung
+description: >-
+  Pro-Group-Warteschlangen, ein Worker-eigener Scheduler, isolierte
+  Ausführungsslots, Checkpoint-sichere Präemption und Wiedergabe.
+---
+
+# Gruppen und Terminplanung
+
+Ein Worker kann zu vielen Mission-Gruppen gehören, ohne deren Kontexte
+zusammenzuführen. Es verwaltet einen eigenen Event-Posteingang, einen eigenen
+Cursor und eine Arbeitswarteschlange für jeden Group, und diese lokalen
+Projektionen bleiben aus akzeptierten Ereignissen
+([MWP-WRK-008](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008))
+wiederherstellbar.
+
+```text
+Event von Group A → Warteschlange von Group A ┐
+Event von Group B → Warteschlange von Group B ├→ Worker-Planer → isolierte Ausführungsplätze
+Event von Group C → Warteschlange von Group C ┘
+```
+
+## Wer kontrolliert die Priorität?
+
+Der Coordinator liefert die angeforderte Dringlichkeit, Frist und
+Geschäftsauswirkungen für seinen Mission. Der Worker-Scheduler hat die
+endgültige Kontrolle über die Group-übergreifende Reihenfolge. Ein Coordinator
+kann seinen Mission nicht vor nicht verwandten Gruppen erzwingen
+([MWP-WRK-009](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-009)).
+
+Der Planer wendet gewichtete Fairness und Anti-Hunger-Maßnahmen an. Die
+effektive Reihenfolge berücksichtigt die Prioritätsklasse Organization, Fristen,
+Alterung der Warteschlange, Kontingente pro Group, Risikoschwellen und
+verfügbare Ressourcen. Eine reine unbegrenzte Planung mit der höchsten Priorität
+zuerst wird durch
+[MWP-WRK-010](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-010)
+ausgeschlossen.
+
+## Isolierung und Offenlegung des Zeitplans
+
+Jeder aktive Slot isoliert Mission Kontext, Anmeldeinformationen, Prüfpunkte,
+Toolbudgets und Nebeneffektschlüssel von jedem anderen Slot
+([MWP-WRK-011](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-011)).
+
+A Worker kann geschätzte Start- und Abschlussfenster, Konfidenz,
+Kapazitätsstatus und Berechnungszeit veröffentlichen, ohne andere offenzulegen
+GroupIdentität, Inhalt, Zuweisungen oder genaue Position in der globalen
+Warteschlange
+([MWP-WRK-012](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-012)).
+
+## Eigentum, Mietverträge und sichere Präemptionen
+
+Mit der Annahme beginnt eine Eigentumsperiode und eine Startfrist. Bei der
+aktiven Ausführung wird eine an die gebundene Ausführungsmiete verwendet Agent,
+Session Epoch, WorkItem, Besitzepoche, stabile Lease-ID und Ablauf
+([MWP-WRK-013](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013)).
+
+Bei Prioritätsänderungen wird die Arbeit in der Warteschlange sofort neu
+angeordnet. Aktive Arbeit erreicht einen sicheren, idempotenten Kontrollpunkt,
+bevor sie ihren Slot freigibt:
+
+1. Der Planer fordert Präemption;
+2. die Worker erreicht einen sicheren Kontrollpunkt;
+3. die Worker zeichnet den Kontrollpunkt auf und pausiert;
+4. Der Ausführungsslot wird freigegeben; und
+5. die WorkItem kehrt zu seinem zurück Group Warteschlange.
+
+Diese Sequenz ist das normative kooperative Präemptionsmodell in
+[MWP-WRK-015](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-015).
+
+## Wiederherstellung durch Wiederholung
+
+Event Lieferung erfolgt mindestens einmal. Ein neu gestarteter Worker stellt
+pro-Group Cursor und Warteschlangen aus Snapshots und geordneter Wiedergabe
+wieder her, dedupliziert anhand der Event-ID und verschiebt einen dauerhaften
+Cursor nicht über eine Sequenzlücke
+([MWP-WRK-029](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)).
+Die Bestätigung meldet die höchste zusammenhängende dauerhafte Position, ohne
+den maßgeblichen Group-Verlauf zu löschen
+([MWP-WRK-030](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)).
+
+MissionWeaveProtocol definiert die Reihenfolge innerhalb jedes Group, nicht eine
+globale Reihenfolge über Gruppen hinweg.

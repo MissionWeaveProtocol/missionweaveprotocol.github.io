@@ -1,0 +1,36 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 首次準入與歷史信任合規性
+description: 完整的本地準入證據包位於六階段驗證之上。
+---
+
+import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
+import BundleArtifactCatalog from "../../../../../../components/BundleArtifactCatalog.astro";
+import release from "../../../../../../data/normative/0.1/release-source.json";
+
+# 首次準入與歷史信任合規性
+
+簡介 <code>{release.admission.profile}</code> 綁定
+**{release.admission.artifacts} 工件**、**{release.admission.cases} 案例**和
+**{release.admission.evaluations} 評估**。確切地說
+**{release.admission.complete}** 評估已完成並且 **{release.admission.rejected}**
+被拒絕。其摘要是
+
+<code>{release.admission.digest}</code> 並且它固定未更改的加密摘要
+<code>{release.admission.cryptographyDigest}</code>.
+
+- <ArtifactLink path="protocol/admission/manifest.json">準入清單</ArtifactLink>
+- <ArtifactLink path="protocol/admission/manifest.schema.json">
+    清單架構
+  </ArtifactLink>
+- <ArtifactLink path="protocol/admission/README.md">本地捆綁語義</ArtifactLink>
+
+每次評估首先重複相同的六階段密碼驗證，然後執行首次準入或歷史重播。規範編排和故障映射位於[首次準入和歷史信任規範頁面](../../specification/first-admission-and-historical-trust/)。
+
+## 範圍排除
+
+此套裝組合不示範 Command 新鮮度或時鐘偏差強制、簽署者授權、狀態機轉換、Event 建立、可攜式 Admission
+Log 證明格式，或特定於部署的授權和保留政策。這些事項需要單獨的證據。
+
+<BundleArtifactCatalog bundle="admission" />

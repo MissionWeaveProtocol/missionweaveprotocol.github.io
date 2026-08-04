@@ -1,0 +1,55 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: アーティファクトとダイジェスト
+description:
+  MissionWeaveProtocol 0.1 Web
+  サイトがローカルの規範的なバイトをバインドし、アイデンティティをリリースする方法。
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import artifacts from "../../../../../data/normative/0.1/artifacts.json";
+
+# アーティファクトとダイジェスト
+
+ローカル プロトコル バンドルには、ツリー ダイジェスト
+
+<code>{artifacts.bundle.digest}</code> を含む **{artifacts.bundle.files}
+個の正確なファイル**が含まれています。プロトコル ピン SHA-256 は、
+
+<code>{artifacts.protocolPin.sha256}</code> と固定プロトコル バンドル SHA-256 は
+<code>{artifacts.protocolPin.bundleSha256}</code>。
+
+| 表面           |                                                  ファイルまたはアーティファクト | ダイジェスト                                 |
+| -------------- | ------------------------------------------------------------------------------: | -------------------------------------------- |
+| スキーマ       |                                                       {artifacts.schemas.files} | <code>{artifacts.schemas.digest}</code>      |
+| 構造適合性     | {artifacts.structural.files} ファイル / {artifacts.structural.vectors} ベクトル | <code>{artifacts.structural.digest}</code>   |
+| 暗号           |                                              {artifacts.cryptography.artifacts} | <code>{artifacts.cryptography.digest}</code> |
+| アドミッション |                                                 {artifacts.admission.artifacts} | <code>{artifacts.admission.digest}</code>    |
+
+## ダイジェスト セマンティクス
+
+個々のマニフェスト エントリは、正確なファイル バイトを小文字の SHA-256 にバインドします。暗号とアドミッションのトップレベル
+`artifactDigest` 値は、そのメンバーを正確に削除し、残りのマニフェストを RFC 8785
+JCS でシリアル化し、正規バイトをハッシュします。宣言されたアーティファクト エントリは、すべての名前付きファイルを推移的にバインドします。
+
+Web サイトのバンドル ツリー ダイジェストは、各正規相対パス、NUL セパレータ、正確なファイル バイト、および末尾の NUL セパレータを、ソートされたパス順序でさらにバインドします。これにより、2 つの異なるアーティファクト レイアウトが、単に連結されたバイトが一致するという理由だけで ID を共有することがなくなります。
+
+## ローカル リリースのアーティファクト
+
+- <ArtifactLink path="protocol/spec/PROTOCOL.md">
+    ピン留めされたプロトコル ソース
+  </ArtifactLink>
+- <ArtifactLink path="protocol/CONTEXT.md">固定された規範用語集</ArtifactLink>
+- <ArtifactLink path="protocol/conformance/manifest.json">
+    構造マニフェスト
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/manifest.json">
+    暗号マニフェスト
+  </ArtifactLink>
+- <ArtifactLink path="protocol/admission/manifest.json">
+    アドミッションマニフェスト
+  </ArtifactLink>
+- <ArtifactLink path="normative-release.json">
+    生成されたWebサイトリリースマニフェスト
+  </ArtifactLink>

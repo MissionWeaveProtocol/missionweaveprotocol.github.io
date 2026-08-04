@@ -1,0 +1,71 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 核心模型
+description:
+  构成 MissionWeaveProtocol 0.1 的任务、组、持久记录、本地投影和不变量。
+---
+
+# 核心模型
+
+MissionWeaveProtocol 围绕有界 **Mission** 及其临时 **Group**
+组织合作。 Mission 创建恰好建立了一个主 Group、一个根人类 MissionOwner、一个初始 Coordinator、一个规划对话以及初始持久 Event 历史记录（[MWP-MSN-001](../../reference/specification/missions-groups-and-membership/#mwp-msn-001)）。
+
+```text
+Organization
+├── Agent Registry
+├── Group 权威服务和持久 Event 存储
+├── 授权服务
+└── Mission
+    └── Group
+        ├── MissionOwner
+        ├── Coordinator
+        ├── Worker Membership
+        ├── 对话和 Message
+        ├── WorkItem 和 Work Contract
+        └── 有序 Event、Artifact、Evidence 和 Approval
+```
+
+## 连接合作的记录
+
+- **Membership** 将 Principal 连接到一个 Group、角色集、可见性范围和 Membership
+  Epoch。
+- **对话**包含用于 Group 计划或一个的持久消息 WorkItem。
+- **WorkItem** 是 Mission 工作的可执行单元。它的**工作合同**
+  定义目标、可交付成果、Evidence、权限、截止日期和预算。
+- **Artifact** 是不可变的、内容寻址的可交付成果。
+- **Evidence** 记录 Artifact 或 WorkItem 如何满足验收要求标准。
+- **Event** 是 Group 的单调历史中不可改变的公认事实。
+- **光标**记录由持久处理的最高连续 Group Event Agent。
+
+消息提供上下文或建议。可执行责任仅通过授权的 WorkItem 转换和 Worker 接受开始。这是
+[MWP-FND-014](../../reference/specification/foundations/#mwp-fnd-014)
+中的对话边界和
+[MWP-FND-015](../../reference/specification/foundations/#mwp-fnd-015)
+中的结构化执行边界]。
+
+## 权威的国家和地方预测
+
+MissionWeaveProtocol 将共享事实与可重建的 Worker 状态分开。
+
+**权威状态**
+包括任务、成员资格、工作项、所有权和租赁时期、重复数据删除收据、批准和 Group 事件。 Group 机构序列化对此状态接受的更改。
+
+**Agent-本地投影**包括游标、每个 Group 队列、检查点、发件箱、收件箱和调度程序状态。 Agent 可以从持久事件重建它们。丢失本地存储不会更改权威 Mission 状态。完整的边界是[MWP-FND-023](../../reference/specification/foundations/#mwp-fnd-023)。
+
+## 值得记住的不变量
+
+规范不变集从
+[MWP-FND-013](../../reference/specification/foundations/#mwp-fnd-013)
+开始。概念总结是：
+
+- 一个 Mission 拥有一个主 Group，以及每个 Group 内唯一的 Event 顺序；
+- Conversation 永远不会创建执行权限；
+- 独占工作通过 Ownership Epoch 和 Lease Epoch 进行 fencing；
+- 已接受的 Event 和已提交的 Message 仅可追加；
+- Mission 上下文和凭证默认是隔离的；
+- WorkItem 和子任务的预算与权限只会从其父级收窄；
+- 根 Mission 完成需要人工 Approval 精确的修订版和 Artifact 集；以及
+- Agent 发布可审核的决策、输入、Evidence、阻塞因素和结果，而不是私有思维链。
+
+继续[身份、角色和权限](../identity-roles-and-authority/)，了解这些记录如何获取受信任的参与者和范围权限。

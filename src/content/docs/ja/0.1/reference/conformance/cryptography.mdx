@@ -1,0 +1,50 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 暗号準拠
+description: 完全なローカル Signed Document 検証プロファイル証拠バンドル。
+---
+
+import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
+import BundleArtifactCatalog from "../../../../../../components/BundleArtifactCatalog.astro";
+import release from "../../../../../../data/normative/0.1/release-source.json";
+
+# 暗号適合性
+
+プロファイル <code>{release.cryptography.profile}</code>
+は、**{release.cryptography.artifacts} アーティファクト**、**{release.cryptography.cases} ケース**、**{release.cryptography.evaluations} 評価**をバインドします。正確に
+**{release.cryptography.complete}**
+評価は完了し、**{release.cryptography.rejected}** は拒否されます。その RFC
+8785 にバインドされたダイジェストは次のとおりです。
+
+<code>{release.cryptography.digest}</code>。
+
+- <ArtifactLink path="protocol/cryptography/manifest.json">
+    暗号マニフェスト
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/manifest.schema.json">
+    マニフェストスキーマ
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/README.md">
+    ローカルバンドルセマンティクス
+  </ArtifactLink>
+
+## 6 つのセマンティック ステージ
+
+すべての署名付き文書の評価では、次の順序付けされた分類が使用されます。
+
+1. 厳密な UTF-8 JSON 解析。
+2. 標準的な JSON スキーマの検証。
+3. 署名エンベロープと保護時間の検証。
+4. 署名キーの解決と有効性の検証。
+5. RFC 8785 正規化と署名ハッシュの生成。そして
+6. Ed25519 署名の検証。
+
+対応する規範ルールは、[署名された文書と trust](../../specification/signed-documents-and-trust/)
+ページで公開されています。 `complete`
+は、その評価の 6 つのステージすべてが完了したことを意味します。
+
+このバンドルを渡すことは、First-Admission
+Record 検証、履歴信頼検証、Command の鮮度またはクロック スキューの適用、または該当するロールとポリシーに基づく署名者の認可を証明するものではありません。
+
+<BundleArtifactCatalog bundle="cryptography" />

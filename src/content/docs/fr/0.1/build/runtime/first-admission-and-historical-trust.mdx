@@ -1,0 +1,155 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Première admission et confiance historique
+description: >-
+  Comment les couches d'exécution ont authentifié les résultats Admission Log,
+  l'ajout atomique, la validation des enregistrements renvoyés et la relecture
+  historique au-dessus de la cryptographie.
+---
+
+# Première admission et confiance historique
+
+L'admission est une couche sémantique distincte après une vérification
+cryptographique en six étapes. Cela ne modifie pas les octets de signature, les
+hachages de signature, la résolution de clé ou le résultat de la signature
+([MWP-ADM-005](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+Sa condition préalable est un résultat complet en six étapes
+([MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015))
+avec un hachage de signature indépendant de l'admission
+([MWP-SDV-017](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-017))
+et le contrat de preuve Registry actuel ou historique correct.
+([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)).
+
+## Interfaces requises
+
+La couche Admission dépend de ces limites distinctes de preuves et d’autorité :
+
+:::note[Implementation note]
+
+Représentez chaque frontière avec une interface typée :
+
+- preuves Registry actuelles pour une nouvelle décision de première admission ;
+- preuves historiques Registry faisant autorité pour la rediffusion ;
+- une recherche Admission Log authentifiée ;
+- une opération atomique d'ajout ou de retour existant ; et
+- Contexte d'acceptation de confiance Organization utilisé uniquement après une
+  absence faisant autorité.
+
+:::
+
+La clé logique Admission Log est `(organizationId, signingHash)`. Il doit
+authentifier le service d'acceptation, distinguer un enregistrement trouvé d'une
+constatation faisant autorité de son absence, préserver l'intégrité des ajouts
+uniquement et échouer en mode fermé pour les résultats indisponibles,
+indéterminés, non authentifiés, en cas d'échec d'intégrité, de conflit ou
+d'échec de validation
+([MWP-ADM-003](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).
+Un booléen de confiance fourni par l'appelant ne fait pas partie de ces
+résultats.
+
+Il existe au plus un enregistrement faisant autorité pour une clé logique. Un
+enregistrement valide identique trouvé lors d'une nouvelle tentative est un
+succès idempotent, tandis qu'un type de document, un ID de clé ou un Principal
+en conflit est rejeté plutôt que remplacé
+([MWP-ADM-004](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-004)).
+
+## Algorithme de première admission
+
+```text
+vérification cryptographique en six étapes
+→ recherche faisant autorité dans Admission Log
+→ validation de l’enregistrement trouvé ou absence faisant autorité
+→ préparation du contexte de confiance et de l’enregistrement candidat
+→ ajout atomique ou renvoi de l’enregistrement existant
+→ validation de l’enregistrement renvoyé
+→ résultat admis
+```
+
+Seule une absence faisant autorité permet une acquisition de contexte fiable et
+une préparation des candidats. L'ajout peut renvoyer le candidat local ou un
+gagnant concurrent, et l'enregistrement renvoyé est toujours validé avant succès
+([MWP-ADM-006](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006)).
+
+Le First-Admission Record est un objet distinct à neuf champs non signé. Il ne
+s'authentifie pas et ne peut pas contenir de `signature`
+([MWP-ADM-001](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001)).
+Conserver l'orthographe lexicale de `trustedAcceptedAt` ; comparez-le à un
+instant RFC 3339 sans nécessiter l'orthographe en majuscules `Z` utilisée par
+les heures de document protégé
+([MWP-ADM-002](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-002)).
+
+La préparation du candidat n’ajoute pas de Event, n’exécute pas de transition et
+n’implique pas la réussite. Un gagnant simultané peut renvoyer un ID
+d'enregistrement ou une heure de confiance différent, mais seuls les octets
+renvoyés validés peuvent réussir
+([MWP-ADM-007](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-007)).
+
+## Validation des enregistrements retournés
+
+Validation des enregistrements :
+
+1. analyse strictement exactement une valeur UTF-8 JSON ;
+2. applique le schéma normatif First-Admission Record ;
+3. compare `organizationId`, `documentKind`, `signingHash`, `keyId` et
+   `principal` exactement avec le résultat en six étapes ;
+4. compare `acceptedBy` exactement avec l'identité de service authentifiée par
+   le Adaptateur Admission Log ; et
+5. vérifie `trustedAcceptedAt` indépendamment par rapport à la clé sélectionnée
+   retenue intervalle de validité semi-ouvert.
+
+Les règles de liaison exactes sont
+[MWP-ADM-009](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+et la règle d'intervalle de temps de confiance est
+[MWP-ADM-010](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010).
+Valider uniquement les octets candidats n’est jamais suffisant. Un Event signé
+ne peut pas servir de son propre First-Admission Record ; un Event ultérieur ne
+peut publier ou référencer qu'un enregistrement distinct
+([MWP-ADM-011](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-011)).
+
+## Relecture historique
+
+```text
+vérification cryptographique en six étapes avec des preuves historiques Registry faisant autorité
+→ un enregistrement trouvé est requis
+→ validation de l’enregistrement
+→ aucun contexte de confiance ni ajout
+```
+
+La relecture ne peut pas créer une admission manquante, émettre un nouveau
+contexte de confiance ou traiter un ancien document comme nouvellement admis
+([MWP-ADM-008](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)).
+
+## Limites après l'admission
+
+Un résultat admis n’établit toujours pas la fraîcheur Command ou l’autorisation
+du signataire. Un Command nouvellement présenté comporte une vérification
+distincte de la fraîcheur et du décalage d'horloge
+([MWP-ADM-013](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)),
+et l'autorité compétente valide séparément le rôle et la politique du signataire
+aux heures d'acceptation protégées et fiables
+([MWP-ADM-014](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)).
+
+Chaque échec d'admission post-cryptographique conserve l'étape protégée
+`admission` et est mappé sur le fil à `AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).
+
+:::note[Implementation note]
+
+Conservez la résolution de clé actuelle, la résolution de clé historique,
+l'accès Admission Log et l'acquisition de contexte de confiance en tant
+qu'adaptateurs typés distincts, même lorsqu'un service en implémente plusieurs.
+Cela évite qu'un échec de cache, une erreur de transport ou un booléen
+d'appelant ne soit présenté à tort comme une absence faisant autorité.
+
+L'adaptateur API doit renvoyer l'identité du service authentifié ainsi que les
+octets trouvés ou ajoutés afin que la validation de l'enregistrement ne puisse
+pas accidentellement faire confiance à un champ `acceptedBy` extrait de
+l'enregistrement lui-même.
+
+:::
+
+Utilisez le
+[Admission conformance bundle](../../../reference/conformance/admission/) local
+pour tester à la fois la première admission et la relecture historique, y
+compris les résultats d'échec de l'adaptateur.

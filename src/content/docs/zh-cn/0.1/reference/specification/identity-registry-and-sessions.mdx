@@ -1,0 +1,100 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-IDN
+title: 身份、Registry 和会话
+description: 规范性 Agent Card、存在记录、身份验证和 Session Epoch 要求。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 6. 身份、Agent Registry 和会话
+
+### 6.1 Agent 卡
+
+<NormativeClause id="MWP-IDN-001" level={["MUST","MUST NOT"]}>
+
+Organization MUST 颁发、验证、版本化并签署每个 Agent Card。 Agent MUST
+NOT 仅仅因为它自我声明了一种功能而受到信任。 Agent Card MUST 分开：
+
+- 稳定的身份、所有权、端点、公钥和支持的协议版本；
+- 版本化的 Organization 控制的功能，具有声明的输入/输出模式、约束和验证 Evidence；和
+- 支持的最大并发数。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-002" level="MUST NOT">
+
+能力不是授权。 Agent Card MUST
+NOT 包含可重用凭证或授予对工具或业务数据的访问权限。授权资格和当前政策仍由 Organization 决定。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-003" level={["MUST","MAY"]}>
+
+分配 MUST Pin Agent
+Card 版本和每个所需的功能版本。兼容的就地升级 MAY 在 Organization 策略下继续。不兼容的升级 MUST 检查点活动工作并在继续执行之前获得重新接受。每个 Artifact
+MUST 记录生产 Agent Card 和能力版本。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-004" level={["SHOULD","MAY","SHOULD NOT"]}>
+
+Registry
+SHOULD 与 Agent 卡分开维护特定于功能的上下文性能记录。记录 MAY 包括完成、失败、重新分配、人工变更请求、截止日期、预算和租赁到期结果。实施 SHOULD
+NOT 将性能降低到一个不透明的全局信誉评分。
+
+</NormativeClause>
+
+### 6.2 存在记录
+
+<NormativeClause id="MWP-IDN-005" level={["MUST","MAY","MUST NOT"]}>
+
+存在是短暂的，MUST 与稳定的 Agent
+Card 是分开的。存在记录 MAY 报告在线状态、当前可用的执行槽、功能可用性、估计响应延迟和上次心跳。陈旧的存在记录 MUST
+NOT 被视为转让接受或租约续订。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-006" level={["MAY","MUST NOT"]}>
+
+存在更新 MAY 在经过身份验证的 `PING` 帧中携带，并且不需要单独的持久签名。 MUST
+NOT 的存在暴露了另一个 Group 的身份、内容、工作项或确切的队列位置。
+
+</NormativeClause>
+
+### 6.3 身份验证和 Session Epoch 防护
+
+<NormativeClause id="MWP-IDN-007" level="MUST">
+
+每个 Agent MUST 至少有一个 Organization 注册的 Ed25519 公钥。 v0.1
+WebSocket 握手使用新的服务器挑战：
+
+1. Agent 发送 `HELLO/client_init`，其中包含 Agent ID、key
+   ID、nonce 和支持的协议版本；
+2. 服务器回复
+   `HELLO/server_challenge`，其中包含不可预测的 challenge 和选定版本；
+3. Agent 回复 `HELLO/client_response`，其中包含对规范 challenge
+   transcript 的 Ed25519 签名；以及
+4. 服务器回复 `HELLO/server_accept`，其中包含短期 session
+   token 和新签发的 Session Epoch。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-008" level={["MUST","MUST NOT","MAY"]}>
+
+发出纪元 `n + 1` 会使该 Agent ID 纪元 `n` 或更低的每个会话无效。 Group Authority
+MUST 在每个状态更改的 Agent Command 上验证 Session
+Epoch。人类和 Organization 服务命令不携带 Agent Session Epoch 和 MUST
+NOT 发明一个。重新启动的运行时 MAY 回收其稳定的 Agent ID；两个运行时 MUST
+NOT 同时操作该身份。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-009" level={["MUST","NOT RECOMMENDED","MAY"]}>
+
+持久命令和 Artifact 清单 MUST 单独签名。心跳和存在记录依赖于经过身份验证的会话。长期共享 API 密钥是 NOT
+RECOMMENDED。实现 MAY 添加 mTLS 或工作负载身份验证，前提是它保留 Agent
+ID 和防护语义。
+
+</NormativeClause>

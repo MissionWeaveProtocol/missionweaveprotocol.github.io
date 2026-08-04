@@ -1,0 +1,102 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Java 運行時參考
+description: 精確固定的 Java SDK 的完整公共包表面和運行時邊界。
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Java 運行時參考
+
+此頁面涵蓋了由[確切的 API inventory](../api/)
+表示的完整 Java 表面。共享協定行為仍由本地[運行時參考](../../../runtime/architecture-and-bootstrap/)和[參考子句](../../../../reference/specification/)定義。公共應用程式類型位於
+`org.missionweaveprotocol.sdk` 下；一致性入口點位於
+`org.missionweaveprotocol.sdk.cli` 下。
+
+<SupportStatus status="implemented" /> 適用於下列所列的公共類別和進程內行為。
+
+<SupportStatus status="deployment-adapter-required" /> 適用於目前 Registry
+權威性、可信任準入情境、經過驗證的日誌存取和其他部署服務。
+
+<SupportStatus status="not-implemented" />
+表示精確固定的工件沒有對應的執行時間。
+
+## Artifact 及執行模型
+
+Maven 工件是
+`org.missionweaveprotocol:missionweaveprotocol-sdk:0.1.0-SNAPSHOT`，為 Java
+21 編譯並使用 Maven 3.9 建置。它聲明自動模組名稱 `org.missionweaveprotocol.sdk`
+並將確切的協定、密碼學和準入資源打包在 JAR 內。
+
+安裝工件不會啟動任何服務，不會開啟套接字，不會建立持久存儲，也不會授予任何權限。檢查了
+`IOException`、驗證異常和準入異常仍然是 Java 呼叫邊界的一部分。
+
+## 完整的原始碼圖
+
+| 運行時關注            | 公開實施原始碼                                                                            | 固定提交的合約                                                              |
+| --------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| 版本與元資料          | `MissionWeaveProtocol.java`, `ProtocolBundle.java`                                        | 協定標識、線路版本、命名空間以及確切的協定和套件來源。                      |
+| 嚴格的 JSON           | `StrictJson.java`                                                                         | UTF-8 解析重複成員、BOM、格式錯誤的輸入和尾隨資料拒絕。                     |
+| 架構與確切時間        | `SchemaCatalog.java`, `ExactInstant.java`                                                 | 離線草案 2020-12 驗證、斷言格式、打包架構存取與精確 RFC 3339 比較。         |
+| 典範 JSON 和 Ed25519  | `CanonicalJson.java`, `Ed25519.java`, `Base64Url.java`                                    | RFC 8785 位元組和雜湊加嚴格 Ed25519 幫手。                                  |
+| 簽署的文件和 Registry | `SignedDocumentCodec.java`, `AgentRegistryKeyResolution.java`, `KeyRegistrySnapshot.java` | 九種文件，簽字，齊全 Registry 驗證、六階段驗證和不可變的證據。              |
+| 框架                  | `FrameCodec.java`                                                                         | 通用的嚴格解碼與規範編碼 WebSocket 幀值。這是編解碼器，而不是託管網關服務。 |
+| 結構一致性            | `ConformanceRunner.java`, `cli/ConformanceCli.java`                                       | 打包或明確根模式向量執行和進程退出狀態。                                    |
+| 嵌入式捆綁包          | `ProtocolBundle.java`                                                                     | 協定、密碼學和準入工件集的源根和打包驗證。                                  |
+| 首次準入              | `AdmissionService.java` 與準入記錄/介面                                                   | Signed Document 驗證成功後的首次準入與歷史信任。                            |
+
+## 驗證、簽名和 Registry 證據
+
+`StrictJson.parse` 只接受一個 UTF-8 JSON 值。 `SchemaCatalog.packaged`
+載入 22 個精確模式，而 `validate` 檢查選定的 2020-12 草案合約。
+`CanonicalJson.canonicalize`、`canonicalString`、`sha256Hex` 和 `canonicalHash`
+實現 RFC 8785 和摘要表面。
+
+`SigningKey` 是應用程式擁有的簽名縫。 `SignedDocumentCodec.sign` 和 `verify`
+選擇九個 `SignedDocumentKind`
+值之一併執行解析、架構、簽章信封、金鑰解析、規範化和簽章階段。
+`KeyResolver.resolve` 必須回傳 `KeyRegistrySnapshot.organizationWide`
+證據，以取得具有完整保留歷史記錄的一個連貫的適用 Organization 修訂版。選定的金鑰、部分投影、快取命中或呼叫者提供的信任標誌是不夠的。
+
+`VerifiedSignedDocument`
+公開接收、簽章和規範位元組的防禦副本以及雜湊值、受保護時間、簽章資料以及已解析的 Registry 金鑰和 Principal。
+
+## 框架、捆綁包和一致性
+
+`FrameCodec.decode` 和 `encode`
+驗證訊框值，但不擁有傳輸、TLS、會話驗證、遊標持久性、路由、背壓或權威狀態轉換。
+
+`ProtocolBundle.verifyPackaged`、`verifyPackagedCryptographyBundle` 和
+`verifyPackagedAdmissionBundle`
+驗證 JAR 的確切接腳、計數、路徑、位元組長度和摘要。相應的 `Path`
+重載驗證來源或發布包根。這些方法並未執行所有密碼或存取評估。
+
+`ConformanceRunner.runPackaged` 和 `ConformanceCli` 僅執行結構模式向量。提供
+`--root PATH` 選擇顯式協定或發布包而不是打包資源。
+
+## 首次準入
+
+`AdmissionService` 公開 `prepareFirstAdmission`、`admitFirst` 和
+`verifyHistoricalAdmission`。繼續使用
+[Java 準入參考](../admission/)，以了解確切的適配器結果、呼叫順序和可運行套件範例。
+
+## 明確的可用性邊界
+
+<SupportStatus status="deployment-adapter-required" /> **準入權威服務** —
+應用程式提供當前 Registry 證據、歷史 Registry
+證據、可信任接受上下文以及經過驗證的僅附加日誌。
+
+<SupportStatus status="not-implemented" /> **Mission 編排** — 不匯出進階 Mission
+狀態機或編排外觀。
+
+<SupportStatus status="not-implemented" /> **Worker 排程器** — 不匯出 Worker
+佇列、排程器、租用執行程式或復原循環。
+
+<SupportStatus status="not-implemented" /> **託管閘道服務** — 此工件提供
+`FrameCodec`，而非具有傳輸、TLS、會話、路由或反壓所有權的閘道服務。
+
+<SupportStatus status="not-implemented" /> **權威持久性運行時** —
+不導出資料庫支援的或 Agent 本地持久性運行時。
+
+這些未實作項目是書面支援合約的一部分；不得從共享協定名稱推斷 Python 參考執行階段能力。

@@ -1,0 +1,112 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Erstellen Sie eine MissionWeaveProtocol 0.1-Laufzeit
+description: >-
+  Der normative gemeinsame Implementierungspfad für Parsing, Vertrauen,
+  Zulassung, Persistenz, Transport, Diagnose, Konformität und Upgrades.
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+# Erstellen Sie eine MissionWeaveProtocol 0.1-Laufzeit
+
+:::caution[Draft Standard 0.1]
+
+Dieser versionierte Build-Pfad ist Teil der normativen Website-Veröffentlichung.
+Es organisiert die lokalen Referenzklauseln in der Implementierungsreihenfolge,
+ohne sie neu zu definieren. Wenn sich eine Zusammenfassung und eine verknüpfte
+Klausel unterscheiden, ist die verknüpfte Klausel die maßgebliche Anforderung.
+
+:::
+
+Die von der lokalen Spezifikation verwendete BCP 14-Anforderungssprache ist in
+[MWP-FND-001](../reference/specification/foundations/#mwp-fnd-001). Der
+gemeinsame Pfad beschreibt die Semantik, die jede Sprachimplementierung
+beibehalten muss. SDK-spezifische Seiten können Installationsbefehle,
+Sprachtypen und öffentliche API-Syntax hinzufügen, sie dürfen diese Regeln
+jedoch nicht schwächen oder ersetzen.
+
+:::note[Implementation note]
+
+## Empfohlene Implementierungsreihenfolge
+
+1. Bootstrapping einer genauen Version, Vertrauensgrenze, Validatoren, Stores
+   und Laufzeit Identität.
+2. Behalten Sie das Protokoll JSON, Bezeichner, Zeitstempel, Hashes und
+   Umschlagtypen bei ohne Normalisierung der Wirtssprache.
+3. Implementieren Sie striktes Parsen, Schemavalidierung, Kanonisierung,
+   Signierung, Registry-gestützte Schlüsselauflösung und die sechsstufige
+   Verifizierungspipeline.
+4. Stellen Sie Erstzulassung und historisches Vertrauen über die kryptografische
+   Überprüfung.
+5. Trennen Sie den autoritativen Zustand von den wiederhergestellten
+   Projektionen und implementieren Sie ihn dann Wiederholung, Idempotenz,
+   Fechten und Wiederherstellung von Nebenwirkungen.
+6. Authentifizieren und multiplexen Sie Gruppen über den normativen
+   WebSocket-Rahmen.
+7. Stabile Verdrahtungsfehler aufdecken und gleichzeitig geschützte
+   Diagnosefunktionen und nützliche Funktionen beibehalten Betriebssignale.
+8. Überprüfen Sie die genauen Release-Artefakte, melden Sie die nachgewiesene
+   Konformitätsteilmenge und Upgrade ohne stillschweigende Änderung der
+   Wire-Semantik.
+
+Bei dieser Reihenfolge handelt es sich um eine Umsetzungsanleitung. Die
+verlinkten Referenzklauseln definieren die Anforderungen und deren
+Akzeptanzgrenzen.
+
+:::
+
+## Gemeinsame Laufzeitreferenz
+
+<CardGrid>
+  <LinkCard
+    title="Architektur und Bootstrap"
+    description="Vertrauensgrenzen, Laufzeitverantwortung, Release-Laden, Identität, Wiederherstellung und Startreihenfolge."
+    href="./runtime/architecture-and-bootstrap/"
+  />
+  <LinkCard
+    title="Protokolltypen"
+    description="Wire-JSON, Skalarprofile, dauerhafte Objekte, Umschläge, generierte Typen und semantischer Zustand."
+    href="./runtime/protocol-types/"
+  />
+  <LinkCard
+    title="Validierung, Kanonisierung und Signierung"
+    description="Striktes Parsen, Schema-Assertionen, JCS, Ed25519, Registry-Nachweise und Signatur-Hashes."
+    href="./runtime/validation-canonicalization-and-signing/"
+  />
+  <LinkCard
+    title="Erstzulassung und historisches Vertrauen"
+    description="Typisierte Ergebnisse des Admission Log, atomare Erstzulassung, Datensatzvalidierung und historische Wiedergabe."
+    href="./runtime/first-admission-and-historical-trust/"
+  />
+  <LinkCard
+    title="Persistenz und Wiederherstellung"
+    description="Maßgeblicher Zustand, lokale Projektionen, Belege, Wiedergabe, Cursors, Snapshots und Nebenwirkungen."
+    href="./runtime/persistence-and-recovery/"
+  />
+  <LinkCard
+    title="Transport und Framing"
+    description="HELLO-Authentifizierung, Session Epoch-Fencing, Abonnements, Multiplexing, ACK, PING und Gegendruck."
+    href="./runtime/transport-and-framing/"
+  />
+  <LinkCard
+    title="Fehler und Beobachtbarkeit"
+    description="Wire-safe Fehler, Wiederholungsentscheidungen, geschützte Diagnosen, Prüfaufzeichnungen, Metriken und Tracing-Grenzen."
+    href="./runtime/errors-and-observability/"
+  />
+  <LinkCard
+    title="Konformität und Upgrades"
+    description="Exakte Artefakte, Struktur- und Vertrauenspakete, Anspruchsgrenzen, Erweiterungen und Versionsübergänge."
+    href="./runtime/conformance-and-upgrades/"
+  />
+</CardGrid>
+
+## Release vor Code
+
+Beginnen Sie mit der lokalen
+[normativen Release-Identität](../reference/normative-release/), nicht mit einem
+nicht angehefteten Repository-Zweig oder SDK README. Die Release-Seite bindet
+die Protokollartefakte, alle sechs SDK-Commits, Profile, Digests, Locales und
+die genaue Identität der erstellten Site, die von dieser Dokumentation verwendet
+werden.

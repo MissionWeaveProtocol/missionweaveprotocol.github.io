@@ -1,0 +1,69 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: Java SDK
+description: 安裝並導航 MissionWeaveProtocol 0.1 的完整固定 Java 運行時參考。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Java SDK
+
+`org.missionweaveprotocol:missionweaveprotocol-sdk`
+是官方 Java 工件。此參考描述了精確提交
+`3b2798c21d906c81887c54fe80e5bca8a19ddac7`、版本 `0.1.0-SNAPSHOT`、Java
+21 和 Maven
+3.9。該工件是從確切的原始碼固定提交安裝的；不同的提交或本地安裝的快照是不同的實現輸入。
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="java"
+  command={`git clone https://github.com/MissionWeaveProtocol/java-sdk.git missionweaveprotocol-java-sdk
+cd missionweaveprotocol-java-sdk
+git checkout --detach 3b2798c21d906c81887c54fe80e5bca8a19ddac7
+./mvnw -B -ntp verify
+./mvnw -B -ntp install`}
+  verifyCommand={`./mvnw -q -Dexec.mainClass=org.missionweaveprotocol.sdk.cli.ConformanceCli -Dexec.args='' exec:java`}
+>
+  <p slot="notes">
+    Maven 包裝器提供 Maven 3.9.x，但仍需要 Java 21
+    運行時。下游建置必須將已安裝的工件固定到上面的確切提交的來源； SNAPSHOT
+    版本字串本身並不能識別來源位元組。
+  </p>
+</SdkInstall>
+
+:::
+
+CLI 主類別是
+`org.missionweaveprotocol.sdk.cli.ConformanceCli`。其支援的呼叫是`missionweaveprotocol-conformance [--root PATH]`；它沒有定義
+`--help` 或 `--json`。在沒有根的情況下，它運行打包的結構模式向量。
+
+## 使用此參考
+
+<CardGrid>
+  <LinkCard
+    title="完整執行階段"
+    description="每個公共類別關注點、套件邊界、套件驗證器、CLI 入口點和明確非實作。"
+    href="./runtime/"
+  />
+  <LinkCard
+    title="首次準入與歷史信任"
+    description="Registry 目前證據、可信任上下文和 Admission Log 的型別化介面，以及一個可運行範例。"
+    href="./admission/"
+  />
+  <LinkCard
+    title="確切的公共 API"
+    description="每個公共 Java 聲明都解析為其確切的原始碼行。"
+    href="./api/"
+  />
+</CardGrid>
+
+## 支援記錄的提交
+
+<SdkRuntimeMatrix sdk="java" />
+
+JAR 提供進程內協定行為，而不是部署權限。應用程式仍然提供經過身份驗證的當前和歷史 Registry 證據、可信任準入上下文和權威 Admission
+Log。

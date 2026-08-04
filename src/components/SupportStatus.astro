@@ -1,0 +1,53 @@
+---
+import { localizedText, uiCopyForPathname } from "../lib/normative-locale";
+
+type Status = "implemented" | "not-implemented" | "deployment-adapter-required";
+
+interface Props {
+  status: Status;
+}
+
+const labelKeys: Record<Status, string> = {
+  implemented: "supportImplemented",
+  "not-implemented": "supportNotImplemented",
+  "deployment-adapter-required": "supportDeploymentAdapterRequired",
+};
+const { status } = Astro.props as Props;
+const copy = uiCopyForPathname(Astro.url.pathname);
+const labelKey = labelKeys[status];
+const label = labelKey ? localizedText(copy, labelKey) : undefined;
+if (!label) throw new Error(`Unsupported SDK status: ${String(status)}`);
+---
+
+<span class:list={["support-status", `support-status--${status}`]}>{label}</span
+>
+
+<style>
+  .support-status {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.6rem;
+    padding: 0.15rem 0.55rem;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 750;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+
+  .support-status--implemented {
+    color: var(--sl-color-green-high);
+    background: color-mix(in srgb, var(--sl-color-green-low) 48%, transparent);
+  }
+
+  .support-status--not-implemented {
+    color: var(--sl-color-gray-2);
+    background: color-mix(in srgb, var(--sl-color-gray-6) 45%, transparent);
+  }
+
+  .support-status--deployment-adapter-required {
+    color: var(--sl-color-orange-high);
+    background: color-mix(in srgb, var(--sl-color-orange-low) 48%, transparent);
+  }
+</style>

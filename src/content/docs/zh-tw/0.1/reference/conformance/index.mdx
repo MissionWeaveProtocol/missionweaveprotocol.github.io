@@ -1,0 +1,16 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+title: 符合性範圍
+description: MissionWeaveProtocol 0.1 的結構、加密和存取證據。
+---
+
+# 一致性曲面
+
+MissionWeaveProtocol 0.1 將一致性證據分為三個獨立版本化的表面：
+
+1. [結構一致性](./structural/)檢查與實作無關的文件是否符合 JSON Schema。
+2. [密碼學一致性](./cryptography/)檢查 Signed Document 的六個驗證階段。
+3. [首次準入與歷史信任](./admission/)檢查在成功的六階段結果之上建立並驗證接受記錄的行為。
+
+通過一個表面並不意味著通過其他任何一個表面。完整的協議一致性也需要[本地規範](../specification/)中適用的行為條款的證據。

@@ -1,0 +1,266 @@
+---
+normativeVersion: "0.1"
+normativeStatus: normative
+clausePrefix: MWP-EVT
+title: Comandos, eventos y ordenamiento
+description: >-
+  Sobres Command y Event, simultaneidad, orden Group, transporte WebSocket y
+  codificación de cable canónico.
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../../components/InformativeBlock.astro";
+
+## 15. Comandos, eventos y concurrencia
+
+### 15.1 Comandos
+
+<NormativeClause id="MWP-EVT-001" level={["MUST","MUST NOT"]}>
+
+Un Command es una solicitud firmada para una única transición de estado
+estructurada. Cada sobre Command MUST contener un Action ID estable, la versión
+del protocolo, el actor, el tipo, la carga útil, el ID de correlación, la hora
+de emisión y la firma. Un Command con alcance Group MUST contener su Group ID.
+Un Agent Command que cambia estado MUST contener además los Session Epoch y
+Membership Epoch actuales. Un Command humano dentro de un Group existente MUST
+contener el Membership Epoch actual y MUST NOT contener un Agent Session Epoch.
+Un Command emitido por un servicio de Organization MUST NOT inventar Agent
+Session Epoch ni Membership Epoch.
+
+</NormativeClause>
+
+`mission.create` y `mission.create_follow_up` llevan el ID del Group que se está
+creando, pero omiten Membership y las épocas de sesión porque el nuevo Group
+Membership aún no existe y los comandos humanos no utilizan sesiones Agent. Un
+plano de control puede autenticar, transmitir y validar `mission.create`, pero
+el actor Command firmado y la raíz resultante MissionOwner siguen siendo
+humanos; el plano de control no se convierte en MissionOwner. Los comandos de
+arranque Organization, propiedad de
+`ext.missionweaveprotocol.registry.agent_card_register` y
+`ext.missionweaveprotocol.identity.session_open`, omiten el ID Group y las tres
+épocas de rol/sesión.
+
+<NormativeClause id="MWP-EVT-002" level={["MUST","SHOULD"]}>
+
+Un Agent Command cuya autoridad deriva del arrendamiento Coordinator vigente
+MUST contener el Coordinator Epoch vigente. Este campo es obligatorio para
+`mission.renew_coordinator`, `mission.submit_for_approval`,
+`mission.create_child`, `membership.grant_delegation` y `work.accept_result`, y
+para un `mission.terminate` emitido por un Agent. En cambio, un
+`mission.terminate` emitido por un servicio está autorizado por la política
+Organization y no lleva un Coordinator Epoch. Un Command SHOULD contener la
+revisión agregada esperada al modificar el estado estructurado existente. Un
+Command que utiliza una escalada de cooperación de un solo uso MUST contener
+también `cooperationOverrideGrantId`.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EVT-003" level={["MUST","MUST NOT"]}>
+
+El mismo `(actor ID, Action ID)` con contenido canónico firmado equivalente a
+bytes MUST devolver el recibo original y MUST NOT agregar una segunda transición
+de estado. La reutilización del mismo ID de acción con contenido canónico
+diferente MUST fallar con `ACTION_ID_COLLISION`.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EVT-004" level="MUST">
+
+El Group Authority MUST autenticar al actor; validar Session Epoch y Membership
+Epoch, Schema, la revisión agregada actual, el rol, la delegación, el
+presupuesto, la política y el arrendamiento; y rechazar el Command o agregar
+atómicamente los Event resultantes dentro de ese Group.
+
+</NormativeClause>
+
+<span id="core-command-kinds"></span>
+
+Los tipos principales de Command son:
+
+```text
+mission.create                 mission.assign_coordinator
+mission.renew_coordinator      mission.submit_for_approval
+mission.approve                mission.request_changes
+mission.cancel                 mission.terminate
+mission.create_child           mission.create_follow_up
+membership.change             membership.end
+membership.grant_delegation
+message.post                   message.correct
+message.retract                message.redact
+work.propose                   work.authorize
+work.offer                     work.accept_offer
+work.start                     work.checkpoint
+work.block                     work.unblock
+work.submit                    work.accept_result
+work.fail                      work.cancel
+artifact.publish               approval.grant_execution
+policy.grant_cooperation_override
+```
+
+El núcleo de referencia define adicionalmente los comandos
+`ext.missionweaveprotocol.*` propiedad de Organization para el registro Agent
+Card, la activación de la sesión, la inserción de dependencias, la renovación
+del contrato de arrendamiento de ejecución, el registro autorizado del uso de
+recursos y el archivo Group. Un futuro Extension Profile puede estandarizar
+comandos de conveniencia como el rechazo explícito de una oferta, una aclaración
+o una pausa Mission, pero esos nombres no son transiciones principales de la
+versión 0.1.
+
+### 15.2 Eventos y orden Group
+
+<NormativeClause id="MWP-EVT-005" level={["MUST","MUST NOT"]}>
+
+Un Event es un hecho aceptado e inmutable. Un sobre Group Event MUST contener
+Event ID, Group ID, secuencia Group estrictamente creciente, revisión agregada,
+tipo, actor, causa, ID de correlación, hora de ocurrencia, carga útil y firma
+del Group Authority. Los hechos con alcance Organization
+`ext.missionweaveprotocol.registry.agent_card_registered` y
+`ext.missionweaveprotocol.identity.session_opened` contienen los campos comunes
+Event de identidad, actor, causa, correlación, carga útil, hora, autoridad de
+aceptación y firma, pero MUST NOT contener Group ID, secuencia Group o revisión
+agregada Group.
+
+</NormativeClause>
+
+El Group Authority asigna una secuencia monótona a cada Group Event duradero.
+Esta secuencia proporciona un orden determinista de visualización, recuperación
+y auditoría. Los Message ordinarios pueden ser lógicamente concurrentes aunque
+el servicio asigne un orden de visualización. Las transiciones estructuradas se
+basan en el orden Event y en las revisiones agregadas.
+
+<span id="core-event-kinds"></span>
+
+Los tipos principales Event son los hechos en tiempo pasado correspondientes a
+los comandos principales, que incluyen:
+
+```text
+mission.created                 mission.coordinator.assigned
+mission.coordinator.renewed     mission.submitted_for_approval
+mission.approved                mission.changes_requested
+mission.cancelled               mission.terminated
+mission.child.created           mission.follow_up.created
+membership.changed              membership.ended
+membership.delegation.granted
+message.posted                  message.corrected
+message.retracted               message.redacted
+work.proposed                   work.authorized
+work.offer.created              work.offer.accepted
+work.contract.revised           work.started
+work.progressed                 work.checkpointed
+work.blocked                    work.unblocked
+work.submitted                  work.result.accepted
+work.failed                     work.cancelled
+artifact.published              approval.execution.granted
+policy.cooperation_override.granted
+group.snapshot.created          group.archived
+```
+
+`work.contract.revised` y `work.progressed` son hechos principales WorkItem
+emitidos por los comandos de inserción de dependencia y renovación de
+arrendamiento de ejecución y propiedad de referencia Organization. Agent Card y
+los datos de activación de sesión conservan sus tipos
+`ext.missionweaveprotocol.*` Event. `group.snapshot.created` y `group.archived`
+son datos de archivo centrales emitidos atómicamente por Organization, propiedad
+de `ext.missionweaveprotocol.core.group_archive` Command, después de validar su
+instantánea firmada y su enlace de registro de políticas.
+
+<NormativeClause id="MWP-EVT-006" level="MAY">
+
+Los eventos automáticos MAY pueden ser causados por un Command aceptado, Event
+anterior, un temporizador o una decisión de política. Los eventos de diferentes
+Grupos no tienen un orden definido.
+
+</NormativeClause>
+
+### 15.3 Simultaneidad optimista
+
+<NormativeClause id="MWP-EVT-007" level={["SHOULD","MUST","MUST NOT"]}>
+
+Los comandos agregados estructurados SHOULD proporcionan `expectedRevision`. Si
+no es igual a la revisión actual, Group Authority MUST rechaza Command con
+`REVISION_CONFLICT` y MUST NOT lo aplican parcialmente. La propiedad de primera
+aceptación de Atomic, la renovación del arrendamiento, el cambio Membership y
+Approval siempre requieren procesamiento de comparación y configuración incluso
+si un actor interno privilegiado omite el campo de conexión.
+
+</NormativeClause>
+
+<InformativeBlock title="Continuación de la fuente fijada">
+
+El siguiente bloque reanuda un segmento fuente fijado posteriormente. Consulte
+el [mapa fuente de especificación](./) para ver la página local intermedia y los
+rangos de líneas exactos.
+
+</InformativeBlock>
+
+## 17. Enlace WebSocket
+
+### 17.1 Conexión
+
+<NormativeClause id="MWP-EVT-008" level={["MUST","MUST NOT"]}>
+
+Los servidores MissionWeaveProtocol 0.1 MUST proporcionan WebSocket sobre TLS
+1.3 (`wss`). Una única conexión autenticada multiplexa todos los grupos
+utilizados por un Agent. Cada mensaje WebSocket MUST contiene exactamente un
+marco de texto UTF-8 JSON conforme a `schemas/websocket-frame.schema.json`. Los
+mensajes binarios WebSocket MUST NOT transportan objetos MissionWeaveProtocol o
+contenido Artifact en v0.1.
+
+</NormativeClause>
+
+Los tipos de tramas principales son `HELLO`, `SUBSCRIBE`, `COMMAND`, `EVENT`,
+`ACK`, `PING` y `ERROR`. Los fotogramas de transmisión Message parciales no
+están definidos.
+
+### 17.2 Suscripciones
+
+<NormativeClause id="MWP-EVT-009" level={["MUST","MUST NOT"]}>
+
+Después de la autenticación, un cliente envía `SUBSCRIBE` con ID Group,
+posiciones de reproducción per-Group y filtros de atención opcionales. Un filtro
+cambia la entrega en vivo, no la autorización ni el historial duradero. El
+servidor MUST aplica de forma independiente Membership para cada Group y MUST
+NOT revela si existe un Group no autorizado.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EVT-010" level={["MAY","MUST"]}>
+
+Una conexión MAY entrelaza eventos de múltiples grupos. La secuencia se
+garantiza únicamente dentro de cada Group. Una ruta del receptor MUST por ID
+Group antes de aplicar la lógica de secuencia.
+
+</NormativeClause>
+
+### 17.3 Control de flujo y vivacidad
+
+<NormativeClause id="MWP-EVT-011" level={["MAY","MUST","SHOULD"]}>
+
+`ACK` proporciona un progreso duradero. `PING` proporciona vitalidad y MAY lleva
+un Registro de Presencia; el par repite su nonce en una respuesta `PING`. Los
+servidores MUST aplican almacenamiento en búfer limitado y contrapresión según
+Group. Cuando se alcanza un límite, SHOULD pausan ese Group y emiten
+`BACKPRESSURE` con guía de reintento en lugar de desconectar grupos no
+relacionados.
+
+</NormativeClause>
+
+### 17.4 Codificación canónica
+
+<NormativeClause id="MWP-EVT-012" level="MUST">
+
+No es necesario que el JSON del protocolo llegue en el orden de miembros
+canónicos, pero cada hash, identificador derivado del contenido o firma MUST usa
+RFC 8785 JCS bytes. Los nombres de miembros de objetos duplicados MUST se
+rechazarán antes de la validación del esquema. Los números y cadenas MUST
+satisfacen las reglas finite-binary64 e I-JSON en la
+[Sección 2](../foundations/#mwp-fnd-006); Las implementaciones conformes MUST
+producen los mismos bytes JCS para el mismo valor JSON.
+
+</NormativeClause>
+
+El contenido de gran tamaño se publica como Artifact y se hace referencia
+mediante URI y hash de contenido. Los esquemas v0.1 rechazan las propiedades
+principales desconocidas. Los datos desconocidos Extension Profile no críticos
+se almacenan y transmiten sin cambios. Las extensiones críticas desconocidas
+causan `UNKNOWN_CRITICAL_EXTENSION`.
