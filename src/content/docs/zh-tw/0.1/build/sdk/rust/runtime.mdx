@@ -17,12 +17,12 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 和進程內行為。
 
 <SupportStatus status="deployment-adapter-required" /> 適用於目前 Registry
-權威性、可信任准入情境、經過身分驗證的日誌存取和其他部署服務。
+權威性、可信任準入情境、經過身分驗證的日誌存取和其他部署服務。
 
 <SupportStatus status="not-implemented" />
-意味著精確固定的板條箱沒有對應的運作時間。
+意味著精確固定的crate沒有對應的運作時間。
 
-## 板條箱與執行模型
+## crate與執行模型
 
 箱子是版本 `0.1.0`，使用 2024 版，聲明 Rust
 1.85 作為其最小支援的工具鏈，並公開一個二進位檔案：
@@ -42,8 +42,8 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 | 簽署的文件和 Registry | `signed_document.rs`                                        | 九種文檔，簽名，六階段驗證，完整的Organization範圍的Registry解析，以及不可變的驗證證據。 |
 | 框架                  | `frame.rs`                                                  | `FrameCodec` 解碼、編碼和文件驗證。這是編解碼器，而不是託管網關服務。                    |
 | 結構一致性            | `conformance.rs`、`bin/missionweaveprotocol-conformance.rs` | 嵌入式模式向量執行、報告摘要、CLI 退出狀態和可選的詳細故障。                             |
-| 嵌入式套裝組合        | `bundle.rs`                                                 | 協定、密碼學和存取包的精確引腳存取、工件查找和摘要驗證。                                 |
-| 首次入場              | `admission.rs`                                              | 首次入場和歷史信任高於成功的 Signed Document 驗證。                                      |
+| 嵌入式套裝組合        | `bundle.rs`                                                 | 協定、密碼學和存取包的精確Pin存取、工件查找和摘要驗證。                                  |
+| 首次準入              | `admission.rs`                                              | 首次準入和歷史信任高於成功的 Signed Document 驗證。                                      |
 
 ## 驗證、簽名和 Registry 證據
 
@@ -70,18 +70,18 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 `ProtocolBundle::verify` 檢查 22 個架構和 59 個檔案結構套件。
 `verify_cryptography` 檢查 98 個工件、22 個案例和 62 個聲明的評估；
 `verify_admission`
-檢查 19 個工件、5 個案例和 30 個聲明的評估。這兩個呼叫驗證引腳、計數和摘要。他們並不執行所有密碼學或入學評估。一致性二進位檔案和
+檢查 19 個工件、5 個案例和 30 個聲明的評估。這兩個呼叫驗證固定值、計數和摘要。他們並不執行所有密碼學或準入評估。一致性二進位檔案和
 `ConformanceRunner::run` 僅執行結構向量。
 
-## 首次入場
+## 首次準入
 
 `AdmissionService::new`、`prepare_first_admission`、`admit_first` 和
 `verify_historical_admission` 公開確切的進入流程。繼續使用
-[Rust 准入參考 ](../admission/)，了解適配器結果、呼叫順序和可運行套件消費者範例。
+[Rust 準入參考 ](../admission/)，了解適配器結果、呼叫順序和可運行套件消費者範例。
 
 ## 明確的可用性邊界
 
-<SupportStatus status="deployment-adapter-required" /> **准入權威服務** —
+<SupportStatus status="deployment-adapter-required" /> **準入權威服務** —
 應用程式提供當前 Registry 證據、歷史 Registry
 證據、可信任接受上下文以及經過驗證的僅附加日誌。
 

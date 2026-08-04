@@ -12,16 +12,16 @@ description:
 Worker 可以屬於多個 Mission 組，而無需合併其上下文。它為每個 Group 維護一個不同的 Event 收件匣、遊標和工作佇列，並且這些本地投影仍然可以從接受的事件中重建 ([MWP-WRK-008](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008))。
 
 ```text
-Group A Events → Group A queue ┐
-Group B Events → Group B queue ├→ Worker Scheduler → isolated execution slots
-Group C Events → Group C queue ┘
+Group A Event → Group A 佇列 ┐
+Group B Event → Group B 佇列 ├→ Worker 排程器 → 隔離執行槽
+Group C Event → Group C 佇列 ┘
 ```
 
 ## 誰控制優先級
 
 Coordinator 提供其 Mission 所要求的緊迫性、截止日期和業務影響。 Worker 調度程序對跨 Group 排序擁有最終控制權；一個 Coordinator 無法強制其 Mission 領先於不相關的組([MWP-WRK-009](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-009))。
 
-調度器應用加權公平和抗飢餓。有效訂單考慮 Organization 優先權、截止日期、佇列時效、每個 Group 配額、風險閘和可用資源。
+Scheduler 應用加權公平和抗飢餓。有效排序考慮 Organization 優先級、截止日期、佇列時效、每個 Group 配額、風險閘門和可用資源。
 [MWP-WRK-010](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-010)
 排除純無界最高優先權優先調度。
 
@@ -33,9 +33,10 @@ Coordinator 提供其 Mission 所要求的緊迫性、截止日期和業務影�
 
 ## 所有權、租賃和安全搶佔
 
-接受後開始所有權時代和啟動截止日期。主動執行使用綁定到的執行租約 Agent, Session
-Epoch,
-WorkItem、所有權紀元、穩定租約 ID 和到期日（[MWP-WRK-013](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013)）。
+接受後會開始新的 Ownership
+Epoch 和啟動截止日期。主動執行使用綁定到 Agent、Session
+Epoch、WorkItem、Ownership Epoch、穩定 Lease ID 和到期時刻的 Execution
+Lease（[MWP-WRK-013](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013)）。
 
 優先順序變更會立即對排隊的工作重新排序。活動工作在釋放其插槽之前到達安全、冪等的檢查點：
 
@@ -52,4 +53,4 @@ WorkItem、所有權紀元、穩定租約 ID 和到期日（[MWP-WRK-013](../../
 Event 交貨至少一次。一個重新啟動 Worker 恢復每Group 來自快照和有序重播的遊標和佇列，透過以下方式進行重複資料刪除 Event
 ID，並且不會在序列間隙上推進持久遊標（[MWP-WRK-029](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)）。確認報告最高連續持久位置而不刪除權威 Group 歷史 ([MWP-WRK-030](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)).
 
-MissionWeaveProtocol 定義每個內的順序 Group，而不是跨集團的全球訂單。
+MissionWeaveProtocol 定義每個 Group 內的順序，而不定義跨 Group 的全域順序。

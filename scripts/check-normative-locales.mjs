@@ -3,6 +3,10 @@ import { access, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import yaml from "js-yaml";
+import remarkGfm from "remark-gfm";
+import remarkMdx from "remark-mdx";
+import remarkParse from "remark-parse";
+import { unified } from "unified";
 
 function parseRepositoryRoot(arguments_) {
   if (arguments_.length === 0) {
@@ -97,21 +101,36 @@ function normalizeBody(body) {
   return body.trim().replace(/\s+/gu, " ");
 }
 
-function proseOnly(body) {
-  return body
-    .replace(/^\s*import\s.+$/gmu, " ")
-    .replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/gu, " ")
-    .replace(/`[^`]*`/gu, " ")
-    .replace(/<[^>]+>/gu, " ")
-    .replace(/!?(?:\[(?<label>[^\]]+)\])\([^)]*\)/gu, "$<label>")
-    .replace(/[#*_>|~{}[\]()-]+/gu, " ")
-    .replace(/\s+/gu, " ")
-    .trim();
+const readerTextProcessor = unified()
+  .use(remarkParse)
+  .use(remarkGfm)
+  .use(remarkMdx);
+const nonReaderNodeTypes = new Set([
+  "code",
+  "inlineCode",
+  "html",
+  "mdxFlowExpression",
+  "mdxTextExpression",
+  "mdxjsEsm",
+]);
+
+function readerFacingText(body) {
+  const tree = readerTextProcessor.parse(
+    body.replace(/^\s*:::[^\n]*$/gmu, " "),
+  );
+  const values = [];
+  function collect(node) {
+    if (nonReaderNodeTypes.has(node.type)) return;
+    if (node.type === "text") values.push(node.value);
+    for (const child of node.children ?? []) collect(child);
+  }
+  collect(tree);
+  return values.join(" ").replace(/\s+/gu, " ").trim();
 }
 
 function copiedEnglishSentence(englishBody, localizedBody) {
-  const localizedProse = proseOnly(localizedBody);
-  const sentences = proseOnly(englishBody).split(/(?<=[.!?])\s+/u);
+  const localizedProse = readerFacingText(localizedBody);
+  const sentences = readerFacingText(englishBody).split(/(?<=[.!?])\s+/u);
   return sentences.find((sentence) => {
     const asciiWords = sentence.match(/\b[A-Za-z][A-Za-z'-]*\b/gu) ?? [];
     return (
@@ -120,6 +139,41 @@ function copiedEnglishSentence(englishBody, localizedBody) {
       localizedProse.includes(sentence)
     );
   });
+}
+
+function asciiWords(value) {
+  return value.match(/\b[A-Za-z][A-Za-z'-]*\b/gu) ?? [];
+}
+
+function copiedEnglishRun(englishBody, localizedBody) {
+  const englishText = readerFacingText(englishBody);
+  const localizedProse = readerFacingText(localizedBody);
+  const englishWords = asciiWords(englishText).map((word) =>
+    word.toLowerCase(),
+  );
+  const englishSequence = ` ${englishWords.join(" ")} `;
+  const candidateRuns = localizedProse.match(
+    /\b[A-Za-z][A-Za-z'-]*(?:[\s,;:]+[A-Za-z][A-Za-z'-]*){3,}/gu,
+  );
+  for (const candidate of candidateRuns ?? []) {
+    const words = asciiWords(candidate);
+    for (let index = 0; index <= words.length - 4; index += 1) {
+      const window = words.slice(index, index + 4);
+      const lowercaseWordCount = window.filter(
+        (word) => word === word.toLowerCase(),
+      ).length;
+      if (lowercaseWordCount < 2) continue;
+      const normalized = window.map((word) => word.toLowerCase()).join(" ");
+      if (englishSequence.includes(` ${normalized} `)) return window.join(" ");
+    }
+  }
+  for (const connector of ["while"]) {
+    const pattern = new RegExp(`\\b${connector}\\b`, "u");
+    if (pattern.test(localizedProse) && pattern.test(englishText)) {
+      return connector;
+    }
+  }
+  return undefined;
 }
 
 function readAttribute(attributes, name) {
@@ -200,6 +254,122 @@ function codeBlockCount(body) {
   return count;
 }
 
+function fencedBlocks(body) {
+  const blocks = [];
+  const lines = body.split("\n");
+  let current;
+  for (const line of lines) {
+    if (!current) {
+      const opening = line.match(/^\s*(?<fence>`{3,}|~{3,})(?<info>.*)$/u);
+      if (!opening) continue;
+      current = {
+        fence: opening.groups.fence,
+        info: opening.groups.info.trim().split(/\s+/u)[0] ?? "",
+        lines: [],
+      };
+      continue;
+    }
+    const closing = line.trimStart().match(/^(?<fence>`{3,}|~{3,})\s*$/u)
+      ?.groups?.fence;
+    if (
+      closing &&
+      closing[0] === current.fence[0] &&
+      closing.length >= current.fence.length
+    ) {
+      blocks.push({
+        info: current.info,
+        body: current.lines.join("\n").trim(),
+      });
+      current = undefined;
+      continue;
+    }
+    current.lines.push(line);
+  }
+  return blocks;
+}
+
+function isMachineIdentifierCatalog(block) {
+  const tokens = block
+    .replace(/[│┃┌┐└┘├┤┬┴┼─━┏┓┗┛┣┫┳┻╋]+/gu, " ")
+    .trim()
+    .split(/\s+/u)
+    .filter(Boolean);
+  return (
+    tokens.length > 0 &&
+    tokens.every((token) =>
+      /^[a-z][a-z0-9_-]*(?:\.[a-z][a-z0-9_-]*)+$/u.test(token),
+    )
+  );
+}
+
+function untranslatedReaderFacingTextBlock(englishBody, localizedBody) {
+  const englishBlocks = fencedBlocks(englishBody);
+  const localizedBlocks = fencedBlocks(localizedBody);
+  for (
+    let index = 0;
+    index < Math.min(englishBlocks.length, localizedBlocks.length);
+    index += 1
+  ) {
+    const english = englishBlocks[index];
+    const localized = localizedBlocks[index];
+    if (!new Set(["text", "mermaid"]).has(english.info)) continue;
+    if (english.body !== localized.body) continue;
+    if (isMachineIdentifierCatalog(english.body)) continue;
+    return { index, body: english.body };
+  }
+  return undefined;
+}
+
+function orderedListMarkerSequence(body) {
+  const withoutFences = body.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/gu, " ");
+  return [...withoutFences.matchAll(/^\s*(\d+)[.)]\s+/gmu)].map((match) =>
+    Number.parseInt(match[1], 10),
+  );
+}
+
+function clauseBody(body, clauseId) {
+  for (const match of body.matchAll(
+    /<NormativeClause\b(?<attributes>[^>]*)>/gu,
+  )) {
+    if (readAttribute(match.groups.attributes, "id") !== clauseId) continue;
+    const start = match.index + match[0].length;
+    const end = body.indexOf("</NormativeClause>", start);
+    return end < 0 ? body.slice(start) : body.slice(start, end);
+  }
+  return "";
+}
+
+function sixStageMarkerSequence(body) {
+  return orderedListMarkerSequence(clauseBody(body, "MWP-SDV-015"));
+}
+
+function readerListTableStructure(body) {
+  const tree = readerTextProcessor.parse(
+    body.replace(/^\s*:::[^\n]*$/gmu, " "),
+  );
+  const structure = [];
+  function collect(node) {
+    if (node.type === "list") {
+      structure.push({
+        type: "list",
+        ordered: node.ordered,
+        start: node.ordered ? (node.start ?? 1) : undefined,
+        items: node.children.length,
+      });
+    }
+    if (node.type === "table") {
+      structure.push({
+        type: "table",
+        align: node.align,
+        cells: node.children.map((row) => row.children.length),
+      });
+    }
+    for (const child of node.children ?? []) collect(child);
+  }
+  collect(tree);
+  return structure;
+}
+
 function isLocalTarget(target) {
   return (
     !/^[a-z][a-z0-9+.-]*:/iu.test(target) &&
@@ -210,16 +380,44 @@ function isLocalTarget(target) {
 
 function localLinkSequence(body) {
   const links = [];
-  for (const match of body.matchAll(
-    /\]\((?<target>[^)\s]+)(?:\s+"[^"]*")?\)/gu,
-  )) {
-    if (isLocalTarget(match.groups.target)) links.push(match.groups.target);
+  const tree = readerTextProcessor.parse(
+    body.replace(/^\s*:::[^\n]*$/gmu, " "),
+  );
+  function append(target) {
+    if (typeof target === "string" && isLocalTarget(target)) {
+      links.push(target);
+    }
   }
-  for (const match of body.matchAll(
-    /\b(?:href|src)\s*=\s*(["'])(?<target>[^"']+)\1/gu,
-  )) {
-    if (isLocalTarget(match.groups.target)) links.push(match.groups.target);
+  function collect(node) {
+    if (node.type === "image") append(node.url);
+    if (node.type === "link") {
+      for (const child of node.children ?? []) collect(child);
+      append(node.url);
+      return;
+    }
+    if (
+      node.type === "mdxJsxFlowElement" ||
+      node.type === "mdxJsxTextElement"
+    ) {
+      for (const attribute of node.attributes ?? []) {
+        if (
+          attribute.type === "mdxJsxAttribute" &&
+          new Set(["href", "src"]).has(attribute.name)
+        ) {
+          append(attribute.value);
+        }
+      }
+    }
+    if (node.type === "html") {
+      for (const match of node.value.matchAll(
+        /\b(?:href|src)\s*=\s*(["'])(?<target>[^"']+)\1/gu,
+      )) {
+        append(match.groups.target);
+      }
+    }
+    for (const child of node.children ?? []) collect(child);
   }
+  collect(tree);
   return links;
 }
 
@@ -282,6 +480,8 @@ for (const relativePath of englishFiles) {
     informative: informativeSequence(english.body),
     keywords: normativeKeywordSequence(english.body, policy.normativeKeywords),
     links: localLinkSequence(english.body),
+    readerStructure: readerListTableStructure(english.body),
+    sixStageMarkers: sixStageMarkerSequence(english.body),
   };
 
   for (const locale of policy.locales) {
@@ -299,6 +499,21 @@ for (const relativePath of englishFiles) {
     if (copiedSentence !== undefined) {
       failures.push(
         `${localizedRelativePath}: contains untranslated English prose: ${JSON.stringify(copiedSentence.slice(0, 120))}`,
+      );
+    }
+    const copiedRun = copiedEnglishRun(english.body, localized.body);
+    if (copiedRun !== undefined) {
+      failures.push(
+        `${localizedRelativePath}: contains untranslated English run: ${JSON.stringify(copiedRun)}`,
+      );
+    }
+    const untranslatedTextBlock = untranslatedReaderFacingTextBlock(
+      english.body,
+      localized.body,
+    );
+    if (untranslatedTextBlock !== undefined) {
+      failures.push(
+        `${localizedRelativePath}: untranslated reader-facing text block ${untranslatedTextBlock.index + 1}: ${JSON.stringify(untranslatedTextBlock.body.slice(0, 120))}`,
       );
     }
     for (const field of [
@@ -321,6 +536,8 @@ for (const relativePath of englishFiles) {
         policy.normativeKeywords,
       ),
       links: localLinkSequence(localized.body),
+      readerStructure: readerListTableStructure(localized.body),
+      sixStageMarkers: sixStageMarkerSequence(localized.body),
     };
     const comparisons = [
       ["clauses", "NormativeClause sequence differs"],
@@ -329,6 +546,8 @@ for (const relativePath of englishFiles) {
       ["informative", "informative-block sequence differs"],
       ["keywords", "BCP 14 keyword sequence differs"],
       ["links", "local-link sequence differs"],
+      ["readerStructure", "reader list/table structure differs"],
+      ["sixStageMarkers", "ordered-list marker sequence differs"],
     ];
     for (const [field, message] of comparisons) {
       if (!same(actual[field], expected[field])) {

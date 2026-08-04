@@ -1,8 +1,8 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: 坚持与恢复
-description: 权威状态、可重建预测、收据、乐观并发、重放、游标、快照和外部副作用恢复。
+title: 持久化与恢复
+description: 权威状态、可重建投影、收据、乐观并发、重放、游标、快照和外部副作用恢复。
 ---
 
 # 持久性和恢复
@@ -72,13 +72,13 @@ ID、所有权 Epoch 和逻辑操作 ID
 安全的本地应用周期是：
 
 ```text
-begin local transaction
-→ reject or ignore duplicate Event ID
-→ verify next contiguous Group sequence
-→ update Group projection and per-Group queue
-→ persist any checkpoint or outbox intent
-→ advance durable Cursor
-→ commit
+开始本地事务
+→ 拒绝或忽略重复的 Event ID
+→ 验证下一个连续的 Group 序列
+→ 更新 Group 投影和每个 Group 的队列
+→ 持久化任何检查点或发件箱意图
+→ 推进持久 Cursor
+→ 提交
 ```
 
 对于外部副作用，请在发送前坚持意图，保留外部收据，并在重试前协调不确定的结果。

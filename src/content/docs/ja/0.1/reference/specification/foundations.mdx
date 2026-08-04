@@ -150,26 +150,29 @@ NOT は追加の正規化を考案します。
 
 - **Organization** は、v0.1 における唯一の信頼およびガバナンスの境界です。
 - **Agent**
-  は、最大 1 つのアクティブなランタイム セッションを持つ 1 つの安定した ID です。水平スケールアウトは別途登録されたもので表現されます Agent アイデンティティ。-A
-  **MissionOwner**
-  は責任者です Group 指示、承認、そして通常のキャンセル。根は人間です Mission。子供のために Mission、親 Coordinator 根本的な人間の責任の下でこの役割を果たします。
+  は、最大 1 つのアクティブなランタイムセッションを持つ、安定した 1 つの ID です。水平スケールアウトは、個別に登録された Agent
+  ID で表現されます。
+- **MissionOwner**
+  は、指示、承認、および通常のキャンセルに責任を負う Group メンバーです。ルート Mission では人間が担います。サブタスクでは、ルートの人間が負う責任のもとで Parent
+  Coordinator がこの役割を担います。
 
 <NormativeClause id="MWP-FND-010" level="MAY">
 
--A
-**Coordinator**は Agent 更新可能な役割のリースを保持します。まさに 1 つ Coordinator エポック MAY しばらく活動する Mission 一度に。
+- **Coordinator**
+  は、更新可能なロールリースを保持する Agent です。1 つの Mission につき、一度に正確に 1 つの Coordinator
+  Epoch がアクティブであることを MAY 許可します。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-FND-011" level="MAY">
 
--A **Worker**は Agent WorkItem を独自のスケジュールに受け入れる行列。同じ Agent
-MAY になる Worker 多くのグループで。
+- **Worker**
+  は、WorkItem を自身のスケジューリングキューに受け入れる Agent です。同じ Agent が複数の Group で Worker になることを MAY 許可します。
 
 </NormativeClause>
 
--A **Group Authority**
-は Organization 認証するインフラストラクチャセッション、検証 Membership およびポリシーを作成し、構造化された遷移をシリアル化し、イベントを追加します。これはセマンティック マネージャーではなく、エージェントが何を言うべきか、またはどのように推論すべきかを決定しません。
+- **Group Authority**
+  は、セッションを認証し、Membership とポリシーを検証し、構造化された遷移をシリアル化して Event を追加する Organization インフラストラクチャです。これはセマンティックマネージャーではなく、Agent が何を言うべきか、どのように推論すべきかを決定しません。
 
 <NormativeClause id="MWP-FND-012" level={["MAY","MUST NOT"]}>
 

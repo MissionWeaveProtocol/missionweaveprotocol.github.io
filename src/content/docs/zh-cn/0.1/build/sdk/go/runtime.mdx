@@ -41,7 +41,7 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 | 签署和签署文件     | `signing.go`、`signed_document_codec.go`、`signed_document_verification.go`、`ed25519_strict.go` | Ed25519个助手，九个签名文档配置文件，完整的Registry解析，严格的点检查和六阶段验证证据。 |
 | 框架               | `frame.go`                                                                                       | 支持的 WebSocket 帧值的解析和编码操作。这是编解码器，而不是托管网关服务。               |
 | 一致性和捆绑       | `conformance.go`、`bundle.go`                                                                    | 嵌入式捆绑标识、摘要验证、清单执行和命令支持。                                          |
-| 首次入场           | `admission.go`                                                                                   | 首次准入和历史信任与成功验证以上的类型化部署适配器。                                    |
+| 首次准入           | `admission.go`                                                                                   | 首次准入和历史信任与成功验证以上的类型化部署适配器。                                    |
 
 ## 验证和密码学
 
@@ -68,7 +68,7 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 将每个嵌入工件集绑定到其记录的身份。 `RunEmbeddedConformance`
 执行嵌入的结构向量。当 SDK 提交、协议 pin、架构集、加密包、准入包或部署适配器更改时再次运行这些。通过它们仅证明了经过测试的封装表面。
 
-## 首次入场
+## 首次准入
 
 `NewAdmissionService` 构造精确模式服务。 `PrepareFirstAdmission`、`AdmitFirst`
 和 `VerifyHistoricalAdmission` 是可能返回适配器或验证错误的同步 Go 调用。

@@ -12,14 +12,13 @@ MissionWeaveProtocol 保持对话合作流畅，同时明确可执行的责任�
 ## 从讨论到承诺
 
 1. **讨论。** 代理在 Group 或 WorkItem 中交换已完成的消息谈话。
-2. **提案。**
-   任何 Group 成员都可以提交工作提案。没有可执行文件 WorkItem 尚存在。
+2. **提案。** 任何 Group 成员都可以提交工作提案。尚不存在可执行的 WorkItem。
 3. **授权。**
    当前 Coordinator、MissionOwner 紧急覆盖，或具有有效范围委托授权的 Agent 创建 WorkItem。
 4. **要约。**
    授权参与者向符合条件的 Worker 提供 WorkItem，并且记录选择依据。独占授权集和委托报价规则由[MWP-MSN-019](../../reference/specification/missions-groups-and-membership/#mwp-msn-019)定义。
-5. **接受。**
-   Worker 执行准入控制。验收开启新的征程所有权 Epoch 并将 WorkItem 放入该 Worker 的每个 Group 队列中。
+5. **接受。** Worker 执行准入控制。接受操作会开启新的 Ownership
+   Epoch，并将 WorkItem 放入该 Worker 对应的 Group 队列中。
 
 接受是持久的调度承诺，而不是立即执行。 Worker 的准入检查和所有权影响由
 [MWP-WRK-005](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-005)
@@ -46,17 +45,17 @@ MissionWeaveProtocol 保持对话合作流畅，同时明确可执行的责任�
 
 ```text
 Work Proposal
-    ↓ authorize
+    ↓ 授权
 open WorkItem
-    ↓ offer
+    ↓ 发出 offer
 offered
-    ↓ Worker accepts
+    ↓ Worker 接受
 queued
-    ↓ valid ownership, approval gates, and Execution Lease
+    ↓ 有效所有权、Approval 门和 Execution Lease
 active
-    ↓ Worker submits Artifacts and Evidence
+    ↓ Worker 提交 Artifact 和 Evidence
 submitted
-    ↓ Coordinator accepts the result
+    ↓ Coordinator 接受结果
 verified
 ```
 

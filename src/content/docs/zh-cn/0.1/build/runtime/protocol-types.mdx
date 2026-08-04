@@ -12,10 +12,10 @@ description:
 将协议对象视为不仅仅是反序列化的类。合格的运行时保留四个不同的层：
 
 ```text
-received UTF-8 bytes
-→ lossless parsed JSON value
-→ schema-valid protocol object
-→ semantically accepted authoritative state or local projection
+接收 UTF-8 字节
+→ 无损解析的 JSON 值
+→ 通过 Schema 验证的协议对象
+→ 语义上接受的权威状态或本地投影
 ```
 
 跳过一层会导致规范化、验证顺序或权限错误。
@@ -59,7 +59,7 @@ Command 是一个结构化转换的签名请求。它的信封绑定了稳定的
 ID、版本、参与者、种类、有效负载、相关性、发布时间以及适用的 Group 和纪元字段 ([MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001))。因此，有效的 Command 对象尚未被接受的转换。
 
 Event 是一个不可变的公认事实。 Group 事件包含单调 Group 序列和由 Group
-Authority 分配的聚合修订版；两种 Organization 范围的引导程序 Event 类型省略 Group 订单字段 ([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005))。
+Authority 分配的聚合修订版；两种 Organization 范围的引导程序 Event 类型省略 Group 顺序字段 ([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005))。
 
 ## 保留后期所需的证据
 
@@ -78,7 +78,7 @@ Authority 分配的聚合修订版；两种 Organization 范围的引导程序 E
 [MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008)
 下的选定密钥查找之前的完整证据验证。部分缓存无法取代权威完整性（[MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009)）；适配器必须建立适用的修订版、完整性和历史覆盖范围，或者报告它不能 ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010))，并且只有在建立完整性后，未知密钥才是权威的 ([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011))。无损保留保留
 [MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016)
-下的规范阶段分类，而受保护的诊断处理和线路安全故障边界遵循
+下的规范阶段分类，而受保护的诊断处理和 Wire-safe 故障边界遵循
 [MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)。
 
 在 [JSON 架构目录](../../../reference/schemas/)

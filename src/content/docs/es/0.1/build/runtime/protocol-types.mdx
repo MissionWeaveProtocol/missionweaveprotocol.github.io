@@ -3,9 +3,9 @@ normativeVersion: "0.1"
 normativeStatus: normative
 title: Tipos de protocolo
 description: >-
-  Cómo encajan el cable JSON, los perfiles escalares, los tipos de lenguaje
-  generados, los objetos duraderos, los comandos, los eventos y el estado
-  semántico.
+  Cómo encajan el JSON del protocolo, los perfiles escalares, los tipos de
+  lenguaje generados, los objetos duraderos, los comandos, los eventos y el
+  estado semántico.
 ---
 
 # tipos de protocolo
@@ -14,10 +14,10 @@ Trate un objeto de protocolo como algo más que una clase deserializada. Un
 tiempo de ejecución conforme conserva cuatro capas distintas:
 
 ```text
-received UTF-8 bytes
-→ lossless parsed JSON value
-→ schema-valid protocol object
-→ semantically accepted authoritative state or local projection
+bytes UTF-8 recibidos
+→ valor JSON analizado sin pérdidas
+→ objeto de protocolo válido según Schema
+→ estado autoritativo o proyección local aceptados semánticamente
 ```
 
 Omitir una capa crea errores de normalización, orden de validación o autoridad.

@@ -1,7 +1,7 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: 文物和摘要
+title: 工件和摘要
 description: MissionWeaveProtocol 0.1 网站如何绑定本地规范字节并释放身份。
 ---
 
@@ -10,7 +10,7 @@ import artifacts from "../../../../../data/normative/0.1/artifacts.json";
 
 # 工件和摘要
 
-本地协议包包含**{artifacts.bundle.files}精确文件**以及树摘要<code>{artifacts.bundle.digest}</code>。协议引脚 SHA-256 是
+本地协议包包含**{artifacts.bundle.files}精确文件**以及树摘要<code>{artifacts.bundle.digest}</code>。协议固定版本 SHA-256 是
 
 <code>{artifacts.protocolPin.sha256}</code> 和固定协议包 SHA-256 是
 <code>{artifacts.protocolPin.bundleSha256}</code>。
@@ -20,7 +20,7 @@ import artifacts from "../../../../../data/normative/0.1/artifacts.json";
 | 架构       |                                               {artifacts.schemas.files} | <code>{artifacts.schemas.digest}</code>      |
 | 结构一致性 | {artifacts.structural.files} 文件 / {artifacts.structural.vectors} 向量 | <code>{artifacts.structural.digest}</code>   |
 | 密码学     |                                      {artifacts.cryptography.artifacts} | <code>{artifacts.cryptography.digest}</code> |
-| 入场       |                                         {artifacts.admission.artifacts} | <code>{artifacts.admission.digest}</code>    |
+| 准入       |                                         {artifacts.admission.artifacts} | <code>{artifacts.admission.digest}</code>    |
 
 ## 摘要语义
 
@@ -40,5 +40,5 @@ JCS 序列化剩余清单，并对规范字节进行哈希处理。他们声明�
 - <ArtifactLink path="protocol/cryptography/manifest.json">
     密码学清单
   </ArtifactLink>
-- <ArtifactLink path="protocol/admission/manifest.json">入学清单</ArtifactLink>
+- <ArtifactLink path="protocol/admission/manifest.json">准入清单</ArtifactLink>
 - <ArtifactLink path="normative-release.json">生成的网站发布清单</ArtifactLink>

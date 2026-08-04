@@ -42,22 +42,22 @@ existente.
 | autorización del firmante                                      | Un Principal vinculado a clave verificada aún necesita autorización de política y función autorizada antes de la aceptación estatal ([MWP-ADM-014](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)).                                                     |
 | prueba portátil de Admission Log                               | La versión 0.1 define resultados tipados del adaptador y validación de registros, no un formato portátil para una prueba desplegada ([MWP-EXT-013](../../reference/specification/errors-extensions-and-security/#mwp-ext-013)).                                                           |
 | aceptación de la máquina de estados                            | La criptografía y la admisión finalizan antes de que Organization o Group Authority validen la revisión, las funciones, la política, las épocas, los presupuestos y los arrendamientos actuales ([MWP-EVT-004](../../reference/specification/commands-events-and-ordering/#mwp-evt-004)). |
-| booleanos de confianza proporcionados por la persona que llama | Un valor booleano proporcionado por la persona que llama no puede reemplazar los resultados Admission Log autenticados y escritos ni sus distinciones de integridad y ausencia ([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).          |
+| booleanos de confianza proporcionados por la persona que llama | Un valor booleano proporcionado por la persona que llama no puede reemplazar los resultados tipados y autenticados del Admission Log ni sus distinciones de integridad y ausencia ([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).       |
 
 ## Modelo de resultados en capas
 
 ```text
-valid JSON and schema
+JSON y Schema válidos
         ↓
-six-stage cryptographic result
+resultado criptográfico de seis etapas
         ↓
-First Admission or Historical Trust result
+resultado de primera admisión o confianza histórica
         ↓
-Command freshness when applicable
+frescura de Command cuando corresponda
         ↓
-signer role and policy authorization
+rol del firmante y autorización de política
         ↓
-current state-machine validation and atomic Event append
+validación actual de la máquina de estados y anexado atómico de Event
 ```
 
 Cada flecha añade evidencia; ninguno cambia retroactivamente lo que demostró la

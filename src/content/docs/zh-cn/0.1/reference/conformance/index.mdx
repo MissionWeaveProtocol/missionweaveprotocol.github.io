@@ -1,7 +1,7 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: 一致性表面
+title: 一致性验证范围
 description: MissionWeaveProtocol 0.1 的结构、加密和准入证据。
 ---
 
@@ -9,8 +9,8 @@ description: MissionWeaveProtocol 0.1 的结构、加密和准入证据。
 
 MissionWeaveProtocol 0.1 将一致性证据分为三个独立版本化的表面：
 
-1. [结构一致性](./structural/)
-   检查 JSON 的架构有效性实施中立的文件。2.【密码学一致性](./cryptography/)检查了6个Signed
-   Document验证阶段。3.【首次入场及历史信任](./admission/)检查已验证在成功的六阶段结果之上，还创下了接受记录的行为。
+1. [结构一致性](./structural/)检查与实现无关的文档是否符合 JSON Schema。
+2. [密码学一致性](./cryptography/)检查 Signed Document 的六个验证阶段。
+3. [首次准入和历史信任](./admission/)检查在成功的六阶段结果之上创建和验证接受记录的行为。
 
 通过一个表面并不意味着通过其他任何一个表面。完整的协议一致性还需要[本地规范](../specification/)中适用的行为条款的证据。

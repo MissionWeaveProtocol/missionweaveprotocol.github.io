@@ -1,22 +1,22 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: Python 首次入場與歷史信任
-description: 輸入 Python 適配器、確切的呼叫順序、信任邊界和可運行的准入範例。
+title: Python 首次準入與歷史信任
+description: 輸入 Python 適配器、確切的呼叫順序、信任邊界和可運行的準入範例。
 ---
 
 import admissionExample from "../../../../../../../../examples/sdk/python/admission.py?raw";
 
-# Python 首次入場與歷史信任
+# Python 首次準入與歷史信任
 
 Python `AdmissionService` 在六階段 Signed
-Document 驗證器 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)) 之上進行歷史信任的首次存取和歷史信任。控制與語言無關的流程是本地[首次接納和歷史信任運行時頁面](../../../runtime/first-admission-and-historical-trust/)，確切的要求是本地[首次接納和歷史信任子句](../../../../reference/specification/first-admission-and-historical-trust/)。
+Document 驗證器 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)) 之上執行首次準入和歷史信任。與語言無關的流程見本地[首次準入和歷史信任運行時頁面](../../../runtime/first-admission-and-historical-trust/)，確切要求見本地[首次準入和歷史信任條款](../../../../reference/specification/first-admission-and-historical-trust/)。
 
 ## 公共類型
 
 | 公開 API                                       | 責任                                                                                                                                                                                                                                                                                |
 | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AdmissionCurrentKeyResolver.resolve_current`  | 返回完整的 Organization 範圍的 Registry 證據，表明部署斷言對於新的首次接納決策是最新的。                                                                                                                                                                                            |
+| `AdmissionCurrentKeyResolver.resolve_current`  | 返回完整的 Organization 範圍 Registry 證據，表明部署斷言對於新的首次準入決策是目前有效的。                                                                                                                                                                                          |
 | `TrustedAdmissionContext.issue`                | 核發可信任記錄ID，可信賴接受即時，只有在權威缺席後才接受服務。                                                                                                                                                                                                                      |
 | `AdmissionLog.lookup`                          | 傳回帶有經過驗證的位元組的 `AdmissionLookupStatus.FOUND` 或 `AdmissionLookupStatus.AUTHORITATIVE_ABSENCE`。傳輸失敗、快取未命中、不確定狀態和未經身份驗證的缺席失敗在 [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003) 下關閉。 |
 | `AdmissionLog.append_or_return_existing`       | 原子地附加候選位元組或返回並發權威獲勝者。                                                                                                                                                                                                                                          |
@@ -25,9 +25,9 @@ Document 驗證器 ([MWP-ADM-005](../../../../reference/specification/first-admi
 | `AdmissionService.admit_first`                 | 在 [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006) 中實現當前證據、權威缺席、原子追加和返回記錄流程。                                                                                                                          |
 | `AdmissionService.verify_historical_admission` | 使用歷史 Registry 證據重新運行驗證，並要求找到記錄，而不發布上下文或附加，按照 [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) 的要求。                                                                                        |
 
-適配器結果是鍵入的證據。呼叫者提供的信任布林值不是權威的查找結果，絕對不能選擇成功路徑。
+適配器結果是型別化的證據。呼叫者提供的信任布林值不是權威的查找結果，絕對不能選擇成功路徑。
 
-## 首次錄取電話
+## 首次準入呼叫順序
 
 :::note[Informative example]
 
@@ -63,7 +63,7 @@ historical = AdmissionService().verify_historical_admission(
 
 :::
 
-歷史重播使用保留的 Registry 歷史記錄，需要找到的准入記錄，並且從不呼叫
+歷史重播使用保留的 Registry 歷史記錄，需要找到的準入記錄，並且從不呼叫
 `TrustedAdmissionContext.issue` 或
 `AdmissionLog.append_or_return_existing`。範例中匹配的記錄 ID 表示重播恢復了第一筆權威記錄；它們本身並不能證明 Command 新鮮度、簽署者授權、狀態機接受或便攜式日誌證明驗證。 Command 在
 [MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
@@ -110,5 +110,5 @@ Record ID。該程式還斷言匹配的簽章雜湊值和記錄字節，並且�
 
 :::
 
-加密後准入拒絕仍受保護階段 `admission` 和線路代碼 `AUTH_INVALID_SIGNATURE`
+加密後準入拒絕仍受保護階段 `admission` 和線路代碼 `AUTH_INVALID_SIGNATURE`
 ([MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012))。

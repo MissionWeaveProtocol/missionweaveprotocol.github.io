@@ -12,9 +12,9 @@ description:
 Worker は、コンテキストをマージせずに、多くの Mission グループに属することができます。 Group ごとに個別の Event 受信箱、カーソル、およびワーク キューを維持し、これらのローカル プロジェクションは、受け入れられたイベントから再構築可能のままです ([MWP-WRK-008](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008))。
 
 ```text
-Group A Events → Group A queue ┐
-Group B Events → Group B queue ├→ Worker Scheduler → isolated execution slots
-Group C Events → Group C queue ┘
+Group A の Event → Group A のキュー ┐
+Group B の Event → Group B のキュー ├→ Worker スケジューラ → 分離された実行スロット
+Group C の Event → Group C のキュー ┘
 ```
 
 ## 誰が優先順位をコントロールするか

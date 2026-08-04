@@ -11,11 +11,11 @@ import typescriptAdmissionExample from "../../../../../../../../examples/sdk/typ
 
 # TypeScript Erstzulassung und historischer Trust
 
-Der TypeScript `AdmissionService` legt First Admission und Historical Trust über
-dem sechsstufigen Verifizierer Signed Document
+Der TypeScript `AdmissionService` legt Erstzulassung und historisches Vertrauen
+über dem sechsstufigen Verifizierer Signed Document
 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005))“.
 Der sprachunabhängige Ablauf ist die lokale
-[First Admission and Historical Trust-Laufzeitseite](../../../runtime/first-admission-and-historical-trust/),
+[Laufzeitseite für Erstzulassung und historisches Vertrauen](../../../runtime/first-admission-and-historical-trust/),
 und die genauen Anforderungen sind die lokalen
 [First-Admission- und Historical-Trust-Klauseln](../../../../reference/specification/first-admission-and-historical-trust/).
 
@@ -26,10 +26,10 @@ und die genauen Anforderungen sind die lokalen
 | `AdmissionCurrentKeyResolver.resolveCurrent` | Geben Sie synchron den vollständigen Organization-weiten Registry-Beweis zurück, dass die Bereitstellung für diese Entscheidung aktuell ist.                                                                                                                                                                                    |
 | `TrustedAdmissionContext.issue`              | Geben Sie synchron oder asynchron die vertrauenswürdige Datensatz-ID, den Akzeptanzzeitpunkt und den Akzeptanzdienst erst nach maßgeblicher Abwesenheit aus.                                                                                                                                                                    |
 | `AdmissionLog.lookup`                        | Geben Sie `{ status: "found", record }` oder `{ status: "authoritative-absence" }` asynchron zurück. Cache-Fehler, Zeitüberschreitung, nicht authentifizierte Abwesenheit und unbestimmter Statusfehler geschlossen unter [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
-| `AdmissionLog.appendOrReturnExisting`        | Hängen Sie Kandidatenbytes atomar an oder geben Sie den gleichzeitigen autorisierenden Gewinner über eine authentifizierte Dienstidentität zurück.                                                                                                                                                                              |
+| `AdmissionLog.appendOrReturnExisting`        | Hängen Sie Kandidatenbytes atomar an oder geben Sie den gleichzeitigen maßgeblichen Gewinner über eine authentifizierte Dienstidentität zurück.                                                                                                                                                                                 |
 | `AuthenticatedAdmissionRecord`               | Binden Sie `recordBytes` an den vom Adapter authentifizierten Dienst, damit [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) den zurückgegebenen Datensatz validieren kann.                                                                                                 |
 | `AdmissionService.prepareFirstAdmission`     | Erstellen und validieren Sie Kandidatennachweise aus einem von SDK erstellten `VerifiedSignedDocument`. Es stellt keine Zulassung dar und impliziert auch keine Zulassung.                                                                                                                                                      |
-| `AdmissionService.admitFirst`                | Führen Sie unter [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006) eine aktuelle Überprüfung, eine autorisierende Suche, eine Kandidatenerstellung, eine atomare Append-or-Return-Existing-Funktion und eine Validierung zurückgegebener Datensätze durch.                   |
+| `AdmissionService.admitFirst`                | Führen Sie unter [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006) eine aktuelle Überprüfung, eine maßgebliche Suche, eine Kandidatenerstellung, eine atomare Append-or-Return-Existing-Funktion und eine Validierung zurückgegebener Datensätze durch.                      |
 | `AdmissionService.verifyHistoricalAdmission` | Führen Sie die sechsstufige Überprüfung erneut mit historischen Registry-Beweisen durch und fordern Sie einen vorhandenen Datensatz an, ohne Kontext auszugeben oder anzuhängen, wie in [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) erforderlich.                      |
 | `AdmittedSignedDocument`                     | Geben Sie unveränderliche `verified`- und `record`-Beweise sowie eine defensive `recordBytes`-Kopie zurück.                                                                                                                                                                                                                     |
 
@@ -88,10 +88,11 @@ Wiederholung Registry Geschichte, erfordert `status: "found"`, und ruft nie an
 Übereinstimmende Datensatz-IDs zeigen die Wiederherstellung desselben
 maßgeblichen Datensatzes. sie beweisen es nicht Command Aktualität,
 Unterzeichnerautorisierung, Zustandsmaschinenakzeptanz oder tragbare
-protokollsichere Überprüfung. Diese bleiben unter [MWP-ADM-013]
-getrennt](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+protokollsichere Überprüfung. Diese bleiben gemäß
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
 und
-[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)
+getrennt.
 
 ## Fehleroberfläche
 

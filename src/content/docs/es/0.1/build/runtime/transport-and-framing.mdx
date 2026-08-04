@@ -1,14 +1,14 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: Transporte y enmarcado
+title: Transporte y tramas
 description: >-
   La autenticación normativa HELLO, vallado Session Epoch, marcos de texto
   WebSocket, suscripciones Group, multiplexación, ACK, PING y modelo de
   contrapresión.
 ---
 
-# Transporte y enmarcado
+# Transporte y tramas
 
 MissionWeaveProtocol 0.1 vincula el tiempo de ejecución al WebSocket autenticado
 a través de TLS 1.3. Encuadre y entrega de suministros de transporte; no
@@ -92,10 +92,10 @@ desconexión
 
 ## Codificación en el límite del cable
 
-El cable JSON puede llegar en cualquier pedido de miembros, pero los nombres de
-miembros duplicados se rechazan antes de la validación del esquema. Cada firma,
-identificador derivado de contenido y hash utiliza el modelo de valor y bytes
-exactos RFC 8785 JCS
+El JSON del protocolo puede llegar en cualquier orden de miembros, pero los
+nombres de miembros duplicados se rechazan antes de la validación del esquema.
+Cada firma, identificador derivado de contenido y hash utiliza el modelo de
+valor y bytes exactos RFC 8785 JCS
 ([MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012)).
 El contenido de gran tamaño viaja como una referencia Artifact con dirección de
 contenido en lugar de un marco de protocolo de transmisión parcial o binario.

@@ -40,7 +40,7 @@ SDK 使用节点加密和打包文件系统资产来实现架构、一致性、�
 | 签署文件             | `src/signed-document-codec.ts`、`src/crypto.ts` | Ed25519 签名助手、九个签名文档配置文件、完整的 Organization 范围的 Registry 解析以及六阶段验证结果。               |
 | 框架                 | `src/frame-codec.ts`                            | 对支持的 WebSocket 框架对象进行严格的解析和编码操作。这是编解码器，而不是托管网关服务。                            |
 | 一致性和捆绑         | `src/conformance.ts`、`src/package-root.ts`     | 打包根发现、结构清单执行和 `missionweaveprotocol-conformance` 命令。加密和准入资产已打包，但没有公共验证运行程序。 |
-| 首次入场             | `src/admission.ts`                              | 成功的六阶段验证后，键入首次准入和历史信任流程分层。                                                               |
+| 首次准入             | `src/admission.ts`                              | 成功的六阶段验证后，类型化首次准入和历史信任流程分层。                                                             |
 
 ## 验证和密码学
 
@@ -70,7 +70,7 @@ SDK 使用节点加密和打包文件系统资产来实现架构、一致性、�
 固定包包含用于准确发布来源的密码学和准入资产，但它不会公开用于验证密码学或准入包摘要或执行这些评估清单的公共 API。应用程序不得将
 `packageRoot` 或成功的结构一致性报告视为这两个捆绑包已验证的证据。
 
-## 首次入场
+## 首次准入
 
 `AdmissionService`
 在同步签名文档验证器之上公开异步准备、首次准入和历史重放。当前Registry分辨率是同步的；可信上下文发布可以是同步的或异步的； Admission

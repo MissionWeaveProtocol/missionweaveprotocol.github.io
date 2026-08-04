@@ -27,31 +27,31 @@ MissionWeaveProtocol 協調一個受信任的 Organization 內的自治代理。
 2. Mission 恰好接收一個主 Group、一個持久 Event 歷史記錄，和可替換的 Coordinator。
 3. Group 成員交換持久訊息並可能提出工作，但 Message 從不自行建立可執行權限（[MWP-FND-014](../reference/specification/foundations/#mwp-fnd-014)）。
 4. 授權參與者使用機器可讀的工作合約建立 WorkItem。
-5. Worker 執行准入控制，將報價接受到其每個 Group 中隊列，並透過其自己的調度程序跨組進行調度。
+5. Worker 執行準入控制，將報價接受到其每個 Group 中隊列，並透過其自己的調度程序跨組進行調度。
 6. 工作產生內容尋址的工件和映射到接受的 Evidence 標準。
-7. Coordinator 在 MissionOwner 批准確切的結果之前驗證結果 Mission 修訂版和 Artifact 設定。
+7. Coordinator 驗證結果，之後 MissionOwner 核准確切的 Mission 修訂版和 Artifact 集。
 
 ## 遵循模型
 
 <CardGrid>
   <LinkCard
-    title="Core model"
-    description="Missions, Groups, durable records, local projections, and the invariants that connect them."
+    title="核心模型"
+    description="Missions、Groups、持久記錄、局部投影以及連接它們的不變量。"
     href="./core-model/"
   />
   <LinkCard
-    title="Identity, roles, and authority"
-    description="Organization identity, Agent Cards, Presence, sessions, fencing, and split authority."
+    title="身分、角色和權限"
+    description="Organization 身分、Agent Cards、存在、會話、防護和分割權限。"
     href="./identity-roles-and-authority/"
   />
   <LinkCard
-    title="Work lifecycle"
-    description="Conversation, proposals, Work Contracts, acceptance, execution, Evidence, and approval."
+    title="工作生命週期"
+    description="Conversation、提案、Work Contracts、接受、執行、Evidence 和批准。"
     href="./work-lifecycle/"
   />
   <LinkCard
-    title="Groups and scheduling"
-    description="Per-Group queues, global Worker scheduling, isolated slots, preemption, and replay."
+    title="Groups 和調度"
+    description="每個 Group 佇列、全域 Worker 調度、隔離時隙、搶佔和重播。"
     href="./groups-and-scheduling/"
   />
   <LinkCard
@@ -60,18 +60,18 @@ MissionWeaveProtocol 協調一個受信任的 Organization 內的自治代理。
     href="./child-missions/"
   />
   <LinkCard
-    title="Signed Documents and trust"
-    description="Protected content, Registry evidence, six-stage verification, and signing hashes."
+    title="Signed Documents 和信任"
+    description="受保護的內容、Registry 證據、六階段驗證和簽名哈希。"
     href="./signed-documents-and-trust/"
   />
   <LinkCard
-    title="First Admission and Historical Trust"
-    description="Authoritative lookup, atomic admission, returned-record validation, and historical replay."
+    title="首次準入與歷史信任"
+    description="權威查找、原子準入、返回記錄驗證、歷史回放。"
     href="./first-admission-and-historical-trust/"
   />
   <LinkCard
-    title="Security boundaries"
-    description="What cryptography and Admission establish, and which concerns remain separate."
+    title="安全邊界"
+    description="密碼學和準入所建立的內容以及關注點仍然是分開的。"
     href="./security-boundaries/"
   />
 </CardGrid>
@@ -83,4 +83,4 @@ RPC、跨組織聯合、實體點對點路由、分散式共識、模型提示�
 
 对于准确的要求措辞，请使用当地的[参考规范](../reference/specification/),
 [術語](../reference/terminology/),
-[模式](../reference/schemas/)，和[一致性曲面](../reference/conformance/)。確切的提交、設定檔、摘要和內建網站身分發佈在本地[規範發布頁面]](../reference/normative-release/).
+[模式](../reference/schemas/)，和[一致性曲面](../reference/conformance/)。確切的提交、設定檔、摘要和內建網站身分發佈在本地[規範發布頁面](../reference/normative-release/)。

@@ -5,6 +5,7 @@ import javaInventory from "../../public/artifacts/0.1/sdks/java-api.json";
 import pythonInventory from "../../public/artifacts/0.1/sdks/python-api.json";
 import rustInventory from "../../public/artifacts/0.1/sdks/rust-api.json";
 import typescriptInventory from "../../public/artifacts/0.1/sdks/typescript-api.json";
+import { localizedText, uiCopyForPathname } from "../lib/normative-locale";
 
 type SdkId = "python" | "typescript" | "go" | "rust" | "java" | "cpp";
 
@@ -60,6 +61,7 @@ function sourceUrl(sourceFile: string, line?: number) {
 }
 
 const artifactUrl = `${import.meta.env.BASE_URL}artifacts/0.1/sdks/${sdk}-api.json`;
+const copy = uiCopyForPathname(Astro.url.pathname);
 ---
 
 <section
@@ -69,17 +71,17 @@ const artifactUrl = `${import.meta.env.BASE_URL}artifacts/0.1/sdks/${sdk}-api.js
 >
   <header class="inventory-header">
     <div>
-      <p class="eyebrow">Exact-commit public API inventory</p>
+      <p class="eyebrow">{localizedText(copy, "apiEyebrow")}</p>
       <p>
         <strong>{inventory.name}</strong> · <code>{inventory.package}</code> · {
-          entries.length
-        } public entries
+          localizedText(copy, "publicEntries", { count: entries.length })
+        }
       </p>
     </div>
-    <a href={artifactUrl}>Download local JSON inventory</a>
+    <a href={artifactUrl}>{localizedText(copy, "downloadInventory")}</a>
   </header>
   <p class="commit">
-    Source commit: <a
+    {localizedText(copy, "sourceCommit")}: <a
       href={`${inventory.repository}/commit/${inventory.commit}`}
     >
       <code>{inventory.commit}</code>
@@ -92,15 +94,17 @@ const artifactUrl = `${import.meta.env.BASE_URL}artifacts/0.1/sdks/${sdk}-api.js
         <details open={grouped.length <= 3 || undefined}>
           <summary>
             <code>{group.sourceFile}</code>
-            <span>{group.entries.length} entries</span>
+            <span>
+              {localizedText(copy, "entries", { count: group.entries.length })}
+            </span>
           </summary>
           <div class="table-scroll">
             <table>
               <thead>
                 <tr>
-                  <th scope="col">Kind</th>
-                  <th scope="col">Public symbol</th>
-                  <th scope="col">Exact source</th>
+                  <th scope="col">{localizedText(copy, "kind")}</th>
+                  <th scope="col">{localizedText(copy, "publicSymbol")}</th>
+                  <th scope="col">{localizedText(copy, "exactSource")}</th>
                 </tr>
               </thead>
               <tbody>

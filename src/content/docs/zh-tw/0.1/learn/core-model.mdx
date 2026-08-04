@@ -14,16 +14,16 @@ Mission 創造只建立了一個主要的 Group，一個根人類 MissionOwner, 
 ```text
 Organization
 ├── Agent Registry
-├── Group Authority and durable Event store
-├── Authorization Service
+├── Group 權威服務和持久 Event 儲存
+├── 授權服務
 └── Mission
     └── Group
         ├── MissionOwner
         ├── Coordinator
-        ├── Worker Memberships
-        ├── Conversations and Messages
-        ├── WorkItems and Work Contracts
-        └── ordered Events, Artifacts, Evidence, and Approvals
+        ├── Worker Membership
+        ├── 對話和 Message
+        ├── WorkItem 和 Work Contract
+        └── 有序 Event、Artifact、Evidence 和 Approval
 ```
 
 ## 連接合作的記錄
@@ -60,13 +60,13 @@ Authority 序列化對此狀態所接受的變更。
 [MWP-FND-013](../../reference/specification/foundations/#mwp-fnd-013)
 開始。概念總結是：
 
-- 一張 Mission 有一張主 Group 訂單和一張 Group Event 訂單；
-- 談話永遠不會產生執行力；
-- 專有作品受所有權和租賃期限的限制；
-- 接受的事件和提交的訊息僅是附加的；
+- 一個 Mission 擁有一個主 Group，以及每個 Group 內唯一的 Event 順序；
+- Conversation 永遠不會建立執行權限；
+- 獨佔工作透過 Ownership Epoch 和 Lease Epoch 進行 fencing；
+- 已接受的 Event 和已提交的 Message 僅可追加；
 - Mission 上下文和憑證預設是隔離的；
-- WorkItem 和子任务的預算與權限不得超過其上層；
-- 根 Mission 完成需要人工批准精確的修訂，並且 Artifact設定；和
-- 代理人發布可審核的決策、輸入、Evidence、阻止者和結果，不是私人的思想鏈。
+- WorkItem 和子任务的預算與權限只會從其父級收窄；
+- 根 Mission 完成需要人工 Approval 精確的修訂版和 Artifact 集；以及
+- Agent 發布可審核的決策、輸入、Evidence、阻塞因素和結果，而不是私有思維鏈。
 
 繼續[身分、角色和權限](../identity-roles-and-authority/)，了解這些記錄如何取得受信任的參與者和範圍權限。

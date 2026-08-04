@@ -43,16 +43,16 @@ partie de la limite d'appel Java.
 
 ## Carte source complète
 
-| Problème d'exécution         | Source de mise en œuvre publique                                                          | Contrat au commit épinglé                                                                                                                             |
+| Fonctionnalité d'exécution   | Source de mise en œuvre publique                                                          | Contrat au commit épinglé                                                                                                                             |
 | ---------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Versions et métadonnées      | `MissionWeaveProtocol.java`, `ProtocolBundle.java`                                        | Identité du protocole, version filaire, espace de noms et provenance exacte du protocole et du bundle.                                                |
 | Stricte JSON                 | `StrictJson.java`                                                                         | Analyse UTF-8 avec membre en double, nomenclature, entrée mal formée et rejet des données de fin.                                                     |
 | Schéma et heure exacte       | `SchemaCatalog.java`, `ExactInstant.java`                                                 | Validation hors ligne Draft 2020-12, formats affirmés, accès au schéma packagé et comparaison exacte RFC 3339.                                        |
-| Canoniques JSON et Ed25519   | `CanonicalJson.java`, `Ed25519.java`, `Base64Url.java`                                    | RFC 8785 octets et hachages ainsi que des assistants Ed25519 stricts.                                                                                 |
+| JSON canonique et Ed25519    | `CanonicalJson.java`, `Ed25519.java`, `Base64Url.java`                                    | RFC 8785 octets et hachages ainsi que des assistants Ed25519 stricts.                                                                                 |
 | Documents signés et Registry | `SignedDocumentCodec.java`, `AgentRegistryKeyResolution.java`, `KeyRegistrySnapshot.java` | Neuf types de documents, signature, validation complète Registry, vérification en six étapes et preuves immuables.                                    |
 | Cadres                       | `FrameCodec.java`                                                                         | Décodage strict et encodage canonique pour les valeurs de trame génériques WebSocket. Il s'agit d'un codec et non d'un service de passerelle hébergé. |
 | Conformité structurelle      | `ConformanceRunner.java`, `cli/ConformanceCli.java`                                       | Exécution du vecteur de schéma packagé ou à racine explicite et état de sortie du processus.                                                          |
-| Offres groupées intégrées    | `ProtocolBundle.java`                                                                     | Vérification source-racine et packagée des ensembles d'artefacts de protocole, de cryptographie et d'admission.                                       |
+| Bundles intégrés             | `ProtocolBundle.java`                                                                     | Vérification source-racine et packagée des ensembles d'artefacts de protocole, de cryptographie et d'admission.                                       |
 | Première admission           | `AdmissionService.java` et les enregistrements/interfaces d'admission                     | Première admission et confiance historique au-dessus de la vérification Signed Document réussie.                                                      |
 
 ## Validation, signature et preuves Registry
@@ -84,9 +84,9 @@ pas le transport, TLS, l'authentification de session, la persistance du curseur,
 le routage, la contre-pression ou les transitions d'état faisant autorité.
 
 `ProtocolBundle.verifyPackaged`, `verifyPackagedCryptographyBundle` et
-`verifyPackagedAdmissionBundle` valident les broches, les décomptes, les
-chemins, les longueurs d'octets et les résumés exacts du JAR. Les surcharges
-`Path` correspondantes valident une racine source ou un bundle de versions. Ces
+`verifyPackagedAdmissionBundle` valident les pins, les décomptes, les chemins,
+les longueurs d'octets et les résumés exacts du JAR. Les surcharges `Path`
+correspondantes valident une racine source ou un bundle de versions. Ces
 méthodes n’exécutent pas chaque cryptographie ou évaluation d’admission.
 
 `ConformanceRunner.runPackaged` et `ConformanceCli` exécutent uniquement les

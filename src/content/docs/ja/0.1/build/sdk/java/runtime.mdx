@@ -35,7 +35,7 @@ Maven アーティファクトは
 `org.missionweaveprotocol:missionweaveprotocol-sdk:0.1.0-SNAPSHOT` で、Java
 21 用にコンパイルされ、Maven 3.9 でビルドされました。これは、自動モジュール名
 `org.missionweaveprotocol.sdk`
-を宣言し、正確なプロトコル、暗号化、およびアドミッション リソースを JAR 内にパッケージ化します。
+を宣言し、正確なプロトコル、暗号、およびアドミッション リソースを JAR 内にパッケージ化します。
 
 アーティファクトをインストールしても、サービスは開始されず、ソケットも開かれず、永続ストアは作成されず、権限も付与されません。チェックされた
 `IOException`、検証例外、およびアドミッション例外は、Java 呼び出し境界の一部のままです。
@@ -51,7 +51,7 @@ Maven アーティファクトは
 | 署名付きドキュメントと Registry | `SignedDocumentCodec.java`、`AgentRegistryKeyResolution.java`、`KeyRegistrySnapshot.java` | 9 種類の文書、署名、完全な Registry 検証、6 段階の検証、および不変の証拠。                                                             |
 | フレーム                        | `FrameCodec.java`                                                                         | 汎用 WebSocket フレーム値の厳密なデコードと正規のエンコード。これはコーデックであり、ホストされたゲートウェイ サービスではありません。 |
 | 構造適合性                      | `ConformanceRunner.java`、`cli/ConformanceCli.java`                                       | パッケージ化されたまたは明示的なルートのスキーマ ベクターの実行とプロセスの終了ステータス。                                            |
-| 埋め込みバンドル                | `ProtocolBundle.java`                                                                     | プロトコル、暗号化、およびアドミッション アーティファクト セットのソース ルートおよびパッケージ化された検証。                          |
+| 埋め込みバンドル                | `ProtocolBundle.java`                                                                     | プロトコル、暗号、およびアドミッション アーティファクト セットのソース ルートおよびパッケージ化された検証。                            |
 | 初回アドミッション              | `AdmissionService.java` とアドミッションレコード/インターフェイス                         | Signed Document 検証が成功した後の初回アドミッションと履歴信頼。                                                                       |
 
 ## 検証、署名、および Registry の証拠
@@ -82,7 +82,7 @@ Maven アーティファクトは
 `verifyPackagedAdmissionBundle`
 は、JAR の正確なピン、カウント、パス、バイト長、およびダイジェストを検証します。対応する
 `Path`
-オーバーロードは、ソースまたはリリースバンドルのルートを検証します。これらのメソッドは、すべての暗号化やアドミッション評価を実行するわけではありません。
+オーバーロードは、ソースまたはリリースバンドルのルートを検証します。これらのメソッドは、すべての暗号やアドミッション評価を実行するわけではありません。
 
 `ConformanceRunner.runPackaged` および `ConformanceCli`
 は、構造スキーマ ベクトルのみを実行します。 `--root PATH`
@@ -110,7 +110,7 @@ Maven アーティファクトは
 ループはエクスポートされません。
 
 <SupportStatus status="not-implemented" /> **ホストされたゲートウェイ サービス**
-- アーティファクトは `FrameCodec`
+— アーティファクトは `FrameCodec`
 を提供しますが、トランスポート、TLS、セッション、ルーティング、またはバックプレッシャーの所有権を持つゲートウェイ
 サービスではありません。
 

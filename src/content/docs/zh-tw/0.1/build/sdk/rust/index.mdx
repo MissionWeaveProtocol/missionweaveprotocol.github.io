@@ -12,7 +12,7 @@ import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.a
 # Rust SDK
 
 `missionweaveprotocol` 是官方 Rust 箱子。此參考描述了確切的提交
-`2727f8777737265d98dde4ceaca306612ef54c52`、板條箱版本 `0.1.0`、Rust
+`2727f8777737265d98dde4ceaca306612ef54c52`、crate版本 `0.1.0`、Rust
 1.85 或更高版本以及版本 2024。記錄的 pin 未在 crates.io 上發布；不同的 Git 修訂版或包存檔是不同的實現輸入。
 
 :::note[Implementation note]
@@ -44,18 +44,18 @@ Log 持久性、網路安全性或生產就緒性。
 
 <CardGrid>
   <LinkCard
-    title="Complete runtime"
-    description="Every crate-root re-export, codec, bundle verifier, CLI boundary, and explicit non-implementation."
+    title="完整執行階段"
+    description="每個crate 根重新導出、編解碼器、捆綁驗證器、CLI 邊界和明確非實作。"
     href="./runtime/"
   />
   <LinkCard
-    title="First Admission and Historical Trust"
-    description="Typed current-Registry, trusted-context, and Admission Log traits with one runnable example."
+    title="首次準入與歷史信任"
+    description="Registry 目前證據、可信任上下文和 Admission Log 的型別化 trait，以及一個可運行範例。"
     href="./admission/"
   />
   <LinkCard
-    title="Exact public API"
-    description="Every public crate-root declaration resolved to its exact source line."
+    title="確切的公共 API"
+    description="每個公共crate 根聲明都解析到其確切的原始程式碼行。"
     href="./api/"
   />
 </CardGrid>
@@ -64,5 +64,5 @@ Log 持久性、網路安全性或生產就緒性。
 
 <SdkRuntimeMatrix sdk="rust" />
 
-該套件提供進程內協定行為，而不是部署權限。應用程式仍然提供經過驗證的當前和歷史 Registry 證據、可信任准入上下文以及權威的僅附加 Admission
+該套件提供進程內協定行為，而不是部署權限。應用程式仍然提供經過驗證的當前和歷史 Registry 證據、可信任準入上下文以及權威的僅附加 Admission
 Log。

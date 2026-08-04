@@ -196,18 +196,19 @@ Eine Implementierung entspricht nur dann MissionWeaveProtocol 0.1, wenn sie:
 
 - validiert jedes dauerhafte Objekt anhand der normativen Schemata;
 - übergibt alle 58 Strukturvektoren in `conformance/manifest.json`, bestehend
-  aus 27 erwartet-gültige und 31 erwartet-ungültige Dokumente; – besteht jede
-  Auswertung in `cryptography/manifest.json` und deckt alle neun ab
-  Schemaprofile im Signed Document-Verifizierungsprofil und ihre kanonischen
-  Signaturbytes, Hashes, Schlüsselbindungen und Signaturen; – besteht alle 30
-  Bewertungen im unabhängigen `admission/manifest.json` Verhaltenspaket, das die
-  Erstaufnahme und die historische Wiederholung in fünf Fällen abdeckt;
+  aus 27 erwartet-gültigen und 31 erwartet-ungültigen Dokumenten;
+- besteht jede Auswertung in `cryptography/manifest.json` und deckt alle neun
+  Schemaprofile im Signed Document-Verifizierungsprofil sowie ihre kanonischen
+  Signaturbytes, Hashes, Schlüsselbindungen und Signaturen ab;
+- besteht alle 30 Bewertungen im unabhängigen Verhaltenspaket
+  `admission/manifest.json`, das die Erstzulassung und die historische
+  Wiederholung in fünf Fällen abdeckt;
 - erzwingt alle Übergänge Mission und WorkItem;
 - demonstriert Wiedergabe, Deduplizierung, optimistische Parallelität und
-  Fencing; – demonstriert die Autorisierung und die
-  Message/non-authority-Invariante; und
-- Besteht Fehlerwiederherstellungstests, ohne veraltete oder doppelte Seiten zu
-  akzeptieren Effekte.
+  Fencing;
+- demonstriert die Autorisierung und die Message/non-authority-Invariante; und
+- besteht Fehlerwiederherstellungstests, ohne veraltete oder doppelte
+  Nebeneffekte zu akzeptieren.
 
 <NormativeClause id="MWP-EXT-011" level="MUST">
 
@@ -225,7 +226,7 @@ genauen Dateibytes.
 
 <NormativeClause id="MWP-EXT-012" level="MUST">
 
-Für das Eintrittspaket: `manifest.fixtureSchemas` identifiziert die
+Für das Admission-Bundle: `manifest.fixtureSchemas` identifiziert die
 First-Admission Record Und Registry Vorrichtungsschemata und
 `manifest.cryptography.artifactDigest` pinnt das unveränderte Kryptografiepaket,
 das von jeder Auswertung verwendet wird. Es ist `artifactDigest` wird mit der

@@ -20,18 +20,18 @@ Log 对其接受服务进行身份验证，将找到的记录与权威确认不�
 中建立索引，完整的首次准入和重放证据包发布在
 [准入一致性](../../reference/conformance/admission/)下。
 
-## 首次入场流程
+## 首次准入流程
 
 读者可见的序列正是：
 
 ```text
-six-stage cryptographic verification
-→ authoritative Admission Log lookup
-→ found record validation OR authoritative absence
-→ trusted context and candidate preparation
-→ atomic append-or-return-existing
-→ returned record validation
-→ admitted result
+六阶段密码验证
+→ Admission Log 权威查找
+→ 验证已找到的记录，或权威确认不存在
+→ 准备可信上下文和候选记录
+→ 原子式追加或返回现有记录
+→ 验证返回的记录
+→ 已准入结果
 ```
 
 分支点很重要。找到的记录直接进入记录验证。只有权威缺席才能保证可信的背景和候选人的准备。原子追加可以返回本地候选记录或并发提交的记录，并且返回的记录在成功之前总是经过验证。单独的候选字节永远不会建立准入。此编排由
@@ -58,10 +58,10 @@ JSON 值，根据本地架构进行验证，并与 Organization、文档类型�
 历史重播遵循一条较窄的路径：
 
 ```text
-six-stage cryptographic verification
-→ required found record
-→ record validation
-→ no trusted context or append
+六阶段密码验证
+→ 必须找到记录
+→ 验证记录
+→ 不签发可信上下文，也不追加
 ```
 
 这六个阶段使用权威历史 Registry 证据，其中包含受保护签名时间所需的保留有效性历史记录。重播需要现有记录，对其进行验证，并且永远不会创建新的准入或发出可信候选上下文（[MWP-ADM-008](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)）。

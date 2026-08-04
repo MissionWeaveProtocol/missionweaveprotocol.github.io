@@ -14,16 +14,16 @@ MissionWeaveProtocol 围绕有界 **Mission** 及其临时 **Group**
 ```text
 Organization
 ├── Agent Registry
-├── Group Authority and durable Event store
-├── Authorization Service
+├── Group 权威服务和持久 Event 存储
+├── 授权服务
 └── Mission
     └── Group
         ├── MissionOwner
         ├── Coordinator
-        ├── Worker Memberships
-        ├── Conversations and Messages
-        ├── WorkItems and Work Contracts
-        └── ordered Events, Artifacts, Evidence, and Approvals
+        ├── Worker Membership
+        ├── 对话和 Message
+        ├── WorkItem 和 Work Contract
+        └── 有序 Event、Artifact、Evidence 和 Approval
 ```
 
 ## 连接合作的记录
@@ -59,13 +59,13 @@ MissionWeaveProtocol 将共享事实与可重建的 Worker 状态分开。
 [MWP-FND-013](../../reference/specification/foundations/#mwp-fnd-013)
 开始。概念总结是：
 
-- 一张 Mission 有一张主 Group 订单和一张 Group Event 订单；
-- 谈话永远不会产生执行力；
-- 专有作品受所有权和租赁期限的限制；
-- 接受的事件和提交的消息仅是附加的；
+- 一个 Mission 拥有一个主 Group，以及每个 Group 内唯一的 Event 顺序；
+- Conversation 永远不会创建执行权限；
+- 独占工作通过 Ownership Epoch 和 Lease Epoch 进行 fencing；
+- 已接受的 Event 和已提交的 Message 仅可追加；
 - Mission 上下文和凭证默认是隔离的；
-- WorkItem 和子任务的预算与权限不得超过其父级；
-- 根 Mission 完成需要人工批准精确的修订，并且 Artifact设置；和
-- 代理发布可审核的决策、输入、Evidence、阻止者和结果，不是私人的思想链。
+- WorkItem 和子任务的预算与权限只会从其父级收窄；
+- 根 Mission 完成需要人工 Approval 精确的修订版和 Artifact 集；以及
+- Agent 发布可审核的决策、输入、Evidence、阻塞因素和结果，而不是私有思维链。
 
 继续[身份、角色和权限](../identity-roles-and-authority/)，了解这些记录如何获取受信任的参与者和范围权限。

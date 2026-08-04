@@ -1,16 +1,16 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: Java 首次入場與歷史信任
-description: 輸入 Java 適配器、確切的呼叫順序、信任邊界和可運行的准入範例。
+title: Java 首次準入與歷史信任
+description: 輸入 Java 適配器、確切的呼叫順序、信任邊界和可運行的準入範例。
 ---
 
 import javaAdmissionExample from "../../../../../../../../examples/sdk/java/AdmissionExample.java?raw";
 
-# Java 首次入場與歷史信任
+# Java 首次準入與歷史信任
 
-Java `AdmissionService` 將首次存取和歷史信任置於六階段 Signed
-Document 驗證器 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)) 之上。與語言無關的流程是本地[首次准入和歷史信任運行時頁面](../../../runtime/first-admission-and-historical-trust/)，確切的要求是本地[准入條款](../../../../reference/specification/first-admission-and-historical-trust/)。
+Java `AdmissionService` 將首次準入和歷史信任置於六階段 Signed
+Document 驗證器 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)) 之上。與語言無關的流程是本地[首次準入和歷史信任運行時頁面](../../../runtime/first-admission-and-historical-trust/)，確切的要求是本地[準入條款](../../../../reference/specification/first-admission-and-historical-trust/)。
 
 ## 公共適配器和結果
 
@@ -26,9 +26,9 @@ Document 驗證器 ([MWP-ADM-005](../../../../reference/specification/first-admi
 | `AdmissionService.verifyHistoricalAdmission`       | 使用歷史 Registry 證據重新運行驗證，並需要現有記錄，而不發布上下文或在 [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) 下附加。                                             |
 | `PreparedFirstAdmission`、`AdmittedSignedDocument` | 保留不可變的驗證和記錄證據並返回防禦性記錄位元組副本。                                                                                                                                                                           |
 
-呼叫者提供的信任布林值不是准入查找結果，絕不能選擇成功路徑。
+呼叫者提供的信任布林值不是準入查找結果，絕不能選擇成功路徑。
 
-## 首次入場電話順序
+## 首次準入呼叫順序
 
 :::note[Informative example]
 
@@ -63,9 +63,9 @@ AdmittedSignedDocument first =
 [MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)
 下的便携式日志证明验证。
 
-六級故障依然存在 `SignedDocumentVerificationException`。准入階段故障有
+六級故障依然存在 `SignedDocumentVerificationException`。準入階段故障有
 `AdmissionException` 有線碼 `AUTH_INVALID_SIGNATURE`， 階段
-`admission`，以及一個鍵入的
+`admission`，以及一個型別化的
 `AdmissionReason`，依照[MWP-ADM-012的要求](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)。部署適配器拋出
 `AdmissionAdapterException`;一般性的成功或可用性並不是經過驗證的證據。
 
@@ -73,7 +73,7 @@ AdmittedSignedDocument first =
 
 :::note[Informative example]
 
-此範例讀取簽名的 Command 和 Registry 從打包在確切的 JAR 中的資源中獲取，然後提供類型化的記憶體中權限適配器。它不會讀取存儲庫文件。它為首次准入和歷史重播斷言相同的記錄 ID、簽名雜湊值和記錄位元組，並且只有一個附加。
+此範例讀取簽名的 Command 和 Registry 從打包在確切的 JAR 中的資源中獲取，然後提供類型化的記憶體中權限適配器。它不會讀取存儲庫文件。它為首次準入和歷史重播斷言相同的記錄 ID、簽名雜湊值和記錄位元組，並且只有一個附加。
 
 <pre>
   <code>{javaAdmissionExample}</code>

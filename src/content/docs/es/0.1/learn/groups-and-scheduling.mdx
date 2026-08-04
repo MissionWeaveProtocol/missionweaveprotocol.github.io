@@ -16,17 +16,17 @@ partir de eventos aceptados
 ([MWP-WRK-008](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008)).
 
 ```text
-Group A Events → Group A queue ┐
-Group B Events → Group B queue ├→ Worker Scheduler → isolated execution slots
-Group C Events → Group C queue ┘
+Event de Group A → cola de Group A ┐
+Event de Group B → cola de Group B ├→ planificador de Worker → ranuras de ejecución aisladas
+Event de Group C → cola de Group C ┘
 ```
 
 ## ¿Quién controla la prioridad?
 
 Los suministros Coordinator solicitaron urgencia, fecha límite e impacto
 comercial para su Mission. El programador Worker tiene control final sobre los
-pedidos cruzados Group; un Coordinator no puede forzar su Mission por delante de
-grupos no relacionados
+ordenamiento entre Groups; un Coordinator no puede forzar su Mission por delante
+de grupos no relacionados
 ([MWP-WRK-009](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-009)).
 
 El Programador aplica la equidad ponderada y la lucha contra el hambre. El orden

@@ -101,8 +101,8 @@ clave pública de 32 bytes como la codificación de punto comprimida Edwards2551
 definida por RFC 8032. La codificación MUST debe ser canónica, MUST decodifica
 en un punto de la curva, MUST NOT es el punto de identidad y MUST está en el
 subgrupo de orden principal: para el orden de subgrupo `L`, `[L]A` MUST es igual
-a la identidad. Una verificación de longitud, una lista negra de pedidos
-pequeños o una importación exitosa a un backend de criptografía de propósito
+a la identidad. Una verificación de longitud, una lista negra de puntos de orden
+pequeño o una importación exitosa a un backend de criptografía de propósito
 general no es suficiente. Las codificaciones no canónicas, las codificaciones de
 cero negativo, los puntos de orden pequeño y los puntos de orden mixto MUST se
 rechazarán antes de que se apliquen el enlace inmutable y las comprobaciones de
@@ -292,7 +292,7 @@ validación de confianza histórica por parte del Organization que acepta.
 
 </NormativeClause>
 
-<InformativeBlock title="Pinned source continuation">
+<InformativeBlock title="Continuación de la fuente fijada">
 
 El siguiente bloque reanuda un segmento fuente fijado posteriormente. Consulte
 el [mapa fuente de especificación](./) para ver la página local intermedia y los

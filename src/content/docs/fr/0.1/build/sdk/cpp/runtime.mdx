@@ -43,16 +43,16 @@ déclaration API et ne doivent pas survivre à leur propriétaire.
 
 ## Carte d'en-tête complète
 
-| Problème d'exécution         | En-têtes publics installés          | Contrat au niveau du commit épinglé                                                                                                                                |
+| Fonctionnalité d'exécution   | En-têtes publics installés          | Contrat au niveau du commit épinglé                                                                                                                                |
 | ---------------------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Versions et types d'actifs   | `version.hpp`, `bundle.hpp`         | SDK et identité de protocole, étendues d'actifs intégrés immuables, broches exactes et résumés des bundles.                                                        |
+| Versions et types d'actifs   | `version.hpp`, `bundle.hpp`         | SDK et identité de protocole, étendues d'actifs intégrés immuables, pins exactes et résumés des bundles.                                                           |
 | Stricte JSON                 | `json.hpp`                          | `parse_strict_json` sur du texte ou des octets avec un membre en double, un UTF-8/JSON mal formé et un rejet des données de fin.                                   |
 | Schéma et heure exacte       | `schema.hpp`, `signed_document.hpp` | Validation hors ligne du projet 2020-12, formats affirmés et preuves exactes en temps protégé.                                                                     |
-| Canoniques JSON et Ed25519   | `canonical.hpp`, `crypto.hpp`       | Chaînes et hachages RFC 8785 ainsi que des aides strictes à la signature et à la vérification Ed25519.                                                             |
+| JSON canonique et Ed25519    | `canonical.hpp`, `crypto.hpp`       | Chaînes et hachages RFC 8785 ainsi que des aides strictes à la signature et à la vérification Ed25519.                                                             |
 | Documents signés et Registry | `signed_document.hpp`               | Neuf types de documents, signature, validation complète Registry, vérification en six étapes et preuves immuables.                                                 |
 | Cadres                       | `frame.hpp`                         | Décodage strict, encodage canonique et validation de document pour les valeurs de trame WebSocket. Il s'agit d'un codec et non d'un service de passerelle hébergé. |
 | Conformité structurelle      | `conformance.hpp`                   | Exécution de schéma-vecteur intégrée, résultats vectoriels et résumé du rapport.                                                                                   |
-| Offres groupées intégrées    | `bundle.hpp`                        | Accès exact aux actifs et vérification du résumé pour les offres groupées de protocole, de cryptographie et d'admission.                                           |
+| Bundles intégrés             | `bundle.hpp`                        | Accès exact aux actifs et vérification du résumé pour les bundles de protocole, de cryptographie et d'admission.                                                   |
 | Première admission           | `admission.hpp`                     | Première admission et confiance historique au-dessus de la vérification réussie Signed Document.                                                                   |
 
 ## Validation, signature et preuves Registry
@@ -86,7 +86,7 @@ d'état faisant autorité.
 `ProtocolBundle::verify` vérifie le groupe structurel de 22 schémas et de 59
 fichiers. `verify_cryptography` vérifie 98 artefacts, 22 cas et 62 évaluations
 déclarées ; `verify_admission` vérifie 19 artefacts, 5 cas et 30 évaluations
-déclarées. Ces appels vérifient les broches, les décomptes, les chemins, les
+déclarées. Ces appels vérifient les pins, les décomptes, les chemins, les
 longueurs d'octets et les résumés, mais n'exécutent pas chaque cryptographie ou
 évaluation d'admission.
 

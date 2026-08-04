@@ -1,5 +1,6 @@
 ---
 import release from "../data/normative/0.1/release-source.json";
+import { localizedText, uiCopyForPathname } from "../lib/normative-locale";
 
 interface Props {
   heading?: string;
@@ -7,7 +8,8 @@ interface Props {
 
 type SdkName = keyof typeof release.sdks;
 
-const { heading = "Normative release facts" } = Astro.props as Props;
+const copy = uiCopyForPathname(Astro.url.pathname);
+const { heading = localizedText(copy, "releaseFacts") } = Astro.props as Props;
 const headingId = "normative-release-facts";
 const sdkNames = Object.keys(release.sdks) as SdkName[];
 const sdkPins = sdkNames.map((name) => ({
@@ -23,49 +25,49 @@ const protocolCommitUrl = `${release.repository}/commit/${release.protocolCommit
 
   <dl class="release-facts__summary">
     <div>
-      <dt>Release</dt>
+      <dt>{localizedText(copy, "release")}</dt>
       <dd><code>{release.releaseId}</code></dd>
     </div>
     <div>
-      <dt>Status</dt>
+      <dt>{localizedText(copy, "status")}</dt>
       <dd><code>{release.status}</code></dd>
     </div>
     <div>
-      <dt>Protocol version</dt>
+      <dt>{localizedText(copy, "protocolVersion")}</dt>
       <dd><code>{release.protocolVersion}</code></dd>
     </div>
     <div>
-      <dt>Wire namespace</dt>
+      <dt>{localizedText(copy, "wireNamespace")}</dt>
       <dd><code>{release.wireNamespace}</code></dd>
     </div>
     <div>
-      <dt>Locales</dt>
+      <dt>{localizedText(copy, "locales")}</dt>
       <dd>{release.locales.length}</dd>
     </div>
     <div>
-      <dt>SDKs</dt>
+      <dt>{localizedText(copy, "sdks")}</dt>
       <dd>{sdkPins.length}</dd>
     </div>
   </dl>
 
-  <h3>Protocol identity</h3>
+  <h3>{localizedText(copy, "protocolIdentity")}</h3>
   <dl class="release-facts__identity">
     <div>
-      <dt>Commit</dt>
+      <dt>{localizedText(copy, "commit")}</dt>
       <dd>
         <a href={protocolCommitUrl}><code>{release.protocolCommit}</code></a>
       </dd>
     </div>
     <div>
-      <dt>Pin SHA-256</dt>
+      <dt>{localizedText(copy, "pinSha256")}</dt>
       <dd><code>{release.protocolPinSha256}</code></dd>
     </div>
     <div>
-      <dt>Bundle SHA-256</dt>
+      <dt>{localizedText(copy, "bundleSha256")}</dt>
       <dd><code>{release.protocolBundleSha256}</code></dd>
     </div>
     <div>
-      <dt>Built-tree digest algorithm</dt>
+      <dt>{localizedText(copy, "builtTreeDigestAlgorithm")}</dt>
       <dd><code>{release.contentDigestAlgorithm}</code></dd>
     </div>
   </dl>
@@ -73,23 +75,23 @@ const protocolCommitUrl = `${release.repository}/commit/${release.protocolCommit
   <div class="release-facts__tables">
     <section aria-labelledby="normative-artifact-counts">
       <h3 id="normative-artifact-counts">
-        Normative artifacts and evaluations
+        {localizedText(copy, "normativeArtifactsEvaluations")}
       </h3>
       <div class="release-facts__table-scroll">
         <table>
           <thead>
             <tr>
-              <th scope="col">Surface</th>
-              <th scope="col">Artifacts</th>
-              <th scope="col">Cases</th>
-              <th scope="col">Evaluations</th>
-              <th scope="col">Complete / valid</th>
-              <th scope="col">Rejected / invalid</th>
+              <th scope="col">{localizedText(copy, "surface")}</th>
+              <th scope="col">{localizedText(copy, "artifacts")}</th>
+              <th scope="col">{localizedText(copy, "cases")}</th>
+              <th scope="col">{localizedText(copy, "evaluations")}</th>
+              <th scope="col">{localizedText(copy, "completeValid")}</th>
+              <th scope="col">{localizedText(copy, "rejectedInvalid")}</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <th scope="row">JSON Schemas</th>
+              <th scope="row">{localizedText(copy, "jsonSchemas")}</th>
               <td>{release.schemas.count}</td>
               <td>—</td>
               <td>—</td>
@@ -97,7 +99,8 @@ const protocolCommitUrl = `${release.repository}/commit/${release.protocolCommit
               <td>—</td>
             </tr>
             <tr>
-              <th scope="row">Structural conformance</th>
+              <th scope="row">{localizedText(copy, "structuralConformance")}</th
+              >
               <td>—</td>
               <td>{release.structural.total}</td>
               <td>—</td>
@@ -105,7 +108,7 @@ const protocolCommitUrl = `${release.repository}/commit/${release.protocolCommit
               <td>{release.structural.invalid}</td>
             </tr>
             <tr>
-              <th scope="row">Cryptography</th>
+              <th scope="row">{localizedText(copy, "cryptography")}</th>
               <td>{release.cryptography.artifacts}</td>
               <td>{release.cryptography.cases}</td>
               <td>{release.cryptography.evaluations}</td>
@@ -113,7 +116,7 @@ const protocolCommitUrl = `${release.repository}/commit/${release.protocolCommit
               <td>{release.cryptography.rejected}</td>
             </tr>
             <tr>
-              <th scope="row">First Admission</th>
+              <th scope="row">{localizedText(copy, "firstAdmission")}</th>
               <td>{release.admission.artifacts}</td>
               <td>{release.admission.cases}</td>
               <td>{release.admission.evaluations}</td>
@@ -126,35 +129,37 @@ const protocolCommitUrl = `${release.repository}/commit/${release.protocolCommit
     </section>
 
     <section aria-labelledby="normative-profile-digests">
-      <h3 id="normative-profile-digests">Profiles and digests</h3>
+      <h3 id="normative-profile-digests">
+        {localizedText(copy, "profilesDigests")}
+      </h3>
       <dl class="release-facts__identity">
         <div>
-          <dt>Cryptography profile</dt>
+          <dt>{localizedText(copy, "cryptographyProfile")}</dt>
           <dd><code>{release.cryptography.profile}</code></dd>
         </div>
         <div>
-          <dt>Cryptography digest</dt>
+          <dt>{localizedText(copy, "cryptographyDigest")}</dt>
           <dd><code>{release.cryptography.digest}</code></dd>
         </div>
         <div>
-          <dt>Admission profile</dt>
+          <dt>{localizedText(copy, "admissionProfile")}</dt>
           <dd><code>{release.admission.profile}</code></dd>
         </div>
         <div>
-          <dt>Admission digest</dt>
+          <dt>{localizedText(copy, "admissionDigest")}</dt>
           <dd><code>{release.admission.digest}</code></dd>
         </div>
       </dl>
     </section>
 
     <section aria-labelledby="normative-sdk-pins">
-      <h3 id="normative-sdk-pins">Exact SDK pins</h3>
+      <h3 id="normative-sdk-pins">{localizedText(copy, "exactSdkPins")}</h3>
       <div class="release-facts__table-scroll">
         <table>
           <thead>
             <tr>
               <th scope="col">SDK</th>
-              <th scope="col">Commit</th>
+              <th scope="col">{localizedText(copy, "commit")}</th>
             </tr>
           </thead>
           <tbody>

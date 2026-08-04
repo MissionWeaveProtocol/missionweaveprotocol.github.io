@@ -1,14 +1,14 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: Beharrlichkeit und Genesung
+title: Persistenz und Wiederherstellung
 description: >-
-  Autorisierender Status, wiederherstellbare Projektionen, Belege, optimistische
+  Maßgeblicher Zustand, wiederherstellbare Projektionen, Belege, optimistische
   Parallelität, Wiedergabe, Cursor, Snapshots und Wiederherstellung externer
   Nebeneffekte.
 ---
 
-# Beharrlichkeit und Genesung
+# Persistenz und Wiederherstellung
 
 Beharrlichkeit wird durch Autorität gespalten. Missionen, Mitgliedschaften,
 WorkItems, Eigentums- und Leasing-Epochen, Deduplizierungsbelege, Genehmigungen
@@ -55,7 +55,7 @@ wiederhergestellt werden können.
 
 `ACK` meldet den höchsten zusammenhängenden dauerhaften Cursor. Es ermöglicht
 möglicherweise die Bereinigung der Zustellung, löscht jedoch niemals den
-autorisierenden Group-Verlauf. Die Wiedergabe der erneuten Verbindung kann
+maßgeblichen Group-Verlauf. Die Wiedergabe der erneuten Verbindung kann
 Duplikate rund um eine Verbindungsunterbrechung enthalten
 ([MWP-WRK-030](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)).
 
@@ -140,13 +140,13 @@ Operations-ID
 Ein sicherer lokaler Anwendungszyklus ist:
 
 ```text
-begin local transaction
-→ reject or ignore duplicate Event ID
-→ verify next contiguous Group sequence
-→ update Group projection and per-Group queue
-→ persist any checkpoint or outbox intent
-→ advance durable Cursor
-→ commit
+lokale Transaktion beginnen
+→ doppelte Event ID ablehnen oder ignorieren
+→ nächste zusammenhängende Group-Sequenz prüfen
+→ Group-Projektion und Warteschlange pro Group aktualisieren
+→ Checkpoint- oder Postausgangsabsicht persistieren
+→ dauerhaften Cursor fortschreiben
+→ festschreiben
 ```
 
 Behalten Sie bei einem externen Nebeneffekt die Absicht vor dem Versand bei,
@@ -160,7 +160,7 @@ unterstützt werden. Machen Sie Transaktionsgrenzen im sichtbar API:
 `record side-effect receipt` sollte nicht in nicht verwandten
 Objektspeicherungen ausgeblendet werden.
 
-Ein Postausgang ist für die Transportveröffentlichung nach einem autorisierenden
+Ein Postausgang ist für die Transportveröffentlichung nach einem maßgeblichen
 Commit nützlich, und ein Posteingang oder eine verarbeitete Datei ist
 nützlich.Event Die Tabelle ist für die lokale Deduplizierung nützlich.
 Aufbewahrung, Snapshot-Kadenz, Partitionierung, Komprimierung und
@@ -169,5 +169,5 @@ und Replay-Verpflichtungen nicht aufheben.
 
 :::
 
-Weiter mit [Transport und Einrahmung](../transport-and-framing/) um eine
-dauerhafte Wiedergabe mit dem Wire-Protokoll zu verbinden.
+Weiter mit [Transport und Framing](../transport-and-framing/) um eine dauerhafte
+Wiedergabe mit dem Wire-Protokoll zu verbinden.

@@ -17,7 +17,7 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 <SupportStatus status="implemented" /> 適用於下列所列的公共類別和進程內行為。
 
 <SupportStatus status="deployment-adapter-required" /> 適用於目前 Registry
-權威性、可信任准入情境、經過驗證的日誌存取和其他部署服務。
+權威性、可信任準入情境、經過驗證的日誌存取和其他部署服務。
 
 <SupportStatus status="not-implemented" />
 表示精確固定的工件沒有對應的執行時間。
@@ -27,10 +27,10 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 Maven 工件是
 `org.missionweaveprotocol:missionweaveprotocol-sdk:0.1.0-SNAPSHOT`，為 Java
 21 編譯並使用 Maven 3.9 建置。它聲明自動模組名稱 `org.missionweaveprotocol.sdk`
-並將確切的協定、密碼學和准入資源打包在 JAR 內。
+並將確切的協定、密碼學和準入資源打包在 JAR 內。
 
 安裝工件不會啟動任何服務，不會開啟套接字，不會建立持久存儲，也不會授予任何權限。檢查了
-`IOException`、驗證異常和准入異常仍然是 Java 呼叫邊界的一部分。
+`IOException`、驗證異常和準入異常仍然是 Java 呼叫邊界的一部分。
 
 ## 完整的原始碼圖
 
@@ -43,8 +43,8 @@ Maven 工件是
 | 簽署的文件和 Registry | `SignedDocumentCodec.java`, `AgentRegistryKeyResolution.java`, `KeyRegistrySnapshot.java` | 九種文件，簽字，齊全 Registry 驗證、六階段驗證和不可變的證據。              |
 | 框架                  | `FrameCodec.java`                                                                         | 通用的嚴格解碼與規範編碼 WebSocket 幀值。這是編解碼器，而不是託管網關服務。 |
 | 結構一致性            | `ConformanceRunner.java`, `cli/ConformanceCli.java`                                       | 打包或明確根模式向量執行和進程退出狀態。                                    |
-| 嵌入式捆綁包          | `ProtocolBundle.java`                                                                     | 協定、密碼學和准入工件集的源根和打包驗證。                                  |
-| 首次准入              | `AdmissionService.java` 與准入記錄/介面                                                   | Signed Document 驗證成功後的首次准入與歷史信任。                            |
+| 嵌入式捆綁包          | `ProtocolBundle.java`                                                                     | 協定、密碼學和準入工件集的源根和打包驗證。                                  |
+| 首次準入              | `AdmissionService.java` 與準入記錄/介面                                                   | Signed Document 驗證成功後的首次準入與歷史信任。                            |
 
 ## 驗證、簽名和 Registry 證據
 
@@ -75,15 +75,15 @@ Maven 工件是
 `ConformanceRunner.runPackaged` 和 `ConformanceCli` 僅執行結構模式向量。提供
 `--root PATH` 選擇顯式協定或發布包而不是打包資源。
 
-## 首次入場
+## 首次準入
 
 `AdmissionService` 公開 `prepareFirstAdmission`、`admitFirst` 和
 `verifyHistoricalAdmission`。繼續使用
-[Java 准入參考](../admission/)，以了解確切的適配器結果、呼叫順序和可運行套件範例。
+[Java 準入參考](../admission/)，以了解確切的適配器結果、呼叫順序和可運行套件範例。
 
 ## 明確的可用性邊界
 
-<SupportStatus status="deployment-adapter-required" /> **准入權威服務** —
+<SupportStatus status="deployment-adapter-required" /> **準入權威服務** —
 應用程式提供當前 Registry 證據、歷史 Registry
 證據、可信任接受上下文以及經過驗證的僅附加日誌。
 

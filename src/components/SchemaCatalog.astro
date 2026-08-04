@@ -1,5 +1,8 @@
 ---
 import release from "../data/normative/0.1/release-source.json";
+import { localizedText, uiCopyForPathname } from "../lib/normative-locale";
+
+const copy = uiCopyForPathname(Astro.url.pathname);
 
 interface SchemaDocument {
   title?: string;
@@ -36,9 +39,11 @@ if (schemas.length !== release.schemas.count) {
   <table>
     <thead>
       <tr>
-        <th scope="col">Schema artifact</th>
-        <th scope="col">Declared title</th>
-        <th scope="col">Canonical <code>$id</code></th>
+        <th scope="col">{localizedText(copy, "schemaArtifact")}</th>
+        <th scope="col">{localizedText(copy, "declaredTitle")}</th>
+        <th scope="col">
+          {localizedText(copy, "canonicalId", { id: "$id" })}
+        </th>
       </tr>
     </thead>
     <tbody>

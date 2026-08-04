@@ -1,17 +1,17 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: TypeScript 首次入場與歷史信任
+title: TypeScript 首次準入與歷史信任
 description:
-  輸入 TypeScript 適配器、精確的非同步呼叫順序、信任邊界和可運行的准入範例。
+  輸入 TypeScript 適配器、精確的非同步呼叫順序、信任邊界和可運行的準入範例。
 ---
 
 import typescriptAdmissionExample from "../../../../../../../../examples/sdk/typescript/admission.ts?raw";
 
-# TypeScript 首次入場與歷史信任
+# TypeScript 首次準入與歷史信任
 
 TypeScript `AdmissionService` 在六階段 Signed
-Document 驗證器 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)) 之上首次准入和信任歷史。與語言無關的流程是本地[首次接納和歷史信任運行時頁面](../../../runtime/first-admission-and-historical-trust/)，確切的要求是本地[首次接納和歷史信任子句](../../../../reference/specification/first-admission-and-historical-trust/)。
+Document 驗證器 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)) 之上分層首次準入和歷史信任。與語言無關的流程見本地[首次準入和歷史信任運行時頁面](../../../runtime/first-admission-and-historical-trust/)，確切要求見本地[首次準入和歷史信任條款](../../../../reference/specification/first-admission-and-historical-trust/)。
 
 ## 公共適配器和結果
 
@@ -28,9 +28,9 @@ Document 驗證器 ([MWP-ADM-005](../../../../reference/specification/first-admi
 | `AdmittedSignedDocument`                     | 返回不可變的 `verified` 和 `record` 證據以及防禦性 `recordBytes` 副本。                                                                                                                                                                              |
 
 確切的權威缺席值為
-`{ status: "authoritative-absence" }`。呼叫者提供的信任布林值不是准入查找結果，絕不能選擇成功路徑。
+`{ status: "authoritative-absence" }`。呼叫者提供的信任布林值不是準入查找結果，絕不能選擇成功路徑。
 
-## 首次入場電話順序
+## 首次準入呼叫順序
 
 :::note[Informative example]
 
@@ -85,7 +85,7 @@ const historical = await new AdmissionService().verifyHistoricalAdmission(
 所需的非神諭線結果。
 
 適配器可能會拋出 `AdmissionLogError`
-以及受支援的准入原因。其他適配器例外不會自動重新分類。部署必須刻意映射其失敗，並且不得將一般成功、可用性或快取狀態視為經過驗證的證據。
+以及受支援的準入原因。其他適配器例外不會自動重新分類。部署必須刻意映射其失敗，並且不得將一般成功、可用性或快取狀態視為經過驗證的證據。
 
 ## 可運行的精確固定範例
 

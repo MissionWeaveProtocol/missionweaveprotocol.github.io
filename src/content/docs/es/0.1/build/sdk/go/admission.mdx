@@ -1,7 +1,7 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: Ir Primera Admisión y Confianza Histórica
+title: Go Primera admisión y confianza histórica
 description: >-
   Adaptadores Go escritos, orden de llamada exacto, límites de confianza,
   requisitos de registro atómico y un ejemplo de admisión ejecutable.
@@ -9,7 +9,7 @@ description: >-
 
 import goAdmissionExample from "../../../../../../../../examples/sdk/go/admission/main.go?raw";
 
-# Ir Primera Admisión y Confianza Histórica
+# Go Primera admisión y confianza histórica
 
 Go `AdmissionService` coloca la primera admisión y la confianza histórica por
 encima del verificador Signed Document de seis etapas
@@ -32,7 +32,7 @@ locales].
 | `AdmissionService.PrepareFirstAdmission`     | Cree y valide pruebas candidatas a partir de un `VerifiedSignedDocument` producido por SDK. No anexa ni implica admisión.                                                                                                                                                                                 |
 | `AdmissionService.AdmitFirst`                | Realice la verificación actual, la búsqueda autoritativa, la creación de candidatos, la validación atómica de anexar o devolver existente y de registros devueltos en [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                               |
 | `AdmissionService.VerifyHistoricalAdmission` | Vuelva a ejecutar la verificación de seis etapas con evidencia histórica autoritativa del Registry y exija un registro existente sin emitir contexto ni añadirlo, como requiere [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                     |
-| `AdmittedSignedDocument`                     | Devuelva evidencia de registro verificada y analizada más una copia defensiva `RecordBytes()`.                                                                                                                                                                                                            |
+| `AdmittedSignedDocument`                     | Devuelva evidencia de Registry verificada y analizada más una copia defensiva `RecordBytes()`.                                                                                                                                                                                                            |
 
 Un valor booleano de confianza proporcionado por la persona que llama no es un
 resultado de búsqueda de admisión y nunca debe seleccionar la ruta exitosa.

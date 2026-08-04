@@ -45,26 +45,26 @@ WorkItem 的核心狀態和轉換是：
 
 <span id="workitem-transition-table"></span>
 
-| 目前狀態                                                                         | 過渡                              | 下一個狀態                | 筆記                                                                  |
-| -------------------------------------------------------------------------------- | --------------------------------- | ------------------------- | --------------------------------------------------------------------- |
-| 無                                                                               | `work.propose`                    | 開放工作提案              | 任何 Group 成員可以提議；不 WorkItem 還存在                           |
-| 沒有或開放工作提案                                                               | `work.authorize`                  | `open`                    | Coordinator 或範圍委託創建 WorkItem                                   |
-| `open`, `offered`, `queued`, `active`, `blocked`， 或者 `failed`，沒有活著的主人 | `work.offer`                      | `offered`                 | 建立、替換或擴展持久報價；過期的所有者首先被圍起來                    |
-| `offered`                                                                        | `work.accept_offer`               | `queued`                  | 原子所有權時代開始                                                    |
-| `offered`                                                                        | 優惠到期                          | `offered`                 | 到期會使接受無效，但本身不會附加 Event 或更改狀態                     |
-| `queued`                                                                         | `approval.grant_execution` 需要時 | `queued`                  | 無需執行工作即可滿足啟動閘                                            |
-| `queued`                                                                         | `work.start`                      | `active`                  | 需要有效的所有權和執行租賃                                            |
-| `active`                                                                         | `work.checkpoint`                 | `queued`                  | 持久的進展釋放了執行力，同時保留了有限的所有權租賃                    |
-| `active`                                                                         | `work.block`                      | `blocked`                 | 檢查點與有界塊租約                                                    |
-| `blocked`                                                                        | `work.unblock`                    | `queued` 或者 `open`      | 重新進入其佇列或在所有權到期後重新提供                                |
-| `active`                                                                         | `work.submit`                     | `submitted`               | 文物和 Evidence 必填                                                  |
-| `submitted`                                                                      | `work.accept_result`              | `verified`                | Coordinator 審核成功                                                  |
-| `open`, `offered`, `queued`, `active`, `blocked`， 或者 `submitted`              | `work.fail`                       | `failed`                  | 失敗 Evidence 必需的;一個 Coordinator 稍後可能會發布新的 `work.offer` |
-| `open`, `offered`, `queued`, `active`, `blocked`， 或者 `submitted`              | `work.cancel`                     | `cancelled`               | 清理政策適用                                                          |
-| `open`, `offered`, `queued`, `active`， 或者 `blocked`                           | `mission.create_child`            | `blocked`                 | 連結的子項的所有權受到保護 Mission 運行                               |
-| `blocked`                                                                        | 連結的子任务獲得核准              | `verified`                | 子任务 Approval 成為上層 WorkItem 的 Evidence                         |
-| `blocked`                                                                        | 連結的子任务失敗                  | `blocked` 或 `failed`     | 宣告的子任务失敗策略控制傳播                                          |
-| `open`, `offered`, `queued`, `active`, `blocked`， 或者 `submitted`              | 家長 Mission 失敗或取消           | `failed` 或者 `cancelled` | 終端 Mission 狀態傳播到未完成的工作項目                               |
+| 目前狀態                                                                     | 轉換                                  | 下一狀態                | 說明                                                       |
+| ---------------------------------------------------------------------------- | ------------------------------------- | ----------------------- | ---------------------------------------------------------- |
+| 無                                                                           | `work.propose`                        | 開放工作提案            | 任何 Group 成員均可提出；尚不存在 WorkItem                 |
+| 無或開放工作提案                                                             | `work.authorize`                      | `open`                  | Coordinator 或範圍內委託方建立 WorkItem                    |
+| `open`、`offered`、`queued`、`active`、`blocked` 或 `failed`，且無有效所有者 | `work.offer`                          | `offered`               | 建立、替換或延長持久報價；過期所有者先被 fencing           |
+| `offered`                                                                    | `work.accept_offer`                   | `queued`                | 原子性 Ownership Epoch 開始                                |
+| `offered`                                                                    | 報價到期                              | `offered`               | 到期會使接受操作失效，但本身不會附加 Event 或變更狀態      |
+| `queued`                                                                     | 需要時執行 `approval.grant_execution` | `queued`                | 無需執行工作即可滿足啟動閘門                               |
+| `queued`                                                                     | `work.start`                          | `active`                | 需要有效所有權與 Execution Lease                           |
+| `active`                                                                     | `work.checkpoint`                     | `queued`                | 持久化進度會釋放執行權，同時保留有界 Ownership Lease       |
+| `active`                                                                     | `work.block`                          | `blocked`               | 檢查點與有界阻塞租約                                       |
+| `blocked`                                                                    | `work.unblock`                        | `queued` 或 `open`      | 重新進入其佇列，或在所有權到期後重新報價                   |
+| `active`                                                                     | `work.submit`                         | `submitted`             | 需要 Artifact 與 Evidence                                  |
+| `submitted`                                                                  | `work.accept_result`                  | `verified`              | Coordinator 審核成功                                       |
+| `open`、`offered`、`queued`、`active`、`blocked` 或 `submitted`              | `work.fail`                           | `failed`                | 需要失敗 Evidence；Coordinator 稍後可發布新的 `work.offer` |
+| `open`、`offered`、`queued`、`active`、`blocked` 或 `submitted`              | `work.cancel`                         | `cancelled`             | 適用清理政策                                               |
+| `open`、`offered`、`queued`、`active` 或 `blocked`                           | `mission.create_child`                | `blocked`               | 連結的子任务執行期間，所有權被 fencing                     |
+| `blocked`                                                                    | 連結的子任务獲批                      | `verified`              | 子任务的 Approval 成為父 WorkItem 的 Evidence              |
+| `blocked`                                                                    | 連結的子任务失敗                      | `blocked` 或 `failed`   | 宣告的子任务失敗政策控制傳播                               |
+| `open`、`offered`、`queued`、`active`、`blocked` 或 `submitted`              | 父 Mission 失敗或取消                 | `failed` 或 `cancelled` | Mission 終態傳播到未完成的 WorkItem                        |
 
 <NormativeClause id="MWP-WRK-003" level={["MAY","MUST"]}>
 
@@ -124,14 +124,15 @@ MUST 為每個 Group 維護一個不同的 Event 收件匣、遊標和工作佇�
 
 <NormativeClause id="MWP-WRK-009" level="MUST NOT">
 
-Worker 擁有的調度程序從所有每個 Group 佇列中選擇符合條件的工作項目到聲明的隔離執行槽中。調度者對跨Group訂單擁有最終決定權。 Coordinator 提供所請求的緊迫性、截止日期和業務影響，但 MUST
-NOT 迫使其 Mission 領先於其他。組織優先順序的升級是透過策略或 MissionOwner 進行。
+Worker 自有的 Scheduler 從所有每個 Group 佇列中選擇符合條件的 WorkItem，並將其放入宣告的隔離執行槽。Scheduler 對跨 Group 順序擁有最終決定權。Coordinator 提供所要求的緊迫性、截止日期和業務影響，但 MUST
+NOT 強制其 Mission 排在其他 Mission 之前。Organization 優先級的升級透過策略或 MissionOwner 進行。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-WRK-010" level={["MUST","SHOULD"]}>
 
-調度器MUST實現加權公平和抗飢餓。有效訂單 SHOULD 考慮組織優先順序、截止日期、時效、每個 Group 配額、風險門和資源可用性。純無界最高優先優先調度是不符合要求的。
+Scheduler
+MUST 實作加權公平和抗飢餓。有效排序 SHOULD 考慮 Organization 優先級類別、截止日期、佇列時效、每個 Group 配額、風險閘門和資源可用性。純粹且無界的最高優先級優先調度不符合規範。
 
 </NormativeClause>
 
@@ -165,7 +166,8 @@ MUST 的延遲 Command 也會被拒絕。
 
 <NormativeClause id="MWP-WRK-014" level="MUST">
 
-能力令牌綁定到執行租賃 ID，而不是相反。這允許在一項租約保持有效的情況下輪換或縮小代幣範圍；每個令牌仍然會在不晚於其發行時的租約邊界到期。檢查點、阻止、提交釋放租約；超時使之過期；會話替換、重新分配、取消和失敗撤銷它。開啟取代 Agent 會話 MUST 會撤銷 Agent 的活動租約，並將受影響的工作項目傳回
+能力令牌綁定到 Execution Lease
+ID，而不是相反。這允許在一項租約保持有效的情況下輪換或縮小代幣範圍；每個令牌仍然會在不晚於其發行時的租約邊界到期。檢查點、阻止、提交釋放租約；超時使之過期；會話替換、重新分配、取消和失敗撤銷它。開啟取代 Agent 會話 MUST 會撤銷 Agent 的活動租約，並將受影響的工作項目傳回
 `queued`，然後它們在新啟動時可以在新啟動時執行。
 
 </NormativeClause>
@@ -243,15 +245,15 @@ Event 識別歷史執行會話和協調會話，更新 WorkItem 並完成預算�
 
 </NormativeClause>
 
-<InformativeBlock title="Pinned source continuation">
+<InformativeBlock title="固定來源內容續接">
 
-下一個區塊恢復稍後固定的來源段。詳見【規格源碼圖](./) 對於中間的本機頁面和確切的行範圍。
+下一個區塊恢復稍後固定的來源段。中間的本地頁面與確切行範圍請參閱[規範來源映射](./)。
 
 </InformativeBlock>
 
-## 13.文物， Evidence和上下文包
+## 13.工件， Evidence和上下文包
 
-### 13.1 文物
+### 13.1 工件
 
 <NormativeClause id="MWP-WRK-023" level="MUST">
 
@@ -276,10 +278,10 @@ NOT 將可變 URI 視為內容標識。
 一個 Worker的完成聲明是不夠的。 WorkItem 提交 MUST 包括 Evidence 映射到驗收標準。 Coordinator 審查 SHOULD， 為了：
 
 1. 驗證 Artifact 完整性和所需的輸出模式；
-2. 執行確定性測試或可用的業務規則；3.請求審稿人-Agent
-   Evidence 用於語意或定性標準；
-3. 綜合評估 Evidence;和
-4. 保留最終人類的所有結果 Approval.
+2. 執行確定性測試或可用的業務規則；
+3. 請求評審者 Agent 提供用於語意或定性標準的 Evidence；
+4. 綜合評估 Evidence；以及
+5. 保留所有結果，以供最終的人類 Approval 使用。
 
 </NormativeClause>
 
@@ -308,7 +310,7 @@ NOT 檢查機密 Mission 內容。
 
 </NormativeClause>
 
-<InformativeBlock title="Pinned source continuation">
+<InformativeBlock title="固定來源內容續接">
 
 下一個區塊恢復稍後固定的來源段。有關介入的本地頁面和確切的行範圍，請參閱[規範來源映射](./)。
 

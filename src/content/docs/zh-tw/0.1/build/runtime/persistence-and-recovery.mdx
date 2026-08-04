@@ -1,7 +1,7 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: 堅持與恢復
+title: 持久化與復原
 description: 權威狀態、可重建預測、收據、樂觀並發、重播、遊標、快照和外部副作用恢復。
 ---
 
@@ -71,13 +71,13 @@ ID、所有權 Epoch 和邏輯操作 ID
 安全的本地應用週期是：
 
 ```text
-begin local transaction
-→ reject or ignore duplicate Event ID
-→ verify next contiguous Group sequence
-→ update Group projection and per-Group queue
-→ persist any checkpoint or outbox intent
-→ advance durable Cursor
-→ commit
+開始本機交易
+→ 拒絕或忽略重複的 Event ID
+→ 驗證下一個連續的 Group 序列
+→ 更新 Group 投影和每個 Group 的佇列
+→ 持久化任何檢查點或寄件匣意圖
+→ 推進持久 Cursor
+→ 提交
 ```
 
 對於外部副作用，請在發送前堅持意圖，保留外部收據，並在重試前協調不確定的結果。

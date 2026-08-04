@@ -45,26 +45,26 @@ WorkItem 的核心状态和转换是：
 
 <span id="workitem-transition-table"></span>
 
-| 当前状态                                                                     | 过渡                                                            | 下一个状态             | 笔记                                               |
-| ---------------------------------------------------------------------------- | --------------------------------------------------------------- | ---------------------- | -------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------- |
-| 无                                                                           | `work.propose`                                                  | 开放工作提案           | 任何Group成员都可以提议；尚不存在 WorkItem         |
-| 没有或开放工作提案                                                           | `work.authorize`                                                | `open`                 | Coordinator 或范围委托创建 WorkItem                |
-| `open`、`offered`、`queued`、`active`、`blocked` 或 `failed`，没有实时所有者 | `work.offer`                                                    | `offered`              | 创建、替换或扩展持久报价；过期的所有者首先被围起来 |
-| `offered`                                                                    | `work.accept_offer`                                             | `queued`               | 原子所有权时代开始                                 |
-| `offered`                                                                    | 优惠到期                                                        | `offered`              | 到期会使接受无效，但本身不会附加 Event 或更改状态  |
-| `queued`                                                                     | `approval.grant_execution` 需要时                               | `queued`               | 无需执行工作即可满足启动门                         |
-| `queued`                                                                     | `work.start`                                                    | `active`               | 需要有效的所有权和执行租赁                         |
-| `active`                                                                     | `work.checkpoint`                                               | `queued`               | 持久的进展释放了执行力，同时保留了有限的所有权租赁 |
-| `active`                                                                     | `work.block`                                                    | `blocked`              | 检查点和有界块租约                                 |
-| `blocked`                                                                    | `work.unblock`                                                  | `queued` 或 `open`     | 重新进入其队列或在所有权到期后重新提供             |
-| `active`                                                                     | `work.submit`                                                   | `submitted`            | 需要工件和 Evidence                                |
-| `submitted`                                                                  | `work.accept_result`                                            | `verified`             | Coordinator 审核成功                               |
-|                                                                              | `open`、`offered`、`queued`、`active`、`blocked` 或 `submitted` | `work.fail`            | `failed`                                           | 需要失败 Evidence； Coordinator 稍后可能会发行新的 `work.offer` |
-|                                                                              | `open`、`offered`、`queued`、`active`、`blocked` 或 `submitted` | `work.cancel`          | `cancelled`                                        | 清理政策适用                                                    |
-|                                                                              | `open`、`offered`、`queued`、`active` 或 `blocked`              | `mission.create_child` | `blocked`                                          | 当链接的子项 Mission 运行时，所有权受到保护                     |
-| `blocked`                                                                    | 链接子项 Mission 批准                                           | `verified`             | 子 Approval 成为父 WorkItem Evidence               |
-| `blocked`                                                                    | 链接子项 Mission 失败                                           |                        | `blocked` 或 `failed`                              | 声明的子失败策略控制传播                                        |
-|                                                                              | `open`、`offered`、`queued`、`active`、`blocked` 或 `submitted` |                        | 父级 Mission 失败或取消                            | `failed` 或 `cancelled`                                         | 终端 Mission 状态传播到未完成的工作项 |
+| 当前状态                                                                     | 过渡                                  | 下一状态                | 说明                                                       |
+| ---------------------------------------------------------------------------- | ------------------------------------- | ----------------------- | ---------------------------------------------------------- |
+| 无                                                                           | `work.propose`                        | 开放工作提案            | 任何 Group 成员均可提出；尚不存在 WorkItem                 |
+| 无或开放工作提案                                                             | `work.authorize`                      | `open`                  | Coordinator 或范围内委托方创建 WorkItem                    |
+| `open`、`offered`、`queued`、`active`、`blocked` 或 `failed`，且无有效所有者 | `work.offer`                          | `offered`               | 创建、替换或延长持久报价；过期所有者先被 fencing           |
+| `offered`                                                                    | `work.accept_offer`                   | `queued`                | 原子性 Ownership Epoch 开始                                |
+| `offered`                                                                    | 报价到期                              | `offered`               | 到期会使接受操作失效，但本身不会附加 Event 或更改状态      |
+| `queued`                                                                     | 需要时执行 `approval.grant_execution` | `queued`                | 无需执行工作即可满足启动门槛                               |
+| `queued`                                                                     | `work.start`                          | `active`                | 需要有效所有权和 Execution Lease                           |
+| `active`                                                                     | `work.checkpoint`                     | `queued`                | 持久化进度会释放执行权，同时保留有界 Ownership Lease       |
+| `active`                                                                     | `work.block`                          | `blocked`               | 检查点和有界阻塞租约                                       |
+| `blocked`                                                                    | `work.unblock`                        | `queued` 或 `open`      | 重新进入其队列，或在所有权到期后重新报价                   |
+| `active`                                                                     | `work.submit`                         | `submitted`             | 需要 Artifact 和 Evidence                                  |
+| `submitted`                                                                  | `work.accept_result`                  | `verified`              | Coordinator 审核成功                                       |
+| `open`、`offered`、`queued`、`active`、`blocked` 或 `submitted`              | `work.fail`                           | `failed`                | 需要失败 Evidence；Coordinator 稍后可发布新的 `work.offer` |
+| `open`、`offered`、`queued`、`active`、`blocked` 或 `submitted`              | `work.cancel`                         | `cancelled`             | 适用清理策略                                               |
+| `open`、`offered`、`queued`、`active` 或 `blocked`                           | `mission.create_child`                | `blocked`               | 链接的子任务运行期间，所有权被 fencing                     |
+| `blocked`                                                                    | 链接的子任务获批                      | `verified`              | 子任务的 Approval 成为父 WorkItem 的 Evidence              |
+| `blocked`                                                                    | 链接的子任务失败                      | `blocked` 或 `failed`   | 声明的子任务失败策略控制传播                               |
+| `open`、`offered`、`queued`、`active`、`blocked` 或 `submitted`              | 父 Mission 失败或取消                 | `failed` 或 `cancelled` | Mission 终态传播到未完成的 WorkItem                        |
 
 <NormativeClause id="MWP-WRK-003" level={["MAY","MUST"]}>
 
@@ -124,15 +124,15 @@ MUST 为每个 Group 维护一个不同的 Event 收件箱、光标和工作队�
 
 <NormativeClause id="MWP-WRK-009" level="MUST NOT">
 
-Worker 拥有的调度程序从所有每个 Group 队列中选择符合条件的工作项到声明的隔离执行槽中。调度者对跨Group订单拥有最终决定权。 Coordinator 提供所请求的紧迫性、截止日期和业务影响，但 MUST
-NOT 迫使其 Mission 领先于其他。组织优先级的升级通过策略或 MissionOwner 进行。
+Worker 自有的 Scheduler 从所有每个 Group 队列中选择符合条件的 WorkItem，并将其放入声明的隔离执行槽。Scheduler 对跨 Group 顺序拥有最终决定权。Coordinator 提供所请求的紧迫性、截止日期和业务影响，但 MUST
+NOT 强制其 Mission 排在其他 Mission 之前。Organization 优先级的升级通过策略或 MissionOwner 进行。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-WRK-010" level={["MUST","SHOULD"]}>
 
 Scheduler
-MUST 实现加权公平和抗饥饿。有效订单 SHOULD 考虑组织优先级、截止日期、时效、每个 Group 配额、风险门和资源可用性。纯无界最高优先级优先调度是不符合要求的。
+MUST 实现加权公平和抗饥饿。有效排序 SHOULD 考虑 Organization 优先级类别、截止日期、队列时效、每个 Group 配额、风险门槛和资源可用性。纯粹且无界的最高优先级优先调度不符合规范。
 
 </NormativeClause>
 
@@ -166,7 +166,8 @@ MUST 的延迟 Command 也会被拒绝。
 
 <NormativeClause id="MWP-WRK-014" level="MUST">
 
-能力令牌绑定到执行租赁 ID，而不是相反。这允许在一项租约保持有效的情况下轮换或缩小代币范围；每个令牌仍然会在不晚于其发行时的租约边界到期。检查点、阻止、提交释放租约；超时使之过期；会话替换、重新分配、取消和失败撤销它。打开替换 Agent 会话 MUST 会撤销 Agent 的活动租约，并将受影响的工作项返回到
+能力令牌绑定到 Execution Lease
+ID，而不是相反。这允许在一项租约保持有效的情况下轮换或缩小代币范围；每个令牌仍然会在不晚于其发行时的租约边界到期。检查点、阻止、提交释放租约；超时使之过期；会话替换、重新分配、取消和失败撤销它。打开替换 Agent 会话 MUST 会撤销 Agent 的活动租约，并将受影响的工作项返回到
 `queued`，然后新运行时可以在新租约下启动它们。
 
 </NormativeClause>
@@ -245,7 +246,7 @@ Event，用于标识历史执行会话和协调会话，更新 WorkItem 并完�
 
 </NormativeClause>
 
-<InformativeBlock title="Pinned source continuation">
+<InformativeBlock title="固定源内容续接">
 
 下一个块恢复稍后固定的源段。有关介入的本地页面和确切的行范围，请参阅[规范源映射](./)。
 
@@ -253,7 +254,7 @@ Event，用于标识历史执行会话和协调会话，更新 WorkItem 并完�
 
 ## 13. 工件、Evidence 和上下文包
 
-### 13.1 文物
+### 13.1 工件
 
 <NormativeClause id="MWP-WRK-023" level="MUST">
 
@@ -279,8 +280,9 @@ Worker 的完成声明是不够的。 WorkItem 提交 MUST 包括映射到验收
 
 1. 验证 Artifact 完整性和所需的输出模式；
 2. 运行确定性测试或可用的业务规则；
-3. 请求评审者-Agent
-   Evidence 获取语义或定性标准；4.评估组合后的Evidence；和5.保留最终人类Approval的所有结果。
+3. 请求评审者 Agent 提供用于语义或定性标准的 Evidence；
+4. 评估组合后的 Evidence；以及
+5. 保留所有结果，以供最终的人类 Approval 使用。
 
 </NormativeClause>
 
@@ -309,7 +311,7 @@ NOT 检查机密 Mission 内容。
 
 </NormativeClause>
 
-<InformativeBlock title="Pinned source continuation">
+<InformativeBlock title="固定源内容续接">
 
 下一个块恢复稍后固定的源段。有关介入的本地页面和确切的行范围，请参阅[规范源映射](./)。
 

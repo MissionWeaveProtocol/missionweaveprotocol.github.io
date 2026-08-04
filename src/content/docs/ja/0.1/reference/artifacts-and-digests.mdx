@@ -24,12 +24,12 @@ import artifacts from "../../../../../data/normative/0.1/artifacts.json";
 | -------------- | ------------------------------------------------------------------------------: | -------------------------------------------- |
 | スキーマ       |                                                       {artifacts.schemas.files} | <code>{artifacts.schemas.digest}</code>      |
 | 構造適合性     | {artifacts.structural.files} ファイル / {artifacts.structural.vectors} ベクトル | <code>{artifacts.structural.digest}</code>   |
-| 暗号化         |                                              {artifacts.cryptography.artifacts} | <code>{artifacts.cryptography.digest}</code> |
+| 暗号           |                                              {artifacts.cryptography.artifacts} | <code>{artifacts.cryptography.digest}</code> |
 | アドミッション |                                                 {artifacts.admission.artifacts} | <code>{artifacts.admission.digest}</code>    |
 
 ## ダイジェスト セマンティクス
 
-個々のマニフェスト エントリは、正確なファイル バイトを小文字の SHA-256 にバインドします。暗号化とアドミッションのトップレベル
+個々のマニフェスト エントリは、正確なファイル バイトを小文字の SHA-256 にバインドします。暗号とアドミッションのトップレベル
 `artifactDigest` 値は、そのメンバーを正確に削除し、残りのマニフェストを RFC 8785
 JCS でシリアル化し、正規バイトをハッシュします。宣言されたアーティファクト エントリは、すべての名前付きファイルを推移的にバインドします。
 

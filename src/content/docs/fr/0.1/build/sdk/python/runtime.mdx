@@ -40,7 +40,7 @@ réexporté depuis la racine du package.
 
 ## Carte complète des modules
 
-| Problème d'exécution                 | Modules publics                                                                                                                                                                  | Contrat au commit épinglé                                                                                                                                                                                                                                                                                 |
+| Fonctionnalité d'exécution           | Modules publics                                                                                                                                                                  | Contrat au commit épinglé                                                                                                                                                                                                                                                                                 |
 | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Modèles protocolaires et sémantiques | `missionweaveprotocol.models`, `missionweaveprotocol.documents`, `missionweaveprotocol.artifacts`, `missionweaveprotocol.context`                                                | Objets de protocole typés, assistants de document, gestion Artifact et Evidence et structures de contexte de portée Group. Les données valides selon le schéma nécessitent toujours les contrôles sémantiques définis par la spécification locale.                                                        |
 | Transitions d'État faisant autorité  | `missionweaveprotocol.core`, `missionweaveprotocol.control`, `missionweaveprotocol.auth`, `missionweaveprotocol.ingress`                                                         | `Core` interroge, relit et exécute des chemins ; contrôle des actions acceptées, assistants de session et de signature, et limites d'entrée validées. La conversation ou la sortie du modèle à elle seule n’autorise jamais une transition d’état.                                                        |
@@ -112,13 +112,13 @@ fournit pas d'autorité de réseau de déploiement.
 
 `SchemaCatalog` et `run_manifest` exécutent les surfaces de validation locales
 prises en charge. `verify_cryptography_bundle` et `verify_admission_bundle`
-lient les artefacts packagés aux broches et résumés documentés. Le
+lient les artefacts packagés aux pins et résumés documentés. Le
 `missionweaveprotocol-conformance` expose le programme d'exécution du manifeste
 structurel aux opérateurs. Appelez les deux fonctions de vérification du bundle
 séparément lors de la vérification de la cryptographie packagée et des identités
 des artefacts d'admission.
 
-Exécutez à nouveau la conformité chaque fois que la validation SDK, la broche de
+Exécutez à nouveau la conformité chaque fois que la validation SDK, la pin de
 protocole, l'ensemble de schémas, le bundle de cryptographie, le bundle
 d'admission ou l'adaptateur de déploiement changent. Passer un sous-ensemble
 prouve uniquement ce sous-ensemble ; il n'établit pas la durabilité de la base

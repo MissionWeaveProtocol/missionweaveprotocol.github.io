@@ -33,7 +33,7 @@ locales].
 | `AdmissionService.admit_first`                 | Implemente el flujo de evidencia actual, constatación autoritativa de ausencia, adición atómica y registro devuelto de [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                                                                                                 |
 | `AdmissionService.verify_historical_admission` | Vuelva a ejecutar la verificación con evidencia histórica autoritativa del Registry y exija un registro encontrado sin emitir contexto ni añadirlo, como requiere [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                                                      |
 
-El resultado del adaptador es evidencia escrita. Un valor booleano de confianza
+El resultado del adaptador es evidencia tipada. Un valor booleano de confianza
 proporcionado por la persona que llama no es un resultado de búsqueda autorizado
 y nunca debe seleccionar la ruta exitosa.
 
@@ -77,13 +77,13 @@ historical = AdmissionService().verify_historical_admission(
 :::
 
 La reproducción histórica utiliza el historial Registry retenido, requiere un
-registro de admisión encontrado y nunca llama a `TrustedAdmissionContext.issue`
-o `AdmissionLog.append_or_return_existing`. Los ID de registros coincidentes en
-el ejemplo demuestran que la reproducción recuperó el primer registro
-autorizado; por sí solos no prueban la actualidad de Command, la autorización
-del firmante, la aceptación de la máquina de estados ni la verificación portátil
-a prueba de registros. La frescura de Command y la autorización del firmante
-siguen siendo requisitos separados según
+registro encontrado en el Admission Log y nunca llama a
+`TrustedAdmissionContext.issue` o `AdmissionLog.append_or_return_existing`. Los
+ID de registros coincidentes en el ejemplo demuestran que la reproducción
+recuperó el primer registro autorizado; por sí solos no prueban la actualidad de
+Command, la autorización del firmante, la aceptación de la máquina de estados ni
+la verificación portátil a prueba de registros. La frescura de Command y la
+autorización del firmante siguen siendo requisitos separados según
 [MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
 y
 [MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).

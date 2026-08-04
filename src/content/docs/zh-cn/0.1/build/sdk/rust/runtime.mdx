@@ -10,7 +10,7 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 # Rust 运行时参考
 
 此页面涵盖了由[确切的 API inventory](../api/)
-表示的完整板条箱根表面。共享协议行为仍然由本地[运行时参考](../../../runtime/architecture-and-bootstrap/)和[参考子句](../../../../reference/specification/)定义。下面的模块名称标识了实现来源；调用者从
+表示的完整crate 根表面。共享协议行为仍然由本地[运行时参考](../../../runtime/architecture-and-bootstrap/)和[参考子句](../../../../reference/specification/)定义。下面的模块名称标识了实现来源；调用者从
 `missionweaveprotocol` 导入公共重新导出，因为模块本身是私有的。
 
 <SupportStatus status="implemented" /> 适用于下面列出的 crate-root API
@@ -22,9 +22,9 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 <SupportStatus status="not-implemented" /> 表示精确固定的 crate
 没有相应的运行时。
 
-## 板条箱和执行模型
+## crate和执行模型
 
-该板条箱的版本为 `0.1.0`，使用版本 2024，声明 Rust
+该crate的版本为 `0.1.0`，使用版本 2024，声明 Rust
 1.85 作为其最小支持的工具链，并公开一个二进制文件：`missionweaveprotocol-conformance`。
 `src/lib.rs` 是唯一的公共导入根；内部模块路径不是受支持的 API。
 
@@ -41,8 +41,8 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 | 签署的文件和 Registry | `signed_document.rs`                                        | 九种文档，签名，六阶段验证，完整的Organization范围的Registry解析，以及不可变的验证证据。 |
 | 框架                  | `frame.rs`                                                  | `FrameCodec` 解码、编码和文档验证。这是编解码器，而不是托管网关服务。                    |
 | 结构一致性            | `conformance.rs`、`bin/missionweaveprotocol-conformance.rs` | 嵌入式模式向量执行、报告摘要、CLI 退出状态和可选的详细故障。                             |
-| 嵌入式捆绑包          | `bundle.rs`                                                 | 协议、密码学和准入包的精确引脚访问、工件查找和摘要验证。                                 |
-| 首次入场              | `admission.rs`                                              | 首次入场和历史信任高于成功的 Signed Document 验证。                                      |
+| 嵌入式捆绑包          | `bundle.rs`                                                 | 协议、密码学和准入包的精确Pin访问、工件查找和摘要验证。                                  |
+| 首次准入              | `admission.rs`                                              | 首次准入和历史信任高于成功的 Signed Document 验证。                                      |
 
 ## 验证、签名和 Registry 证据
 
@@ -69,10 +69,10 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 `ProtocolBundle::verify` 检查 22 个架构和 59 个文件结构包。
 `verify_cryptography` 检查 98 个工件、22 个案例和 62 个声明的评估；
 `verify_admission`
-检查 19 个工件、5 个案例和 30 个声明的评估。这两个调用验证引脚、计数和摘要。他们并不执行所有密码学或入学评估。一致性二进制文件和
+检查 19 个工件、5 个案例和 30 个声明的评估。这两个调用验证固定值、计数和摘要。他们并不执行所有密码学或准入评估。一致性二进制文件和
 `ConformanceRunner::run` 仅执行结构向量。
 
-## 首次入场
+## 首次准入
 
 `AdmissionService::new`、`prepare_first_admission`、`admit_first` 和
 `verify_historical_admission` 公开确切的准入流程。继续使用

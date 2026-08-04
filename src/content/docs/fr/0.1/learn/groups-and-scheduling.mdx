@@ -16,9 +16,9 @@ restent reconstructibles à partir des événements acceptés
 ([MWP-WRK-008](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008)).
 
 ```text
-Group A Events → Group A queue ┐
-Group B Events → Group B queue ├→ Worker Scheduler → isolated execution slots
-Group C Events → Group C queue ┘
+Event du Group A → file du Group A ┐
+Event du Group B → file du Group B ├→ ordonnanceur de Worker → créneaux d’exécution isolés
+Event du Group C → file du Group C ┘
 ```
 
 ## Qui contrôle la priorité

@@ -19,16 +19,16 @@ Event-Verlauf erstellt
 ```text
 Organization
 ├── Agent Registry
-├── Group Authority and durable Event store
-├── Authorization Service
+├── Group Authority und dauerhafter Event-Speicher
+├── Autorisierungsdienst
 └── Mission
     └── Group
         ├── MissionOwner
         ├── Coordinator
-        ├── Worker Memberships
-        ├── Conversations and Messages
-        ├── WorkItems and Work Contracts
-        └── ordered Events, Artifacts, Evidence, and Approvals
+        ├── Worker Membership
+        ├── Konversationen und Message
+        ├── WorkItem und Work Contract
+        └── geordnete Event, Artifact, Evidence und Approval
 ```
 
 ## Die Datensätze, die Zusammenarbeit verbinden
@@ -36,15 +36,17 @@ Organization
 - Ein **Membership** verbindet einen Principal mit einem Group, Rollensatz,
   Sichtbarkeit Bereich und Membership Epoche.
 - Eine **Konversation** enthält dauerhafte Nachrichten für die Group-Planung
-  oder eine WorkItem. – Ein **WorkItem** ist eine ausführbare Einheit der
-  Mission-Arbeit. Es ist **Arbeitsvertrag** definiert das Ziel, die zu
-  erbringenden Leistungen, Evidence, Berechtigungen, die Frist und das Budget. –
-  Ein **Artifact** ist eine unveränderliche, inhaltsadressierte Lieferung.
+  oder ein WorkItem.
+- Ein **WorkItem** ist eine ausführbare Einheit der Mission-Arbeit. Sein
+  **Arbeitsvertrag** definiert das Ziel, die zu erbringenden Leistungen,
+  Evidence, Berechtigungen, die Frist und das Budget.
+- Ein **Artifact** ist eine unveränderliche, inhaltsadressierte Lieferung.
 - **Evidence** zeichnet auf, wie ein Artifact oder WorkItem die Akzeptanz
-  erfüllt Kriterien. – Ein **Event** ist eine unveränderliche akzeptierte
-  Tatsache in der monotonen Geschichte eines Group. – Ein **Cursor** zeichnet
-  den höchsten zusammenhängenden Group Event auf, der dauerhaft verarbeitet
-  wurde ein Agent.
+  erfüllt.
+- Ein **Event** ist eine unveränderliche akzeptierte Tatsache in der monotonen
+  Geschichte eines Group.
+- Ein **Cursor** zeichnet den höchsten zusammenhängenden Group Event auf, der
+  von einem Agent dauerhaft verarbeitet wurde.
 
 Nachrichten liefern Kontext oder Vorschläge. Die ausführbare Verantwortung
 beginnt erst durch einen autorisierten WorkItem-Übergang und eine
@@ -66,8 +68,8 @@ diesem Status.
 **Agent-lokale Projektionen** umfassen Cursor, pro-Group Warteschlangen,
 Prüfpunkte, Postausgänge, Posteingänge und den Planerstatus. Ein Agent kann sie
 aus dauerhaften Ereignissen neu erstellen. Durch den Verlust des lokalen
-Speichers ändert sich der autorisierende Status von Mission nicht. Die
-vollständige Grenze ist
+Speichers ändert sich der maßgebliche Status von Mission nicht. Die vollständige
+Grenze ist
 [MWP-FND-023](../../reference/specification/foundations/#mwp-fnd-023).
 
 ## Invarianten, an die man sich erinnern sollte
@@ -76,8 +78,7 @@ Der normative Invariantensatz beginnt bei
 [MWP-FND-013](../../reference/specification/foundations/#mwp-fnd-013). Die
 konzeptionelle Zusammenfassung lautet:
 
-– ein Mission hat einen primären Group und einen pro Group Event Auftrag;
-
+- ein Mission hat einen primären Group und eine Event-Reihenfolge pro Group;
 - Konversation schafft niemals Ausführungsbefugnis;
 - Exklusive Arbeiten sind durch Eigentums- und Pachtepochen eingegrenzt.
 - Akzeptierte Ereignisse und festgeschriebene Nachrichten können nur angehängt

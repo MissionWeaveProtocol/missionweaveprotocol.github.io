@@ -192,7 +192,8 @@ NOT 将公开为 MissionWeaveProtocol 语义。这种选择提供了确定性的
 <NormativeClause id="MWP-FND-015" level="MUST">
 
 3. **结构化执行权限。**
-   连接相应的操作 MUST 接受的 WorkItem、当前所有权纪元、有效的执行租约、适用的策略批准和范围能力令牌。
+   任何有后果的操作 MUST 同时关联到已接受的 WorkItem、当前 Ownership
+   Epoch、有效的 Execution Lease、适用的策略 Approval，以及限定范围的能力令牌。
 
 </NormativeClause>
 
@@ -205,15 +206,16 @@ NOT 将公开为 MissionWeaveProtocol 语义。这种选择提供了确定性的
 
 <NormativeClause id="MWP-FND-017" level={["MAY","MUST NOT"]}>
 
-5. **专有工作受到限制。**
-   最多存在一个当前所有权时代独家WorkItem。来自过时纪元 MAY 的结果将保留为非权威 Evidence，但 MUST
-   NOT 会完成 WorkItem。
+5. **独占工作受 fencing 保护。**
+   对于每个独占 WorkItem，最多存在一个当前 Ownership
+   Epoch。来自过时 Epoch 的结果 MAY 作为非权威 Evidence 保留，但 MUST
+   NOT 完成该 WorkItem。
 
 </NormativeClause>
 
 6. **仅附加历史记录。**
    接受的事件和提交的消息是不可变的。更正、撤回、编辑、撤销和补救是新事件。
-7. **仅限每个 Group 订单。**
+7. **仅定义每个 Group 内的顺序。**
    每个 Group 都有一个单调 Event 序列。MissionWeaveProtocol 未定义跨组的全局顺序或原子事务。
 
 <NormativeClause id="MWP-FND-018" level={["MAY","MUST"]}>
@@ -231,7 +233,7 @@ NOT 将公开为 MissionWeaveProtocol 语义。这种选择提供了确定性的
 </NormativeClause>
 
 10. **人类最终批准。**
-    根 Mission 仅在其完成后才完成 MissionOwner 批准确切的 Mission 修订版和 Artifact 集。 Coordinator 审核不是最终的人工审核 Approval。
+    根 Mission 只有在 MissionOwner 批准确切的 Mission 修订版和 Artifact 集后才会完成。Coordinator 审核不是最终的人工 Approval。
 
 <NormativeClause id="MWP-FND-020" level="MUST NOT">
 

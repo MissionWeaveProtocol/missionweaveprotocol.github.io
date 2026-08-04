@@ -1,13 +1,13 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: 首次准入與歷史信任
+title: 首次準入與歷史信任
 description: 權威查找、原子追加、回傳記錄驗證和歷史重播流程位於六階段驗證之上。
 ---
 
-# 首次准入與歷史信任
+# 首次準入與歷史信任
 
-密碼驗證證明受保護的位元組和金鑰綁定 Principal。首次入場增加了 Organization-分配可信的接受即時和權威的僅附加記錄。准入層與六個加密階段保持分離（[MWP-ADM-005](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+密碼驗證證明受保護的位元組和金鑰綁定 Principal。首次準入增加了 Organization-分配可信的接受即時和權威的僅附加記錄。準入層與六個加密階段保持分離（[MWP-ADM-005](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
 
 ## Admission Log 契約
 
@@ -16,23 +16,23 @@ Log 對其接受服務進行身分驗證，區分找到的記錄與權威確認�
 
 精確的九場記錄形狀，禁止 `signature` 成員和非自認證邊界由
 [MWP-ADM-001](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001)。其確切的本地工件在
-[ 中索引JSON 模式目錄](../../reference/schemas/)，完整的首次准入和重播證據包發佈在[准入一致性](../../reference/conformance/admission/)。
+[ 中索引JSON 模式目錄](../../reference/schemas/)，完整的首次準入和重播證據包發佈在[準入一致性](../../reference/conformance/admission/)。
 
-## 首次入場流程
+## 首次準入流程
 
 讀者可見的序列正是：
 
 ```text
-six-stage cryptographic verification
-→ authoritative Admission Log lookup
-→ found record validation OR authoritative absence
-→ trusted context and candidate preparation
-→ atomic append-or-return-existing
-→ returned record validation
-→ admitted result
+六階段密碼驗證
+→ Admission Log 權威查找
+→ 驗證已找到的記錄，或權威確認不存在
+→ 準備可信上下文和候選記錄
+→ 原子式附加或傳回現有記錄
+→ 驗證傳回的記錄
+→ 已準入結果
 ```
 
-分支點很重要。找到的記錄直接進入記錄驗證。只有權威缺席才能保證可信的背景和候選人的準備。原子追加可以傳回本地候選記錄或並發提交的記錄，並且傳回的記錄在成功之前總是經過驗證。單獨的候選位元組永遠不會建立准入。此編排由
+分支點很重要。找到的記錄直接進入記錄驗證。只有權威缺席才能保證可信的背景和候選人的準備。原子追加可以傳回本地候選記錄或並發提交的記錄，並且傳回的記錄在成功之前總是經過驗證。單獨的候選位元組永遠不會建立準入。此編排由
 [MWP-ADM-006](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006)。
 
 候選人準備也不附加 Event 或暗示狀態轉換（[MWP-ADM-007](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-007)）。
@@ -55,12 +55,12 @@ JSON 值，根據本地模式進行驗證，並與六階段結果進行比較 Or
 歷史重播遵循一條較窄的路徑：
 
 ```text
-six-stage cryptographic verification
-→ required found record
-→ record validation
-→ no trusted context or append
+六階段密碼驗證
+→ 必須找到記錄
+→ 驗證記錄
+→ 不簽發可信上下文，也不附加
 ```
 
-這六個階段使用權威歷史 Registry 證據，其中包含受保護簽名時間所需的保留有效性歷史記錄。重播需要現有記錄，對其進行驗證，並且永遠不會建立新的准入或發出可信任候選上下文（[MWP-ADM-008](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)）。
+這六個階段使用權威歷史 Registry 證據，其中包含受保護簽名時間所需的保留有效性歷史記錄。重播需要現有記錄，對其進行驗證，並且永遠不會建立新的準入或發出可信任候選上下文（[MWP-ADM-008](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)）。
 
-准入與 Command 新鮮度和簽署者授權保持獨立；下一頁使這些界限變得明確。
+準入與 Command 新鮮度和簽署者授權保持獨立；下一頁使這些界限變得明確。

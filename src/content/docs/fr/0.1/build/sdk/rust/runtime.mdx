@@ -45,17 +45,17 @@ moins que l'application ne les stocke ou ne les transmette délibérément.
 
 ## Carte source complète
 
-| Problème d'exécution            | Source de mise en œuvre publique                            | Contrat au commit épinglé                                                                                                                        |
-| ------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Racine et constantes du package | `lib.rs`                                                    | Réexporte la surface publique prise en charge et les versions SDK, de protocole et de fil.                                                       |
-| Stricte JSON                    | `strict_json.rs`                                            | `parse_strict_json` rejette le UTF-8 non valide, les membres en double, le JSON mal formé et les données de fin.                                 |
-| Schéma et heure exacte          | `schema.rs`, `signed_document.rs`                           | Validation hors ligne Draft 2020-12, formats URI/date-heure affirmés, recherche de schéma packagée et comparaison instantanée exacte.            |
-| Canoniques JSON et Ed25519      | `canonical.rs`                                              | RFC 8785 octets et hachages plus `Ed25519Signer` assistants.                                                                                     |
-| Documents signés et Registry    | `signed_document.rs`                                        | Neuf types de documents, signature, vérification en six étapes, résolution complète Organization Registry et preuves de vérification immuables.  |
-| Cadres                          | `frame.rs`                                                  | `FrameCodec` décode, encode et valide les documents. Il s'agit d'un codec et non d'un service de passerelle hébergé.                             |
-| Conformité structurelle         | `conformance.rs`, `bin/missionweaveprotocol-conformance.rs` | Exécution de vecteur de schéma intégré, résumés de rapports, état de sortie de la CLI et échecs détaillés facultatifs.                           |
-| Offres groupées intégrées       | `bundle.rs`                                                 | Accès exact aux broches, recherche d'artefacts et vérification de résumé pour les offres groupées de protocole, de cryptographie et d'admission. |
-| Première admission              | `admission.rs`                                              | Première admission et confiance historique au-dessus de la vérification Signed Document réussie.                                                 |
+| Fonctionnalité d'exécution      | Source de mise en œuvre publique                            | Contrat au commit épinglé                                                                                                                       |
+| ------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Racine et constantes du package | `lib.rs`                                                    | Réexporte la surface publique prise en charge et les versions SDK, de protocole et de fil.                                                      |
+| Stricte JSON                    | `strict_json.rs`                                            | `parse_strict_json` rejette le UTF-8 non valide, les membres en double, le JSON mal formé et les données de fin.                                |
+| Schéma et heure exacte          | `schema.rs`, `signed_document.rs`                           | Validation hors ligne Draft 2020-12, formats URI/date-heure affirmés, recherche de schéma packagée et comparaison instantanée exacte.           |
+| JSON canonique et Ed25519       | `canonical.rs`                                              | RFC 8785 octets et hachages plus les assistants `Ed25519Signer`.                                                                                |
+| Documents signés et Registry    | `signed_document.rs`                                        | Neuf types de documents, signature, vérification en six étapes, résolution complète Organization Registry et preuves de vérification immuables. |
+| Cadres                          | `frame.rs`                                                  | `FrameCodec` décode, encode et valide les documents. Il s'agit d'un codec et non d'un service de passerelle hébergé.                            |
+| Conformité structurelle         | `conformance.rs`, `bin/missionweaveprotocol-conformance.rs` | Exécution de vecteur de schéma intégré, résumés de rapports, état de sortie de la CLI et échecs détaillés facultatifs.                          |
+| Bundles intégrés                | `bundle.rs`                                                 | Accès exact aux pins, recherche d'artefacts et vérification de résumé pour les bundles de protocole, de cryptographie et d'admission.           |
+| Première admission              | `admission.rs`                                              | Première admission et confiance historique au-dessus de la vérification Signed Document réussie.                                                |
 
 ## Validation, signature et preuves Registry
 

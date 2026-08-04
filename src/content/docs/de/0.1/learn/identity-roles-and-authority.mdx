@@ -61,26 +61,25 @@ Agent-Identität abgegrenzt
 
 Weitere Epochen schränken die Autorität weiter ein:
 
-– ein Membership Epoch umzäunt eine ältere Version eines Group Membership; –
-eine Coordinator-Epoche umzäunt einen ersetzten Coordinator und seine
-Gewährungen;
-
-- eine Eigentumsepoche schränkt frühere Eigentümer exklusiver Werke ein; und –
-  Eine Execution Lease ID begrenzt einen abgelaufenen oder widerrufenen
-  Ausführungszeitraum.
+- eine Membership Epoch grenzt eine ältere Version eines Group Membership ab;
+- eine Coordinator-Epoche grenzt einen ersetzten Coordinator und seine
+  Gewährungen ab;
+- eine Ownership Epoch grenzt frühere Eigentümer exklusiver Arbeiten ab; und
+- eine Execution Lease ID grenzt einen abgelaufenen oder widerrufenen
+  Ausführungszeitraum ab.
 
 ## Vom Kontext zum erlaubten Nebeneffekt
 
 ```text
-Message or Work Proposal
-        ↓ explicit authorization
-WorkItem and Work Contract
-        ↓ Worker acceptance
+Message oder Work Proposal
+        ↓ explizite Autorisierung
+WorkItem und Work Contract
+        ↓ Annahme durch den Worker
 Ownership Epoch
-        ↓ current session, policy, budget, and approval checks
-Execution Lease and scoped capability token
+        ↓ aktuelle Prüfungen von Session, Richtlinie, Budget und Approval
+Execution Lease und bereichsgebundenes Capability-Token
         ↓
-Permitted operation
+zulässige Operation
 ```
 
 Der Autorisierungsdienst stellt ein kurzlebiges Token mit den geringsten

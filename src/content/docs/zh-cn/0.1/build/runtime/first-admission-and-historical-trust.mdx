@@ -19,7 +19,7 @@ description:
 
 用类型化接口表示每个边界：
 
-- 新的首次接纳决定的当前 Registry 证据；
+- 新的首次准入决策所需的当前 Registry 证据；
 - 权威历史Registry证据供回放；
 - 经过身份验证的 Admission Log 查找；
 - 一个原子追加或返回现有操作；和
@@ -32,16 +32,16 @@ Admission Log 逻辑密钥是
 
 逻辑键最多存在一条权威记录。重试时发现的相同有效记录是幂等成功，而冲突的文档类型、密钥 ID 或 Principal 会被拒绝而不是被替换 ([MWP-ADM-004](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-004))。
 
-## 首次接纳算法
+## 首次准入算法
 
 ```text
-six-stage cryptographic verification
-→ authoritative Admission Log lookup
-→ found record validation OR authoritative absence
-→ trusted context and candidate preparation
-→ atomic append-or-return-existing
-→ returned record validation
-→ admitted result
+六阶段密码验证
+→ Admission Log 权威查找
+→ 验证已找到的记录，或权威确认不存在
+→ 准备可信上下文和候选记录
+→ 原子式追加或返回现有记录
+→ 验证返回的记录
+→ 已准入结果
 ```
 
 只有权威缺席才允许可信的上下文获取和候选人准备。追加可能会返回本地候选人或并发获胜者，并且返回的记录始终在成功之前经过验证（[MWP-ADM-006](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006)）。
@@ -59,11 +59,12 @@ Record 是一个单独的无符号九字段对象。它不会对自身进行身�
 
 记录验证：
 
-1.严格解析恰好一个UTF-8 JSON值；2.应用规范的First-Admission Record
-Schema；3. 比较 `organizationId`、`documentKind`、`signingHash`、`keyId`，以及
-`principal`
-与六阶段结果完全一致；4. 将`acceptedBy`与认证的服务身份进行准确比较Admission
-Log适配器；和5. 独立检查 `trustedAcceptedAt` 与所选密钥的保留情况半开有效区间。
+1. 严格解析恰好一个 UTF-8 JSON 值；
+2. 应用规范的 First-Admission Record Schema；
+3. 将 `organizationId`、`documentKind`、`signingHash`、`keyId` 和 `principal`
+   与六阶段结果逐项精确比较；
+4. 将 `acceptedBy` 与 Admission Log 适配器认证的服务身份精确比较；
+5. 独立检查 `trustedAcceptedAt` 是否处于所选密钥保留的半开有效区间内。
 
 确切的绑定规则为[MWP-ADM-009](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)，可信时间间隔规则为[MWP-ADM-010](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)。仅验证候选字节是不够的。已签名的 Event 不能充当其自己的 First-Admission
 Record；稍后的 Event 只能发布或引用单独的记录 ([MWP-ADM-011](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-011))。
@@ -71,15 +72,15 @@ Record；稍后的 Event 只能发布或引用单独的记录 ([MWP-ADM-011](../
 ## 历史回放
 
 ```text
-six-stage cryptographic verification with authoritative historical Registry evidence
-→ required found record
-→ record validation
-→ no trusted context or append
+使用权威历史 Registry 证据进行六阶段密码验证
+→ 必须找到记录
+→ 验证记录
+→ 不签发可信上下文，也不追加
 ```
 
 重播无法创建丢失的准入、发出新的可信上下文或将旧文档视为新准入的文档 ([MWP-ADM-008](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008))。
 
-## 入学后的界限
+## 准入后的界限
 
 承认的结果仍然无法建立 Command 新鲜度或签名者授权。新提出的 Command 具有单独的新鲜度和时钟偏差检查（[MWP-ADM-013](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)），并且相关机构在受保护和可信的接受时间分别验证签名者的角色和策略（[MWP-ADM-014](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)）。
 

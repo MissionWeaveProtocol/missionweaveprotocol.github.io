@@ -138,13 +138,13 @@ logique
 Un cycle d’application locale sûr est :
 
 ```text
-begin local transaction
-→ reject or ignore duplicate Event ID
-→ verify next contiguous Group sequence
-→ update Group projection and per-Group queue
-→ persist any checkpoint or outbox intent
-→ advance durable Cursor
-→ commit
+démarrer la transaction locale
+→ rejeter ou ignorer un Event ID dupliqué
+→ vérifier la prochaine séquence Group contiguë
+→ mettre à jour la projection Group et la file de chaque Group
+→ persister tout point de contrôle ou intention de boîte d’envoi
+→ avancer le Cursor durable
+→ valider
 ```
 
 En cas d'effet secondaire externe, conservez l'intention avant l'envoi,

@@ -20,7 +20,7 @@ v0.1 簽名輸入省略了完整的頂級簽名信封。驗證者透過
 [MWP-SDV-001](../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)選擇預期簽署者，並遵循完整的分階段規範化和簽名字節規則[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)。
 
 簽章雜湊是第 5 階段產生的確切 RFC 8785
-JCS 位元組的小寫 SHA-256 標識。它獨立於准入狀態來標識受保護內容 ([MWP-SDV-017](../../reference/specification/signed-documents-and-trust/#mwp-sdv-017))。
+JCS 位元組的小寫 SHA-256 標識。它獨立於準入狀態來標識受保護內容 ([MWP-SDV-017](../../reference/specification/signed-documents-and-trust/#mwp-sdv-017))。
 
 ## Registry 證據比一個選定的密鑰更寬
 
@@ -36,9 +36,12 @@ JCS 位元組的小寫 SHA-256 標識。它獨立於准入狀態來標識受保�
 [MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)
 中的有序階段：
 
-1.嚴格UTF-8 JSON解析及重複成員拒絕；2.完成規範的JSON
-Schema驗證；3. 簽名信封及保護時間驗證；4. 完成Registry證據、金鑰解析、綁定和有效性檢查；5.
-RFC 8785 規範化和簽章哈希生成；和6.嚴格Ed25519簽章驗證。
+1. 嚴格解析 UTF-8 JSON 並拒絕重複成員；
+2. 完整執行規範 JSON Schema 驗證；
+3. 驗證簽章信封和受保護時間；
+4. 完整驗證 Registry 證據、金鑰解析、綁定和有效性；
+5. 執行 RFC 8785 規範化並產生簽署雜湊；
+6. 嚴格驗證 Ed25519 簽章。
 
 驗證者在第一個失敗階段停止。在所有六個階段成功之前，它不會授權參與者、附加 Event 或執行狀態轉換。
 
@@ -50,4 +53,4 @@ RFC 8785 規範化和簽章哈希生成；和6.嚴格Ed25519簽章驗證。
 中建立索引，完整的六階段證據包在
 [密碼學一致性](../../reference/conformance/cryptography/) 下發布。
 
-繼續[首次入場和歷史信任](../first-admission-and-historical-trust/)作為密碼學之上的權威接受層。
+繼續[首次準入和歷史信任](../first-admission-and-historical-trust/)作為密碼學之上的權威接受層。

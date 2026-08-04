@@ -7,23 +7,20 @@ description: 對話如何成為明確工作項目、接受執行、Evidence、�
 
 # 工作生命週期
 
-MissionWeaveProtocol keeps conversational cooperation fluid while making
-executable responsibility
-explicit.一個 Message 可以提供上下文或請求工作，但介面不能將其呈現為可執行指令（[MWP-MSN-017](../../reference/specification/missions-groups-and-membership/#mwp-msn-017)）。
+MissionWeaveProtocol 在保持對話協作流暢的同時，明確界定可執行責任。一個 Message 可以提供上下文或請求工作，但介面不能將其呈現為可執行指令（[MWP-MSN-017](../../reference/specification/missions-groups-and-membership/#mwp-msn-017)）。
 
 ## 從討論到承諾
 
-1. **Discuss.** Agents exchange completed Messages in a
-   Group 或者 WorkItem 對話。
-2. **提議。 ** 任何 Group 會員可以提交工作提案。沒有可執行檔 WorkItem 還存在。
+1. **討論。** Agent 在 Group 或 WorkItem 對話中交換已完成的 Message。
+2. **提議。 ** 任何 Group 會員可以提交工作提案。尚不存在可執行的 WorkItem。
 3. **授權。 **
    目前 Coordinator, 一個 MissionOwner 緊急超越，或一個 Agent 具有有效範圍的委託授權創建 WorkItem。
 4. **報價。 **
    授權參與者提供 WorkItem 給符合資格的 Worker 和記錄選擇依據。獨佔授權集和委託報價規則由[MWP-MSN-019](../../reference/specification/missions-groups-and-membership/#mwp-msn-019)。
-5. **接受。 **
-   Worker 執行准入控制。驗收開啟新的旅程所有權紀元並放置 WorkItem 在那 Worker的每Group 隊列。
+5. **接受。 ** Worker 執行準入控制。接受操作會開始新的 Ownership
+   Epoch，並將 WorkItem 放入該 Worker 對應的每個 Group 佇列。
 
-接受是持久的調度承諾，而不是立即執行。 Worker 的准入檢查和所有權影響由
+接受是持久的調度承諾，而不是立即執行。 Worker 的準入檢查和所有權影響由
 [MWP-WRK-005](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-005)
 定義。
 
@@ -48,17 +45,17 @@ explicit.一個 Message 可以提供上下文或請求工作，但介面不能�
 
 ```text
 Work Proposal
-    ↓ authorize
+    ↓ 授權
 open WorkItem
-    ↓ offer
+    ↓ 發出 offer
 offered
-    ↓ Worker accepts
+    ↓ Worker 接受
 queued
-    ↓ valid ownership, approval gates, and Execution Lease
+    ↓ 有效所有權、Approval 閘門和 Execution Lease
 active
-    ↓ Worker submits Artifacts and Evidence
+    ↓ Worker 提交 Artifact 和 Evidence
 submitted
-    ↓ Coordinator accepts the result
+    ↓ Coordinator 接受結果
 verified
 ```
 
@@ -68,7 +65,7 @@ verified
 
 ## 批准前的 Evidence
 
-一個 Worker 索賠並不能充分證明完成情況。提交內容包括文物和 Evidence 映射到驗收標準。 Coordinator 審查檢查 Artifact 完整性、確定性測試、定性審核員 Evidence，以及依照
+一個 Worker 索賠並不能充分證明完成情況。提交內容包括工件和 Evidence 映射到驗收標準。 Coordinator 審查檢查 Artifact 完整性、確定性測試、定性審核員 Evidence，以及依照
 [MWP-WRK-025 所描述的順序記錄的驗收決定](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-025)。
 
-驗證所需的 WorkItem 後， Coordinator 提交具體的 Mission 修訂和 Artifact 放。這 MissionOwner 最終標誌 Approval 或要求更改而不刪除先前提交的內容 ([MWP-MSN-008](../../reference/specification/missions-groups-and-membership/#mwp-msn-008)).
+驗證所需的 WorkItem 後，Coordinator 提交特定的 Mission 修訂版和 Artifact 集。MissionOwner 簽署最終 Approval 或要求變更，而不刪除先前提交的內容（[MWP-MSN-008](../../reference/specification/missions-groups-and-membership/#mwp-msn-008)）。

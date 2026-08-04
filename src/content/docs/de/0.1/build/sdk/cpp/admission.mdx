@@ -12,11 +12,11 @@ import cppAdmissionCmake from "../../../../../../../../examples/sdk/cpp/CMakeLis
 
 # C++ Erstzulassung und historischer Trust
 
-Der C++ `AdmissionService` legt First Admission und Historical Trust über den
-sechsstufigen Verifizierer Signed Document
+Der C++ `AdmissionService` legt Erstzulassung und historisches Vertrauen über
+den sechsstufigen Verifizierer Signed Document
 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
 Der sprachunabhängige Ablauf ist die lokale
-[First Admission and Historical Trust-Laufzeitseite](../../../runtime/first-admission-and-historical-trust/),
+[Laufzeitseite für Erstzulassung und historisches Vertrauen](../../../runtime/first-admission-and-historical-trust/),
 und die genauen Anforderungen sind die lokalen
 [Admission-Klauseln](../../../../reference/specification/first-admission-and-historical-trust/).
 
@@ -27,7 +27,7 @@ und die genauen Anforderungen sind die lokalen
 | `AdmissionCurrentKeyResolver::resolve_current`     | Geben Sie den vollständigen Organization-weiten Registry-Beweis zurück, dass die Bereitstellung für diese Entscheidung aktuell ist.                                                                                                                                                                      |
 | `TrustedAdmissionContext::issue`                   | Vergeben Sie die Akten-ID, die vertrauenswürdige Annahmestelle und die Annahmezustellung erst nach behördlicher Abwesenheit.                                                                                                                                                                             |
 | `AdmissionLog::lookup`                             | Geben Sie `AdmissionLookup::found` oder `AdmissionLookup::authoritative_absence` zurück. Cache-Fehler, Zeitüberschreitung oder nicht authentifizierte Abwesenheit schlagen unter [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003) fehl.              |
-| `AdmissionLog::append_or_return_existing`          | Hängen Sie Kandidatenbytes atomar an oder geben Sie den gleichzeitigen autorisierenden Gewinner über eine authentifizierte Dienstidentität zurück.                                                                                                                                                       |
+| `AdmissionLog::append_or_return_existing`          | Hängen Sie Kandidatenbytes atomar an oder geben Sie den gleichzeitigen maßgeblichen Gewinner über eine authentifizierte Dienstidentität zurück.                                                                                                                                                          |
 | `AuthenticatedAdmissionRecord`                     | Binden Sie zurückgegebene Datensatzbytes an die vom Adapter authentifizierte Dienstidentität für [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009).                                                                                                   |
 | `AdmissionService::prepare_first_admission`        | Erstellen und validieren Sie Kandidatennachweise aus einem von SDK erstellten `VerifiedSignedDocument`; es stellt keine Zulassung dar oder impliziert diese.                                                                                                                                             |
 | `AdmissionService::admit_first`                    | Überprüfen Sie aktuelle Beweise, suchen Sie nach, bereiten Sie sie nach Abwesenheit vor, hängen Sie vorhandene an oder geben Sie sie zurück und validieren Sie den zurückgegebenen Datensatz unter [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006). |

@@ -92,7 +92,7 @@ policy.grant_cooperation_override
 Card 注册、会话激活、依赖项插入、执行租约续订、权威资源使用记录和 Group 归档。未来的 Extension
 Profile 可能会标准化便利命令，例如显式报价拒绝、澄清或 Mission 暂停，但这些名称不是 v0.1 核心过渡。
 
-### 15.2 事件和Group订单
+### 15.2 Event 与 Group 顺序
 
 <NormativeClause id="MWP-EVT-005" level={["MUST","MUST NOT"]}>
 
@@ -136,9 +136,10 @@ group.snapshot.created          group.archived
 ```
 
 `work.contract.revised` 和 `work.progressed`
-是由引用 Organization 拥有的依赖项插入和执行租赁更新命令发出的核心 WorkItem 事实。 Agent
-Card 和会话激活事实保留其 `ext.missionweaveprotocol.*` Event 类型。
-`group.snapshot.created` 和 `group.archived` 是 Organization 拥有的
+是由引用 Organization 拥有的依赖项插入和 Execution
+Lease 更新 Command 发出的核心 WorkItem 事实。Agent Card 和会话激活事实保留其
+`ext.missionweaveprotocol.*` Event 类型。 `group.snapshot.created` 和
+`group.archived` 是 Organization 拥有的
 `ext.missionweaveprotocol.core.group_archive`
 Command 在其签名快照和策略日志链接验证后以原子方式发出的核心存档事实。
 
@@ -158,7 +159,7 @@ NOT 部分应用它。原子优先接受所有权、租约续订、Membership �
 
 </NormativeClause>
 
-<InformativeBlock title="Pinned source continuation">
+<InformativeBlock title="固定源内容续接">
 
 下一个块恢复稍后固定的源段。有关介入的本地页面和确切的行范围，请参阅[规范源映射](./)。
 

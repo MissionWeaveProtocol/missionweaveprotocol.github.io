@@ -21,8 +21,9 @@ capa de Admisión permanece separada de las seis etapas criptográficas
 La clave lógica es `(organizationId, signingHash)`. Admission Log autentica su
 servicio de aceptación, distingue un registro encontrado de una ausencia
 autorizada, preserva la integridad de solo agregar y expone una operación
-atómica de agregar o devolver existente. Los resultados escritos no se cierran;
-un indicador de confianza de la persona que llama no puede reemplazarlos
+atómica de agregar o devolver existente. Los resultados tipados fallan de forma
+cerrada; un indicador de confianza de la persona que llama no puede
+reemplazarlos
 ([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).
 
 La forma exacta del registro de nueve campos, la prohibición de un miembro
@@ -38,13 +39,13 @@ admisión y reproducción se publica en
 La secuencia visible para el lector es exactamente:
 
 ```text
-six-stage cryptographic verification
-→ authoritative Admission Log lookup
-→ found record validation OR authoritative absence
-→ trusted context and candidate preparation
-→ atomic append-or-return-existing
-→ returned record validation
-→ admitted result
+verificación criptográfica de seis etapas
+→ búsqueda autoritativa en Admission Log
+→ validación del registro encontrado o ausencia autoritativa
+→ preparación del contexto de confianza y del registro candidato
+→ anexado atómico o devolución del registro existente
+→ validación del registro devuelto
+→ resultado admitido
 ```
 
 El punto de bifurcación importa. Un registro encontrado pasa directamente a la
@@ -82,10 +83,10 @@ diagnóstico protegida `admission` y se asignan en el cable a
 La repetición histórica sigue un camino más estrecho:
 
 ```text
-six-stage cryptographic verification
-→ required found record
-→ record validation
-→ no trusted context or append
+verificación criptográfica de seis etapas
+→ se requiere encontrar un registro
+→ validación del registro
+→ sin contexto de confianza ni anexado
 ```
 
 Las seis etapas utilizan evidencia histórica autoritativa del Registry que

@@ -97,7 +97,7 @@
         },
         {
           "capability": "frame-codec",
-          "label": "WebSocket frame models and codec",
+          "label": "WebSocket frame codec",
           "sourceFiles": ["src/missionweaveprotocol/wire.py"]
         },
         {
@@ -107,7 +107,7 @@
         },
         {
           "capability": "embedded-protocol-bundles",
-          "label": "Embedded protocol bundles and digest verification",
+          "label": "Protocol bundles",
           "sourceFiles": ["src/missionweaveprotocol/bundle.py"]
         },
         {
@@ -187,7 +187,7 @@
         },
         {
           "capability": "embedded-protocol-bundles",
-          "label": "Packaged protocol bundles",
+          "label": "Protocol bundles",
           "sourceFiles": ["src/package-root.ts", "src/schema-catalog.ts"]
         },
         {
@@ -212,7 +212,7 @@
         },
         {
           "capability": "worker-scheduler",
-          "label": "Worker scheduler",
+          "label": "Worker scheduling",
           "reason": "No Worker scheduling runtime is exported at the pinned commit."
         },
         {
@@ -280,7 +280,7 @@
         },
         {
           "capability": "embedded-protocol-bundles",
-          "label": "Embedded protocol bundles and digest verification",
+          "label": "Protocol bundles",
           "sourceFiles": ["bundle.go"]
         },
         {
@@ -305,7 +305,7 @@
         },
         {
           "capability": "worker-scheduler",
-          "label": "Worker scheduler",
+          "label": "Worker scheduling",
           "reason": "No Worker scheduling runtime is exported at the pinned commit."
         },
         {
@@ -368,7 +368,7 @@
         },
         {
           "capability": "embedded-protocol-bundles",
-          "label": "Embedded protocol bundles and digest verification",
+          "label": "Protocol bundles",
           "sourceFiles": ["src/bundle.rs"]
         },
         {
@@ -393,7 +393,7 @@
         },
         {
           "capability": "worker-scheduler",
-          "label": "Worker scheduler",
+          "label": "Worker scheduling",
           "reason": "No Worker scheduling runtime is exported at the pinned commit."
         },
         {
@@ -469,7 +469,7 @@
         },
         {
           "capability": "embedded-protocol-bundles",
-          "label": "Embedded protocol bundles and digest verification",
+          "label": "Protocol bundles",
           "sourceFiles": [
             "src/main/java/org/missionweaveprotocol/sdk/ProtocolBundle.java"
           ]
@@ -502,7 +502,7 @@
         },
         {
           "capability": "worker-scheduler",
-          "label": "Worker scheduler",
+          "label": "Worker scheduling",
           "reason": "No Worker scheduling runtime is exported at the pinned commit."
         },
         {
@@ -562,7 +562,7 @@
         },
         {
           "capability": "embedded-protocol-bundles",
-          "label": "Embedded protocol bundles and digest verification",
+          "label": "Protocol bundles",
           "sourceFiles": ["src/bundle.cpp"]
         },
         {
@@ -590,7 +590,7 @@
         },
         {
           "capability": "worker-scheduler",
-          "label": "Worker scheduler",
+          "label": "Worker scheduling",
           "reason": "No Worker scheduling runtime is exported at the pinned commit."
         },
         {

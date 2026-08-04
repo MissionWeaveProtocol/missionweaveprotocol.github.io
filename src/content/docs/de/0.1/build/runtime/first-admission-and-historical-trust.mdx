@@ -31,10 +31,10 @@ ab:
 Stellen Sie jede Grenze mit einer typisierten Schnittstelle dar:
 
 - aktuelle Registry Nachweise für eine neue Erstzulassungsentscheidung;
-- verbindliche historische Registry-Beweise zur Wiedergabe; – eine
-  authentifizierte Admission Log-Suche;
+- verbindliche historische Registry-Beweise zur Wiedergabe;
+- eine authentifizierte Admission Log-Suche;
 - eine atomare Operation zum Anhängen oder Zurückgeben vorhandener Elemente; und
-  – Organization-vertrauenswürdiger Akzeptanzkontext, der nur nach maßgeblicher
+- Organization-vertrauenswürdiger Akzeptanzkontext, der nur nach maßgeblicher
   Abwesenheit verwendet wird.
 
 :::
@@ -59,13 +59,13 @@ wird
 ## Erstzulassungsalgorithmus
 
 ```text
-six-stage cryptographic verification
-→ authoritative Admission Log lookup
-→ found record validation OR authoritative absence
-→ trusted context and candidate preparation
-→ atomic append-or-return-existing
-→ returned record validation
-→ admitted result
+sechsstufige kryptografische Verifizierung
+→ maßgebliche Suche im Admission Log
+→ Validierung des gefundenen Datensatzes oder maßgebliche Abwesenheit
+→ Vorbereitung von vertrauenswürdigem Kontext und Kandidatendatensatz
+→ atomisches Anhängen oder Zurückgeben des vorhandenen Datensatzes
+→ Validierung des zurückgegebenen Datensatzes
+→ zugelassenes Ergebnis
 ```
 
 Nur maßgebliche Abwesenheit ermöglicht eine vertrauenswürdige Kontexterfassung
@@ -113,10 +113,10 @@ einen separaten Datensatz veröffentlichen oder darauf verweisen
 ## Historische Wiederholung
 
 ```text
-six-stage cryptographic verification with authoritative historical Registry evidence
-→ required found record
-→ record validation
-→ no trusted context or append
+sechsstufige kryptografische Verifizierung mit maßgeblichen historischen Registry-Nachweisen
+→ ein gefundener Datensatz ist erforderlich
+→ Datensatzvalidierung
+→ kein vertrauenswürdiger Kontext und kein Anhängen
 ```
 
 Replay kann keine fehlende Zulassung erstellen, keinen neuen vertrauenswürdigen

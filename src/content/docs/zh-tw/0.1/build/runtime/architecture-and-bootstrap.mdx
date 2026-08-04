@@ -17,7 +17,7 @@ description:
 | ---------------------- | ------------------------------------------------------------------------------- |
 | Agent Registry         | 發佈 Organization 管理的 Agent 身分、功能、端點、簽章金鑰和歷史記錄。           |
 | Signed Document 驗證者 | 根據精確的文檔位元組和權威的 Registry 證據產生六階段加密結果。                  |
-| 入學服務               | 取得經過驗證的 Admission Log 結果並產生首次入場或歷史信任結果。                 |
+| 準入服務               | 取得經過驗證的 Admission Log 結果並產生首次準入或歷史信任結果。                 |
 | Group Authority        | 對參與者進行身份驗證，驗證當前狀態和策略，序列化接受的轉換，並附加 Group 事件。 |
 | 授權服務               | 發行與已接受的工作、時代、租賃、政策和預算綁定的短期能力代幣。                  |
 | Agent 運行時           | 維護 Group 範圍的本地投影、消耗事件、安排接受的工作並產生工件和 Evidence。      |
@@ -48,7 +48,9 @@ Mission 內容、憑證、中間狀態和 Agent 記憶猶存 Group-除非揭露�
 7. **啟用狀態轉換。 ** Group
    Authority 僅在以下時間後接受 Command 以原子方式對參與者進行身份驗證並驗證架構、紀元、修訂、角色、委託、預算、策略和租賃（[MWP-EVT-004](../../../reference/specification/commands-events-and-ordering/#mwp-evt-004)）。
 8. **最後啟用副作用。 **
-   僅發出最低權限的功能令牌在 WorkItem 接受並獲得所需批准後，綁定範圍不比目前執行租賃 ([MWP-AUT-001](../../../reference/specification/authorization-and-budgets/#mwp-aut-001)) 更廣泛或更長。
+   僅在 WorkItem 被接受並獲得所需 Approval 後簽發最小權限 Capability
+   Token，其綁定範圍不得比目前 Execution
+   Lease 更廣或更長 ([MWP-AUT-001](../../../reference/specification/authorization-and-budgets/#mwp-aut-001))。
 
 ## 失敗關閉啟動
 

@@ -57,13 +57,13 @@ en conflit est rejeté plutôt que remplacé
 ## Algorithme de première admission
 
 ```text
-six-stage cryptographic verification
-→ authoritative Admission Log lookup
-→ found record validation OR authoritative absence
-→ trusted context and candidate preparation
-→ atomic append-or-return-existing
-→ returned record validation
-→ admitted result
+vérification cryptographique en six étapes
+→ recherche faisant autorité dans Admission Log
+→ validation de l’enregistrement trouvé ou absence faisant autorité
+→ préparation du contexte de confiance et de l’enregistrement candidat
+→ ajout atomique ou renvoi de l’enregistrement existant
+→ validation de l’enregistrement renvoyé
+→ résultat admis
 ```
 
 Seule une absence faisant autorité permet une acquisition de contexte fiable et
@@ -110,10 +110,10 @@ peut publier ou référencer qu'un enregistrement distinct
 ## Relecture historique
 
 ```text
-six-stage cryptographic verification with authoritative historical Registry evidence
-→ required found record
-→ record validation
-→ no trusted context or append
+vérification cryptographique en six étapes avec des preuves historiques Registry faisant autorité
+→ un enregistrement trouvé est requis
+→ validation de l’enregistrement
+→ aucun contexte de confiance ni ajout
 ```
 
 La relecture ne peut pas créer une admission manquante, émettre un nouveau

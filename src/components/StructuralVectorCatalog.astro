@@ -1,6 +1,9 @@
 ---
 import manifest from "../../public/artifacts/0.1/protocol/conformance/manifest.json";
 import release from "../data/normative/0.1/release-source.json";
+import { localizedText, uiCopyForPathname } from "../lib/normative-locale";
+
+const copy = uiCopyForPathname(Astro.url.pathname);
 
 const expectedValid = manifest.filter((entry) => entry.valid);
 const expectedInvalid = manifest.filter((entry) => !entry.valid);
@@ -18,13 +21,13 @@ const artifactUrl = (path: string) =>
 const groups = [
   {
     id: "expected-valid-vector-directory",
-    label: "Expected-valid vector directory",
+    label: localizedText(copy, "expectedValidDirectory"),
     className: "expected-valid",
     entries: expectedValid,
   },
   {
     id: "expected-invalid-vector-directory",
-    label: "Expected-invalid vector directory",
+    label: localizedText(copy, "expectedInvalidDirectory"),
     className: "expected-invalid",
     entries: expectedInvalid,
   },
@@ -42,9 +45,9 @@ const groups = [
           <table>
             <thead>
               <tr>
-                <th scope="col">Case</th>
-                <th scope="col">Instance</th>
-                <th scope="col">Schema</th>
+                <th scope="col">{localizedText(copy, "case")}</th>
+                <th scope="col">{localizedText(copy, "instance")}</th>
+                <th scope="col">{localizedText(copy, "schema")}</th>
               </tr>
             </thead>
             <tbody>

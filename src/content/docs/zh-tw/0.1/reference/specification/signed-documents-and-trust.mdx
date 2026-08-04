@@ -127,7 +127,7 @@ NOT 被視為省略 Organization 範圍檢查所需證據的權限。
 <NormativeClause id="MWP-SDV-010" level={["MUST","MUST NOT"]}>
 
 密鑰解析適配器是 v0.1 中的可信任部署接縫。當它向驗證者提供 Registry 證據時，它 MUST 建立所需的 Organization 範圍、適用的權威修訂、證據完整性和歷史覆蓋範圍，或者報告它不能。被取代的 Registry 狀態 MUST
-NOT 將作為新驗證或首次接納決策的當前證據提供。 Organization
+NOT 將作為新驗證或首次準入決策的目前證據提供。 Organization
 MUST 定義適配器如何建立修訂版本或適用性。 MissionWeaveProtocol
 0.1 未標準化修訂識別碼、可移植 Agent
 Registry 快照線工件、傳輸、新鮮度機製或加密完整性證明。
@@ -175,18 +175,19 @@ Card。解析另一個金鑰下的相同金鑰 ID Principal 或不同的密鑰�
 NOT 執行授權、附加 Event 或在每個階段成功之前執行轉換：
 
 1. 嚴格解析恰好一個 UTF-8
-   JSON 值並拒絕無效 UTF-8, 一個位元組順序標記、尾隨資料和重複的解碼物件成員名稱；2.驗證完整 Signed
-   Document 違反其規範模式，包括所需的簽名信封和支援的演算法；
-2. 應用此驗證設定文件，包括受保護的時間 UTC-`Z` 形式驗證，準確 `createdAt`
-   無需轉換的平等、預期簽署者規則選擇、規範的未填充的 base64url 解碼
-   `signature.value`，並且嚴格 `Renc` 和 `Senc` 64位元組的驗證 Ed25519 簽名;
-3. obtain complete Organization-範圍 Registry evidence, validate every
-   binding需要建立不可變的簽章金鑰綁定， Organization- 廣泛的無重用和無別名不變量，以及完整保留的有效性歷史記錄，然後選擇預期簽名者下的固定密鑰並驗證其受保護時間間隔，包括規範的未填充的base64url解碼和對其32字節的嚴格點驗證 Ed25519 公鑰；
-4. 完全省略頂級 `signature` 成員，拒絕 RFC 8785 和 I-JSON 資料模型以外的值
-   [第 2](../foundations/#mwp-fnd-006)
-   節，並根據接收到的值產生 JCS 簽名字節，而無需超出所需的 RFC
-   8785 二進位 64 序列化的時間戳或數字轉換；
-5. 驗證這些位元組上的 Ed25519 簽章。
+   JSON 值，並拒絕無效 UTF-8、位元組順序標記、尾隨資料和重複的已解碼物件成員名稱；
+2. 根據規範 Schema 驗證完整的 Signed
+   Document，包括必要的簽章信封和支援的演算法；
+3. 套用此驗證設定檔，包括受保護時間的 UTC-`Z` 形式驗證、未經轉換的精確
+   `createdAt` 相等性、預期簽署者規則選擇、`signature.value`
+   的規範無填充 base64url 解碼，以及對 64 位元組 Ed25519 簽章的 `Renc` 和 `Senc`
+   嚴格驗證；
+4. 取得完整的 Organization 範圍 Registry 證據，驗證建立不可變簽章金鑰綁定、Organization 範圍無重用和無別名不變量以及完整保留有效性歷史所需的每個綁定，然後選擇預期簽署者下的固定金鑰並驗證其受保護時間區間，包括規範無填充 base64url 解碼和對其 32 位元組 Ed25519 公鑰的嚴格點驗證；
+5. 恰好省略頂層 `signature`
+   成員，拒絕[第 2 節](../foundations/#mwp-fnd-006)定義的 RFC
+   8785 和 I-JSON 資料模型之外的值，並從接收到的值產生 JCS 簽名字節，不對時間戳記或數字執行超出 RFC
+   8785 所需 binary64 序列化的轉換；以及
+6. 驗證這些位元組上的 Ed25519 簽章。
 
 </NormativeClause>
 
@@ -204,26 +205,26 @@ JCS 資料模型失敗，而不是第一階段 JSON 語法錯誤。斷言一個�
 
 **簽名哈希**是
 `sha256:<lowercase hex SHA-256 of the exact stage-5 JCS signing bytes>`。上述六个阶段构成了密码验证和 MUST
-NOT 需要入學狀態。因此，在接受方單獨的首次存取或歷史信任驗證之前，可能存在經過加密驗證的結果。 Organization.
+NOT 需要準入狀態。因此，在接受方單獨的首次準入或歷史信任驗證之前，可能存在經過密碼學驗證的結果。 Organization.
 
 </NormativeClause>
 
-<InformativeBlock title="Pinned source continuation">
+<InformativeBlock title="固定來源內容續接">
 
-下一個區塊恢復稍後固定的來源段。詳見【規格源碼圖](./) 對於中間的本機頁面和確切的行範圍。
+下一個區塊恢復稍後固定的來源段。中間的本地頁面與確切行範圍請參閱[規範來源映射](./)。
 
 </InformativeBlock>
 
 <NormativeClause id="MWP-SDV-018" level={["MUST NOT","MUST"]}>
 
-無效的 JSON、重複的成員或無法輸入的數值 JCS 資料模型是一個
-`PROTOCOL_VIOLATION`。模式、所需信封或不支援的演算法失敗是
-`SCHEMA_VALIDATION_FAILED`。語意階段的加密階段 3、4 或 6 失敗
-`admission`，或在 Command-新鮮度檢查是
-`AUTH_INVALID_SIGNATURE`;範例包含時間綁定不匹配、具有非零未使用填充位的架構有效的 base64url、未知或錯誤綁定金鑰、無效金鑰間隔、非規範或非素數順序公鑰、格式錯誤的解碼金鑰或簽章長度或加密不符。有線回應 MUST
-NOT reveal which key-resolution, admission, or cryptographic check
-failed.這 Organization
-MUST 根據適用的保留策略，將第一個失敗的語意階段及其特定診斷原因保留在受保護的、存取控制的審核記錄中。一個 Group- 範圍內的故障 MUST 授權審計員可以從策略日誌中進行參考，而不會將該診斷資訊暴露給不受信任的呼叫者。
+無效的 JSON、重複成員，或無法進入 JCS 資料模型的值，均屬
+`PROTOCOL_VIOLATION`。結構描述、必要信封或不支援演算法的失敗屬
+`SCHEMA_VALIDATION_FAILED`。密碼學階段 3、4 或 6、語意階段
+`admission`，或 Command 新鮮度檢查中的失敗，均屬
+`AUTH_INVALID_SIGNATURE`；例子包括時間綁定不符、結構描述有效但未使用填充位非零的 base64url、未知或綁定錯誤的金鑰、無效的金鑰區間、非規範或非素數階公鑰、解碼後的金鑰或簽章長度格式錯誤，以及密碼學不符。協定線路回應 MUST
+NOT 揭露究竟是哪一項密鑰解析、準入或密碼學檢查失敗。Organization
+MUST 依適用的保留策略，在受保護且具存取控制的稽核記錄中保留第一個失敗的語意階段及其具體診斷原因。Group 範圍的失敗 MUST 可供已授權稽核員從 Policy
+Log 引用，同時不得向不受信任的呼叫者揭露該診斷。
 
 </NormativeClause>
 

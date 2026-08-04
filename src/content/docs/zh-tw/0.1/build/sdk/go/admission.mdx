@@ -1,17 +1,17 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: Go 首次准入與歷史信任
+title: Go 首次準入與歷史信任
 description:
-  類型化的 Go 適配器、精確的呼叫順序、信任邊界、原子日誌要求和可運行的准入範例。
+  類型化的 Go 適配器、精確的呼叫順序、信任邊界、原子日誌要求和可運行的準入範例。
 ---
 
 import goAdmissionExample from "../../../../../../../../examples/sdk/go/admission/main.go?raw";
 
-# Go 首次准入與歷史信任
+# Go 首次準入與歷史信任
 
 Go `AdmissionService` 在六階段 Signed
-Document 驗證器（[MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)）之上分層首次存取和歷史信任。與語言無關的流程是本地[首次接納和歷史信任運行時頁面](../../../runtime/first-admission-and-historical-trust/)，確切的要求是本地[首次接納和歷史信任子句](../../../../reference/specification/first-admission-and-historical-trust/)。
+Document 驗證器（[MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)）之上分層首次準入和歷史信任。與語言無關的流程見本地[首次準入和歷史信任運行時頁面](../../../runtime/first-admission-and-historical-trust/)，確切要求見本地[首次準入和歷史信任條款](../../../../reference/specification/first-admission-and-historical-trust/)。
 
 ## 公共適配器和結果
 
@@ -27,9 +27,9 @@ Document 驗證器（[MWP-ADM-005](../../../../reference/specification/first-adm
 | `AdmissionService.VerifyHistoricalAdmission` | 根據 [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) 的要求，使用歷史 Registry 證據重新運行六階段驗證，並需要現有記錄而不發布上下文或附加。                                               |
 | `AdmittedSignedDocument`                     | 傳回經過驗證和解析的記錄證據以及防禦性 `RecordBytes()` 副本。                                                                                                                                                                                  |
 
-呼叫者提供的信任布林值不是准入查找結果，絕不能選擇成功路徑。
+呼叫者提供的信任布林值不是準入查找結果，絕不能選擇成功路徑。
 
-## 首次入場電話順序
+## 首次準入呼叫順序
 
 :::note[Informative example]
 

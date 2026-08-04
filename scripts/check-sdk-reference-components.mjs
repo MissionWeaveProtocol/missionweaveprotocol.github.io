@@ -10,6 +10,12 @@ const matrix = JSON.parse(
     "utf8",
   ),
 );
+const uiCopy = JSON.parse(
+  await readFile(
+    path.join(repositoryRoot, "src/data/normative/0.1/ui-copy.json"),
+    "utf8",
+  ),
+);
 const failures = [];
 
 async function componentSource(name) {
@@ -31,13 +37,22 @@ const apiInventory = await componentSource("SdkApiInventory.astro");
 const sdkInstall = await componentSource("SdkInstall.astro");
 
 if (supportStatus) {
-  for (const label of [
-    "Implemented",
-    "Not implemented",
-    "Deployment adapter required",
-  ]) {
-    if (!supportStatus.includes(label)) {
-      failures.push(`SupportStatus.astro: missing exact label ${label}`);
+  for (const required of ["uiCopyForPathname", "localizedText"]) {
+    if (!supportStatus.includes(required)) {
+      failures.push(`SupportStatus.astro: missing ${required}`);
+    }
+  }
+  const statusLabels = {
+    supportImplemented: "Implemented",
+    supportNotImplemented: "Not implemented",
+    supportDeploymentAdapterRequired: "Deployment adapter required",
+  };
+  for (const [key, label] of Object.entries(statusLabels)) {
+    if (!supportStatus.includes(key)) {
+      failures.push(`SupportStatus.astro: missing localized key ${key}`);
+    }
+    if (uiCopy.locales?.en?.[key] !== label) {
+      failures.push(`ui-copy.json: ${key} must equal ${label}`);
     }
   }
 }

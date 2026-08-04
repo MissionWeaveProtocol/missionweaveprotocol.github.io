@@ -69,14 +69,14 @@ Der Erfolg des Anbieterimports ist nicht die Akzeptanzregel. Ein Prüfer:
   Ordnung, akzeptiert nur `0 <= S < L` und reduziert keinen Skalar außerhalb des
   Bereichs
   ([MWP-SDV-003](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-003));
-  – erzwingt unveränderliche Schlüssel-ID-zu-Principal, Algorithmus und
+- erzwingt unveränderliche Schlüssel-ID-zu-Principal, Algorithmus und
   öffentliche Schlüsselbindung plus Organization-weite No-Reuse- und
   No-Alias-Invarianten
   ([MWP-SDV-004](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-004));
 - Entschlüsselt den 32-Byte-öffentlichen Schlüssel strikt als kanonische
   Nichtidentität. Edwards25519-Punkt erster Ordnung
   ([MWP-SDV-005](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-005));
-  und – überprüft die Pure-Ed25519-Verifizierungsgleichung über die genauen
+- und überprüft die Pure-Ed25519-Verifizierungsgleichung über die genauen
   Stage-5-Bytes
   ([MWP-SDV-006](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-006)).
 
@@ -98,11 +98,12 @@ Vergleich nicht repariert oder normalisiert werden
 
 Stufe 4 ist umfassender als eine Suche nach ausgewählten Schlüsseln:
 
-– Der Beweis ist auf genau einen Organization und einen kohärenten beschränkt
-maßgebliche Registry-Revision; – jedes Bindungs- und beibehaltene
-Verlaufselement, das für die Organization-weite Nicht-Wiederverwendung benötigt
-wird, No-Alias und Vollständigkeitsansprüche werden vor der Auswahl validiert
-([MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008));
+- Der Beweis ist auf genau einen Organization und eine kohärente maßgebliche
+  Registry-Revision beschränkt;
+- jedes Bindungs- und beibehaltene Verlaufselement, das für die
+  Organization-weite Nicht-Wiederverwendung, No-Alias- und
+  Vollständigkeitsansprüche benötigt wird, wird vor der Auswahl validiert
+  ([MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008));
 
 - Der Bereitstellungsadapter stellt die Anwendbarkeit, Vollständigkeit und
   Gültigkeit der Revision fest historische Berichterstattung oder Berichte, dass
@@ -116,7 +117,7 @@ wird, No-Alias und Vollständigkeitsansprüche werden vor der Auswahl validiert
 Nicht verfügbare Beweise, unvollständige Abdeckung, autoritativer unbekannter
 Schlüssel, ungültige unabhängige Bindungen und ein ungültiger ausgewählter
 Schlüssel werden in Stufe 4 nicht geschlossen. Evidence kann aus einem
-vollständigen Snapshot oder autorisierenden Indizes und Abfragen stammen, ein
+vollständigen Snapshot oder maßgeblichen Indizes und Abfragen stammen, ein
 teilweiser Cache kann jedoch nicht als Ersatz dienen Organization-weiter
 Nachweis
 ([MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009)).

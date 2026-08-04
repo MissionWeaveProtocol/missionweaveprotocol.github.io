@@ -1,5 +1,11 @@
 ---
 import contextSource from "../../public/artifacts/0.1/protocol/CONTEXT.md?raw";
+import localizedGlossary from "../data/normative/0.1/context-glossary-locales.json";
+import {
+  localeForPathname,
+  localizedText,
+  uiCopyForPathname,
+} from "../lib/normative-locale";
 
 interface GlossaryTerm {
   term: string;
@@ -77,6 +83,57 @@ const termCount = contextSections.reduce(
 );
 if (termCount === 0) throw new Error("protocol context glossary is empty");
 
+const locale = localeForPathname(Astro.url.pathname);
+const copy = uiCopyForPathname(Astro.url.pathname);
+const translation =
+  locale === "en"
+    ? undefined
+    : localizedGlossary.locales[
+        locale as keyof typeof localizedGlossary.locales
+      ];
+if (locale !== "en" && !translation) {
+  throw new Error(`${locale} context glossary translation is missing`);
+}
+if (translation) {
+  if (translation.sectionTitles.length !== contextSections.length) {
+    throw new Error(`${locale} context glossary section count differs`);
+  }
+  if (translation.entries.length !== termCount) {
+    throw new Error(`${locale} context glossary term count differs`);
+  }
+}
+let localizedEntryIndex = 0;
+const displayedSections = contextSections.map((section, sectionIndex) => ({
+  id: slug(section.title),
+  title: translation?.sectionTitles[sectionIndex] ?? section.title,
+  terms: section.terms.map((entry) => {
+    const localizedEntry = translation?.entries[localizedEntryIndex];
+    localizedEntryIndex += 1;
+    if (translation && !localizedEntry) {
+      throw new Error(`${locale} context glossary entry is missing`);
+    }
+    if (localizedEntry && localizedEntry.term !== entry.term) {
+      throw new Error(
+        `${locale} context glossary term mismatch: expected ${entry.term}, found ${localizedEntry.term}`,
+      );
+    }
+    const description = translation
+      ? localizedEntry!.description
+      : entry.description;
+    const avoid = translation ? localizedEntry!.avoid : entry.avoid;
+    if (!description.trim() || !avoid.trim()) {
+      throw new Error(
+        `${locale} context glossary contains empty localized text`,
+      );
+    }
+    return { ...entry, description, avoid };
+  }),
+}));
+const displayedIntroduction = translation
+  ? translation.introduction
+  : introduction.join(" ");
+const avoidLabel = localizedText(copy, "avoid");
+
 function slug(value: string) {
   return value
     .toLowerCase()
@@ -94,12 +151,12 @@ function inlineParts(value: string) {
 ---
 
 <div class="context-glossary" data-term-count={termCount}>
-  <p>{introduction.join(" ")}</p>
+  <p>{displayedIntroduction}</p>
 
   {
-    contextSections.map((section) => (
-      <section aria-labelledby={slug(section.title)}>
-        <h2 id={slug(section.title)}>{section.title}</h2>
+    displayedSections.map((section) => (
+      <section aria-labelledby={section.id}>
+        <h2 id={section.id}>{section.title}</h2>
         <dl>
           {section.terms.map((entry) => (
             <div>
@@ -111,7 +168,7 @@ function inlineParts(value: string) {
                   )}
                 </p>
                 <p class="avoid">
-                  <strong>Avoid:</strong>{" "}
+                  <strong>{avoidLabel}:</strong>{" "}
                   {inlineParts(entry.avoid).map((part) =>
                     part.code ? <code>{part.value}</code> : part.value,
                   )}

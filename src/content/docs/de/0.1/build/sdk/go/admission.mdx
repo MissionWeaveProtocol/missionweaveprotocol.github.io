@@ -1,7 +1,7 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: Go First Admission und Historical Trust
+title: Go Erstzulassung und historisches Vertrauen
 description: >-
   Typisierte Go-Adapter, genaue Aufrufreihenfolge, Vertrauensgrenzen, atomare
   Protokollanforderungen und ein ausführbares Zulassungsbeispiel.
@@ -9,13 +9,13 @@ description: >-
 
 import goAdmissionExample from "../../../../../../../../examples/sdk/go/admission/main.go?raw";
 
-# Erste Zulassung und historisches Vertrauen
+# Go Erstzulassung und historisches Vertrauen
 
-Die Go-Schichten `AdmissionService` legen First Admission und Historical Trust
-über dem sechsstufigen Verifizierer Signed Document
+Die Go-Schichten `AdmissionService` legen Erstzulassung und historisches
+Vertrauen über dem sechsstufigen Verifizierer Signed Document
 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
 Der sprachunabhängige Ablauf ist die lokale
-[First Admission and Historical Trust-Laufzeitseite](../../../runtime/first-admission-and-historical-trust/),
+[Laufzeitseite für Erstzulassung und historisches Vertrauen](../../../runtime/first-admission-and-historical-trust/),
 und die genauen Anforderungen sind die lokalen
 [First-Admission- und Historical-Trust-Klauseln](../../../../reference/specification/first-admission-and-historical-trust/).
 
@@ -26,10 +26,10 @@ und die genauen Anforderungen sind die lokalen
 | `AdmissionCurrentKeyResolver.ResolveCurrent` | Geben Sie den vollständigen Organization-weiten Registry-Beweis zurück, dass die Bereitstellung für diese Entscheidung aktuell ist.                                                                                                                                                                                                     |
 | `TrustedAdmissionContext.Issue`              | Vergeben Sie die vertrauenswürdige Datensatz-ID, den Annahmezeitpunkt und den Annahmedienst erst nach behördlicher Abwesenheit.                                                                                                                                                                                                         |
 | `AdmissionLog.Lookup`                        | Gibt einen gefundenen authentifizierten Datensatz oder `AdmissionLookup{AuthoritativeAbsence: true}` zurück. Cache-Fehler, Zeitüberschreitung, nicht authentifizierte Abwesenheit und unbestimmter Statusfehler geschlossen unter [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
-| `AdmissionLog.AppendOrReturnExisting`        | Hängen Sie Kandidatenbytes atomar an oder geben Sie den gleichzeitigen autorisierenden Gewinner über eine authentifizierte Dienstidentität zurück.                                                                                                                                                                                      |
+| `AdmissionLog.AppendOrReturnExisting`        | Hängen Sie Kandidatenbytes atomar an oder geben Sie den gleichzeitigen maßgeblichen Gewinner über eine authentifizierte Dienstidentität zurück.                                                                                                                                                                                         |
 | `AuthenticatedAdmissionRecord`               | Binden Sie `RecordBytes` an den vom Adapter authentifizierten Dienst, damit [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) den zurückgegebenen Datensatz validieren kann.                                                                                                         |
 | `AdmissionService.PrepareFirstAdmission`     | Erstellen und validieren Sie Kandidatennachweise aus einem von SDK erstellten `VerifiedSignedDocument`. Es stellt keine Zulassung dar und impliziert auch keine Zulassung.                                                                                                                                                              |
-| `AdmissionService.AdmitFirst`                | Führen Sie unter [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006) eine aktuelle Überprüfung, eine autorisierende Suche, eine Kandidatenerstellung, eine atomare Append-or-Return-Existing- und zurückgegebene Datensatzvalidierung durch.                                           |
+| `AdmissionService.AdmitFirst`                | Führen Sie unter [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006) eine aktuelle Überprüfung, eine maßgebliche Suche, eine Kandidatenerstellung, eine atomare Append-or-Return-Existing- und zurückgegebene Datensatzvalidierung durch.                                              |
 | `AdmissionService.VerifyHistoricalAdmission` | Führen Sie die sechsstufige Überprüfung erneut mit historischen Registry-Beweisen durch und fordern Sie einen vorhandenen Datensatz an, ohne Kontext auszugeben oder anzuhängen, wie von [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) gefordert.                                |
 | `AdmittedSignedDocument`                     | Geben Sie verifizierte und analysierte Datensatzbeweise sowie eine defensive `RecordBytes()`-Kopie zurück.                                                                                                                                                                                                                              |
 
@@ -116,13 +116,13 @@ Beweis für das Fehlen von Autorität.
 Das Beispiel leitet deterministisch einen Ed25519-Schlüssel ab, erstellt einen
 vollständigen Registry und einen signierten Command und stellt typisierte
 In-Memory-Adapter bereit. Ein `sync.Mutex` schützt die gemeinsam genutzte
-autorisierende Karte. `Lookup` und `AppendOrReturnExisting` erwerben es
-unabhängig voneinander; Der Mutex macht `AppendOrReturnExisting` atomar, wenn er
-nach einem gleichzeitigen Gewinner sucht und bedingt anhängt. Das Protokoll
-erfordert eine autorisierende Suche und ein atomares
-Anfügen-oder-Rückgeben-Verhalten, nicht eine einzige Transaktion, die beide
-Aufrufe umfasst. Der feste Seed ist Demonstrationsmaterial und darf niemals
-außerhalb des Beispiels verwendet werden.
+maßgebliche Map. `Lookup` und `AppendOrReturnExisting` erwerben es unabhängig
+voneinander; Der Mutex macht `AppendOrReturnExisting` atomar, wenn er nach einem
+gleichzeitigen Gewinner sucht und bedingt anhängt. Das Protokoll erfordert eine
+maßgebliche Suche und ein atomares Anfügen-oder-Rückgeben-Verhalten, nicht eine
+einzige Transaktion, die beide Aufrufe umfasst. Der feste Seed ist
+Demonstrationsmaterial und darf niemals außerhalb des Beispiels verwendet
+werden.
 
 <pre>
   <code>{goAdmissionExample}</code>

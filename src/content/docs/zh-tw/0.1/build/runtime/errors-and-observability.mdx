@@ -2,7 +2,9 @@
 normativeVersion: "0.1"
 normativeStatus: normative
 title: 錯誤和可觀察性
-description: 線路安全錯誤、重試決策、受保護的驗證診斷、存取控制的審核記錄、指標和追蹤邊界。
+description:
+  Wire-safe
+  錯誤、重試決策、受保護的驗證診斷、存取控制的審核記錄、指標和追蹤邊界。
 ---
 
 # 錯誤和可觀察性
@@ -11,18 +13,18 @@ description: 線路安全錯誤、重試決策、受保護的驗證診斷、存�
 
 ## 在正確的層進行分類
 
-| 樓層                                                | 公共成果                                    |
-| --------------------------------------------------- | ------------------------------------------- | -------------------- |
-|                                                     | 無效的 JSON、重複的成員或不可能的 JCS 值    | `PROTOCOL_VIOLATION` |
+| 層                                                  | 公開結果                                    |
+| --------------------------------------------------- | ------------------------------------------- |
+| 無效的 JSON、重複成員或不可能的 JCS 值              | `PROTOCOL_VIOLATION`                        |
 | 完整架構或所需信封失敗                              | `SCHEMA_VALIDATION_FAILED`                  |
 | 加密階段 3、4 或 6 失敗                             | `AUTH_INVALID_SIGNATURE`                    |
-| 准入或 Command-新鮮度失敗                           | `AUTH_INVALID_SIGNATURE`                    |
+| 準入或 Command-新鮮度失敗                           | `AUTH_INVALID_SIGNATURE`                    |
 | 缺少許可或政策資格                                  | `AUTH_FORBIDDEN`                            |
 | 過時會話、Membership、Coordinator、所有權或租賃狀態 | 相應的穩定的fencing代碼                     |
 | 目前聚合修訂不符                                    | `REVISION_CONFLICT`                         |
 | 接受壓力極限                                        | `BACKPRESSURE` 或 `RATE_LIMITED` 帶重試指導 |
 
-加密和准入失敗故意在線路上崩潰。 Organization 僅在受保護、存取控制的審核記錄中保留第一個失敗語意階段和特定原因 ([MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018))。階段編號是語意分類，而不是所需的內部函數邊界 ([MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016))。准入路徑中六階段完成後的每次失敗都使用受保護階段
+加密和準入失敗故意在線路上崩潰。 Organization 僅在受保護、存取控制的審核記錄中保留第一個失敗語意階段和特定原因 ([MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018))。階段編號是語意分類，而不是所需的內部函數邊界 ([MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016))。準入路徑中六階段完成後的每次失敗都使用受保護階段
 `admission` 和相同的公共 `AUTH_INVALID_SIGNATURE`
 代碼 ([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012))。
 
@@ -67,7 +69,7 @@ Organization 根據
 
 命令已經攜帶穩定的操作和相關身份（[MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001)），並且接受的事件保留不可變的原因、參與者、相關性、序列和修訂上下文（[MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)）。優先選擇這些引用而不是不相關的追蹤身分。
 
-有用的指標包括公共代碼接受和拒絕的命令、受限遙測中的第一個失敗的受保護階段、Group 的重播延遲、遊標間隙計數、重複 Event 計數、租賃和預算拒絕計數、反壓持續時間、准入適配器。在附加 Organization、Group、參與者、操作、金鑰或簽章雜湊標識符之前定義有界基數。
+有用的指標包括公共代碼接受和拒絕的命令、受限遙測中的第一個失敗的受保護階段、Group 的重播延遲、遊標間隙計數、重複 Event 計數、租賃和預算拒絕計數、反壓持續時間、準入適配器。在附加 Organization、Group、參與者、操作、金鑰或簽章雜湊標識符之前定義有界基數。
 
 :::
 

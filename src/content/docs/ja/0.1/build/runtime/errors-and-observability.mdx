@@ -15,14 +15,14 @@ description: ワイヤーセーフなエラー、再試行の決定、保護さ�
 | ----------------------------------------------------------------- | ----------------------------------------------------------- |
 | 無効な JSON、重複メンバー、または不可能な JCS 値                  | `PROTOCOL_VIOLATION`                                        |
 | 完全なスキーマまたは必須エンベロープの失敗                        | `SCHEMA_VALIDATION_FAILED`                                  |
-| 暗号化ステージ 3、4、または 6 の失敗                              | `AUTH_INVALID_SIGNATURE`                                    |
+| 暗号ステージ 3、4、または 6 の失敗                                | `AUTH_INVALID_SIGNATURE`                                    |
 | アドミッションまたは Command 鮮度の失敗                           | `AUTH_INVALID_SIGNATURE`                                    |
 | 権限またはポリシーの資格がありません                              | `AUTH_FORBIDDEN`                                            |
 | 古いセッション、Membership、Coordinator、所有権、またはリース状態 | 対応する安定したフェンシング コード                         |
 | 現在の集計リビジョンの不一致                                      | `REVISION_CONFLICT`                                         |
 | 許容圧力限界                                                      | `BACKPRESSURE` または `RATE_LIMITED` (再試行ガイダンスあり) |
 
-暗号化およびアドミッションの失敗は、ネットワーク上で意図的に崩壊します。 Organization は、最初に失敗したセマンティック ステージと特定の理由を、保護されアクセス制御された監査レコードにのみ保持します ([MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018))。ステージ番号は、必要な内部関数境界ではなく、意味論的な分類です ([MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016))。アドミッション パスの 6 ステージ完了後のすべての失敗では、保護されたステージ
+暗号およびアドミッションの失敗は、ネットワーク上で意図的に崩壊します。 Organization は、最初に失敗したセマンティック ステージと特定の理由を、保護されアクセス制御された監査レコードにのみ保持します ([MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018))。ステージ番号は、必要な内部関数境界ではなく、意味論的な分類です ([MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016))。アドミッション パスの 6 ステージ完了後のすべての失敗では、保護されたステージ
 `admission` と同じパブリック コード `AUTH_INVALID_SIGNATURE`
 ([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)) が使用されます。
 
@@ -43,16 +43,16 @@ description: ワイヤーセーフなエラー、再試行の決定、保護さ�
 
 ## 保護された監査レコード
 
-の Organization [MWP-SDV-018]
-の要求に従って、最初に失敗したセマンティック ステージとその特定の理由を、保護されアクセス制御された監査レコードに保持します。](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)。
+Organization は、[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)
+の要求に従って、最初に失敗したセマンティック ステージとその特定の理由を、保護されアクセス制御された監査レコードに保持します。
 
-シークレット、機能トークン、秘密鍵マテリアル、未加工の認証情報、未承認のものを入れないでください。 Group 存在、または保護された信頼と失敗の区別をワイヤ応答に含めます。トークンと認証情報はメッセージから除外されます。 Agent カード、コンテキスト パッケージ、アーティファクト、イベントも同様に ([MWP-AUT-002]](../../../reference/specification/authorization-and-budgets/#mwp-aut-002)）。
+シークレット、機能トークン、秘密鍵マテリアル、未加工の認証情報、未承認のものを入れないでください。 Group 存在、または保護された信頼と失敗の区別をワイヤ応答に含めます。トークンと認証情報はメッセージから除外されます。 Agent カード、コンテキスト パッケージ、アーティファクト、イベントも同様に ([MWP-AUT-002](../../../reference/specification/authorization-and-budgets/#mwp-aut-002))。
 
-監査証拠は、プライベートな思考連鎖、隠されたプロンプト、生の内部メモリを必要とせずに、意思決定、入力、阻害要因、および結果をカバーします ([MWP-FND-022]](../../../reference/specification/foundations/#mwp-fnd-022)）。
+監査証拠は、プライベートな思考連鎖、隠されたプロンプト、生の内部メモリを必要とせずに、意思決定、入力、阻害要因、および結果をカバーします ([MWP-FND-022](../../../reference/specification/foundations/#mwp-fnd-022))。
 
 ## リビジョンに依存する障害
 
-代替署名バイトの動作を互換性回復パスとして扱わないでください。署名エンベロープの別の部分を保護するリビジョンは、ワイヤー署名バイトを変更するため、v0.1 として生成したりサイレントに受け入れたりすることはできません ([MWP-SDV-019]](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-019)).
+代替署名バイトの動作を互換性回復パスとして扱わないでください。署名エンベロープの別の部分を保護するリビジョンは、ワイヤー署名バイトを変更するため、v0.1 として生成したりサイレントに受け入れたりすることはできません ([MWP-SDV-019](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-019))。
 
 :::note[Implementation note]
 

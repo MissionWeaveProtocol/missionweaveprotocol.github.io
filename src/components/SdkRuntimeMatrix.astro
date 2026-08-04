@@ -1,6 +1,7 @@
 ---
 import matrix from "../data/normative/0.1/sdk-runtime-matrix.json";
 import release from "../data/normative/0.1/release-source.json";
+import { localizedText, uiCopyForPathname } from "../lib/normative-locale";
 import SupportStatus from "./SupportStatus.astro";
 
 type SdkId = "python" | "typescript" | "go" | "rust" | "java" | "cpp";
@@ -19,6 +20,7 @@ interface CapabilityRow {
 }
 
 const { sdk: selectedSdk } = Astro.props as Props;
+const copy = uiCopyForPathname(Astro.url.pathname);
 const selected = selectedSdk
   ? matrix.sdks.filter((sdk) => sdk.id === selectedSdk)
   : matrix.sdks;
@@ -38,14 +40,19 @@ function capabilityRows(sdk: (typeof matrix.sdks)[number]): CapabilityRow[] {
   return [
     ...sdk.implemented.map((capability) => ({
       ...capability,
+      label: copy.capabilities[capability.capability] ?? capability.label,
       status: "implemented" as const,
     })),
     ...sdk.deploymentAdapters.map((capability) => ({
       ...capability,
+      label: copy.capabilities[capability.capability] ?? capability.label,
+      reason: copy.reasons[capability.capability] ?? capability.reason,
       status: "deployment-adapter-required" as const,
     })),
     ...sdk.notImplemented.map((capability) => ({
       ...capability,
+      label: copy.capabilities[capability.capability] ?? capability.label,
+      reason: copy.reasons[capability.capability] ?? capability.reason,
       status: "not-implemented" as const,
       sourceFiles: [],
     })),
@@ -54,18 +61,30 @@ function capabilityRows(sdk: (typeof matrix.sdks)[number]): CapabilityRow[] {
 
 const evidenceBundles = [
   {
-    label: "Structural vectors",
-    count: `${release.structural.total} total (${release.structural.valid} valid / ${release.structural.invalid} invalid)`,
-    digest: "Bound by the exact protocol bundle digest",
+    label: localizedText(copy, "structuralVectors"),
+    count: localizedText(copy, "structuralCoverage", {
+      total: release.structural.total,
+      valid: release.structural.valid,
+      invalid: release.structural.invalid,
+    }),
+    digest: localizedText(copy, "boundByProtocolDigest"),
   },
   {
-    label: "Cryptography bundle",
-    count: `${release.cryptography.evaluations} evaluations (${release.cryptography.complete} complete / ${release.cryptography.rejected} rejected)`,
+    label: localizedText(copy, "cryptographyBundle"),
+    count: localizedText(copy, "evaluationCoverage", {
+      evaluations: release.cryptography.evaluations,
+      complete: release.cryptography.complete,
+      rejected: release.cryptography.rejected,
+    }),
     digest: release.cryptography.digest,
   },
   {
-    label: "Admission bundle",
-    count: `${release.admission.evaluations} evaluations (${release.admission.complete} complete / ${release.admission.rejected} rejected)`,
+    label: localizedText(copy, "admissionBundle"),
+    count: localizedText(copy, "evaluationCoverage", {
+      evaluations: release.admission.evaluations,
+      complete: release.admission.complete,
+      rejected: release.admission.rejected,
+    }),
     digest: release.admission.digest,
   },
 ];
@@ -76,9 +95,9 @@ const evidenceBundles = [
     <table>
       <thead>
         <tr>
-          <th scope="col">Normative evidence</th>
-          <th scope="col">Coverage</th>
-          <th scope="col">Digest binding</th>
+          <th scope="col">{localizedText(copy, "normativeEvidence")}</th>
+          <th scope="col">{localizedText(copy, "coverage")}</th>
+          <th scope="col">{localizedText(copy, "digestBinding")}</th>
         </tr>
       </thead>
       <tbody>
@@ -103,17 +122,17 @@ const evidenceBundles = [
         <h2 id={`sdk-runtime-${sdk.id}`}>{sdk.name}</h2>
         <dl class="sdk-facts">
           <div>
-            <dt>Package</dt>
+            <dt>{localizedText(copy, "package")}</dt>
             <dd>
               <code>{sdk.package}</code>
             </dd>
           </div>
           <div>
-            <dt>Required toolchain</dt>
+            <dt>{localizedText(copy, "requiredToolchain")}</dt>
             <dd>{sdk.toolchain.join(" · ")}</dd>
           </div>
           <div>
-            <dt>Exact SDK commit</dt>
+            <dt>{localizedText(copy, "exactSdkCommit")}</dt>
             <dd>
               <a href={`${sdk.repository}/commit/${sdk.commit}`}>
                 <code>{sdk.commit}</code>
@@ -121,7 +140,7 @@ const evidenceBundles = [
             </dd>
           </div>
           <div>
-            <dt>Admission operations</dt>
+            <dt>{localizedText(copy, "admissionOperations")}</dt>
             <dd>
               <code>{sdk.admissionOperations.prepare}</code>
               {" · "}
@@ -136,9 +155,9 @@ const evidenceBundles = [
           <table>
             <thead>
               <tr>
-                <th scope="col">Runtime capability</th>
-                <th scope="col">Status</th>
-                <th scope="col">Evidence or boundary</th>
+                <th scope="col">{localizedText(copy, "runtimeCapability")}</th>
+                <th scope="col">{localizedText(copy, "status")}</th>
+                <th scope="col">{localizedText(copy, "evidenceOrBoundary")}</th>
               </tr>
             </thead>
             <tbody>

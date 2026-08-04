@@ -1,7 +1,7 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: Aller à la référence d'exécution
+title: Référence d’exécution Go
 description: >-
   Surface complète du package exporté et limites d’exécution du Go SDK
   exactement épinglé.
@@ -9,7 +9,7 @@ description: >-
 
 import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 
-# Aller à la référence d'exécution
+# Référence d’exécution Go
 
 Cette page couvre le package Go complet représenté par l'inventaire
 [exact API](../api/). Le comportement du protocole partagé reste défini par la
@@ -42,7 +42,7 @@ ne crée d'autorité.
 
 ## Carte source complète
 
-| Problème d'exécution                 | Fichiers sources publics                                                                         | Contrat au niveau du commit épinglé                                                                                                                       |
+| Fonctionnalité d'exécution           | Fichiers sources publics                                                                         | Contrat au niveau du commit épinglé                                                                                                                       |
 | ------------------------------------ | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Identité et documentation du package | `doc.go`                                                                                         | Portée au niveau du package et limite d’implémentation prise en charge.                                                                                   |
 | JSON strictes et valeurs temporelles | `json.go`, `rfc3339.go`                                                                          | Décodage strict JSON et surface de comparaison instantanée RFC 3339 exportée utilisée par la vérification et l'admission.                                 |
@@ -50,7 +50,7 @@ ne crée d'autorité.
 | Canonique JSON                       | `canonical.go`                                                                                   | RFC 8785 canonisation et production d'octets canoniques.                                                                                                  |
 | Signature et documents signés        | `signing.go`, `signed_document_codec.go`, `signed_document_verification.go`, `ed25519_strict.go` | Assistants Ed25519, neuf profils de documents signés, résolution complète Registry, contrôles ponctuels stricts et preuves de vérification en six étapes. |
 | Cadres                               | `frame.go`                                                                                       | Analyser et encoder les opérations pour les valeurs de trame WebSocket prises en charge. Il s'agit d'un codec et non d'un service de passerelle hébergé.  |
-| Conformité et offres groupées        | `conformance.go`, `bundle.go`                                                                    | Identité du bundle intégrée, vérification du résumé, exécution du manifeste et prise en charge des commandes.                                             |
+| Conformité et bundles                | `conformance.go`, `bundle.go`                                                                    | Identité du bundle intégrée, vérification du résumé, exécution du manifeste et prise en charge des commandes.                                             |
 | Première admission                   | `admission.go`                                                                                   | Première admission et confiance historique avec des adaptateurs de déploiement typés au-dessus d’une vérification réussie.                                |
 
 ## Validation et cryptographie
@@ -84,9 +84,9 @@ Il s’agit de responsabilités de déploiement ou d’exécution de niveau sup�
 `VerifyProtocolBundle`, `VerifyCryptographyBundle` et `VerifyAdmissionBundle`
 lient chaque ensemble d'artefacts incorporés à son identité enregistrée.
 `RunEmbeddedConformance` exécute les vecteurs structurels intégrés. Exécutez-les
-à nouveau lorsque la validation SDK, la broche de protocole, l'ensemble de
-schémas, le bundle de cryptographie, le bundle d'admission ou l'adaptateur de
-déploiement changent. Leur passage ne prouve que la surface du paquet exercé.
+à nouveau lorsque la validation SDK, la pin de protocole, l'ensemble de schémas,
+le bundle de cryptographie, le bundle d'admission ou l'adaptateur de déploiement
+changent. Leur passage ne prouve que la surface du paquet exercé.
 
 ## Première admission
 

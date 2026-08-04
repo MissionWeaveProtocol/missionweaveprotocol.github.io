@@ -33,9 +33,12 @@ import release from "../../../../../../data/normative/0.1/release-source.json";
 
 每個簽名文檔評估都使用以下有序分類：
 
-1.嚴格UTF-8 JSON解析；2.規範JSON
-Schema驗證；3. 簽名信封及保護時間驗證；4. 簽章金鑰解析和有效性驗證；5. RFC
-8785規範化和簽章哈希生成；和6. Ed25519 簽章驗證。
+1. 嚴格解析 UTF-8 JSON；
+2. 執行規範 JSON Schema 驗證；
+3. 驗證簽章信封和受保護時間；
+4. 解析簽署金鑰並驗證有效性；
+5. 執行 RFC 8785 規範化並產生簽署雜湊；
+6. 驗證 Ed25519 簽章。
 
 相應的規範規則發佈在[簽名文檔和trust](../../specification/signed-documents-and-trust/)頁面中。
 `complete` 表示該評估的所有六個階段均已完成。

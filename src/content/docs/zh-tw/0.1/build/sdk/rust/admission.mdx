@@ -1,16 +1,16 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: Rust 首次入場與歷史信任
-description: 輸入 Rust 適配器、確切的呼叫順序、信任邊界和可運行的准入範例。
+title: Rust 首次準入與歷史信任
+description: 輸入 Rust 適配器、確切的呼叫順序、信任邊界和可運行的準入範例。
 ---
 
 import rustAdmissionExample from "../../../../../../../../examples/sdk/rust/admission.rs?raw";
 
-# Rust 首次入場與歷史信任
+# Rust 首次準入與歷史信任
 
-Rust `AdmissionService` 將首次存取和歷史信任置於六階段 Signed
-Document 驗證器 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)) 之上。與語言無關的流程是本地[首次入場和歷史信任運行時頁面](../../../runtime/first-admission-and-historical-trust/)，確切的要求是本地[入場條款](../../../../reference/specification/first-admission-and-historical-trust/)。
+Rust `AdmissionService` 將首次準入和歷史信任置於六階段 Signed
+Document 驗證器 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)) 之上。與語言無關的流程是本地[首次準入和歷史信任運行時頁面](../../../runtime/first-admission-and-historical-trust/)，確切的要求是本地[準入條款](../../../../reference/specification/first-admission-and-historical-trust/)。
 
 ## 公共適配器和結果
 
@@ -26,9 +26,9 @@ Document 驗證器 ([MWP-ADM-005](../../../../reference/specification/first-admi
 | `AdmissionService::verify_historical_admission`    | 使用歷史 Registry 證據重新運行驗證，並需要現有記錄，而不發布上下文或在 [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) 下附加。                                               |
 | `PreparedFirstAdmission`、`AdmittedSignedDocument` | 保留不可變的驗證和記錄證據； `FirstAdmissionRecord::bytes` 傳回已驗證的位元組。                                                                                                                                                    |
 
-呼叫者提供的信任布林值不是准入查找結果，絕不能選擇成功路徑。
+呼叫者提供的信任布林值不是準入查找結果，絕不能選擇成功路徑。
 
-## 首次入場電話順序
+## 首次準入呼叫順序
 
 :::note[Informative example]
 
@@ -46,9 +46,11 @@ let first = AdmissionService::new()?.admit_first(
 
 `admit_first`
 在日誌訪問之前完成所有六個驗證階段。找到的記錄經過驗證並返回，無需發出可信上下文或附加。權威缺席後，服務發佈上下文，準備規範的候選字節，調用
-`append_or_return_existing`，並驗證實際傳回的記錄。只有當架構、驗證、文件綁定和可信任時間滿足
-[MWP-ADM-009]
-時，並發獲勝者才會成功](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) 和[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)。
+`append_or_return_existing`，並驗證實際傳回的記錄。只有當架構、驗證、文件綁定和可信任時間同時符合
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+和
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)
+時，並發勝出者才會成功。
 
 ## 歷史回放與錯誤
 
@@ -59,8 +61,8 @@ let first = AdmissionService::new()?.admit_first(
 和[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
 
 `AdmissionOperationError` 保留原來的六階段驗證失敗或
-`AdmissionError`。准入失敗會暴露線路代碼 `AUTH_INVALID_SIGNATURE`, 保護階段
-`admission`，以及一個鍵入的
+`AdmissionError`。準入失敗會暴露線路代碼 `AUTH_INVALID_SIGNATURE`, 保護階段
+`admission`，以及一個型別化的
 `AdmissionReason`，依照[MWP-ADM-012的要求](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)。適配器返回
 `AdmissionAdapterError`;一般性的成功或可用性並不是經過驗證的證據。
 
@@ -69,7 +71,7 @@ let first = AdmissionService::new()?.admit_first(
 :::note[Informative example]
 
 此範例讀取簽名的 Command 和 Registry 從 SDK已驗證嵌入
-`ProtocolBundle`，然後提供類型化的記憶體中權限適配器。它不會讀取存儲庫文件。它為首次准入和歷史重播斷言相同的記錄 ID、簽名雜湊值和記錄位元組，並且只有一個附加。
+`ProtocolBundle`，然後提供類型化的記憶體中權限適配器。它不會讀取存儲庫文件。它為首次準入和歷史重播斷言相同的記錄 ID、簽名雜湊值和記錄位元組，並且只有一個附加。
 
 <pre>
   <code>{rustAdmissionExample}</code>

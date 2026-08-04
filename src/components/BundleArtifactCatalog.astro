@@ -2,6 +2,7 @@
 import admissionManifest from "../../public/artifacts/0.1/protocol/admission/manifest.json";
 import cryptographyManifest from "../../public/artifacts/0.1/protocol/cryptography/manifest.json";
 import release from "../data/normative/0.1/release-source.json";
+import { localizedText, uiCopyForPathname } from "../lib/normative-locale";
 
 interface Props {
   bundle: "cryptography" | "admission";
@@ -18,6 +19,7 @@ interface BundleManifest {
 }
 
 const { bundle } = Astro.props as Props;
+const copy = uiCopyForPathname(Astro.url.pathname);
 const manifests: Record<Props["bundle"], BundleManifest> = {
   cryptography: cryptographyManifest,
   admission: admissionManifest,
@@ -33,15 +35,19 @@ const artifactUrl = (path: string) =>
 ---
 
 <details class="artifact-catalog">
-  <summary
-    >Browse all {manifest.artifacts.length} digest-protected artifacts</summary
-  >
+  <summary>
+    {
+      localizedText(copy, "browseArtifacts", {
+        count: manifest.artifacts.length,
+      })
+    }
+  </summary>
   <div class="table-scroll">
     <table>
       <thead>
         <tr>
-          <th scope="col">Path</th>
-          <th scope="col">Bytes</th>
+          <th scope="col">{localizedText(copy, "artifactPath")}</th>
+          <th scope="col">{localizedText(copy, "bytes")}</th>
           <th scope="col">SHA-256</th>
         </tr>
       </thead>

@@ -155,7 +155,9 @@ MUST 验证引用的授权是否存在、未过期且未使用，并且与 Comma
 
 仅当满足以下条件时，实现才符合 MissionWeaveProtocol 0.1：
 
-- 根据规范模式验证每个持久对象；-传递`conformance/manifest.json`中的所有58个结构向量，其中包括27个预期有效和 31 份预期无效文件；
+- 根据规范模式验证每个持久对象；
+- 通过 `conformance/manifest.json`
+  中的所有 58 个结构向量，其中包括 27 个预期有效和 31 份预期无效文件；
 - 通过 `cryptography/manifest.json` 中的所有评估，涵盖所有九个 Signed
   Document 验证配置文件中的架构配置文件及其规范签名字节、哈希值、密钥绑定和签名；
 - 通过独立 `admission/manifest.json`

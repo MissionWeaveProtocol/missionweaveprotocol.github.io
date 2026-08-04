@@ -3,7 +3,7 @@ normativeVersion: "0.1"
 normativeStatus: normative
 title: Persistencia y recuperación
 description: >-
-  Estado autorizado, proyecciones reconstruibles, recibos, simultaneidad
+  Estado autoritativo, proyecciones reconstruibles, recibos, concurrencia
   optimista, repetición, cursores, instantáneas y recuperación de efectos
   secundarios externos.
 ---
@@ -138,13 +138,13 @@ operación lógica
 Un ciclo de aplicación local seguro es:
 
 ```text
-begin local transaction
-→ reject or ignore duplicate Event ID
-→ verify next contiguous Group sequence
-→ update Group projection and per-Group queue
-→ persist any checkpoint or outbox intent
-→ advance durable Cursor
-→ commit
+iniciar la transacción local
+→ rechazar o ignorar un Event ID duplicado
+→ verificar la siguiente secuencia contigua de Group
+→ actualizar la proyección de Group y la cola de cada Group
+→ persistir cualquier punto de control o intención de bandeja de salida
+→ avanzar el Cursor duradero
+→ confirmar
 ```
 
 Para un efecto secundario externo, persista la intención antes del envío,

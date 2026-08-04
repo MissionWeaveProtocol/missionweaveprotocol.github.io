@@ -1,7 +1,7 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: 持続性と回復
+title: 永続化と復旧
 description: 権威ある状態、再構築可能なプロジェクション、レシート、オプティミスティック同時実行性、リプレイ、カーソル、スナップショット、外部副作用の回復。
 ---
 
@@ -73,13 +73,13 @@ ID、WorkItem ID、所有権エポック、および論理操作 ID
 安全なローカル適用サイクルは次のとおりです。
 
 ```text
-begin local transaction
-→ reject or ignore duplicate Event ID
-→ verify next contiguous Group sequence
-→ update Group projection and per-Group queue
-→ persist any checkpoint or outbox intent
-→ advance durable Cursor
-→ commit
+ローカルトランザクションを開始
+→ 重複する Event ID を拒否または無視
+→ 次の連続する Group シーケンスを検証
+→ Group 投影と Group ごとのキューを更新
+→ チェックポイントまたは送信ボックスの意図を永続化
+→ 永続 Cursor を進める
+→ コミット
 ```
 
 外部副作用の場合は、ディスパッチ前にインテントを保持し、外部レシートを保持し、再試行する前に不確実な結果を調整します。

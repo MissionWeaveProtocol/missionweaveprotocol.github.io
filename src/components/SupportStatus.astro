@@ -1,17 +1,21 @@
 ---
+import { localizedText, uiCopyForPathname } from "../lib/normative-locale";
+
 type Status = "implemented" | "not-implemented" | "deployment-adapter-required";
 
 interface Props {
   status: Status;
 }
 
-const labels: Record<Status, string> = {
-  implemented: "Implemented",
-  "not-implemented": "Not implemented",
-  "deployment-adapter-required": "Deployment adapter required",
+const labelKeys: Record<Status, string> = {
+  implemented: "supportImplemented",
+  "not-implemented": "supportNotImplemented",
+  "deployment-adapter-required": "supportDeploymentAdapterRequired",
 };
 const { status } = Astro.props as Props;
-const label = labels[status];
+const copy = uiCopyForPathname(Astro.url.pathname);
+const labelKey = labelKeys[status];
+const label = labelKey ? localizedText(copy, labelKey) : undefined;
 if (!label) throw new Error(`Unsupported SDK status: ${String(status)}`);
 ---
 

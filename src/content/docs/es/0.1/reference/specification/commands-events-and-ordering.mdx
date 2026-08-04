@@ -2,7 +2,7 @@
 normativeVersion: "0.1"
 normativeStatus: normative
 clausePrefix: MWP-EVT
-title: Comandos, eventos y pedidos
+title: Comandos, eventos y ordenamiento
 description: >-
   Sobres Command y Event, simultaneidad, orden Group, transporte WebSocket y
   codificación de cable canónico.
@@ -185,7 +185,7 @@ si un actor interno privilegiado omite el campo de conexión.
 
 </NormativeClause>
 
-<InformativeBlock title="Pinned source continuation">
+<InformativeBlock title="Continuación de la fuente fijada">
 
 El siguiente bloque reanuda un segmento fuente fijado posteriormente. Consulte
 el [mapa fuente de especificación](./) para ver la página local intermedia y los
@@ -249,13 +249,13 @@ relacionados.
 
 <NormativeClause id="MWP-EVT-012" level="MUST">
 
-No es necesario que el cable JSON llegue en el orden de miembros canónicos, pero
-cada hash, identificador derivado del contenido o firma MUST usa RFC 8785 JCS
-bytes. Los nombres de miembros de objetos duplicados MUST se rechazarán antes de
-la validación del esquema. Los números y cadenas MUST satisfacen las reglas
-finite-binary64 e I-JSON en la [Sección 2](../foundations/#mwp-fnd-006); Las
-implementaciones conformes MUST producen los mismos bytes JCS para el mismo
-valor JSON.
+No es necesario que el JSON del protocolo llegue en el orden de miembros
+canónicos, pero cada hash, identificador derivado del contenido o firma MUST usa
+RFC 8785 JCS bytes. Los nombres de miembros de objetos duplicados MUST se
+rechazarán antes de la validación del esquema. Los números y cadenas MUST
+satisfacen las reglas finite-binary64 e I-JSON en la
+[Sección 2](../foundations/#mwp-fnd-006); Las implementaciones conformes MUST
+producen los mismos bytes JCS para el mismo valor JSON.
 
 </NormativeClause>
 

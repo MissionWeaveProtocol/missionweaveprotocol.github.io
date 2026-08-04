@@ -39,13 +39,13 @@ preuves de première admission et de relecture est publié sous
 La séquence visible par le lecteur est exactement :
 
 ```text
-six-stage cryptographic verification
-→ authoritative Admission Log lookup
-→ found record validation OR authoritative absence
-→ trusted context and candidate preparation
-→ atomic append-or-return-existing
-→ returned record validation
-→ admitted result
+vérification cryptographique en six étapes
+→ recherche faisant autorité dans Admission Log
+→ validation de l’enregistrement trouvé ou absence faisant autorité
+→ préparation du contexte de confiance et de l’enregistrement candidat
+→ ajout atomique ou renvoi de l’enregistrement existant
+→ validation de l’enregistrement renvoyé
+→ résultat admis
 ```
 
 Le point de branchement est important. Un enregistrement trouvé va directement à
@@ -82,10 +82,10 @@ protégée `admission` et sont mappés sur le fil à `AUTH_INVALID_SIGNATURE`
 La relecture historique suit un chemin plus étroit :
 
 ```text
-six-stage cryptographic verification
-→ required found record
-→ record validation
-→ no trusted context or append
+vérification cryptographique en six étapes
+→ un enregistrement trouvé est requis
+→ validation de l’enregistrement
+→ aucun contexte de confiance ni ajout
 ```
 
 Les six étapes utilisent des preuves historiques Registry faisant autorité

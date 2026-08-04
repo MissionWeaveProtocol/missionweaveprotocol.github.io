@@ -12,16 +12,16 @@ description:
 Worker 可以属于多个 Mission 组，而无需合并其上下文。它为每个 Group 维护一个不同的 Event 收件箱、光标和工作队列，并且这些本地投影仍然可以从接受的事件中重建 ([MWP-WRK-008](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008))。
 
 ```text
-Group A Events → Group A queue ┐
-Group B Events → Group B queue ├→ Worker Scheduler → isolated execution slots
-Group C Events → Group C queue ┘
+Group A Event → Group A 队列 ┐
+Group B Event → Group B 队列 ├→ Worker 调度器 → 隔离执行槽
+Group C Event → Group C 队列 ┘
 ```
 
 ## 谁控制优先级
 
 Coordinator 提供其 Mission 所请求的紧迫性、截止日期和业务影响。 Worker 调度程序对跨 Group 排序拥有最终控制权；一个 Coordinator 无法强制其 Mission 领先于不相关的组 ([MWP-WRK-009](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-009))。
 
-调度器应用加权公平和抗饥饿。有效订单考虑 Organization 优先级、截止日期、队列时效、每个 Group 配额、风险门和可用资源。
+Scheduler 应用加权公平和抗饥饿。有效排序考虑 Organization 优先级、截止日期、队列时效、每个 Group 配额、风险门槛和可用资源。
 [MWP-WRK-010](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-010)
 排除纯无界最高优先级优先调度。
 
@@ -33,8 +33,10 @@ Worker 可以发布估计的开始和完成窗口、置信度、容量状态和�
 
 ## 所有权、租赁和安全抢占
 
-接受后开始所有权时代和启动截止日期。活动执行使用绑定到 Agent、Session
-Epoch、WorkItem、所有权纪元、稳定租约 ID 和到期日的执行租约 ([MWP-WRK-013](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013))。
+接受后会开始新的 Ownership
+Epoch 和启动截止日期。活动执行使用绑定到 Agent、Session
+Epoch、WorkItem、Ownership Epoch、稳定 Lease ID 和到期时刻的 Execution Lease
+([MWP-WRK-013](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013))。
 
 优先级更改会立即对排队的工作重新排序。活动工作在释放其插槽之前到达安全、幂等的检查点：
 

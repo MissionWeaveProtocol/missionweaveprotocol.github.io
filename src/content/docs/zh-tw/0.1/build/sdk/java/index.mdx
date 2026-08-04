@@ -15,7 +15,7 @@ import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.a
 是官方 Java 工件。此參考描述了精確提交
 `3b2798c21d906c81887c54fe80e5bca8a19ddac7`、版本 `0.1.0-SNAPSHOT`、Java
 21 和 Maven
-3.9。該工件是從確切的來源引腳安裝的；不同的提交或本地安裝的快照是不同的實現輸入。
+3.9。該工件是從確切的原始碼固定提交安裝的；不同的提交或本地安裝的快照是不同的實現輸入。
 
 :::note[Implementation note]
 
@@ -45,18 +45,18 @@ CLI 主類別是
 
 <CardGrid>
   <LinkCard
-    title="Complete runtime"
-    description="Every public class concern, package boundary, bundle verifier, CLI entry point, and explicit non-implementation."
+    title="完整執行階段"
+    description="每個公共類別關注點、套件邊界、套件驗證器、CLI 入口點和明確非實作。"
     href="./runtime/"
   />
   <LinkCard
-    title="First Admission and Historical Trust"
-    description="Typed current-Registry, trusted-context, and Admission Log interfaces with one runnable example."
+    title="首次準入與歷史信任"
+    description="Registry 目前證據、可信任上下文和 Admission Log 的型別化介面，以及一個可運行範例。"
     href="./admission/"
   />
   <LinkCard
-    title="Exact public API"
-    description="Every public Java declaration resolved to its exact source line."
+    title="確切的公共 API"
+    description="每個公共 Java 聲明都解析為其確切的原始碼行。"
     href="./api/"
   />
 </CardGrid>
@@ -65,5 +65,5 @@ CLI 主類別是
 
 <SdkRuntimeMatrix sdk="java" />
 
-JAR 提供進程內協定行為，而不是部署權限。應用程式仍然提供經過身份驗證的當前和歷史 Registry 證據、可信任准入上下文和權威 Admission
+JAR 提供進程內協定行為，而不是部署權限。應用程式仍然提供經過身份驗證的當前和歷史 Registry 證據、可信任準入上下文和權威 Admission
 Log。

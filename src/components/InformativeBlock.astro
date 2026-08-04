@@ -1,10 +1,13 @@
 ---
+import { localizedText, uiCopyForPathname } from "../lib/normative-locale";
+
 interface Props {
   label?: string;
   title?: string;
 }
 
-const { label = "Informative — not a protocol requirement", title } =
+const copy = uiCopyForPathname(Astro.url.pathname);
+const { label = localizedText(copy, "informativeDefault"), title } =
   Astro.props as Props;
 ---
 

@@ -1,7 +1,7 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: Ir SDK
+title: Go SDK
 description: >-
   Instale y navegue por la referencia completa del tiempo de ejecución de Go
   fijada exactamente para MissionWeaveProtocol 0.1.
@@ -11,10 +11,10 @@ import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 import SdkInstall from "../../../../../../../components/SdkInstall.astro";
 import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
 
-# Ir SDK
+# Go SDK
 
 `github.com/missionweaveprotocol/go-sdk` es el módulo de implementación oficial
-de Go. Esta referencia describe la confirmación exacta
+de Go. Esta referencia describe el commit exacto
 `80c39852e8a2053ac761b8d53d62483264f803f1` y Go 1.24. Una confirmación o
 compilación de módulo diferente es una entrada de implementación documentada
 diferente.
@@ -47,18 +47,18 @@ para la producción.
 
 <CardGrid>
   <LinkCard
-    title="Complete runtime"
-    description="Every exported package concern, Go execution boundary, conformance entry point, and explicit non-implementation."
+    title="Runtime completo"
+    description="Cada paquete exportado tiene que ver con el límite de ejecución de Go, el punto de entrada de conformidad y la no implementación explícita."
     href="./runtime/"
   />
   <LinkCard
-    title="First Admission and Historical Trust"
-    description="Typed current-Registry, trusted-context, and Admission Log interfaces with one runnable example."
+    title="Primera admisión y confianza histórica"
+    description="Interfaces tipadas para Registry actual, contexto de confianza y Admission Log, con un ejemplo ejecutable."
     href="./admission/"
   />
   <LinkCard
-    title="Exact public API"
-    description="Every exported Go declaration resolved to its exact source line."
+    title="API pública exacta"
+    description="Cada declaración Go exportada se resolvió en su línea de origen exacta."
     href="./api/"
   />
 </CardGrid>

@@ -12,10 +12,10 @@ description:
 プロトコル オブジェクトを、逆シリアル化されたクラス以上のものとして扱います。準拠したランタイムは、次の 4 つの異なるレイヤーを保持します。
 
 ```text
-received UTF-8 bytes
-→ lossless parsed JSON value
-→ schema-valid protocol object
-→ semantically accepted authoritative state or local projection
+受信した UTF-8 バイト
+→ 可逆に解析された JSON 値
+→ Schema 検証済みのプロトコルオブジェクト
+→ 意味論的に受理された権威ある状態またはローカル投影
 ```
 
 レイヤーをスキップすると、正規化、検証順序、または権限のバグが発生します。

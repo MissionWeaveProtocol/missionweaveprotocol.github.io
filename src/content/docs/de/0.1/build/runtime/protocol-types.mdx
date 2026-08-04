@@ -13,10 +13,10 @@ Behandeln Sie ein Protokollobjekt als mehr als eine deserialisierte Klasse. Eine
 konforme Laufzeit behält vier verschiedene Ebenen bei:
 
 ```text
-received UTF-8 bytes
-→ lossless parsed JSON value
-→ schema-valid protocol object
-→ semantically accepted authoritative state or local projection
+empfangene UTF-8-Bytes
+→ verlustfrei geparster JSON-Wert
+→ gemäß Schema gültiges Protokollobjekt
+→ semantisch akzeptierter maßgeblicher Zustand oder lokale Projektion
 ```
 
 Das Überspringen einer Ebene führt zu Normalisierungs-, Validierungsreihenfolge-
@@ -39,8 +39,8 @@ deterministischen Regeln, bei denen die Signed Document-Verifizierung gilt
 - Validieren Sie Bezeichner als vollständige absolute RFC 3986-URIs und
   vergleichen Sie sie behaltene Bytes, ohne eine empfängerseitige Normalisierung
   zu erfinden
-  ([MWP-FND-008](../../../reference/specification/foundations/#mwp-fnd-008)). –
-  Aktivieren Sie jedes Schema-Schlüsselwort `format` als Behauptung,
+  ([MWP-FND-008](../../../reference/specification/foundations/#mwp-fnd-008)).
+- Aktivieren Sie jedes Schema-Schlüsselwort `format` als Behauptung,
   einschließlich `uri` und `date-time`
   ([MWP-FND-009](../../../reference/specification/foundations/#mwp-fnd-009)).
 
@@ -114,11 +114,12 @@ und ein unbekannter Schlüssel ist erst dann maßgeblich, wenn die Vollständigk
 festgestellt wurde
 ([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011)).
 Bei der verlustfreien Aufbewahrung bleibt die normative Stufenklassifizierung
-gemäß [MWP-SDV-016]
-erhalten](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016),
-während die geschützte Diagnosebehandlung und die drahtsichere Fehlergrenze
-[MWP-SDV-018]
-folgen](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018).
+gemäß
+[MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016)
+erhalten, während die geschützte Diagnosebehandlung und die drahtsichere
+Fehlergrenze
+[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)
+folgen.
 
 Durchsuchen Sie die genauen lokalen Typen im
 [JSON Schemakatalog](../../../reference/schemas/). Implementieren Sie dann

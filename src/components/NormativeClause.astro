@@ -1,6 +1,7 @@
 ---
 import terminology from "../data/normative/0.1/terminology.json";
 import localePolicy from "../data/normative/0.1/locale-policy.json";
+import { localizedText, uiCopyForPathname } from "../lib/normative-locale";
 
 type NormativeLevel =
   | "MUST"
@@ -47,6 +48,8 @@ if (
 }
 
 const htmlId = id.toLowerCase();
+const copy = uiCopyForPathname(Astro.url.pathname);
+const clauseLinkLabel = localizedText(copy, "clauseLink", { id });
 ---
 
 <section
@@ -62,7 +65,7 @@ const htmlId = id.toLowerCase();
     <a
       class="normative-clause__id"
       href={`#${htmlId}`}
-      aria-label={`Link to normative clause ${id}`}>{id}</a
+      aria-label={clauseLinkLabel}>{id}</a
     >
     {
       declaredLevels.map((entry) => (

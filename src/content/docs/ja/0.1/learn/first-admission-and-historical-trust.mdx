@@ -21,21 +21,21 @@ Log は、受け入れサービスを認証し、見つかったレコードと�
 メンバーの禁止、および非自己認証境界は
 [MWP-ADM-001](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001).その正確なローカル アーティファクトは
 [JSON スキーマ カタログ ](../../reference/schemas/)
-でインデックス付けされており、完全な初回入場および再入場証拠バンドルは
-[入場適合](../../reference/conformance/admission/) で公開されています。
+でインデックス付けされており、完全な初回受け入れおよび再受け入れ証拠バンドルは
+[受け入れ適合](../../reference/conformance/admission/) で公開されています。
 
 ## 初回アドミッションの流れ
 
 読者に表示されるシーケンスは正確に次のとおりです。
 
 ```text
-six-stage cryptographic verification
-→ authoritative Admission Log lookup
-→ found record validation OR authoritative absence
-→ trusted context and candidate preparation
-→ atomic append-or-return-existing
-→ returned record validation
-→ admitted result
+6 段階の暗号検証
+→ Admission Log の権威ある検索
+→ 検出レコードの検証、または権威ある不在
+→ 信頼済みコンテキストと候補レコードの準備
+→ アトミックな追加または既存レコードの返却
+→ 返却レコードの検証
+→ アドミッション済み結果
 ```
 
 分岐点が重要です。見つかったレコードは直接レコード検証へ進みます。権威ある不存在判定だけが、信頼できるコンテキストと候補の準備を許可します。アトミックな追加は、ローカル候補または同時実行で既にコミットされたレコードを返す可能性があり、返されたレコードは成功前に必ず検証されます。候補バイトだけではアドミッションは成立しません。このオーケストレーションは
@@ -63,10 +63,10 @@ JSON 値として解析し、ローカル Schema で検証したうえで、
 歴史の再現はより狭い道をたどります。
 
 ```text
-six-stage cryptographic verification
-→ required found record
-→ record validation
-→ no trusted context or append
+6 段階の暗号検証
+→ レコードの検出が必須
+→ レコードの検証
+→ 信頼済みコンテキストの発行も追加も行わない
 ```
 
 6 つの段階では、保護された署名時刻に必要な保持済み有効期間履歴を含む、権威ある履歴 Registry 証拠を使用します。リプレイには既存レコードが必要で、そのレコードを検証し、新規アドミッションを作成したり、新しい信頼できる受け入れコンテキストを発行したりしません（[MWP-ADM-008](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)）。

@@ -27,7 +27,7 @@ La capa de Admisión depende de estos distintos límites de autoridad y evidenci
 
 :::note[Implementation note]
 
-Representa cada límite con una interfaz escrita:
+Representa cada límite con una interfaz tipada:
 
 - evidencia Registry actual para una nueva decisión de primera admisión;
 - evidencia histórica autoritativa del Registry para la reproducción;
@@ -56,13 +56,13 @@ de reemplazarse
 ## Algoritmo de primera admisión
 
 ```text
-six-stage cryptographic verification
-→ authoritative Admission Log lookup
-→ found record validation OR authoritative absence
-→ trusted context and candidate preparation
-→ atomic append-or-return-existing
-→ returned record validation
-→ admitted result
+verificación criptográfica de seis etapas
+→ búsqueda autoritativa en Admission Log
+→ validación del registro encontrado o ausencia autoritativa
+→ preparación del contexto de confianza y del registro candidato
+→ anexado atómico o devolución del registro existente
+→ validación del registro devuelto
+→ resultado admitido
 ```
 
 Solo una constatación autoritativa de ausencia permite adquirir un contexto
@@ -110,10 +110,10 @@ publicar o hacer referencia a un registro separado
 ## Repetición histórica
 
 ```text
-six-stage cryptographic verification with authoritative historical Registry evidence
-→ required found record
-→ record validation
-→ no trusted context or append
+verificación criptográfica de seis etapas con evidencia histórica autoritativa de Registry
+→ se requiere encontrar un registro
+→ validación del registro
+→ sin contexto de confianza ni anexado
 ```
 
 La reproducción no puede crear una admisión faltante, emitir un contexto

@@ -191,7 +191,8 @@ NOT 將公開為 MissionWeaveProtocol 語義。這種選擇提供了確定性的
 <NormativeClause id="MWP-FND-015" level="MUST">
 
 3. **結構化執行權限。 **
-   連接對應的操作 MUST 接受的 WorkItem、目前所有權紀元、有效的執行租約、適用的策略批准和範圍功能令牌。
+   任何具後果的操作 MUST 同時關聯到已接受的 WorkItem、目前 Ownership
+   Epoch、有效的 Execution Lease、適用的策略 Approval，以及限定範圍的能力權杖。
 
 </NormativeClause>
 
@@ -204,15 +205,16 @@ NOT 將公開為 MissionWeaveProtocol 語義。這種選擇提供了確定性的
 
 <NormativeClause id="MWP-FND-017" level={["MAY","MUST NOT"]}>
 
-5. **專有工作受到限制。 **
-   最多存在一個當前所有權時代獨家WorkItem。來自過時紀元 MAY 的結果將保留為非權威 Evidence，但 MUST
-   NOT 會完成 WorkItem。
+5. **獨佔工作受 fencing 保護。 **
+   對於每個獨佔 WorkItem，最多存在一個目前 Ownership
+   Epoch。來自過時 Epoch 的結果 MAY 作為非權威 Evidence 保留，但 MUST
+   NOT 完成該 WorkItem。
 
 </NormativeClause>
 
 6. **僅附加歷史記錄。 **
    接受的事件和提交的訊息是不可變的。更正、撤回、編輯、撤銷和補救是新事件。
-7. **僅限每個 Group 訂單。 **
+7. **僅定義每個 Group 內的順序。 **
    每個 Group 都有一個單調 Event 序列。MissionWeaveProtocol 未定義跨組的全域順序或原子事務。
 
 <NormativeClause id="MWP-FND-018" level={["MAY","MUST"]}>
@@ -230,7 +232,7 @@ NOT 將公開為 MissionWeaveProtocol 語義。這種選擇提供了確定性的
 </NormativeClause>
 
 10. **人類最終批准。 **
-    根 Mission 僅在其完成後才完成 MissionOwner 批准一個確切的 Mission 修訂和 Artifact 放。 Coordinator 審核不是人類的最終決定 Approval.
+    根 Mission 只有在 MissionOwner 核准確切的 Mission 修訂版和 Artifact 集後才會完成。Coordinator 審查不是最終的人類 Approval。
 
 <NormativeClause id="MWP-FND-020" level="MUST NOT">
 

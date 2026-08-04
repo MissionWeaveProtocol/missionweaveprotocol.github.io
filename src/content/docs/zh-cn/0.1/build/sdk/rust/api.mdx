@@ -1,7 +1,7 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: Rust 公共 API 库存
+title: Rust 公共 API 清单
 description:
   每个受支持的 Rust crate-root 声明都解析为其确切的源文件和记录的 SDK
   提交中的行。
@@ -9,12 +9,12 @@ description:
 
 import SdkApiInventory from "../../../../../../../components/SdkApiInventory.astro";
 
-# Rust 公开 API 库存
+# Rust 公共 API 清单
 
 此精确提交清单是从 `src/lib.rs` 及其在
 `2727f8777737265d98dde4ceaca306612ef54c52`
 选择性地重新导出的模块生成的。它包含 311 个公共结构、枚举和变体、特征、别名、函数、常量、公共字段以及可从 crate 根访问的公共方法。包根未重新导出的私有模块路径和声明不是应用程序合约。
 
-库存是命名和确切的源出处参考，不能替代本地[运行时语义](../runtime/)或[准入调用流程](../admission/)。
+清单记录名称和确切的源出处，不能替代本地[运行时语义](../runtime/)或[准入调用流程](../admission/)。
 
 <SdkApiInventory sdk="rust" />

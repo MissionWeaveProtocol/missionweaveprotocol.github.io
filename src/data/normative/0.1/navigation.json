@@ -225,24 +225,24 @@
               "route": "build-runtime-persistence-and-recovery",
               "labels": {
                 "en": "Persistence and recovery",
-                "zh-cn": "坚持与恢复",
-                "zh-tw": "堅持與恢復",
-                "ja": "持続性と回復",
+                "zh-cn": "持久化与恢复",
+                "zh-tw": "持久化與復原",
+                "ja": "永続化と復旧",
                 "es": "Persistencia y recuperación",
                 "fr": "Persistance et récupération",
-                "de": "Beharrlichkeit und Genesung"
+                "de": "Persistenz und Wiederherstellung"
               }
             },
             {
               "route": "build-runtime-transport-and-framing",
               "labels": {
                 "en": "Transport and framing",
-                "zh-cn": "运输和装框",
-                "zh-tw": "運輸和裝框",
-                "ja": "輸送と額装",
-                "es": "Transporte y enmarcado",
-                "fr": "Transport et encadrement",
-                "de": "Transport und Einrahmung"
+                "zh-cn": "传输与帧处理",
+                "zh-tw": "傳輸與訊框處理",
+                "ja": "トランスポートとフレーム処理",
+                "es": "Transporte y tramas",
+                "fr": "Transport et trames",
+                "de": "Transport und Framing"
               }
             },
             {
@@ -335,8 +335,8 @@
                   "route": "build-sdk-python-admission",
                   "labels": {
                     "en": "Python First Admission and Historical Trust",
-                    "zh-cn": "Python 首次入场和历史信任",
-                    "zh-tw": "Python 首次入場與歷史信任",
+                    "zh-cn": "Python 首次准入和历史信任",
+                    "zh-tw": "Python 首次準入與歷史信任",
                     "ja": "Python 初回アドミッションと履歴信頼",
                     "es": "Python Primera admisión y confianza histórica",
                     "fr": "Python Première admission et confiance historique",
@@ -347,11 +347,11 @@
                   "route": "build-sdk-python-api",
                   "labels": {
                     "en": "Python public API inventory",
-                    "zh-cn": "Python 公共 API 库存",
-                    "zh-tw": "Python 公共 API 庫存",
-                    "ja": "Python 公開在庫 API",
-                    "es": "Python inventario público API",
-                    "fr": "Python inventaire public API",
+                    "zh-cn": "Python 公共 API 清单",
+                    "zh-tw": "Python 公開 API 清單",
+                    "ja": "Python 公開 API インベントリ",
+                    "es": "Inventario de API pública de Python",
+                    "fr": "Inventaire de l’API publique Python",
                     "de": "Python öffentliches API Inventar"
                   }
                 }
@@ -397,8 +397,8 @@
                   "route": "build-sdk-typescript-admission",
                   "labels": {
                     "en": "TypeScript First Admission and Historical Trust",
-                    "zh-cn": "TypeScript 首次入场和历史信任",
-                    "zh-tw": "TypeScript 首次入場與歷史信任",
+                    "zh-cn": "TypeScript 首次准入和历史信任",
+                    "zh-tw": "TypeScript 首次準入與歷史信任",
                     "ja": "TypeScript 初回アドミッションと履歴信頼",
                     "es": "TypeScript Primera admisión y confianza histórica",
                     "fr": "TypeScript Première admission et confiance historique",
@@ -409,11 +409,11 @@
                   "route": "build-sdk-typescript-api",
                   "labels": {
                     "en": "TypeScript public API inventory",
-                    "zh-cn": "TypeScript 公共 API 库存",
-                    "zh-tw": "TypeScript 公共 API 庫存",
-                    "ja": "TypeScript 公開在庫 API",
-                    "es": "TypeScript inventario público API",
-                    "fr": "TypeScript inventaire public API",
+                    "zh-cn": "TypeScript 公共 API 清单",
+                    "zh-tw": "TypeScript 公開 API 清單",
+                    "ja": "TypeScript 公開 API インベントリ",
+                    "es": "Inventario de API pública de TypeScript",
+                    "fr": "Inventaire de l’API publique TypeScript",
                     "de": "TypeScript öffentliches API Inventar"
                   }
                 }
@@ -423,35 +423,35 @@
               "id": "sdk-go",
               "labels": {
                 "en": "Go SDK",
-                "zh-cn": "前往SDK",
-                "zh-tw": "前往SDK",
-                "ja": "SDK に行く",
-                "es": "Ir SDK",
-                "fr": "Allez SDK",
-                "de": "Gehen Sie zu SDK"
+                "zh-cn": "Go SDK",
+                "zh-tw": "Go SDK",
+                "ja": "Go SDK",
+                "es": "Go SDK",
+                "fr": "Go SDK",
+                "de": "Go SDK"
               },
               "items": [
                 {
                   "route": "build-sdk-go",
                   "labels": {
                     "en": "Go SDK",
-                    "zh-cn": "前往SDK",
-                    "zh-tw": "前往SDK",
-                    "ja": "SDK に行く",
-                    "es": "Ir SDK",
-                    "fr": "Allez SDK",
-                    "de": "Gehen Sie zu SDK"
+                    "zh-cn": "Go SDK",
+                    "zh-tw": "Go SDK",
+                    "ja": "Go SDK",
+                    "es": "Go SDK",
+                    "fr": "Go SDK",
+                    "de": "Go SDK"
                   }
                 },
                 {
                   "route": "build-sdk-go-runtime",
                   "labels": {
                     "en": "Go runtime reference",
-                    "zh-cn": "Go运行时参考",
-                    "zh-tw": "Go運行時參考",
+                    "zh-cn": "Go 运行时参考",
+                    "zh-tw": "Go 運行時參考",
                     "ja": "Go ランタイムリファレンス",
-                    "es": "Ir a la referencia en tiempo de ejecución",
-                    "fr": "Aller à la référence d'exécution",
+                    "es": "Referencia de runtime de Go",
+                    "fr": "Référence d’exécution Go",
                     "de": "Go-Laufzeitreferenz"
                   }
                 },
@@ -462,21 +462,21 @@
                     "zh-cn": "Go 首次准入与历史信任",
                     "zh-tw": "Go 首次准入與歷史信任",
                     "ja": "Go 初回アドミッションと履歴信頼",
-                    "es": "Ir Primera Admisión y Confianza Histórica",
-                    "fr": "Go First Admission et confiance historique",
-                    "de": "Go First Admission und Historical Trust"
+                    "es": "Go Primera admisión y confianza histórica",
+                    "fr": "Go Première admission et confiance historique",
+                    "de": "Go Erstzulassung und historisches Vertrauen"
                   }
                 },
                 {
                   "route": "build-sdk-go-api",
                   "labels": {
                     "en": "Go public API inventory",
-                    "zh-cn": "公开API库存",
-                    "zh-tw": "公開API庫存",
-                    "ja": "API インベントリを公開する",
-                    "es": "Ir al inventario público API",
-                    "fr": "Rendre l'inventaire API public",
-                    "de": "Gehen Sie an die Börse API Inventar"
+                    "zh-cn": "Go 公共 API 清单",
+                    "zh-tw": "Go 公開 API 清單",
+                    "ja": "Go 公開 API インベントリ",
+                    "es": "Inventario de API pública de Go",
+                    "fr": "Inventaire de l’API publique Go",
+                    "de": "Inventar der öffentlichen Go-API"
                   }
                 }
               ]
@@ -521,8 +521,8 @@
                   "route": "build-sdk-rust-admission",
                   "labels": {
                     "en": "Rust First Admission and Historical Trust",
-                    "zh-cn": "Rust 首次入场和历史信任",
-                    "zh-tw": "Rust 首次入場與歷史信任",
+                    "zh-cn": "Rust 首次准入和历史信任",
+                    "zh-tw": "Rust 首次準入與歷史信任",
                     "ja": "Rust 初回アドミッションと履歴信頼",
                     "es": "Rust Primera admisión y confianza histórica",
                     "fr": "Rust Première admission et confiance historique",
@@ -533,11 +533,11 @@
                   "route": "build-sdk-rust-api",
                   "labels": {
                     "en": "Rust public API inventory",
-                    "zh-cn": "Rust 公共 API 库存",
-                    "zh-tw": "Rust 公共 API 庫存",
-                    "ja": "Rust 公開在庫 API",
-                    "es": "Rust inventario público API",
-                    "fr": "Rust inventaire public API",
+                    "zh-cn": "Rust 公共 API 清单",
+                    "zh-tw": "Rust 公開 API 清單",
+                    "ja": "Rust 公開 API インベントリ",
+                    "es": "Inventario de API pública de Rust",
+                    "fr": "Inventaire de l’API publique Rust",
                     "de": "Rust öffentliches API Inventar"
                   }
                 }
@@ -583,8 +583,8 @@
                   "route": "build-sdk-java-admission",
                   "labels": {
                     "en": "Java First Admission and Historical Trust",
-                    "zh-cn": "Java 首次入场和历史信任",
-                    "zh-tw": "Java 首次入場與歷史信任",
+                    "zh-cn": "Java 首次准入和历史信任",
+                    "zh-tw": "Java 首次準入與歷史信任",
                     "ja": "Java 初回アドミッションと履歴信頼",
                     "es": "Java Primera admisión y confianza histórica",
                     "fr": "Java Première admission et confiance historique",
@@ -595,11 +595,11 @@
                   "route": "build-sdk-java-api",
                   "labels": {
                     "en": "Java public API inventory",
-                    "zh-cn": "Java 公共 API 库存",
-                    "zh-tw": "Java 公共 API 庫存",
-                    "ja": "Java 公開在庫 API",
-                    "es": "Java inventario público API",
-                    "fr": "Java inventaire public API",
+                    "zh-cn": "Java 公共 API 清单",
+                    "zh-tw": "Java 公開 API 清單",
+                    "ja": "Java 公開 API インベントリ",
+                    "es": "Inventario de API pública de Java",
+                    "fr": "Inventaire de l’API publique Java",
                     "de": "Java öffentliches API Inventar"
                   }
                 }
@@ -645,8 +645,8 @@
                   "route": "build-sdk-cpp-admission",
                   "labels": {
                     "en": "C++ First Admission and Historical Trust",
-                    "zh-cn": "C++ 首次入场和历史信任",
-                    "zh-tw": "C++ 首次入場與歷史信任",
+                    "zh-cn": "C++ 首次准入和历史信任",
+                    "zh-tw": "C++ 首次準入與歷史信任",
                     "ja": "C++ 初回アドミッションと履歴信頼",
                     "es": "C++ Primera admisión y confianza histórica",
                     "fr": "C++ Première admission et confiance historique",
@@ -657,11 +657,11 @@
                   "route": "build-sdk-cpp-api",
                   "labels": {
                     "en": "C++ public API inventory",
-                    "zh-cn": "C++ 公共 API 库存",
-                    "zh-tw": "C++ 公共 API 庫存",
-                    "ja": "C++ 公開在庫 API",
-                    "es": "C++ inventario público API",
-                    "fr": "C++ inventaire public API",
+                    "zh-cn": "C++ 公共 API 清单",
+                    "zh-tw": "C++ 公開 API 清單",
+                    "ja": "C++ 公開 API インベントリ",
+                    "es": "Inventario de API pública de C++",
+                    "fr": "Inventaire de l’API publique C++",
                     "de": "C++ öffentliches API Inventar"
                   }
                 }
@@ -750,9 +750,9 @@
                 "zh-cn": "命令、事件和排序",
                 "zh-tw": "命令、事件和排序",
                 "ja": "コマンド、イベント、および順序付け",
-                "es": "Comandos, eventos y pedidos",
-                "fr": "Commandes, événements et classement",
-                "de": "Befehle, Ereignisse und Bestellung"
+                "es": "Comandos, eventos y ordenamiento",
+                "fr": "Commandes, événements et ordre",
+                "de": "Befehle, Ereignisse und Reihenfolge"
               }
             },
             {
@@ -857,10 +857,10 @@
               "route": "reference-conformance",
               "labels": {
                 "en": "Conformance surfaces",
-                "zh-cn": "一致性表面",
-                "zh-tw": "一致性表面",
+                "zh-cn": "一致性验证范围",
+                "zh-tw": "一致性验证范围",
                 "ja": "適合面",
-                "es": "Superficies de conformidad",
+                "es": "Ámbitos de conformidad",
                 "fr": "Surfaces de conformité",
                 "de": "Konformitätsoberflächen"
               }
@@ -907,8 +907,8 @@
           "route": "reference-artifacts-and-digests",
           "labels": {
             "en": "Artifacts and digests",
-            "zh-cn": "文物和摘要",
-            "zh-tw": "文物和摘要",
+            "zh-cn": "工件和摘要",
+            "zh-tw": "工件與摘要",
             "ja": "アーティファクトとダイジェスト",
             "es": "Artefactos y resúmenes",
             "fr": "Artefacts et résumés",

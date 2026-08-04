@@ -1,5 +1,6 @@
 ---
 import matrix from "../data/normative/0.1/sdk-runtime-matrix.json";
+import { localizedText, uiCopyForPathname } from "../lib/normative-locale";
 
 type SdkId = "python" | "typescript" | "go" | "rust" | "java" | "cpp";
 
@@ -10,11 +11,12 @@ interface Props {
   heading?: string;
 }
 
+const copy = uiCopyForPathname(Astro.url.pathname);
 const {
   sdk: sdkId,
   command,
   verifyCommand,
-  heading = "Install",
+  heading = localizedText(copy, "install"),
 } = Astro.props as Props;
 const sdk = matrix.sdks.find((candidate) => candidate.id === sdkId);
 if (!sdk) throw new Error(`Unknown SDK installation entry: ${String(sdkId)}`);
@@ -27,15 +29,15 @@ if (command.trim().length === 0) {
   <h2 id={`sdk-install-${sdk.id}`}>{heading}</h2>
   <dl>
     <div>
-      <dt>Package identity</dt>
+      <dt>{localizedText(copy, "packageIdentity")}</dt>
       <dd><code>{sdk.package}</code></dd>
     </div>
     <div>
-      <dt>Required toolchain</dt>
+      <dt>{localizedText(copy, "requiredToolchain")}</dt>
       <dd>{sdk.toolchain.join(" · ")}</dd>
     </div>
     <div>
-      <dt>Documented commit</dt>
+      <dt>{localizedText(copy, "documentedCommit")}</dt>
       <dd>
         <a href={`${sdk.repository}/commit/${sdk.commit}`}>
           <code>{sdk.commit}</code>
@@ -47,7 +49,7 @@ if (command.trim().length === 0) {
   {
     verifyCommand && (
       <>
-        <h3>Verify the installed package</h3>
+        <h3>{localizedText(copy, "verifyInstalledPackage")}</h3>
         <pre>
           <code>{verifyCommand}</code>
         </pre>

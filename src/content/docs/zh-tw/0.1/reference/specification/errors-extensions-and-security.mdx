@@ -27,8 +27,9 @@ MUST 拒絕參與依賴於未知關鍵配置檔案的過渡。
 <NormativeClause id="MWP-EXT-003" level="MUST NOT">
 
 一個 Extension Profile MUST NOT 推翻或削弱身份， Membership,
-Event 順序、冪等性、 Session Epoch、所有權時代、租約、預算、 Approval,
-Artifact 出處, Mission 隔離，或訊息從不授權操作的規則。
+Event 順序、冪等性、Session Epoch、Ownership
+Epoch、租約、預算、Approval、Artifact 出處,
+Mission 隔離，或訊息從不授權操作的規則。
 
 </NormativeClause>
 
@@ -156,7 +157,9 @@ Group、參與者、種類、操作 ID 和超越的策略。它 MUST 僅當目�
 
 只有在滿足以下條件時，實作才符合 MissionWeaveProtocol 0.1：
 
-- 根據規範模式驗證每個持久性物件；-傳遞`conformance/manifest.json`中的所有58個結構向量，其中包括27個預期有效和 31 份預期無效文件；
+- 根據規範模式驗證每個持久性物件；
+- 透過 `conformance/manifest.json`
+  中的所有 58 個結構向量，其中包括 27 個預期有效和 31 份預期無效文件；
 - 透過 `cryptography/manifest.json` 中的所有評估，涵蓋所有九個 Signed
   Document 驗證設定檔中的模式設定檔及其規範簽名字節、雜湊值、金鑰綁定和簽章；
 - 透過獨立 `admission/manifest.json`
@@ -179,11 +182,11 @@ JCS，對這些位元組進行雜湊處理 SHA-256，並比較 `sha256:`
 
 <NormativeClause id="MWP-EXT-012" level="MUST">
 
-對於入場套餐， `manifest.fixtureSchemas` 識別 First-Admission
+對於準入套餐， `manifest.fixtureSchemas` 識別 First-Admission
 Record 和 Registry 夾具架構，以及 `manifest.cryptography.artifactDigest`
 固定每次評估使用的未更改的加密包。它是 `artifactDigest`
 使用相同的頂級成員刪除進行計算， RFC 8785
-JCS， 和 SHA-256 程式.一個跑步者 MUST 在執行聲明的適配器結果之前，請驗證所有聲明的准入工件位元組和雜湊、固定的加密摘要以及每個引用的檔案。
+JCS， 和 SHA-256 程式.一個跑步者 MUST 在執行聲明的適配器結果之前，請驗證所有聲明的準入工件位元組和雜湊、固定的加密摘要以及每個引用的檔案。
 
 </NormativeClause>
 

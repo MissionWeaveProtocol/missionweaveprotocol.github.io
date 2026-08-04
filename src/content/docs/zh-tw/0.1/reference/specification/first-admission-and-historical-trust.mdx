@@ -2,8 +2,8 @@
 normativeVersion: "0.1"
 normativeStatus: normative
 clausePrefix: MWP-ADM
-title: 首次准入與歷史信任
-description: 權威 Admission Log 合約、首次准入流程、歷史重播與失敗映射。
+title: 首次準入與歷史信任
+description: 權威 Admission Log 合約、首次準入流程、歷史重播與失敗映射。
 ---
 
 import NormativeClause from "../../../../../../components/NormativeClause.astro";
@@ -63,24 +63,24 @@ ID 或 Principal 不同，便構成衝突；該記錄 MUST NOT 被替換、修�
 
 Admission 是六個密碼學階段之後的獨立語意層。其受保護診斷階段為
 `admission`；它不是第七個密碼學階段，也不改變簽名字節、簽章雜湊、key
-resolution 或簽章結果。每條准入或歷史信任路徑 MUST 先完成全部六個階段，並保留所得的 Organization、文件類型、簽章雜湊、已解析 key
+resolution 或簽章結果。每條準入或歷史信任路徑 MUST 先完成全部六個階段，並保留所得的 Organization、文件類型、簽章雜湊、已解析 key
 ID、綁定的 Principal 與有效 key validity interval。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-006" level="MUST">
 
-對於首次准入，提供給第 4 階段的 Registry 證據 MUST 是目前證據，並且適用於新的准入決定，
+對於首次準入，提供給第 4 階段的 Registry 證據 MUST 是目前證據，並且適用於新的準入決定，
 [如前述要求](../signed-documents-and-trust/#mwp-sdv-010)。完成六階段驗證後，實作 MUST 查找
 `(organizationId, signingHash)`。如果找到記錄，該記錄 MUST 按下文要求驗證。只有「權威確認不存在」才允許實作取得可信接受上下文、準備候選 First-Admission
-Record，並呼叫 append-or-return-existing。該操作傳回的已驗證記錄——無論是新提交的記錄，還是並行時已存在的記錄——在其本身通過驗證之前，首次准入都不算完成。只驗證候選位元組並不充分。
+Record，並呼叫 append-or-return-existing。該操作傳回的已驗證記錄——無論是新提交的記錄，還是並行時已存在的記錄——在其本身通過驗證之前，首次準入都不算完成。只驗證候選位元組並不充分。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]} exclusions={["state-machine-acceptance"]}>
 
 候選記錄的準備過程 MUST
-NOT 追加 Event、執行狀態轉換，或暗示准入已經成功。並行獲勝者傳回的
+NOT 追加 Event、執行狀態轉換，或暗示準入已經成功。並行獲勝者傳回的
 `admissionRecordId` 或 `trustedAcceptedAt`
 MAY 與失敗方的候選值不同；只有下文每項綁定規則與區間規則都通過時，傳回的記錄才能被接受。
 
@@ -90,7 +90,7 @@ MAY 與失敗方的候選值不同；只有下文每項綁定規則與區間規�
 
 歷史重播 MUST 使用權威的歷史 Registry 證據重新執行六個密碼學階段；該證據必須包含受保護簽章時刻所需的完整保留有效期歷史。隨後，歷史重播 MUST 要求存在 First-Admission
 Record，並驗證該記錄。歷史重播 MUST
-NOT 簽發新的可信接受上下文、追加缺失記錄，或把該文件視為新的准入。當受保護簽章時刻與
+NOT 簽發新的可信接受上下文、追加缺失記錄，或把該文件視為新的準入。當受保護簽章時刻與
 `trustedAcceptedAt`
 都位於所選 key 的有效區間內時，之後發生的到期或撤銷本身不會使已錨定的歷史簽章失效。
 
@@ -112,7 +112,7 @@ Log 適配器結果給出的部署斷言；記錄本身不能證明這兩項屬�
 
 對於可信接受時刻 `t`，只有滿足 `validFrom <= t`，並且 `validUntil` 不存在或
 `t < validUntil`，同時 `revokedAt` 不存在或 `t < revokedAt`
-時，准入才有效。這些條件與受保護簽章時刻使用相同的半開邊界，但要在
+時，準入才有效。這些條件與受保護簽章時刻使用相同的半開邊界，但要在
 `trustedAcceptedAt` 上獨立評估，並採用保留歷史中最早生效的 `validUntil` 與
 `revokedAt` 邊界。新提交的文件 MUST
 NOT 僅因簽署者把受保護時刻回填到到期或撤銷之前而被接受。
@@ -123,7 +123,7 @@ NOT 僅因簽署者把受保護時刻回填到到期或撤銷之前而被接受�
 
 對於 Signed Event，該 Event 文件無論透過查找還是 append-or-return-existing，MUST
 NOT 充當自身的 First-Admission Record；其簽章也 MUST
-NOT 被視為驗證該記錄或其准入錨。之後的 Signed Event
+NOT 被視為驗證該記錄或其準入錨。之後的 Signed Event
 MAY 發布或引用一筆獨立記錄；該簽章只驗證 Event 中的引用。
 
 </NormativeClause>
@@ -148,11 +148,11 @@ Record 驗證相互獨立。
 
 密碼學驗證會認證與 key 綁定的 Principal；它不會授予該 Principal 協定權限。在接受狀態轉換之前，相關的 Organization 或 Group
 Authority
-MUST 使用在受保護簽章時刻適用的權威政策與狀態來驗證簽署者的角色和授權；首次准入還要考量可信接受時刻。具體而言，`acceptedBy`
+MUST 使用在受保護簽章時刻適用的權威政策與狀態來驗證簽署者的角色和授權；首次準入還要考量可信接受時刻。具體而言，`acceptedBy`
 MUST 是已獲授權的 Group Authority 或 Organization Event 服務；Agent
 Card 簽發者 MUST 獲其 Organization 授權；Extension
 Profile 核准者與 Approval 核准者 MUST 滿足 Organization 政策；Group
-Snapshot 建立者 MUST 是已獲授權的封存服務。只有全部六個密碼學階段以及適用的首次准入或歷史信任驗證成功後，才執行該授權檢查；失敗碼為
+Snapshot 建立者 MUST 是已獲授權的封存服務。只有全部六個密碼學階段以及適用的首次準入或歷史信任驗證成功後，才執行該授權檢查；失敗碼為
 `AUTH_FORBIDDEN`。
 
 </NormativeClause>

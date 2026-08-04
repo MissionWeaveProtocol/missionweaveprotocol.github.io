@@ -16,7 +16,7 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 和進程內編解碼器。
 
 <SupportStatus status="deployment-adapter-required" /> 適用於目前 Registry
-權威性、可信任准入情境、經過驗證的原子日誌存取以及部署提供的其他外部服務。
+權威性、可信任準入情境、經過驗證的原子日誌存取以及部署提供的其他外部服務。
 
 <SupportStatus status="not-implemented" />
 表示精確固定的模組沒有對應的導出執行時間。
@@ -35,13 +35,13 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 | 運行時關注           | 公共源文件                                                                                       | 固定提交的合約                                                                          |
 | -------------------- | ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------- |
 | 包裝標識和文檔       | `doc.go`                                                                                         | 包級範圍和支援的實現邊界。                                                              |
-| 嚴格的 JSON 和時間值 | `json.go`, `rfc3339.go`                                                                          | 嚴格的 JSON 解碼和導出 RFC 3339 驗證和准入使用的即時比較表面。                          |
+| 嚴格的 JSON 和時間值 | `json.go`, `rfc3339.go`                                                                          | 嚴格的 JSON 解碼和導出 RFC 3339 驗證和準入使用的即時比較表面。                          |
 | 架構目錄             | `schema.go`                                                                                      | 2020-12 草案 架構載入、驗證和精確打包的架構存取。                                       |
 | 規格 JSON            | `canonical.go`                                                                                   | RFC 8785 規範化與規範位元組產生。                                                       |
 | 簽署與簽署文件       | `signing.go`、`signed_document_codec.go`、`signed_document_verification.go`、`ed25519_strict.go` | Ed25519個助手，九個簽章文件配置文件，完整的Registry解析，嚴格的點檢查和六階段驗證證據。 |
 | 框架                 | `frame.go`                                                                                       | 支援的 WebSocket 幀值的解析和編碼操作。這是編解碼器，而不是託管網關服務。               |
 | 一致性與捆綁         | `conformance.go`、`bundle.go`                                                                    | 嵌入式捆綁標識、摘要驗證、清單執行和指令支援。                                          |
-| 首次入場             | `admission.go`                                                                                   | 首次存取與歷史信任與成功驗證以上的類型化部署適配器。                                    |
+| 首次準入             | `admission.go`                                                                                   | 成功驗證之上的首次準入與歷史信任型別化部署適配器。                                      |
 
 ## 驗證和密碼學
 
@@ -66,14 +66,14 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 
 `VerifyProtocolBundle`、`VerifyCryptographyBundle` 和 `VerifyAdmissionBundle`
 將每個嵌入工件集綁定到其記錄的身份。 `RunEmbeddedConformance`
-執行嵌入的結構向量。當 SDK 提交、協定 pin、架構集、加密包、准入包或部署適配器變更時再次執行這些。通過它們僅證明了經過測試的封裝表面。
+執行嵌入的結構向量。當 SDK 提交、協定 pin、架構集、加密包、準入包或部署適配器變更時再次執行這些。通過它們僅證明了經過測試的封裝表面。
 
-## 首次入場
+## 首次準入
 
 `NewAdmissionService` 建構精確模式服務。 `PrepareFirstAdmission`、`AdmitFirst`
 和 `VerifyHistoricalAdmission` 是可能傳回適配器或驗證錯誤的同步 Go 呼叫。
 `AdmissionCurrentKeyResolver`、`TrustedAdmissionContext` 和 `AdmissionLog`
-仍然是部署介面。繼續[Go准入參考](../admission/)，了解確切的結果、原子性要求和歷史路徑。
+仍然是部署介面。繼續[Go準入參考](../admission/)，了解確切的結果、原子性要求和歷史路徑。
 
 ## 明確的可用性邊界
 

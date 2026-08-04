@@ -24,8 +24,18 @@ function document(title, sentence, options = {}) {
   const level = options.level ?? "MUST";
   const heading = options.heading ?? "## Details";
   const link = options.link ?? "../other/";
+  const linkLabel = options.linkLabel ?? "the local page";
+  const clauseId = options.clauseId ?? "MWP-TST-001";
   const importPrefix = options.importPrefix ?? "../../../../";
-  const code = options.code === false ? "" : "\n```text\nwire-value\n```\n";
+  const codeBody = options.codeBody ?? "mission.create";
+  const code =
+    options.code === false ? "" : `\n\`\`\`text\n${codeBody}\n\`\`\`\n`;
+  const orderedList = options.orderedList
+    ? `\n${options.orderedList.trim()}\n`
+    : "";
+  const readerBlock = options.readerBlock
+    ? `\n${options.readerBlock.trim()}\n`
+    : "";
   return `---
 title: "${title}"
 description: "Localized fixture"
@@ -41,9 +51,11 @@ import InformativeBlock from "${importPrefix}components/InformativeBlock.astro";
 
 ${heading}
 
-<NormativeClause id="MWP-TST-001" level="${level}">
+<NormativeClause id="${clauseId}" level="${level}">
 
-${sentence} See [the local page](${link}).
+${sentence} See [${linkLabel}](${link}).
+${orderedList}
+${readerBlock}
 
 </NormativeClause>
 
@@ -59,6 +71,7 @@ function localizedDocument(locale, sentence, options = {}) {
   return document(locale, sentence, {
     ...options,
     importPrefix: "../../../../../",
+    linkLabel: options.linkLabel ?? `${locale} 页面`,
   });
 }
 
@@ -188,6 +201,17 @@ await expectFailure(
 await expectFailure(
   (root) =>
     writeFile(
+      path.join(root, "src/content/docs/ja/0.1/reference/page.mdx"),
+      localizedDocument("ja", localizedSentences.ja).replace(
+        "[ja 页面](../other/)",
+        "ja 页面](../other/)",
+      ),
+    ),
+  /local-link sequence differs/u,
+);
+await expectFailure(
+  (root) =>
+    writeFile(
       path.join(root, "src/content/docs/zh-tw/0.1/reference/page.mdx"),
       localizedDocument("zh-tw", localizedSentences["zh-tw"], {
         code: false,
@@ -221,6 +245,133 @@ await expectFailure(async (root) => {
   );
 }, /contains untranslated English prose/u);
 
+await expectFailure(async (root) => {
+  const english = document(
+    "English",
+    "The adapter MUST establish Organization scope, applicable authoritative revision, evidence completeness, and historical coverage or report that it cannot.",
+  );
+  await writeFile(
+    path.join(root, "src/content/docs/0.1/reference/page.mdx"),
+    english,
+  );
+  await writeFile(
+    path.join(root, "src/content/docs/fr/0.1/reference/page.mdx"),
+    localizedDocument(
+      "fr",
+      "L’adaptateur MUST établir applicable authoritative revision, evidence completeness, and historical coverage avant la vérification.",
+    ),
+  );
+}, /contains untranslated English (?:prose|run)/u);
+
+await expectFailure(async (root) => {
+  const diagram =
+    "current state\n→ validate the combined Evidence\n→ authoritative result";
+  await writeFile(
+    path.join(root, "src/content/docs/0.1/reference/page.mdx"),
+    document("English", "An implementation MUST preserve normative force.", {
+      codeBody: diagram,
+    }),
+  );
+  for (const locale of locales) {
+    await writeFile(
+      path.join(root, `src/content/docs/${locale}/0.1/reference/page.mdx`),
+      localizedDocument(locale, localizedSentences[locale], {
+        codeBody: locale === "ja" ? diagram : `${locale} localized diagram`,
+      }),
+    );
+  }
+}, /ja\/0\.1\/reference\/page\.mdx: untranslated reader-facing text block/u);
+
+await expectFailure(async (root) => {
+  const englishList = [
+    "1. Parse the document.",
+    "2. Validate the schema.",
+    "3. Build the signing projection.",
+    "4. Resolve the Registry key.",
+    "5. Canonicalize the projection.",
+    "6. Verify the signature.",
+  ].join("\n");
+  await writeFile(
+    path.join(root, "src/content/docs/0.1/reference/page.mdx"),
+    document("English", "An implementation MUST preserve normative force.", {
+      clauseId: "MWP-SDV-015",
+      orderedList: englishList,
+    }),
+  );
+  for (const locale of locales) {
+    const markers =
+      locale === "zh-cn" ? [1, 2, 3, 3, 4, 5] : [1, 2, 3, 4, 5, 6];
+    const orderedList = markers
+      .map((marker, index) => `${marker}. ${locale} 阶段 ${index + 1}。`)
+      .join("\n");
+    await writeFile(
+      path.join(root, `src/content/docs/${locale}/0.1/reference/page.mdx`),
+      localizedDocument(locale, localizedSentences[locale], {
+        clauseId: "MWP-SDV-015",
+        orderedList,
+      }),
+    );
+  }
+}, /zh-cn\/0\.1\/reference\/page\.mdx: ordered-list marker sequence differs/u);
+
+await expectFailure(async (root) => {
+  const englishList = [
+    "1. Parse the document.",
+    "2. Validate the schema.",
+    "3. Verify the result.",
+  ].join("\n");
+  await writeFile(
+    path.join(root, "src/content/docs/0.1/reference/page.mdx"),
+    document("English", "An implementation MUST preserve normative force.", {
+      orderedList: englishList,
+    }),
+  );
+  for (const locale of locales) {
+    const orderedList =
+      locale === "zh-cn"
+        ? "解析文档。\n验证架构。\n验证结果。"
+        : [1, 2, 3]
+            .map((marker) => `${marker}. ${locale} 阶段 ${marker}。`)
+            .join("\n");
+    await writeFile(
+      path.join(root, `src/content/docs/${locale}/0.1/reference/page.mdx`),
+      localizedDocument(locale, localizedSentences[locale], { orderedList }),
+    );
+  }
+}, /zh-cn\/0\.1\/reference\/page\.mdx: reader list\/table structure differs/u);
+
+await expectFailure(async (root) => {
+  const englishTable = [
+    "| Stage | Outcome |",
+    "| --- | --- |",
+    "| parse | complete |",
+  ].join("\n");
+  await writeFile(
+    path.join(root, "src/content/docs/0.1/reference/page.mdx"),
+    document("English", "An implementation MUST preserve normative force.", {
+      readerBlock: englishTable,
+    }),
+  );
+  for (const locale of locales) {
+    const readerBlock =
+      locale === "zh-tw"
+        ? [
+            "| 階段 | 結果 | 備註 |",
+            "| --- | --- | --- |",
+            "| 解析 | 完成 | 無 |",
+          ].join("\n")
+        : [
+            `| ${locale} stage | ${locale} outcome |`,
+            "| --- | --- |",
+            `| ${locale} parse | ${locale} complete |`,
+          ].join("\n");
+    await writeFile(
+      path.join(root, `src/content/docs/${locale}/0.1/reference/page.mdx`),
+      localizedDocument(locale, localizedSentences[locale], { readerBlock }),
+    );
+  }
+}, /zh-tw\/0\.1\/reference\/page\.mdx: reader list\/table structure differs/u);
+
 console.log(
-  "Normative locale checker fixture tests passed one valid and seven rejecting cases.",
+  "Normative locale checker fixture tests passed one valid and thirteen rejecting cases.",
 );

@@ -14,10 +14,10 @@ Traitez un objet de protocole comme plus qu'une classe désérialisée. Un runti
 conforme préserve quatre couches distinctes :
 
 ```text
-received UTF-8 bytes
-→ lossless parsed JSON value
-→ schema-valid protocol object
-→ semantically accepted authoritative state or local projection
+octets UTF-8 reçus
+→ valeur JSON analysée sans perte
+→ objet de protocole valide selon le Schema
+→ état faisant autorité ou projection locale acceptés sémantiquement
 ```
 
 Sauter une couche crée des bogues de normalisation, d’ordre de validation ou
@@ -60,7 +60,7 @@ Gardez ces catégories séparées :
 | Catégorie             | Exemples                                                                                | Limite d'acceptation                                                                 |
 | --------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | Scalaire              | identifiant, horodatage, hachage, base64url, entier sécurisé                            | validation lexicale et de profil de valeurs                                          |
-| Document durable      | Mission, WorkItem, Artifact, Evidence, Agent Card                                       | strict JSON plus schéma normatif complet                                             |
+| Document durable      | Mission, WorkItem, Artifact, Evidence, Agent Card                                       | JSON strict et Schema normatif complet                                               |
 | Signed Document       | Command, Event, Approval, Agent Card, Artifact manifeste                                | Schéma et vérification en six étapes                                                 |
 | État faisant autorité | révision globale, Membership, propriété, location, grand livre budgétaire               | transition actuelle Organization ou Group Authority                                  |
 | Projection locale     | Curseur, boîte de réception, boîte d'envoi, file d'attente per-Group, point de contrôle | reconstructible à partir d'événements faisant autorité et de travaux locaux durables |

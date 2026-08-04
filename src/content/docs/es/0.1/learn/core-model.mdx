@@ -18,16 +18,16 @@ de planificación y el historial inicial duradero de Event.
 ```text
 Organization
 ├── Agent Registry
-├── Group Authority and durable Event store
-├── Authorization Service
+├── autoridad de Group y almacén duradero de Event
+├── servicio de autorización
 └── Mission
     └── Group
         ├── MissionOwner
         ├── Coordinator
-        ├── Worker Memberships
-        ├── Conversations and Messages
-        ├── WorkItems and Work Contracts
-        └── ordered Events, Artifacts, Evidence, and Approvals
+        ├── Membership de Worker
+        ├── conversaciones y Message
+        ├── WorkItem y Work Contract
+        └── Event, Artifact, Evidence y Approval ordenados
 ```
 
 ## Los registros que conectan la cooperación
@@ -59,8 +59,8 @@ límite de ejecución estructurado en
 MissionWeaveProtocol separa la verdad compartida del estado Worker
 reconstruible.
 
-**Estado autorizado** incluye misiones, membresías, elementos de trabajo, épocas
-de propiedad y arrendamiento, recibos de deduplicación, aprobaciones y eventos
+**Estado autoritativo** incluye Missions, Memberships, WorkItems, épocas de
+propiedad y arrendamiento, recibos de deduplicación, aprobaciones y eventos
 Group. Group Authority serializa los cambios aceptados en este estado.
 
 **Las proyecciones locales Agent** incluyen cursores, colas per-Group, puntos de

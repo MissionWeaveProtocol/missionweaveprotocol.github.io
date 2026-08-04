@@ -12,10 +12,10 @@ description:
 將協議物件視為不僅僅是反序列化的類別。合格的運行時保留四個不同的層：
 
 ```text
-received UTF-8 bytes
-→ lossless parsed JSON value
-→ schema-valid protocol object
-→ semantically accepted authoritative state or local projection
+接收 UTF-8 位元組
+→ 無損解析的 JSON 值
+→ 通過 Schema 驗證的協議物件
+→ 語意上接受的權威狀態或本機投影
 ```
 
 跳過一層會導致規範化、驗證順序或權限錯誤。
@@ -58,7 +58,7 @@ Record 是一個單獨的無符號九字段對象，無法驗證其自己的位�
 ID、版本、參與者、類型、負載、相關性、發佈時間和適用的 Group 和紀元字段（[MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001)）。有效的 Command 因此 object 還不是一個可接受的轉換。
 
 一個 Event 是不可改變的公認事實。 Group 事件包含單調性 Group 序列和聚合修訂分配 Group
-Authority;兩個 Organization-範圍引導程式 Event 種類省略 Group 訂單欄位（[MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)）。
+Authority 分配的聚合修訂版；兩種 Organization 範圍的引導程式 Event 類型省略 Group 順序欄位（[MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)）。
 
 ## 保留後期所需的證據
 
@@ -77,7 +77,7 @@ Authority;兩個 Organization-範圍引導程式 Event 種類省略 Group 訂單
 [MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008)
 下的選定密鑰。部分缓存无法取代权威完整性（[MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009)）；适配器必须建立适用的修订版、完整性和历史覆盖范围，或者报告它不能 ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010))，并且只有在建立完整性后，未知密钥才是权威的([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011))。無損保留保留
 [MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016)
-下的規範階段分類，而受保護的診斷處理和線路安全故障邊界遵循
+下的規範階段分類，而受保護的診斷處理和 Wire-safe 故障邊界遵循
 [MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)。
 
 在 [JSON 架構目錄](../../../reference/schemas/)

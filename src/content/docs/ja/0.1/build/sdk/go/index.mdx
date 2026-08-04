@@ -1,7 +1,7 @@
 ---
 normativeVersion: "0.1"
 normativeStatus: normative
-title: SDK に行く
+title: Go SDK
 description:
   MissionWeaveProtocol 0.1 の完全に固定された Go ランタイム
   リファレンスをインストールして操作します。
@@ -11,7 +11,7 @@ import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 import SdkInstall from "../../../../../../../components/SdkInstall.astro";
 import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
 
-# SDK に行く
+# Go SDK
 
 `github.com/missionweaveprotocol/go-sdk`
 は、公式の Go 実装モジュールです。このリファレンスでは、`80c39852e8a2053ac761b8d53d62483264f803f1`
@@ -43,18 +43,18 @@ Log 耐久性、ネットワーク セキュリティ、実稼働の準備状態
 
 <CardGrid>
   <LinkCard
-    title="Complete runtime"
-    description="Every exported package concern, Go execution boundary, conformance entry point, and explicit non-implementation."
+    title="完全なランタイム"
+    description="エクスポートされたすべてのパッケージには、Go 実行境界、適合エントリ ポイント、および明示的な非実装が関係します。"
     href="./runtime/"
   />
   <LinkCard
-    title="First Admission and Historical Trust"
-    description="Typed current-Registry, trusted-context, and Admission Log interfaces with one runnable example."
+    title="初回アドミッションと履歴信頼"
+    description="型付きの current-Registry、trusted-context、および Admission Log インターフェイスと 1 つの実行可能な例。"
     href="./admission/"
   />
   <LinkCard
-    title="Exact public API"
-    description="Every exported Go declaration resolved to its exact source line."
+    title="正確なパブリック API"
+    description="エクスポートされたすべての Go 宣言は、その正確なソース行に解決されます。"
     href="./api/"
   />
 </CardGrid>

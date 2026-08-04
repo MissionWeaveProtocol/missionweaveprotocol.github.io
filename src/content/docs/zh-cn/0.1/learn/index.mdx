@@ -29,29 +29,29 @@ MissionWeaveProtocol 协调一个受信任的 Organization 内的自治代理。
 4. 授权参与者使用机器可读的工作合同创建 WorkItem。
 5. Worker 执行准入控制，将报价接受到其每个 Group 中队列，并通过其自己的调度程序跨组进行调度。
 6. 工作产生内容寻址的工件和映射到接受的 Evidence 标准。
-7. Coordinator 在 MissionOwner 批准确切的结果之前验证结果 Mission 修订版和 Artifact 设置。
+7. Coordinator 验证结果，之后 MissionOwner 批准确切的 Mission 修订版和 Artifact 集。
 
 ## 遵循模型
 
 <CardGrid>
   <LinkCard
-    title="Core model"
-    description="Missions, Groups, durable records, local projections, and the invariants that connect them."
+    title="核心模型"
+    description="Missions、Groups、持久记录、局部投影以及连接它们的不变量。"
     href="./core-model/"
   />
   <LinkCard
-    title="Identity, roles, and authority"
-    description="Organization identity, Agent Cards, Presence, sessions, fencing, and split authority."
+    title="身份、角色和权限"
+    description="Organization 身份、Agent Cards、存在、会话、防护和分割权限。"
     href="./identity-roles-and-authority/"
   />
   <LinkCard
-    title="Work lifecycle"
-    description="Conversation, proposals, Work Contracts, acceptance, execution, Evidence, and approval."
+    title="工作生命周期"
+    description="Conversation、提案、Work Contracts、接受、执行、Evidence 和批准。"
     href="./work-lifecycle/"
   />
   <LinkCard
-    title="Groups and scheduling"
-    description="Per-Group queues, global Worker scheduling, isolated slots, preemption, and replay."
+    title="Groups 和调度"
+    description="每个 Group 队列、全局 Worker 调度、隔离时隙、抢占和重放。"
     href="./groups-and-scheduling/"
   />
   <LinkCard
@@ -60,18 +60,18 @@ MissionWeaveProtocol 协调一个受信任的 Organization 内的自治代理。
     href="./child-missions/"
   />
   <LinkCard
-    title="Signed Documents and trust"
-    description="Protected content, Registry evidence, six-stage verification, and signing hashes."
+    title="Signed Documents 和信任"
+    description="受保护的内容、Registry 证据、六阶段验证和签名哈希。"
     href="./signed-documents-and-trust/"
   />
   <LinkCard
-    title="First Admission and Historical Trust"
-    description="Authoritative lookup, atomic admission, returned-record validation, and historical replay."
+    title="首次准入与历史信任"
+    description="权威查找、原子准入、返回记录验证、历史回放。"
     href="./first-admission-and-historical-trust/"
   />
   <LinkCard
-    title="Security boundaries"
-    description="What cryptography and Admission establish, and which concerns remain separate."
+    title="安全边界"
+    description="密码学和准入所建立的内容以及关注点仍然是分开的。"
     href="./security-boundaries/"
   />
 </CardGrid>
@@ -81,4 +81,4 @@ MissionWeaveProtocol 协调一个受信任的 Organization 内的自治代理。
 MissionWeaveProtocol 未定义 Agent 到 Agent
 RPC、跨组织联合、物理对等路由、分布式共识、模型提示或私有模型推理。一个 Organization 提供身份、策略、授权、持久 Group 排序和人员责任。 Mission 内容默认保留 Group 范围 ([MWP-FND-019](../reference/specification/foundations/#mwp-fnd-019))，而可审计的决策和结果不需要披露私有思想链 ([MWP-FND-022](../reference/specification/foundations/#mwp-fnd-022))。
 
-对于准确的要求措辞，请使用本地[参考规范](../reference/specification/)、[术语](../reference/terminology/)、[schemas](../reference/schemas/)和[一致性表面](../reference/conformance/)。确切的提交、配置文件、摘要和内置站点身份已发布在本地[规范发布页面](../reference/normative-release/)上。
+对于准确的要求措辞，请使用本地[参考规范](../reference/specification/)、[术语](../reference/terminology/)、[schemas](../reference/schemas/)和[一致性验证范围](../reference/conformance/)。确切的提交、配置文件、摘要和内置站点身份已发布在本地[规范发布页面](../reference/normative-release/)上。

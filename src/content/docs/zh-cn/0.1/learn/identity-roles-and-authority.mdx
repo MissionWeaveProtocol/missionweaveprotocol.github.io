@@ -18,8 +18,8 @@ MissionWeaveProtocol
 | 稳定的身份和经过验证的能力      | Organization 控制 Agent Registry |
 | Mission 方向和最终批准          | MissionOwner                     |
 | 规划、分配、整合和提交          | 当前 Coordinator 纪元            |
-| 跨Group执行顺序                 | Worker 拥有的调度程序            |
-| 转换验证和每个 Group Event 订单 | Group Authority                  |
+| 跨 Group 执行顺序               | Worker 自有的 Scheduler          |
+| 转换验证和每个 Group Event 顺序 | Group Authority                  |
 | 工具、数据、资源和副作用权限    | 授权服务和Organization政策       |
 
 Group
@@ -48,21 +48,21 @@ Epoch。握手序列由
 
 - Membership Epoch 隔离 Group Membership 的旧版本；
 - Coordinator Epoch 隔离了替换的 Coordinator 及其补助金；
-- 所有权时代隔离了专有作品的前所有者；和
+- Ownership Epoch 隔离独占 WorkItem 的前所有者；以及
 - 执行租约 ID 隔离过期或撤销的执行期。
 
 ## 从上下文到允许的副作用
 
 ```text
-Message or Work Proposal
-        ↓ explicit authorization
-WorkItem and Work Contract
-        ↓ Worker acceptance
+Message 或 Work Proposal
+        ↓ 显式授权
+WorkItem 和 Work Contract
+        ↓ Worker 接受
 Ownership Epoch
-        ↓ current session, policy, budget, and approval checks
-Execution Lease and scoped capability token
+        ↓ 当前 Session、策略、预算和 Approval 检查
+Execution Lease 和限定范围的能力令牌
         ↓
-Permitted operation
+允许的操作
 ```
 
 授权服务仅在相关接受、批准、政策、所有权、租赁和预算检查后才会颁发短期的、最低权限的令牌。其绑定字段由

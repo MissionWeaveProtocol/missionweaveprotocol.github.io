@@ -36,14 +36,14 @@ récent. Il n'expose pas les sous-chemins pris en charge tels que
 `@missionweaveprotocol/sdk/admission` ; Les noms de module source ci-dessous
 sont des regroupements de provenance pour la racine de package unique API.
 
-Le SDK utilise la cryptographie de nœud et les ressources du système de fichiers
-packagées pour les offres groupées de schéma, de conformité, de cryptographie et
-d'admission. Le package épinglé ne revendique pas la prise en charge du
+Le SDK utilise la cryptographie de Node.js et les ressources du système de
+fichiers packagées pour les bundles de schéma, de conformité, de cryptographie
+et d'admission. Le package épinglé ne revendique pas la prise en charge du
 navigateur ou du runtime Deno.
 
 ## Carte source complète
 
-| Problème d'exécution                 | Modules de sources publiques                    | Contrat au commit épinglé                                                                                                                                                                                                              |
+| Fonctionnalité d'exécution           | Modules de sources publiques                    | Contrat au commit épinglé                                                                                                                                                                                                              |
 | ------------------------------------ | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Identité du package et types JSON    | `src/index.ts`, `src/json-types.ts`             | Métadonnées du package, constantes de protocole et types de domaine JSON acceptés par les codecs publics.                                                                                                                              |
 | JSON strictes et valeurs temporelles | `src/strict-json.ts`, `src/rfc3339.ts`          | Exportations d’analyse stricte de la racine du package plus le type public `Rfc3339Instant`. Les analyseurs internes RFC 3339 et les assistants strict-JSON de vérification uniquement ne sont pas des exportations racine du package. |
@@ -51,7 +51,7 @@ navigateur ou du runtime Deno.
 | Canonique JSON                       | `src/canonical-json.ts`                         | RFC 8785 canonisation et production d'octets pour les entrées de signature et de résumé.                                                                                                                                               |
 | Documents signés                     | `src/signed-document-codec.ts`, `src/crypto.ts` | Ed25519 aides à la signature, neuf profils de documents signés, complets Organization-large Registry résolution et le résultat de la vérification en six étapes.                                                                       |
 | Cadres                               | `src/frame-codec.ts`                            | Opérations d'analyse et d'encodage strictes pour les supports pris en charge WebSocket objets de cadre. Il s'agit d'un codec et non d'un service de passerelle hébergé.                                                                |
-| Conformité et offres groupées        | `src/conformance.ts`, `src/package-root.ts`     | Découverte de racines packagées, exécution de manifeste structurel et `missionweaveprotocol-conformance` commande. Les actifs de cryptographie et d'admission sont packagés mais n'ont pas d'outil de vérification publique.           |
+| Conformité et bundles                | `src/conformance.ts`, `src/package-root.ts`     | Découverte de racines packagées, exécution de manifeste structurel et commande `missionweaveprotocol-conformance`. Les actifs de cryptographie et d'admission sont packagés mais n'ont pas d'outil de vérification publique.           |
 | Première admission                   | `src/admission.ts`                              | Flux de première admission typé et de confiance historique superposés après une vérification réussie en six étapes.                                                                                                                    |
 
 ## Validation et cryptographie

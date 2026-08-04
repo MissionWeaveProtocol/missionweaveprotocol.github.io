@@ -35,9 +35,9 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 | Agent 执行         | `missionweaveprotocol.agent`、`missionweaveprotocol.execution`、`missionweaveprotocol.offline`                                                                                   | 一个活动的 Agent 运行时会话、Group 上下文安装、准备执行、检查点感知工作执行和离线协调帮助程序。会话、Membership、Coordinator 和所有权纪元仍然是隔离输入。   |
 | 调度和恢复         | `missionweaveprotocol.scheduler`、`missionweaveprotocol.replay`                                                                                                                  | 工作准入、调度、抢占、过渡应用、快照、确定性重建、Event 投影、连续重播和 Agent 本地协调。                                                                   |
 | 坚持               | `missionweaveprotocol.store`、`missionweaveprotocol.local_store`                                                                                                                 | `InMemoryStore`、SQL 支持的权威存储以及 `SQLiteAgentStore` 用于本地游标、上下文、检查点、调度程序状态、事件和挂起操作。 权威状态和 Agent 本地投影保持独立。 |
-| 政策和有限权力     | `missionweaveprotocol.policy`、`missionweaveprotocol.lease`、`missionweaveprotocol.budget`、`missionweaveprotocol.delegation`                                                    | Membership 和能力令牌服务、策略保护、执行租赁转换、可重建预算分类账和授权缩小检查。这些 API 不会取代部署必须控制的权威策略或关键服务。                      |
+| 政策和有限权力     | `missionweaveprotocol.policy`、`missionweaveprotocol.lease`、`missionweaveprotocol.budget`、`missionweaveprotocol.delegation`                                                    | Membership 和 Capability Token 服务、策略保护、Execution Lease 转换、可重建预算分类账和授权缩小检查。这些 API 不会取代部署必须控制的权威策略或密钥服务。    |
 | 解析、规范化和签名 | `missionweaveprotocol.schema_formats`、`missionweaveprotocol.canonical`、`missionweaveprotocol.crypto`、`missionweaveprotocol.signed_documents`、`missionweaveprotocol.registry` | 协议标量格式、严格验证助手、RFC 8785 规范化、Ed25519 原语、六阶段 Signed Document 签名和验证，以及完整的 Organization 范围 Registry 支持的密钥解析。        |
-| 首次入场           | `missionweaveprotocol.admission`                                                                                                                                                 | 键入当前 Registry、Admission Log 以及经过六阶段验证后分层的可信上下文适配器。首次承认和历史重播有不同的证据路径。                                           |
+| 首次准入           | `missionweaveprotocol.admission`                                                                                                                                                 | 类型化当前 Registry、Admission Log 以及经过六阶段验证后分层的可信上下文适配器。首次准入和历史重播有不同的证据路径。                                         |
 | 框架和网关         | `missionweaveprotocol.wire`、`missionweaveprotocol.gateway`                                                                                                                      | HELLO/CHALLENGE/AUTH/WELCOME 握手模型、Command/Event/ACK/PING 帧、解析和编码、订阅游标、会话激活、Group 路由以及与 Core 的网关集成。                        |
 | 捆绑包、检查和命令 | `missionweaveprotocol.bundle`、`missionweaveprotocol.conformance`、`missionweaveprotocol.cli`、`missionweaveprotocol.poc`                                                        | 打包的协议包发现和摘要验证、模式和向量执行、三个控制台入口点以及确定性概念验证报告。                                                                        |
 
@@ -61,7 +61,8 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 `AgentReplay` 和 `EventProjector`
 从有序事件恢复本地投影并拒绝间隙或不一致的投影状态。
 
-执行租赁、策略、预算和委托 API 是单独的检查。在产生副作用之前，计划的项目仍然需要当前的防护、已接受的工作、适用的政策、剩余预算和有效的最低权限授权。
+Execution
+Lease、策略、预算和委托 API 是相互独立的检查。在产生副作用之前，已调度的 WorkItem 仍然需要当前 fencing、已接受的工作、适用策略、剩余预算和有效的最小权限授权。
 
 ## 验证、信任和框架
 
@@ -76,7 +77,7 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 
 `SchemaCatalog` 和 `run_manifest` 执行支持的本地验证表面。
 `verify_cryptography_bundle` 和 `verify_admission_bundle`
-将打包的工件绑定到记录的引脚和摘要。 `missionweaveprotocol-conformance`
+将打包的工件绑定到记录的Pin和摘要。 `missionweaveprotocol-conformance`
 向操作员公开结构清单运行程序。在检查打包的密码学和准入工件身份时，分别调用两个捆绑验证函数。
 
 每当 SDK 提交、协议 pin、架构集、加密包、准入包或部署适配器发生更改时，请再次运行一致性。传递一个子集仅证明该子集；它不建立数据库持久性、网络安全性、硬件容量或生产准备情况。

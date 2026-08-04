@@ -4,7 +4,7 @@ normativeStatus: normative
 title: Gruppen und Terminplanung
 description: >-
   Pro-Group-Warteschlangen, ein Worker-eigener Scheduler, isolierte
-  Ausführungsslots, Checkpoint-sichere Vorbelegung und Wiedergabe.
+  Ausführungsslots, Checkpoint-sichere Präemption und Wiedergabe.
 ---
 
 # Gruppen und Terminplanung
@@ -17,9 +17,9 @@ Projektionen bleiben aus akzeptierten Ereignissen
 wiederherstellbar.
 
 ```text
-Group A Events → Group A queue ┐
-Group B Events → Group B queue ├→ Worker Scheduler → isolated execution slots
-Group C Events → Group C queue ┘
+Event von Group A → Warteschlange von Group A ┐
+Event von Group B → Warteschlange von Group B ├→ Worker-Planer → isolierte Ausführungsplätze
+Event von Group C → Warteschlange von Group C ┘
 ```
 
 ## Wer kontrolliert die Priorität?
@@ -50,7 +50,7 @@ GroupIdentität, Inhalt, Zuweisungen oder genaue Position in der globalen
 Warteschlange
 ([MWP-WRK-012](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-012)).
 
-## Eigentum, Mietverträge und sichere Vorkaufsrechte
+## Eigentum, Mietverträge und sichere Präemptionen
 
 Mit der Annahme beginnt eine Eigentumsperiode und eine Startfrist. Bei der
 aktiven Ausführung wird eine an die gebundene Ausführungsmiete verwendet Agent,
@@ -61,7 +61,7 @@ Bei Prioritätsänderungen wird die Arbeit in der Warteschlange sofort neu
 angeordnet. Aktive Arbeit erreicht einen sicheren, idempotenten Kontrollpunkt,
 bevor sie ihren Slot freigibt:
 
-1. Der Planer fordert Vorkauf;
+1. Der Planer fordert Präemption;
 2. die Worker erreicht einen sicheren Kontrollpunkt;
 3. die Worker zeichnet den Kontrollpunkt auf und pausiert;
 4. Der Ausführungsslot wird freigegeben; und

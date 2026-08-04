@@ -43,7 +43,7 @@ Maven 工件是
 | 框架                  | `FrameCodec.java`                                                                         | 通用 WebSocket 帧值的严格解码和规范编码。这是编解码器，而不是托管网关服务。 |
 | 结构一致性            | `ConformanceRunner.java`、`cli/ConformanceCli.java`                                       | 打包或显式根模式向量执行和进程退出状态。                                    |
 | 嵌入式捆绑包          | `ProtocolBundle.java`                                                                     | 协议、密码学和准入工件集的源根和打包验证。                                  |
-| 首次入场              | `AdmissionService.java` 和准入记录/接口                                                   | 首次入场和历史信任高于成功的 Signed Document 验证。                         |
+| 首次准入              | `AdmissionService.java` 和准入记录/接口                                                   | 首次准入和历史信任高于成功的 Signed Document 验证。                         |
 
 ## 验证、签名和 Registry 证据
 
@@ -68,13 +68,13 @@ Maven 工件是
 
 `ProtocolBundle.verifyPackaged`、`verifyPackagedCryptographyBundle` 和
 `verifyPackagedAdmissionBundle`
-验证 JAR 的确切引脚、计数、路径、字节长度和摘要。相应的 `Path`
+验证 JAR 的确切Pin、计数、路径、字节长度和摘要。相应的 `Path`
 重载验证源或发布包根。这些方法并不执行所有密码学或准入评估。
 
 `ConformanceRunner.runPackaged` 和 `ConformanceCli` 仅执行结构模式向量。提供
 `--root PATH` 选择显式协议或发布包而不是打包资源。
 
-## 首次入场
+## 首次准入
 
 `AdmissionService` 公开 `prepareFirstAdmission`、`admitFirst` 和
 `verifyHistoricalAdmission`。继续使用

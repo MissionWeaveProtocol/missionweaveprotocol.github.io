@@ -177,7 +177,7 @@ MUST は、引用された付与が存在すること、期限切れおよび消
 
 <NormativeClause id="MWP-EXT-011" level="MUST">
 
-暗号化バンドルの場合、`manifest.fixtureSchemas`
+暗号バンドルの場合、`manifest.fixtureSchemas`
 は、標準の Registry フィクスチャ スキーマとテスト専用署名キー フィクスチャ スキーマを識別します。ランナー MUST は、宣言されたセマンティック ステージを適用する前に、名前付きスキーマに対して各フィクスチャを検証します。
 `artifactDigest` を検証するには、ランナー MUST が最上位の `artifactDigest`
 メンバーを正確に削除し、残りのマニフェストを RFC 8785
@@ -192,7 +192,7 @@ Admission バンドルの場合、`manifest.fixtureSchemas` は First-Admission
 Record および Registry フィクスチャ スキーマを識別し、`manifest.cryptography.artifactDigest`
 はすべての評価で使用される変更されていない暗号バンドルを固定します。その
 `artifactDigest` は、同じ最上位メンバーの削除、RFC
-8785、JCS、および SHA-256 プロシージャを使用して計算されます。ランナー MUST は、宣言されたアダプターの結果を実行する前に、宣言されたすべてのアドミッション アーティファクトのバイトとハッシュ、固定された暗号化ダイジェスト、およびすべての参照ファイルを検証します。
+8785、JCS、および SHA-256 プロシージャを使用して計算されます。ランナー MUST は、宣言されたアダプターの結果を実行する前に、宣言されたすべてのアドミッション アーティファクトのバイトとハッシュ、固定された暗号ダイジェスト、およびすべての参照ファイルを検証します。
 
 </NormativeClause>
 
