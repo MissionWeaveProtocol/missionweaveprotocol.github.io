@@ -97,6 +97,31 @@ function normalizeBody(body) {
   return body.trim().replace(/\s+/gu, " ");
 }
 
+function proseOnly(body) {
+  return body
+    .replace(/^\s*import\s.+$/gmu, " ")
+    .replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/gu, " ")
+    .replace(/`[^`]*`/gu, " ")
+    .replace(/<[^>]+>/gu, " ")
+    .replace(/!?(?:\[(?<label>[^\]]+)\])\([^)]*\)/gu, "$<label>")
+    .replace(/[#*_>|~{}[\]()-]+/gu, " ")
+    .replace(/\s+/gu, " ")
+    .trim();
+}
+
+function copiedEnglishSentence(englishBody, localizedBody) {
+  const localizedProse = proseOnly(localizedBody);
+  const sentences = proseOnly(englishBody).split(/(?<=[.!?])\s+/u);
+  return sentences.find((sentence) => {
+    const asciiWords = sentence.match(/\b[A-Za-z][A-Za-z'-]*\b/gu) ?? [];
+    return (
+      sentence.length >= 60 &&
+      asciiWords.length >= 8 &&
+      localizedProse.includes(sentence)
+    );
+  });
+}
+
 function readAttribute(attributes, name) {
   const scalar = new RegExp(
     `(?:^|\\s)${name}\\s*=\\s*(["'])(?<value>[^"']+)\\1`,
@@ -260,6 +285,12 @@ for (const relativePath of englishFiles) {
     const localized = splitDocument(await readFile(localizedFile, "utf8"));
     if (normalizeBody(localized.body) === normalizeBody(english.body)) {
       failures.push(`${localizedRelativePath}: body is identical to English`);
+    }
+    const copiedSentence = copiedEnglishSentence(english.body, localized.body);
+    if (copiedSentence !== undefined) {
+      failures.push(
+        `${localizedRelativePath}: contains untranslated English prose: ${JSON.stringify(copiedSentence.slice(0, 120))}`,
+      );
     }
     for (const field of [
       "normativeVersion",

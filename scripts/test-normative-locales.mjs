@@ -193,7 +193,22 @@ await expectFailure(async (root) => {
     english,
   );
 }, /body is identical to English/u);
+await expectFailure(async (root) => {
+  const copied =
+    "This explanatory paragraph remains in English even though the first sentence was localized for the target audience.";
+  await writeFile(
+    path.join(root, "src/content/docs/0.1/reference/page.mdx"),
+    document(
+      "English",
+      `An implementation MUST preserve normative force. ${copied}`,
+    ),
+  );
+  await writeFile(
+    path.join(root, "src/content/docs/zh-cn/0.1/reference/page.mdx"),
+    document("zh-cn", `${localizedSentences["zh-cn"]} ${copied}`),
+  );
+}, /contains untranslated English prose/u);
 
 console.log(
-  "Normative locale checker fixture tests passed one valid and six rejecting cases.",
+  "Normative locale checker fixture tests passed one valid and seven rejecting cases.",
 );
