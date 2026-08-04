@@ -178,7 +178,7 @@ JCS 和 SHA-256 过程进行计算。运行程序 MUST 在执行声明的适配�
 
 </NormativeClause>
 
-<NormativeClause id="MWP-EXT-013" level="MUST">
+<NormativeClause id="MWP-EXT-013" level="MUST" exclusions={["command-freshness","signer-authorization","portable-log-proof-verification","state-machine-acceptance"]}>
 
 传递 `missionweaveprotocol-conformance`
 或存储库的模式向量仅演示模式和向量的一致性。这是完全协议一致性的必要但不充分的证据。通过
@@ -187,9 +187,9 @@ JCS 和 SHA-256 过程进行计算。运行程序 MUST 在执行声明的适配�
 节中的六个加密验证阶段。通过 `admission/manifest.json`
 还展示了声明的首次入场记录和历史重放评估，但它不展示 Command 新鲜度和时钟偏差执行、适用角色和策略下的签名者授权，或可移植部署的 Admission
 Log 证明格式。实现 MUST 单独证明了这些要求。仅当自动正面和负面证据覆盖每个核心 Command 和 Event 类型
-[上面的 ](../commands-events-and-ordering/#core-command-kinds) 以及
-[节中的每个转换行] 时，参考实现 MUST 才声称完全符合 MissionWeaveProtocol
-0.1 一致性7.1](../missions-groups-and-membership/#mission-transition-table)和[10.2](../work-scheduling-and-recovery/#workitem-transition-table);否则，MUST 显式报告较窄的已验证子集。
+[上文](../commands-events-and-ordering/#core-command-kinds)，以及[第 7.1 节](../missions-groups-and-membership/#mission-transition-table)和
+[第 10.2 节](../work-scheduling-and-recovery/#workitem-transition-table)中的每个转换行时，参考实现 MUST 才声称完全符合 MissionWeaveProtocol
+0.1；否则，MUST 显式报告较窄的已验证子集。
 
 </NormativeClause>
 

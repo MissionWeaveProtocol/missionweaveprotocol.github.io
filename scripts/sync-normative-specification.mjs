@@ -45,6 +45,10 @@ const terminologyPath = path.join(
   repositoryRoot,
   "src/data/normative/0.1/terminology.json",
 );
+const localePolicyPath = path.join(
+  repositoryRoot,
+  "src/data/normative/0.1/locale-policy.json",
+);
 const releaseSourcePath = path.join(
   repositoryRoot,
   "src/data/normative/0.1/release-source.json",
@@ -52,14 +56,21 @@ const releaseSourcePath = path.join(
 const contentRoot = path.join(repositoryRoot, "src/content/docs/0.1");
 const prettierConfig = (await resolveConfig(manifestPath)) ?? {};
 
-const [source, terminologyText, releaseSourceText, manifestText] =
-  await Promise.all([
-    readFile(sourcePath, "utf8"),
-    readFile(terminologyPath, "utf8"),
-    readFile(releaseSourcePath, "utf8"),
-    readFile(manifestPath, "utf8"),
-  ]);
+const [
+  source,
+  terminologyText,
+  localePolicyText,
+  releaseSourceText,
+  manifestText,
+] = await Promise.all([
+  readFile(sourcePath, "utf8"),
+  readFile(terminologyPath, "utf8"),
+  readFile(localePolicyPath, "utf8"),
+  readFile(releaseSourcePath, "utf8"),
+  readFile(manifestPath, "utf8"),
+]);
 const terminology = JSON.parse(terminologyText);
+const localePolicy = JSON.parse(localePolicyText);
 const releaseSource = JSON.parse(releaseSourceText);
 const currentManifest = JSON.parse(manifestText);
 const refreshedManifest =
@@ -96,6 +107,7 @@ const publication = renderSpecification({
   manifest,
   pages: specificationPages,
   normativeLevels: terminology.normativeKeywords,
+  explicitExclusionsByClauseId: localePolicy.explicitExclusionsByClauseId,
   releaseStatus: "Draft Standard",
   releaseVersion: "0.1.0",
   replacements: sourceReplacements,

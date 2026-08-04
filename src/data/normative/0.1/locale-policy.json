@@ -59,6 +59,25 @@
     "MAY",
     "OPTIONAL"
   ],
+  "explicitExclusionIds": [
+    "command-freshness",
+    "signer-authorization",
+    "portable-log-proof-verification",
+    "state-machine-acceptance",
+    "caller-provided-trust-booleans"
+  ],
+  "explicitExclusionsByClauseId": {
+    "MWP-ADM-003": ["caller-provided-trust-booleans"],
+    "MWP-ADM-007": ["state-machine-acceptance"],
+    "MWP-ADM-013": ["command-freshness", "signer-authorization"],
+    "MWP-ADM-014": ["signer-authorization", "state-machine-acceptance"],
+    "MWP-EXT-013": [
+      "command-freshness",
+      "signer-authorization",
+      "portable-log-proof-verification",
+      "state-machine-acceptance"
+    ]
+  },
   "protocolTerms": [
     "Agent",
     "Mission",

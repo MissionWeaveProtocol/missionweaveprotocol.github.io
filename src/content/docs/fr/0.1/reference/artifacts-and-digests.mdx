@@ -19,10 +19,10 @@ SHA-256 est <code>{artifacts.protocolPin.bundleSha256}</code>.
 
 | Surfaces                |                                                           Fichiers ou artefacts | Résumé                                       |
 | ----------------------- | ------------------------------------------------------------------------------: | -------------------------------------------- |
-| Schémas                 |                                                       {artefacts.schemas.files} | <code>{artifacts.schemas.digest}</code>      |
+| Schémas                 |                                                       {artifacts.schemas.files} | <code>{artifacts.schemas.digest}</code>      |
 | Conformité structurelle | Fichiers {artifacts.structural.files} / vecteurs {artifacts.structural.vectors} | <code>{artifacts.structural.digest}</code>   |
-| Cryptographie           |                                             {artefacts.cryptographie.artefacts} | <code>{artifacts.cryptography.digest}</code> |
-| Admission               |                                                 {artefacts.admission.artefacts} | <code>{artifacts.admission.digest}</code>    |
+| Cryptographie           |                                              {artifacts.cryptography.artifacts} | <code>{artifacts.cryptography.digest}</code> |
+| Admission               |                                                 {artifacts.admission.artifacts} | <code>{artifacts.admission.digest}</code>    |
 
 ## Digérer la sémantique
 
@@ -40,21 +40,21 @@ octets concaténés correspondent.
 
 ## Artefacts de version locale
 
--<ArtifactLink path="protocol/spec/PROTOCOL.md"> Source du protocole épinglé
-
+- <ArtifactLink path="protocol/spec/PROTOCOL.md">
+    Source du protocole épinglé
   </ArtifactLink>
--<ArtifactLink path="protocol/CONTEXT.md">
+- <ArtifactLink path="protocol/CONTEXT.md">
     Glossaire normatif épinglé
   </ArtifactLink>
--<ArtifactLink path="protocol/conformance/manifest.json">
+- <ArtifactLink path="protocol/conformance/manifest.json">
     Manifeste structurel
   </ArtifactLink>
--<ArtifactLink path="protocol/cryptography/manifest.json">
+- <ArtifactLink path="protocol/cryptography/manifest.json">
     Manifeste de cryptographie
   </ArtifactLink>
--<ArtifactLink path="protocol/admission/manifest.json">
+- <ArtifactLink path="protocol/admission/manifest.json">
     Manifeste d'admission
   </ArtifactLink>
--<ArtifactLink path="normative-release.json">
+- <ArtifactLink path="normative-release.json">
     Manifeste de version de site Web généré
   </ArtifactLink>

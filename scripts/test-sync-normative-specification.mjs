@@ -190,6 +190,9 @@ const publication = renderSpecification({
   manifest,
   pages,
   normativeLevels,
+  explicitExclusionsByClauseId: {
+    "MWP-FND-001": ["command-freshness"],
+  },
   releaseStatus: "Draft Standard",
   releaseVersion: "0.1.0",
   replacements: [
@@ -225,7 +228,7 @@ assert.match(
 );
 assert.match(
   publication.files.get("reference/specification/foundations.mdx"),
-  /<NormativeClause id="MWP-FND-001" level="MAY">[\s\S]*A runtime MAY inspect the value\.[\s\S]*<\/NormativeClause>/u,
+  /<NormativeClause id="MWP-FND-001" level="MAY" exclusions=\{\["command-freshness"\]\}>[\s\S]*A runtime MAY inspect the value\.[\s\S]*<\/NormativeClause>/u,
 );
 assert.match(
   publication.files.get("reference/specification/details.mdx"),
@@ -241,6 +244,9 @@ const repeated = renderSpecification({
   manifest,
   pages,
   normativeLevels,
+  explicitExclusionsByClauseId: {
+    "MWP-FND-001": ["command-freshness"],
+  },
   releaseStatus: "Draft Standard",
   releaseVersion: "0.1.0",
   replacements: [

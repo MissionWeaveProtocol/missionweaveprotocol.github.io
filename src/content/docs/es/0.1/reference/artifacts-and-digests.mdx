@@ -19,10 +19,10 @@ SHA-256 es <code>{artifacts.protocolPin.bundleSha256}</code>.
 
 | Superficie              |                                                           Archivos o artefactos | Resumen                                      |
 | ----------------------- | ------------------------------------------------------------------------------: | -------------------------------------------- |
-| Esquemas                |                                                  {artefactos.esquemas.archivos} | <code>{artifacts.schemas.digest}</code>      |
+| Esquemas                |                                                       {artifacts.schemas.files} | <code>{artifacts.schemas.digest}</code>      |
 | Conformidad estructural | {artifacts.structural.files} archivos / {artifacts.structural.vectors} vectores | <code>{artifacts.structural.digest}</code>   |
-| Criptografía            |                                            {artefactos.criptografía.artefactos} | <code>{artifacts.cryptography.digest}</code> |
-| Admisión                |                                                {artefactos.admisión.artefactos} | <code>{artifacts.admission.digest}</code>    |
+| Criptografía            |                                              {artifacts.cryptography.artifacts} | <code>{artifacts.cryptography.digest}</code> |
+| Admisión                |                                                 {artifacts.admission.artifacts} | <code>{artifacts.admission.digest}</code>    |
 
 ## Resumen de semántica
 
@@ -47,18 +47,15 @@ concatenados coinciden.
 - <ArtifactLink path="protocol/CONTEXT.md">
     Glosario normativo fijado
   </ArtifactLink>
-  -
-  <ArtifactLink path="protocol/conformance/manifest.json">
+- <ArtifactLink path="protocol/conformance/manifest.json">
     Manifiesto estructural
   </ArtifactLink>
-  -
-  <ArtifactLink path="protocol/cryptography/manifest.json">
+- <ArtifactLink path="protocol/cryptography/manifest.json">
     Manifiesto de criptografía
   </ArtifactLink>
 - <ArtifactLink path="protocol/admission/manifest.json">
     Manifiesto de admisión
   </ArtifactLink>
-  -
-  <ArtifactLink path="normative-release.json">
+- <ArtifactLink path="normative-release.json">
     Manifiesto de lanzamiento del sitio web generado
   </ArtifactLink>

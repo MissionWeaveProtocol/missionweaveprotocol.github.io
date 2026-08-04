@@ -45,7 +45,7 @@ Document タイムスタンプとは異なり、大文字の `Z`
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]}>
+<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]} exclusions={["caller-provided-trust-booleans"]}>
 
 1 つの Organization の Admission Log 内では、論理検索および追加キーは
 `(organizationId, signingHash)`
@@ -82,7 +82,7 @@ Record を準備し、append-or-return-existing を呼び出すことができ�
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]}>
+<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]} exclusions={["state-machine-acceptance"]}>
 
 候補の準備 MUST
 NOT は Event を追加し、状態遷移を実行するか、承認が成功したことを暗示します。同時勝者の返された
@@ -117,13 +117,15 @@ Log アダプターの結果のデプロイメント アサーションです。
 
 <NormativeClause id="MWP-ADM-010" level="MUST NOT">
 
-信頼できる承認インスタント `t` の場合、承認は「validFrom <=
-t`, `validUntil`is absent or`t < validUntil`, and `revokedAt`is absent or`t <
-revokedAt`. These are the same half-open boundaries used for the protected signed time, evaluated independently at `trustedAcceptedAt`, using the earliest effective retained `validUntil`and`revokedAt`
-boundaries. A newly presented document MUST NOT be accepted solely because its
-signer backdated the protected time to precede expiry or revocation.
+信頼できる受理時刻 `t` について、`validFrom <= t` であり、`validUntil`
+が存在しないか `t < validUntil` であり、かつ `revokedAt` が存在しないか
+`t < revokedAt`
+である場合にのみ、アドミッションは有効です。これは保護された署名時刻に使用するものと同じ半開区間の境界ですが、`trustedAcceptedAt`
+で独立に評価し、保持された履歴で最も早く有効になる `validUntil` と `revokedAt`
+の境界を使用します。新たに提示された文書は、署名者が保護時刻を失効または取り消しより前に遡らせたという理由だけで MUST
+NOT 受理されません。
 
-</NormativeClause>」の場合にのみ有効です。
+</NormativeClause>
 
 <NormativeClause id="MWP-ADM-011" level={["MUST NOT","MAY"]}>
 
@@ -144,7 +146,7 @@ MAY は別のレコードを公開または参照します。その署名は、E
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-013" level="MUST">
+<NormativeClause id="MWP-ADM-013" level="MUST" exclusions={["command-freshness","signer-authorization"]}>
 
 新しく提示された Command MUST は、Organization で定義された、`issuedAt`
 の制限された鮮度およびクロック スキュー ウィンドウをさらに満たします。該当するロールおよびポリシーに基づく鮮度チェックと署名者の承認は、First-Admission
@@ -152,7 +154,7 @@ Record 検証とは別のままです。
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-014" level="MUST">
+<NormativeClause id="MWP-ADM-014" level="MUST" exclusions={["signer-authorization","state-machine-acceptance"]}>
 
 暗号検証では、キーにバインドされた Principal を認証します。 Principal プロトコル権限は付与されません。状態遷移を受け入れる前に、関連する Organization または Group
 Authority

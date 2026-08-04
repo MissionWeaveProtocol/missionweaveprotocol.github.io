@@ -688,6 +688,7 @@ export function renderSpecification({
   manifest,
   pages,
   normativeLevels,
+  explicitExclusionsByClauseId = {},
   releaseStatus,
   releaseVersion,
   replacements = [],
@@ -714,11 +715,16 @@ export function renderSpecification({
       level.length === 1
         ? `level=${JSON.stringify(level[0])}`
         : `level={${JSON.stringify(level)}}`;
+    const explicitExclusions = explicitExclusionsByClauseId[clause.id] ?? [];
+    const exclusionAttribute =
+      explicitExclusions.length === 0
+        ? ""
+        : ` exclusions={${JSON.stringify(explicitExclusions)}}`;
     edits.push({
       page: paragraph.page.page,
       startOffset: range.startOffset,
       endOffset: range.startOffset,
-      value: `${range.isolateFromList ? "\n" : ""}<NormativeClause id=${JSON.stringify(clause.id)} ${levelAttribute}>\n\n`,
+      value: `${range.isolateFromList ? "\n" : ""}<NormativeClause id=${JSON.stringify(clause.id)} ${levelAttribute}${exclusionAttribute}>\n\n`,
       order: 30,
     });
     edits.push({

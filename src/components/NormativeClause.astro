@@ -1,5 +1,6 @@
 ---
 import terminology from "../data/normative/0.1/terminology.json";
+import localePolicy from "../data/normative/0.1/locale-policy.json";
 
 type NormativeLevel =
   | "MUST"
@@ -17,12 +18,14 @@ type NormativeLevel =
 interface Props {
   id: string;
   level: NormativeLevel | readonly NormativeLevel[];
+  exclusions?: readonly string[];
   title?: string;
 }
 
 const clauseIdPattern = /^MWP-(?:FND|IDN|SDV|ADM|MSN|WRK|AUT|EVT|EXT)-\d{3}$/u;
 const normativeLevels = terminology.normativeKeywords as NormativeLevel[];
-const { id, level, title } = Astro.props as Props;
+const explicitExclusionIds = new Set(localePolicy.explicitExclusionIds);
+const { id, level, exclusions = [], title } = Astro.props as Props;
 
 if (!clauseIdPattern.test(id)) {
   throw new Error(`Invalid normative clause id: ${id}`);
@@ -35,6 +38,13 @@ if (
 ) {
   throw new Error(`Invalid normative clause levels for ${id}`);
 }
+const declaredExclusions = [...exclusions];
+if (
+  new Set(declaredExclusions).size !== declaredExclusions.length ||
+  declaredExclusions.some((entry) => !explicitExclusionIds.has(entry))
+) {
+  throw new Error(`Invalid explicit exclusions for ${id}`);
+}
 
 const htmlId = id.toLowerCase();
 ---
@@ -44,6 +54,9 @@ const htmlId = id.toLowerCase();
   class="normative-clause"
   data-clause-id={id}
   data-normative-levels={declaredLevels.join("|")}
+  data-explicit-exclusions={declaredExclusions.length > 0
+    ? declaredExclusions.join("|")
+    : undefined}
 >
   <header class="normative-clause__header">
     <a

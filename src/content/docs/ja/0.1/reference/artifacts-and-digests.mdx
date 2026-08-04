@@ -18,12 +18,12 @@ import artifacts from "../../../../../data/normative/0.1/artifacts.json";
 <code>{artifacts.protocolPin.sha256}</code> と固定プロトコル バンドル SHA-256 は
 <code>{artifacts.protocolPin.bundleSha256}</code>。
 
-| 表面       |                                                  ファイルまたはアーティファクト | ダイジェスト                                          |
-| ---------- | ------------------------------------------------------------------------------: | ----------------------------------------------------- |
-| スキーマ   |                                            {アーティファクト.スキーマ.ファイル} | <code>{アーティファクト.スキーマ.ダイジェスト}</code> |
-| 構造適合性 | {artifacts.structural.files} ファイル / {artifacts.structural.vectors} ベクトル | <code>{artifacts.structural.digest}</code>            |
-| 暗号化     |                                      {アーティファクト.暗号化.アーティファクト} | <code>{artifacts.cryptography.digest}</code>          |
-| 入場料     |                                        {アーティファクト.入場.アーティファクト} | <code>{artifacts.admission.digest}</code>             |
+| 表面       |                                                  ファイルまたはアーティファクト | ダイジェスト                                 |
+| ---------- | ------------------------------------------------------------------------------: | -------------------------------------------- |
+| スキーマ   |                                                       {artifacts.schemas.files} | <code>{artifacts.schemas.digest}</code>      |
+| 構造適合性 | {artifacts.structural.files} ファイル / {artifacts.structural.vectors} ベクトル | <code>{artifacts.structural.digest}</code>   |
+| 暗号化     |                                              {artifacts.cryptography.artifacts} | <code>{artifacts.cryptography.digest}</code> |
+| 入場料     |                                                 {artifacts.admission.artifacts} | <code>{artifacts.admission.digest}</code>    |
 
 ## ダイジェスト セマンティクス
 

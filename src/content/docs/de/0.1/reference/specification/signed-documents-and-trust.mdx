@@ -67,13 +67,14 @@ Edwards25519-Identitätspunkt.
 
 <NormativeClause id="MWP-SDV-003" level={["MUST","MUST NOT"]}>
 
-Nach der Dekodierung eines 64-Byte Ed25519 Unterschrift als `Renc || Senc`, ein
-Prüfer MUST kanonisch entschlüsseln `Renc` als Edwards25519-Punkt und
--Anforderung `[L]R` der Identität gleichkommen. Der Identitätspunkt ist zulässig
-für `R`. Der Prüfer MUST interpretieren `Senc` Als vorzeichenlose
-Little-Endian-Ganzzahl ist „0“ erforderlich <= S <
-L`, and MUST NOT reduce an out-of-range value modulo `L`. Noncanonical, off-curve, non-identity small-order, or mixed-order `R`encodings and out-of-range`S`
-values MUST fail stage 3.
+Nach dem Dekodieren einer 64-Byte-Ed25519-Signatur als `Renc || Senc` MUST ein
+Prüfer `Renc` kanonisch als Edwards25519-Punkt dekodieren und verlangen, dass
+`[L]R` dem Identitätspunkt entspricht. Der Identitätspunkt ist für `R` zulässig.
+Der Prüfer MUST `Senc` als vorzeichenlose Little-Endian-Ganzzahl interpretieren,
+`0 <= S < L` verlangen und einen Wert außerhalb dieses Bereichs MUST NOT modulo
+`L` reduzieren. Nichtkanonische, nicht auf der Kurve liegende, nichtidentische
+kleinordentliche oder gemischtordentliche `R`-Kodierungen sowie außerhalb des
+Bereichs liegende `S`-Werte MUST in Stufe 3 fehlschlagen.
 
 </NormativeClause>
 
@@ -220,16 +221,16 @@ anderen Principal oder auf anderes Schlüsselmaterial MUST scheitern.
 <NormativeClause id="MWP-SDV-014" level="MUST">
 
 Für die geschützte signierte Zeit `t` ist ein Schlüssel nur gültig, wenn
-„validFrom <= t`, `validUntil`is absent or`t <
-validUntil`, and `revokedAt`is absent or`t <
-revokedAt`. A key whose `revokedAt`is equal to or earlier than`t` MUST be
-rejected. Registry validity timestamps MUST conform to the MissionWeaveProtocol
-timestamp profile and be compared as instants, not lexically; the byte-equality
-rule for the two protected document timestamps does not apply to Registry
-interval fields. Durable signature verification MUST evaluate this interval at
-the protected signed time.
+`validFrom <= t` gilt, `validUntil` nicht vorhanden ist oder `t < validUntil`
+gilt und `revokedAt` nicht vorhanden ist oder `t < revokedAt` gilt. Ein
+Schlüssel, dessen `revokedAt` gleich oder früher als `t` ist, MUST abgelehnt
+werden. Gültigkeitszeitstempel des Registry MUST dem Zeitstempelprofil von
+MissionWeaveProtocol entsprechen und als Zeitpunkte statt lexikalisch verglichen
+werden; die Byte-Gleichheitsregel für die beiden geschützten Dokumentzeitstempel
+gilt nicht für Registry-Intervallfelder. Dauerhafte Signaturprüfung MUST dieses
+Intervall zur geschützten signierten Zeit auswerten.
 
-</NormativeClause>“.
+</NormativeClause>
 
 <NormativeClause id="MWP-SDV-015" level={["MUST","MUST NOT"]}>
 

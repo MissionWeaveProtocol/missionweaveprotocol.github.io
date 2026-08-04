@@ -43,7 +43,7 @@ it is compared as an exact instant.
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]}>
+<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]} exclusions={["caller-provided-trust-booleans"]}>
 
 Within one Organization's Admission Log, the logical lookup and append key is
 `(organizationId, signingHash)`. The log MUST authenticate the accepting
@@ -94,7 +94,7 @@ validated. Validating only the candidate bytes is not sufficient.
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]}>
+<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]} exclusions={["state-machine-acceptance"]}>
 
 Candidate preparation MUST NOT append an Event, execute a state transition, or
 imply that admission succeeded. A concurrent winner's returned
@@ -164,7 +164,7 @@ revealing that reason to the untrusted caller.
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-013" level="MUST">
+<NormativeClause id="MWP-ADM-013" level="MUST" exclusions={["command-freshness","signer-authorization"]}>
 
 A newly presented Command MUST additionally satisfy an Organization-defined,
 bounded freshness and clock-skew window for `issuedAt`. That freshness check and
@@ -173,7 +173,7 @@ First-Admission Record validation.
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-014" level="MUST">
+<NormativeClause id="MWP-ADM-014" level="MUST" exclusions={["signer-authorization","state-machine-acceptance"]}>
 
 Cryptographic verification authenticates the Principal bound to the key; it does
 not grant that Principal protocol authority. Before accepting a state

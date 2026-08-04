@@ -43,7 +43,7 @@ las dos marcas de tiempo protegidas Signed Document, no es necesario utilizar
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]}>
+<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]} exclusions={["caller-provided-trust-booleans"]}>
 
 Dentro de un Admission Log de Organization, la clave lógica de búsqueda y
 adición es `(organizationId, signingHash)`. El registro MUST autentica el
@@ -97,7 +97,7 @@ sido validado. Validar sólo los bytes candidatos no es suficiente.
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]}>
+<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]} exclusions={["state-machine-acceptance"]}>
 
 La preparación del candidato MUST NOT agrega un Event, ejecuta una transición de
 estado o implica que la admisión se realizó correctamente. El
@@ -173,7 +173,7 @@ confianza.
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-013" level="MUST">
+<NormativeClause id="MWP-ADM-013" level="MUST" exclusions={["command-freshness","signer-authorization"]}>
 
 Un Command MUST recientemente presentado satisface además una ventana de
 frescura y asimetría horaria definida por Organization para `issuedAt`. Esa
@@ -183,7 +183,7 @@ Record.
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-014" level="MUST">
+<NormativeClause id="MWP-ADM-014" level="MUST" exclusions={["signer-authorization","state-machine-acceptance"]}>
 
 La verificación criptográfica autentica el Principal vinculado a la clave; no
 otorga esa autoridad de protocolo Principal. Antes de aceptar una transición de

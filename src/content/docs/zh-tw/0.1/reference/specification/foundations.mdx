@@ -70,8 +70,8 @@ MissionWeaveProtocol
 所有協議對象 MUST 有效 JSON。持久協議對象 MUST 符合 JSON 模式位於
 `schemas/`，以及每個協定時間戳 MUST 成為一個 RFC 3339 `date-time`.
 MissionWeaveProtocol 0.1 使用確定性時間戳記設定文件 Signed
-Document 驗證設定檔。中的每個時間戳 Signed Document [第 6.4 節]
-涵蓋](../signed-documents-and-trust/)，以及每一個 Registry 或用於驗證該文件的可信任接受時間戳， MUST 滿足以下附加規則：
+Document 驗證設定檔。每個由[第 6.4 節](../signed-documents-and-trust/)涵蓋的 Signed
+Document 時間戳，以及每一個用於驗證該文件的 Registry 或可信任接受時間戳，MUST 滿足以下附加規則：
 
 - 日曆年在包含範圍內 `0001` 透過 `9999` 和公曆日期有效；
 - 第二個在包含範圍內 `00` 透過 `59`;閏秒的寫法v0.1 不支援；

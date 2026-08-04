@@ -39,7 +39,7 @@ Document 时间戳不同，不需要使用大写的 `Z`；它被作为一个精�
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]}>
+<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]} exclusions={["caller-provided-trust-booleans"]}>
 
 在一个 Organization 的 Admission Log 中，逻辑查找和追加键为
 `(organizationId, signingHash)`。日志 MUST 对接受服务进行身份验证，限制对 Organization 授权服务的写入，保留仅附加完整性，支持区分已发现和权威缺失的权威查找，并为该逻辑密钥提供一个原子附加或返回现有操作。不可用、不确定、未经身份验证、完整性失败、冲突或提交失败结果 MUST 无法关闭。调用者提供的信任、身份验证或完整性布尔值 MUST
@@ -70,7 +70,7 @@ Record，并调用追加或返回现有。直到该操作返回的经过身份�
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]}>
+<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]} exclusions={["state-machine-acceptance"]}>
 
 候选准备 MUST NOT 附加 Event，执行状态转换，或暗示准入成功。并发获胜者返回的
 `admissionRecordId` 或 `trustedAcceptedAt`
@@ -102,13 +102,14 @@ Log 适配器结果的部署断言；记录本身并不能证明任何一个属�
 
 <NormativeClause id="MWP-ADM-010" level="MUST NOT">
 
-对于可信接受即时`t`，仅当“validFrom <= t`, `validUntil`is absent or`t <
-validUntil`, and `revokedAt`is absent or`t <
-revokedAt`. These are the same half-open boundaries used for the protected signed time, evaluated independently at `trustedAcceptedAt`, using the earliest effective retained `validUntil`and`revokedAt`
-boundaries. A newly presented document MUST NOT be accepted solely because its
-signer backdated the protected time to precede expiry or revocation.
+对于可信接受时刻 `t`，仅当 `validFrom <= t`，且 `validUntil` 不存在或
+`t < validUntil`，并且 `revokedAt` 不存在或 `t < revokedAt`
+时，准入才有效。这些边界与受保护签名时间使用的半开边界相同，但在
+`trustedAcceptedAt` 处独立求值，并采用保留历史中最早生效的 `validUntil` 和
+`revokedAt` 边界。新提交的文档 MUST
+NOT 仅因为签名者将受保护时间回填到过期或撤销之前而被接受。
 
-</NormativeClause>”时接纳才有效
+</NormativeClause>
 
 <NormativeClause id="MWP-ADM-011" level={["MUST NOT","MAY"]}>
 
@@ -127,7 +128,7 @@ MAY 发布或引用单独的记录；它的签名仅验证 Event 的引用。
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-013" level="MUST">
+<NormativeClause id="MWP-ADM-013" level="MUST" exclusions={["command-freshness","signer-authorization"]}>
 
 新提出的 Command MUST 还满足 `issuedAt`
 定义的 Organization 有界新鲜度和时钟偏差窗口。适用角色和策略下的新鲜度检查和签名者授权仍然与 First-Admission
@@ -135,7 +136,7 @@ Record 验证分开。
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-014" level="MUST">
+<NormativeClause id="MWP-ADM-014" level="MUST" exclusions={["signer-authorization","state-machine-acceptance"]}>
 
 密码验证验证与密钥绑定的Principal；它不授予 Principal 协议权限。在接受状态转换之前，相关 Organization 或 Group
 Authority

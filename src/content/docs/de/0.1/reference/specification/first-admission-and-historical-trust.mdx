@@ -44,7 +44,7 @@ verglichen.
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]}>
+<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]} exclusions={["caller-provided-trust-booleans"]}>
 
 Innerhalb eines Organization Admission Log ist der logische Such- und
 Anhängeschlüssel `(organizationId, signingHash)`. Das Protokoll MUST
@@ -104,7 +104,7 @@ validiert wurde. Es reicht nicht aus, nur die Kandidatenbytes zu validieren.
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]}>
+<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]} exclusions={["state-machine-acceptance"]}>
 
 Kandidatenvorbereitung MUST NOT anhängen Event, einen Zustandsübergang ausführen
 oder implizieren, dass die Zulassung erfolgreich war. Ein gleichzeitiger
@@ -184,7 +184,7 @@ vertrauenswürdigen Anrufer preiszugeben.
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-013" level="MUST">
+<NormativeClause id="MWP-ADM-013" level="MUST" exclusions={["command-freshness","signer-authorization"]}>
 
 Ein neu präsentiertes Command MUST erfüllen zusätzlich eine
 Organization-definiertes, begrenztes Frische- und Clock-Skew-Fenster für
@@ -194,7 +194,7 @@ Record Validierung.
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-014" level="MUST">
+<NormativeClause id="MWP-ADM-014" level="MUST" exclusions={["signer-authorization","state-machine-acceptance"]}>
 
 Die kryptografische Verifizierung authentifiziert die Principal an den Schlüssel
 gebunden; das gewährt es nicht Principal Protokollautorität. Bevor Sie einen

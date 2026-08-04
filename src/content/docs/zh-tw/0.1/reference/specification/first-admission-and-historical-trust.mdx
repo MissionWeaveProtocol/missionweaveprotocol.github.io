@@ -38,7 +38,7 @@ Document 時間戳記不同，不需要使用大寫的 `Z`；它被作為一個�
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]}>
+<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]} exclusions={["caller-provided-trust-booleans"]}>
 
 在一個 Organization 的 Admission Log 中，邏輯尋找和追加鍵為
 `(organizationId, signingHash)`。日誌 MUST 對接受服務進行身份驗證，限制對 Organization 授權服務的寫入，保留僅附加完整性，支援區分已發現和權威缺失的權威查找，並為該邏輯密鑰提供一個原子附加或返回現有操作。不可用、不確定、未經身份驗證、完整性失敗、衝突或提交失敗結果 MUST 無法關閉。呼叫者提供的信任、驗證或完整性布林值 MUST
@@ -69,7 +69,7 @@ Record，並呼叫追加或返回現有。直到該操作返回的經過身份�
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]}>
+<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]} exclusions={["state-machine-acceptance"]}>
 
 候選準備 MUST NOT 附加 Event，執行狀態轉換，或暗示准入成功。並發獲勝者返回的
 `admissionRecordId` 或 `trustedAcceptedAt`
@@ -128,7 +128,7 @@ MAY 發布或引用單獨的記錄；它的簽名僅驗證 Event的參考。
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-013" level="MUST">
+<NormativeClause id="MWP-ADM-013" level="MUST" exclusions={["command-freshness","signer-authorization"]}>
 
 新推出的一款 Command
 MUST 另外滿足 Organization- 定義的、有界的新鮮度和時鐘偏差窗口
@@ -137,7 +137,7 @@ Record 驗證。
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-014" level="MUST">
+<NormativeClause id="MWP-ADM-014" level="MUST" exclusions={["signer-authorization","state-machine-acceptance"]}>
 
 密碼驗證驗證 Principal 綁定到鑰匙；它不承認 Principal 協議權威。在接受狀態轉換之前，相關的 Organization 或者 Group
 Authority

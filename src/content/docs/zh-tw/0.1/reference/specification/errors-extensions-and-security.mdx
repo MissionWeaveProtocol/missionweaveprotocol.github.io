@@ -180,12 +180,12 @@ JCS， 和 SHA-256 程式.一個跑步者 MUST 在執行聲明的適配器結果
 
 </NormativeClause>
 
-<NormativeClause id="MWP-EXT-013" level="MUST">
+<NormativeClause id="MWP-EXT-013" level="MUST" exclusions={["command-freshness","signer-authorization","portable-log-proof-verification","state-machine-acceptance"]}>
 
 透過 `missionweaveprotocol-conformance`
 或儲存庫的模式向量僅演示模式和向量的一致性。這是完全協議一致性的必要但不充分的證據。透過
-`cryptography/manifest.json` 僅演示了[第 6.4
-節]中的六個加密驗證階段](../signed-documents-and-trust/#mwp-sdv-015)。透過
+`cryptography/manifest.json`
+僅演示了[第 6.4 節](../signed-documents-and-trust/#mwp-sdv-015)中的六個加密驗證階段。透過
 `admission/manifest.json` 另外也展示了聲明的 First-Admission
 Record 和歷史重播評估，但它並沒有證明 Command 新鮮度和時鐘偏差強制執行、適用角色和策略下的簽署者授權或便攜式部署 Admission
 Log 證明格式。一個實現 MUST 分別證明這些要求。參考實現 MUST 索賠全額 MissionWeaveProtocol 僅當自動正面和負面證據覆蓋每個核心時才達到 0.1 一致性 Command 和 Event 種類[以上](../commands-events-and-ordering/#core-command-kinds)

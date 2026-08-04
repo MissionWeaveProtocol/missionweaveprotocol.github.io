@@ -31,7 +31,7 @@ cmake --install build --prefix /absolute/install/prefix`}
     配置為 <code>OPENSSL_ROOT_DIR</code> 否則 CMake 會找到非 OpenSSL 或 3.0
     之前的實作。建置首先搜尋 jsoncons 1.8.1，否則下載帶有固定的確切 v1.8.1 存檔
     SHA-256。下游 CMake 專案配置{" "}
-    <code>find_package（missionweave協定配置）</code>
+    <code>find_package(missionweaveprotocol CONFIG)</code>
     ，當包不存在時，他們自己的構建失敗，並鏈接{" "}
     <code>MissionWeaveProtocol::sdk</code>.
   </p>

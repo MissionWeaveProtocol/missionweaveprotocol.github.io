@@ -43,7 +43,7 @@ d'utiliser des majuscules `Z` ; il est comparé à un instant exact.
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]}>
+<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]} exclusions={["caller-provided-trust-booleans"]}>
 
 Dans un Admission Log de Organization, la clé de recherche et d'ajout logique
 est `(organizationId, signingHash)`. Le journal MUST authentifie le service
@@ -100,7 +100,7 @@ n’est pas suffisant.
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]}>
+<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]} exclusions={["state-machine-acceptance"]}>
 
 Préparation du candidat MUST NOT ajoute un Event, exécute une transition d'état
 ou implique que l'admission a réussi. Le `admissionRecordId` ou
@@ -176,7 +176,7 @@ stable sans révéler cette raison à l'appelant non fiable.
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-013" level="MUST">
+<NormativeClause id="MWP-ADM-013" level="MUST" exclusions={["command-freshness","signer-authorization"]}>
 
 Un nouveau présenté Command MUST satisfaire en outre un Organization-fraîcheur
 définie et limitée et fenêtre de décalage d'horloge pour `issuedAt`. Ce contrôle
@@ -185,7 +185,7 @@ politique applicables restent distincts de First-Admission Record validation.
 
 </NormativeClause>
 
-<NormativeClause id="MWP-ADM-014" level="MUST">
+<NormativeClause id="MWP-ADM-014" level="MUST" exclusions={["signer-authorization","state-machine-acceptance"]}>
 
 La vérification cryptographique authentifie le Principal lié à la clé ; il
 n'accorde pas cette autorité de protocole Principal. Avant d'accepter une
