@@ -55,10 +55,68 @@ jobs:
         env:
           MW_SOURCES_ROOT: ${{ runner.temp }}/missionweaveprotocol-sources
 
+  sdk-examples:
+    name: Verify ${{ matrix.sdk }} SDK example
+    if: github.event_name != 'pull_request'
+    needs: release-sources
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        sdk:
+          - python
+          - typescript
+          - go
+          - rust
+          - java
+          - cpp
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - uses: actions/setup-python@v6
+        if: matrix.sdk == 'python'
+        with:
+          python-version: "3.12"
+      - uses: astral-sh/setup-uv@v7
+        if: matrix.sdk == 'python'
+        with:
+          version: 0.11.21
+      - uses: actions/setup-go@v6
+        if: matrix.sdk == 'go'
+        with:
+          go-version: "1.24.x"
+          cache: false
+      - uses: dtolnay/rust-toolchain@stable
+        if: matrix.sdk == 'rust'
+        with:
+          toolchain: 1.85.0
+      - uses: actions/setup-java@v5
+        if: matrix.sdk == 'java'
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: lukka/get-cmake@v4
+        if: matrix.sdk == 'cpp'
+      - name: Install C++ native dependencies
+        if: matrix.sdk == 'cpp'
+        run: sudo apt-get update && sudo apt-get install --yes libssl-dev
+      - name: Check out pinned protocol and SDK sources
+        run: >-
+          node scripts/checkout-normative-sources.mjs --sources-root
+          "$RUNNER_TEMP/missionweaveprotocol-sources"
+      - name: Regenerate API inventories and verify native example
+        run: npm run verify:sdk-examples -- --sdk ${{ matrix.sdk }}
+        env:
+          MW_SOURCES_ROOT: ${{ runner.temp }}/missionweaveprotocol-sources
+
   deploy:
     name: Deploy Pages
     if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: [build, release-sources]
+    needs: [build, release-sources, sdk-examples]
     runs-on: ubuntu-latest
     concurrency:
       group: pages
