@@ -99,7 +99,7 @@ jobs:
         with:
           distribution: temurin
           java-version: "21"
-      - uses: lukka/get-cmake@v4
+      - uses: lukka/get-cmake@v4.4.2
         if: matrix.sdk == 'cpp'
       - name: Install C++ native dependencies
         if: matrix.sdk == 'cpp'
