@@ -221,27 +221,27 @@ git commit -m "feat(docs): add SDK reference components"
 - Create: `src/content/docs/0.1/build/sdk/python/api.mdx`
 - Create: `examples/sdk/python/admission.py`
 
-- [ ] **Step 1: Document installation and package entry points**
+- [x] **Step 1: Document installation and package entry points**
 
 Document Python 3.12+, package `missionweaveprotocol`, and the three console
 commands `missionweaveprotocol-server`, `missionweaveprotocol-demo`, and
 `missionweaveprotocol-conformance`.
 
-- [ ] **Step 2: Document the complete reference runtime**
+- [x] **Step 2: Document the complete reference runtime**
 
 Cover the exported Core, Agent runtime, Scheduler, gateway, local and database
 stores, replay, policy, lease, budget, delegation, schema, signing, frames,
 conformance, and Admission modules from pinned source. Mark database or network
 services as deployment dependencies, not protocol guarantees.
 
-- [ ] **Step 3: Document First Admission and Historical Trust**
+- [x] **Step 3: Document First Admission and Historical Trust**
 
 Use the exact Python public classes and method names from the inventory. The
 runnable example must implement typed in-memory resolver, Admission Log, and
 trusted-context adapters, then call both `admit_first` and
 `verify_historical_admission` without caller-provided trust booleans.
 
-- [ ] **Step 4: Verify the Python example**
+- [x] **Step 4: Verify the Python example**
 
 Copy the example into a detached checkout of the pinned SDK and run:
 
@@ -253,7 +253,7 @@ uv run python /absolute/path/to/examples/sdk/python/admission.py
 Expected: exit 0 and matching admission record IDs for first admission and
 historical replay.
 
-- [ ] **Step 5: Build and commit Python documentation**
+- [x] **Step 5: Build and commit Python documentation**
 
 ```bash
 npm run docs:build

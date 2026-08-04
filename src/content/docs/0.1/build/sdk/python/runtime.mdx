@@ -1,0 +1,111 @@
+---
+title: "Python runtime reference"
+description:
+  "The complete public module and runtime surface of the exact-pinned Python
+  reference implementation."
+---
+
+import SupportStatus from "../../../../../../components/SupportStatus.astro";
+
+# Python runtime reference
+
+This page covers the complete first-party Python surface represented by the
+[exact API inventory](../api/). Shared protocol behavior remains defined by the
+local [runtime reference](../../../runtime/architecture-and-bootstrap/) and
+[Reference clauses](../../../../reference/specification/). The names below
+define how the pinned Python implementation exposes that behavior.
+
+<SupportStatus status="implemented" /> applies to the package modules and
+in-process runtime contracts listed below.
+
+<SupportStatus status="deployment-adapter-required" /> applies when successful
+operation depends on an external database, authenticated authority, network
+binding, certificate, key, or durable service supplied by the deployment.
+
+## Import model
+
+`missionweaveprotocol.__init__` provides curated top-level exports for signed
+documents, Admission, bundle verification, budgets, leases, and delegation. The
+broader reference runtime is a public submodule API: import `Core` from
+`missionweaveprotocol.core`, `AgentRuntime` from `missionweaveprotocol.agent`,
+`Scheduler` from `missionweaveprotocol.scheduler`, and other names from the
+module recorded in the API inventory. Do not assume that every public submodule
+type is re-exported from the package root.
+
+## Complete module map
+
+| Runtime concern                        | Public modules                                                                                                                                                                   | Contract at the pinned commit                                                                                                                                                                                                                        |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Protocol and semantic models           | `missionweaveprotocol.models`, `missionweaveprotocol.documents`, `missionweaveprotocol.artifacts`, `missionweaveprotocol.context`                                                | Typed protocol objects, document helpers, Artifact and Evidence handling, and Group-scoped context structures. Schema-valid data still requires the semantic checks defined by the local specification.                                              |
+| Authoritative state transitions        | `missionweaveprotocol.core`, `missionweaveprotocol.control`, `missionweaveprotocol.auth`, `missionweaveprotocol.ingress`                                                         | `Core` query, replay, and perform paths; accepted-action control, session and signing helpers, and validated ingress boundaries. Conversation or model output alone never authorizes a state transition.                                             |
+| Agent execution                        | `missionweaveprotocol.agent`, `missionweaveprotocol.execution`, `missionweaveprotocol.offline`                                                                                   | One active Agent runtime session, Group context installation, prepared execution, checkpoint-aware work execution, and offline coordination helpers. Session, Membership, Coordinator, and Ownership epochs remain fencing inputs.                   |
+| Scheduling and recovery                | `missionweaveprotocol.scheduler`, `missionweaveprotocol.replay`                                                                                                                  | Work admission, scheduling, preemption, transition application, snapshots, deterministic rebuild, Event projection, contiguous replay, and Agent-local reconciliation.                                                                               |
+| Persistence                            | `missionweaveprotocol.store`, `missionweaveprotocol.local_store`                                                                                                                 | `InMemoryStore`, SQL-backed authoritative stores, and `SQLiteAgentStore` for local cursors, context, checkpoints, scheduler state, Events, and pending actions. Authoritative state and Agent-local projections remain separate.                     |
+| Policy and bounded authority           | `missionweaveprotocol.policy`, `missionweaveprotocol.lease`, `missionweaveprotocol.budget`, `missionweaveprotocol.delegation`                                                    | Membership and capability-token services, policy guards, Execution Lease transitions, rebuildable budget ledgers, and delegation narrowing checks. These APIs do not replace the authoritative policy or key service that a deployment must control. |
+| Parsing, canonicalization, and signing | `missionweaveprotocol.schema_formats`, `missionweaveprotocol.canonical`, `missionweaveprotocol.crypto`, `missionweaveprotocol.signed_documents`, `missionweaveprotocol.registry` | Protocol scalar formats, strict validation helpers, RFC 8785 canonicalization, Ed25519 primitives, six-stage Signed Document signing and verification, and complete Organization-wide Registry-backed key resolution.                                |
+| First Admission                        | `missionweaveprotocol.admission`                                                                                                                                                 | Typed current-Registry, Admission Log, and trusted-context adapters layered after six-stage verification. First admission and historical replay have different evidence paths.                                                                       |
+| Frames and gateway                     | `missionweaveprotocol.wire`, `missionweaveprotocol.gateway`                                                                                                                      | HELLO/CHALLENGE/AUTH/WELCOME handshake models, Command/Event/ACK/PING frames, parsing and encoding, subscription Cursors, session activation, Group routing, and gateway integration with the Core.                                                  |
+| Bundles, checks, and commands          | `missionweaveprotocol.bundle`, `missionweaveprotocol.conformance`, `missionweaveprotocol.cli`, `missionweaveprotocol.poc`                                                        | Packaged protocol-bundle discovery and digest verification, Schema and vector execution, the three console entry points, and the deterministic proof-of-concept report.                                                                              |
+
+## Core, stores, and transaction boundaries
+
+`Core` is the authoritative state-machine façade. Its public `query`, `replay`,
+and `perform` operations are backed by an `AuthoritativeStore`. The store
+contract exposes transaction, inspection, and lifecycle boundaries; the
+in-memory, SQLite, generic SQL, and PostgreSQL implementations do not alter the
+protocol's atomicity, revision, idempotency, or fencing requirements.
+
+`SQLiteAgentStore` is Agent-local. It stores replay position, Group context,
+checkpoints, scheduler state, seen Events, and pending outbound actions so the
+Agent can recover. Those projections are rebuildable and cannot become an
+authority for Mission or Group truth. Continue with
+[persistence and recovery](../../../runtime/persistence-and-recovery/) for the
+normative separation.
+
+An external database is a deployment dependency. `PostgreSQLStore` requires a
+configured database service and driver; connection availability or a local cache
+hit is not proof that an authoritative transition committed.
+
+## Agent, scheduler, and replay
+
+`AgentRuntime.start_session` establishes the single active local session and
+returns an `AgentRuntimeSession`. The session accepts Group-scoped context and
+credentials, prepares execution, and exposes the `Scheduler`. The scheduler
+admits work, applies transitions, schedules or preempts, and rebuilds from a
+snapshot. `AgentReplay` and `EventProjector` restore local projections from
+ordered Events and reject gaps or inconsistent projection state.
+
+Execution Lease, policy, budget, and delegation APIs are separate checks. A
+scheduled item still needs current fencing, accepted work, applicable policy,
+remaining budget, and a valid least-privilege authorization before a
+consequential side effect.
+
+## Validation, trust, and framing
+
+Before protected processing, validate strict JSON and the pinned Draft 2020-12
+Schema, preserve protocol scalar bytes, canonicalize the signing projection,
+verify Ed25519 material, and resolve the selected key from complete Registry
+evidence. The exact six-stage order is specified in
+[validation, canonicalization, and signing](../../../runtime/validation-canonicalization-and-signing/).
+
+`missionweaveprotocol.wire` owns typed frame models plus `parse_frame`,
+`parse_received_frame`, and `encode_frame`. `GroupGateway` binds those frames to
+session activation, subscriptions, Cursors, replay, and Core operations. A
+production network deployment must supply secure binding, authentication inputs,
+TLS 1.3 certificates and keys, backpressure limits, and operational isolation.
+The Python package supplies the gateway runtime; it does not supply deployment
+network authority.
+
+## Conformance and upgrades
+
+`SchemaCatalog` and `run_manifest` execute the supported local validation
+surfaces. `verify_cryptography_bundle` and `verify_admission_bundle` bind
+packaged artifacts to the documented pins and digests. The
+`missionweaveprotocol-conformance` exposes the structural manifest runner to
+operators. Call the two bundle-verification functions separately when checking
+the packaged cryptography and Admission artifact identities.
+
+Run conformance again whenever the SDK commit, protocol pin, Schema set,
+cryptography bundle, Admission bundle, or deployment adapter changes. Passing a
+subset proves only that subset; it does not establish database durability,
+network security, hardware capacity, or production readiness.

@@ -1,0 +1,50 @@
+---
+title: "Official SDK runtime references"
+description:
+  "Exact-commit installation, runtime, Admission, support, and public API
+  references for the six official MissionWeaveProtocol SDKs."
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkRuntimeMatrix from "../../../../../components/SdkRuntimeMatrix.astro";
+
+# Official SDK runtime references
+
+:::caution[Draft Standard 0.1]
+
+These versioned SDK pages are part of the normative website publication. They
+define the supported public runtime surface at each exact SDK commit. Exact
+source links establish provenance; repository README or `docs/` pages do not
+supply missing requirements.
+
+:::
+
+The shared [runtime reference](../runtime/architecture-and-bootstrap/) defines
+the language-independent order and trust boundaries. Each SDK tree adds its real
+package identity, toolchain, public names, adapters, runnable examples, and
+explicit availability boundaries without manufacturing cross-language parity.
+
+## Exact release matrix
+
+<SdkRuntimeMatrix />
+
+`Implemented` means that the pinned source contains the documented public
+surface. `Deployment adapter required` means that the SDK supplies the runtime
+contract but the deployment must provide external authority, persistence, or
+network infrastructure. `Not implemented` means that the pinned SDK has no
+corresponding public runtime surface.
+
+## Runtime references
+
+<CardGrid>
+  <LinkCard
+    title="Python reference runtime"
+    description="Install the exact package, assemble the full runtime, run First Admission and Historical Trust, and inspect every public API entry."
+    href="./python/"
+  />
+</CardGrid>
+
+The TypeScript, Go, Rust, Java, and C++ trees are added in the same normative
+release program. The matrix above is already exact-pinned for all six SDKs, but
+the release must not publish until every language tree and native example has
+passed its required verification.

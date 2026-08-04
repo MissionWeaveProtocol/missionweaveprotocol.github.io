@@ -1,0 +1,25 @@
+---
+title: "Python public API inventory"
+description:
+  "Every public Python symbol resolved to its exact source file and line at the
+  documented SDK commit."
+---
+
+import SdkApiInventory from "../../../../../../components/SdkApiInventory.astro";
+
+# Python public API inventory
+
+This exact-commit inventory is generated from every first-party
+`src/missionweaveprotocol/*.py` module at
+`9403cf1310914670506c56cbab363fdaa465d3cc`. It records public classes,
+protocols, enums, dataclasses, functions, methods, constants, and type aliases,
+including APIs that are public through a submodule but are not re-exported by
+`missionweaveprotocol.__init__`.
+
+The inventory is the naming and provenance reference, not a substitute for the
+local [runtime semantics](../runtime/) or [Admission call flow](../admission/).
+A symbol's presence proves that the pinned source declares it; successful use
+still depends on its documented validation, authority, state, and deployment
+prerequisites.
+
+<SdkApiInventory sdk="python" />

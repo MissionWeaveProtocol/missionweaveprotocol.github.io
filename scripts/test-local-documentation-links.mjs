@@ -20,7 +20,7 @@ function runChecker(contentRoot) {
 }
 
 const fixtureRoot = await mkdtemp(
-  path.join(tmpdir(), "missionweave-local-docs-"),
+  path.join(tmpdir(), "missionweaveprotocol-local-docs-"),
 );
 
 try {
