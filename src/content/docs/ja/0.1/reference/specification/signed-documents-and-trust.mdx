@@ -65,12 +65,12 @@ MissionWeaveProtocol 0.1 は、Ed25519ctx や Ed25519ph ではなく、RFC
 
 64 バイトの Ed25519 署名を `Renc || Senc` としてデコードした後、検証者 MUST は
 `Renc` を Edwards25519 ポイントとして正規にデコードし、`[L]R`
-がアイデンティティ。 ID ポイントは `R`
-に対して許可されます。ベリファイア MUST は、`Senc`
-を符号なしリトルエンディアン整数として解釈します。`0 が必要です <= S < L`, and
-MUST NOT reduce an out-of-range value modulo `L`. Noncanonical, off-curve,
-non-identity small-order, or mixed-order `R` encodings and out-of-range `S`
-values MUST fail stage 3.
+が恒等点に等しいことを要求します。恒等点は `R`
+に対して許可されます。検証者 MUST は `Senc`
+を符号なしリトルエンディアン整数として解釈し、`0 <= S < L`
+を要求し、範囲外の値を `L` を法として還元することを MUST
+NOT とします。非正規、曲線外、恒等点ではない小位数、または混合位数の `R`
+エンコーディング、および範囲外の `S` 値では、ステージ 3 が MUST 失敗します。
 
 </NormativeClause>
 
@@ -170,16 +170,12 @@ Card の Organization サービス Principal になります。別の Principal 
 
 <NormativeClause id="MWP-SDV-014" level="MUST">
 
-保護された署名時間 `t` の場合、キーは `validFrom <= t`, `validUntil` is absent
-or `t < validUntil`, and `revokedAt` is absent or `t < revokedAt`. A key whose
-`revokedAt` is equal to or earlier than `t` MUST be rejected. Registry validity
-timestamps MUST conform to the MissionWeaveProtocol timestamp profile and be
-compared as instants, not lexically; the byte-equality rule for the two
-protected document timestamps does not apply to Registry interval fields.
-Durable signature verification MUST evaluate this interval at the protected
-signed time.
+保護された署名時刻 `t` に対して、鍵は `validFrom <= t` であり、`validUntil`
+が存在しないか `t < validUntil` であり、かつ `revokedAt` が存在しないか
+`t < revokedAt` である場合にのみ有効です。`revokedAt` が `t`
+と等しいかそれ以前の鍵は MUST 拒否されます。Registry の有効性タイムスタンプは MissionWeaveProtocol のタイムスタンププロファイルに MUST 準拠し、字句ではなく時刻として比較されます。保護された 2 つの文書タイムスタンプに対するバイト等価規則は、Registry の区間フィールドには適用されません。永続的な署名検証は、保護された署名時刻においてこの区間を MUST 評価します。
 
-</NormativeClause> の場合にのみ有効です。
+</NormativeClause>
 
 <NormativeClause id="MWP-SDV-015" level={["MUST","MUST NOT"]}>
 
