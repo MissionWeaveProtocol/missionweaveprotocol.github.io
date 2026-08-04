@@ -1,0 +1,72 @@
+---
+title: "Java SDK"
+description:
+  "Install and navigate the complete exact-pinned Java runtime reference for
+  MissionWeaveProtocol 0.1."
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Java SDK
+
+`org.missionweaveprotocol:missionweaveprotocol-sdk` is the official Java
+artifact. This reference describes exact commit
+`3b2798c21d906c81887c54fe80e5bca8a19ddac7`, version `0.1.0-SNAPSHOT`, Java 21,
+and Maven 3.9. The artifact is installed from the exact source pin; a different
+commit or locally installed SNAPSHOT is a different implementation input.
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="java"
+  command={`git clone https://github.com/MissionWeaveProtocol/java-sdk.git missionweaveprotocol-java-sdk
+cd missionweaveprotocol-java-sdk
+git checkout --detach 3b2798c21d906c81887c54fe80e5bca8a19ddac7
+./mvnw -B -ntp verify
+./mvnw -B -ntp install`}
+  verifyCommand={`./mvnw -q -Dexec.mainClass=org.missionweaveprotocol.sdk.cli.ConformanceCli -Dexec.args='' exec:java`}
+>
+  <p slot="notes">
+    The Maven wrapper supplies Maven 3.9.x but still requires a Java 21 runtime.
+    Downstream builds must pin the installed artifact to provenance for the
+    exact commit above; the SNAPSHOT version string alone does not identify
+    source bytes.
+  </p>
+</SdkInstall>
+
+:::
+
+The CLI main class is `org.missionweaveprotocol.sdk.cli.ConformanceCli`. Its
+supported invocation is `missionweaveprotocol-conformance [--root PATH]`; it
+does not define `--help` or `--json`. With no root it runs packaged structural
+Schema vectors.
+
+## Use this reference
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every public class concern, package boundary, bundle verifier, CLI entry point, and explicit non-implementation."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, trusted-context, and Admission Log interfaces with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="Every public Java declaration resolved to its exact source line."
+    href="./api/"
+  />
+</CardGrid>
+
+## Support at the documented commit
+
+<SdkRuntimeMatrix sdk="java" />
+
+The JAR supplies in-process protocol behavior, not deployment authority.
+Applications still provide authenticated current and historical Registry
+evidence, trusted Admission context, and an authoritative Admission Log.

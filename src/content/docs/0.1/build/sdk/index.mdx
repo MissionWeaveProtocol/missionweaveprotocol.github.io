@@ -52,9 +52,23 @@ corresponding public runtime surface.
     description="Install the exact module, run typed First Admission and Historical Trust, and inspect every exported API entry."
     href="./go/"
   />
+  <LinkCard
+    title="Rust SDK"
+    description="Install the exact crate, run typed First Admission and Historical Trust, and inspect every crate-root API entry."
+    href="./rust/"
+  />
+  <LinkCard
+    title="Java SDK"
+    description="Install the exact Maven artifact, run typed First Admission and Historical Trust, and inspect every public Java API entry."
+    href="./java/"
+  />
+  <LinkCard
+    title="C++ SDK"
+    description="Install the exact CMake package, run typed First Admission and Historical Trust, and inspect every installed-header API entry."
+    href="./cpp/"
+  />
 </CardGrid>
 
-The Rust, Java, and C++ trees are added in the same normative release program.
-The matrix above is already exact-pinned for all six SDKs, but the release must
-not publish until every language tree and native example has passed its required
-verification.
+Every tree above is part of the same normative release. Publication still
+requires each exact-pinned native example and the website release checks to meet
+their documented verification boundary.

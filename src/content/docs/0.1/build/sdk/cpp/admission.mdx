@@ -1,0 +1,128 @@
+---
+title: "C++ First Admission and Historical Trust"
+description:
+  "Typed C++ adapters, exact call order, trust boundaries, and a runnable
+  Admission example."
+---
+
+import cppAdmissionExample from "../../../../../../../examples/sdk/cpp/admission.cpp?raw";
+import cppAdmissionCmake from "../../../../../../../examples/sdk/cpp/CMakeLists.txt?raw";
+
+# C++ First Admission and Historical Trust
+
+The C++ `AdmissionService` layers First Admission and Historical Trust above the
+six-stage Signed Document verifier
+([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+The language-independent flow is the local
+[First Admission and Historical Trust runtime page](../../../runtime/first-admission-and-historical-trust/),
+and the exact requirements are the local
+[Admission clauses](../../../../reference/specification/first-admission-and-historical-trust/).
+
+## Public adapters and results
+
+| Public API                                         | Responsibility                                                                                                                                                                                                                                        |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver::resolve_current`     | Return complete Organization-wide Registry evidence that the deployment asserts is current for this decision.                                                                                                                                         |
+| `TrustedAdmissionContext::issue`                   | Issue the record ID, trusted acceptance instant, and accepting service only after authoritative absence.                                                                                                                                              |
+| `AdmissionLog::lookup`                             | Return `AdmissionLookup::found` or `AdmissionLookup::authoritative_absence`. Cache miss, timeout, or unauthenticated absence fails closed under [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
+| `AdmissionLog::append_or_return_existing`          | Atomically append candidate bytes or return the concurrent authoritative winner through an authenticated service identity.                                                                                                                            |
+| `AuthenticatedAdmissionRecord`                     | Bind returned record bytes to the service identity authenticated by the adapter for [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009).                                                             |
+| `AdmissionService::prepare_first_admission`        | Create and validate candidate evidence from an SDK-produced `VerifiedSignedDocument`; it does not append or imply admission.                                                                                                                          |
+| `AdmissionService::admit_first`                    | Verify current evidence, lookup, prepare after absence, append-or-return-existing, and validate the returned record under [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                       |
+| `AdmissionService::verify_historical_admission`    | Rerun verification with historical Registry evidence and require an existing record without issuing context or appending under [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                  |
+| `PreparedFirstAdmission`, `AdmittedSignedDocument` | Preserve immutable verification and record evidence; `record_bytes` returns a view over the validated record bytes.                                                                                                                                   |
+
+A caller-provided trust boolean is not an Admission lookup outcome and must
+never select the success path.
+
+## First-admission call order
+
+:::note[Informative example]
+
+```cpp
+const auto first = AdmissionService{}.admit_first(
+    SignedDocumentKind::command,
+    document,
+    current_registry,
+    admission_log,
+    trusted_context);
+```
+
+:::
+
+`admit_first` completes all six verification stages before log access. A found
+record is validated and returned without issuing trusted context or appending.
+After authoritative absence, the service issues context, prepares canonical
+candidate bytes, calls `append_or_return_existing`, and validates the record
+actually returned. A concurrent winner succeeds only when Schema,
+authentication, document binding, and trusted time satisfy
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+and
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010).
+
+## Historical replay and errors
+
+`verify_historical_admission` uses `KeyResolver`, reruns all six stages,
+requires a found record, and never calls `TrustedAdmissionContext::issue` or
+`AdmissionLog::append_or_return_existing`. Matching record IDs recover the same
+authoritative record but do not prove Command freshness, signer authorization,
+state-machine acceptance, or portable log-proof verification under
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+and
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
+
+Six-stage faults remain `SignedDocumentVerificationError`. Admission-stage
+faults are `AdmissionError` with wire code `AUTH_INVALID_SIGNATURE`, stage
+`admission`, and a typed `AdmissionReason`, as required by
+[MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012).
+Deployment adapters throw `AdmissionAdapterError`; generic success or
+availability is not authenticated evidence.
+
+## Runnable exact-pinned example
+
+:::note[Informative example]
+
+The example reads the signed Command and Registry from the SDK's verified
+embedded `ProtocolBundle`, then supplies typed in-memory authority adapters. It
+does not read repository files. It asserts identical record IDs, signing hashes,
+and record bytes for First Admission and historical replay, with exactly one
+append.
+
+<pre>
+  <code>{cppAdmissionExample}</code>
+</pre>
+
+Copy `admission.cpp` and the following `CMakeLists.txt` into one empty consumer
+directory. The build recipe defines the executable itself and adds the
+exact-pinned SDK checkout as a dependency; it does not depend on a target that
+the consumer has not declared.
+
+<pre>
+  <code>{cppAdmissionCmake}</code>
+</pre>
+
+From that consumer directory, run:
+
+```bash
+cmake -S . -B build \
+  -DMISSIONWEAVEPROTOCOL_SDK_ROOT=/absolute/path/to/exact/cpp-sdk \
+  -DOPENSSL_ROOT_DIR=/absolute/path/to/openssl-3
+cmake --build build --target missionweaveprotocol_website_admission --parallel 2
+./build/missionweaveprotocol_website_admission
+```
+
+Expected output contains the same record ID for `first admission` and
+`historical replay`.
+
+:::
+
+:::note[Implementation note]
+
+Replace `CurrentRegistry` with authenticated current and historical Registry
+adapters, `InMemoryAdmissionLog` with an authenticated durable log whose
+append-or-return-existing operation is atomic, and `FixedTrustedContext` with
+Organization-controlled trusted time and accepting-service issuance. Preserve
+byte lifetimes and never collapse these authority boundaries into one
+caller-provided trust boolean.
+
+:::

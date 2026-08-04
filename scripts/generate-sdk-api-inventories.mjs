@@ -391,7 +391,7 @@ function parseRust(sourceFile, source) {
     if (container && braceDepth <= container.depth) container = undefined;
 
     const declaration = line.match(
-      /^\s*pub(?:\([^)]*\))?\s+(?:(?:async|const|unsafe)\s+)*(struct|enum|trait|type|fn|const|static)\s+([A-Za-z][A-Za-z0-9_]*)/u,
+      /^\s*pub\s+(?:(?:async|const|unsafe)\s+)*(struct|enum|trait|type|fn|const|static)\s+([A-Za-z][A-Za-z0-9_]*)/u,
     );
     if (declaration && braceDepth === 0) {
       const [, kind, name] = declaration;
@@ -404,7 +404,9 @@ function parseRust(sourceFile, source) {
           lineNumber,
         ),
       );
-      if (kind === "trait") container = { name, kind, depth: braceDepth };
+      if (["struct", "enum", "trait"].includes(kind) && line.includes("{")) {
+        container = { name, kind, depth: braceDepth };
+      }
     }
 
     const implementation = line.match(
@@ -415,8 +417,36 @@ function parseRust(sourceFile, source) {
     }
 
     if (container && braceDepth === container.depth + 1) {
+      if (container.kind === "enum") {
+        const variant = line.match(/^\s*([A-Z][A-Za-z0-9_]*)\b/u);
+        if (variant) {
+          entries.push(
+            entry(
+              variant[1],
+              `${container.name}.${variant[1]}`,
+              "enum-member",
+              sourceFile,
+              lineNumber,
+            ),
+          );
+        }
+      }
+      if (container.kind === "struct") {
+        const field = line.match(/^\s*pub\s+([a-z_][A-Za-z0-9_]*)\s*:/u);
+        if (field) {
+          entries.push(
+            entry(
+              field[1],
+              `${container.name}.${field[1]}`,
+              "field",
+              sourceFile,
+              lineNumber,
+            ),
+          );
+        }
+      }
       const method = line.match(
-        /^\s*(pub(?:\([^)]*\))?\s+)?(?:(?:async|const|unsafe)\s+)*fn\s+([A-Za-z][A-Za-z0-9_]*)\s*(?:<[^>]*>)?\s*\(/u,
+        /^\s*(pub\s+)?(?:(?:async|const|unsafe)\s+)*fn\s+([A-Za-z][A-Za-z0-9_]*)\s*(?:<[^>]*>)?\s*\(/u,
       );
       if (method && (container.kind === "trait" || method[1])) {
         const name = method[2];
@@ -436,50 +466,208 @@ function parseRust(sourceFile, source) {
   return entries;
 }
 
+function splitTopLevelCommaSeparated(value) {
+  const parts = [];
+  let start = 0;
+  let angleDepth = 0;
+  let parenDepth = 0;
+  let bracketDepth = 0;
+  for (const [index, character] of [...value].entries()) {
+    if (character === "<") angleDepth += 1;
+    if (character === ">") angleDepth = Math.max(0, angleDepth - 1);
+    if (character === "(") parenDepth += 1;
+    if (character === ")") parenDepth = Math.max(0, parenDepth - 1);
+    if (character === "[") bracketDepth += 1;
+    if (character === "]") bracketDepth = Math.max(0, bracketDepth - 1);
+    if (
+      character === "," &&
+      angleDepth === 0 &&
+      parenDepth === 0 &&
+      bracketDepth === 0
+    ) {
+      parts.push({ value: value.slice(start, index), start });
+      start = index + 1;
+    }
+  }
+  parts.push({ value: value.slice(start), start });
+  return parts;
+}
+
 function parseJava(sourceFile, source) {
   const entries = [];
   const lines = source.split("\n");
+  const containers = [];
   let braceDepth = 0;
-  let container;
+  let pendingType;
+
+  function addRecordComponents(container) {
+    if (!container.exported || container.kind !== "record") return;
+    const open = container.header.indexOf("(");
+    const close = container.header.lastIndexOf(")");
+    if (open < 0 || close < open) return;
+    const parameters = container.header.slice(open + 1, close);
+    for (const component of splitTopLevelCommaSeparated(parameters)) {
+      const name = component.value
+        .trim()
+        .match(/([A-Za-z_$][A-Za-z0-9_$]*)\s*$/u)?.[1];
+      if (!name) continue;
+      const offset = open + 1 + component.start;
+      const componentLine =
+        container.line +
+        (container.header.slice(0, offset).match(/\n/gu)?.length ?? 0);
+      entries.push(
+        entry(
+          name,
+          `${container.qualifiedName}.${name}`,
+          "record-component",
+          sourceFile,
+          componentLine,
+        ),
+      );
+    }
+  }
+
+  function activateType(container, line) {
+    addRecordComponents(container);
+    if (braceDepth + braceDelta(line) > container.depth) {
+      containers.push(container);
+    }
+  }
 
   for (const [index, line] of lines.entries()) {
     const lineNumber = index + 1;
-    if (container && braceDepth <= container.depth) container = undefined;
-
-    const declaration = line.match(
-      /^\s*public\s+(?:(?:abstract|final|sealed|non-sealed)\s+)*(class|interface|enum|record)\s+([A-Za-z][A-Za-z0-9_]*)/u,
-    );
-    if (declaration) {
-      const [, kind, name] = declaration;
-      entries.push(entry(name, name, kind, sourceFile, lineNumber));
-      container = { name, kind, depth: braceDepth };
+    while (containers.length > 0 && braceDepth <= containers.at(-1).depth) {
+      containers.pop();
     }
 
-    if (container && braceDepth === container.depth + 1) {
-      const constructor = line.match(
-        /^\s*public\s+([A-Za-z][A-Za-z0-9_]*)\s*\(/u,
+    if (pendingType) {
+      pendingType.header += `\n${line}`;
+      if (line.includes("{")) {
+        activateType(pendingType, line);
+        pendingType = undefined;
+      }
+      braceDepth += braceDelta(line);
+      continue;
+    }
+
+    const parent = containers.at(-1);
+    const declaration = line.match(
+      /^\s*(?:(public|protected|private)\s+)?(?:(?:abstract|final|sealed|non-sealed|static|strictfp)\s+)*(class|interface|enum|record)\s+([A-Za-z_$][A-Za-z0-9_$]*)/u,
+    );
+    if (declaration) {
+      const [, access, kind, name] = declaration;
+      const exported = parent
+        ? parent.exported &&
+          (access === "public" || (!access && parent.kind === "interface"))
+        : access === "public";
+      const qualifiedName = parent ? `${parent.qualifiedName}.${name}` : name;
+      const declaredType = {
+        name,
+        qualifiedName,
+        kind,
+        depth: braceDepth,
+        exported,
+        header: line,
+        line: lineNumber,
+      };
+      if (exported) {
+        entries.push(entry(name, qualifiedName, kind, sourceFile, lineNumber));
+      }
+      if (line.includes("{")) {
+        activateType(declaredType, line);
+      } else {
+        pendingType = declaredType;
+      }
+      braceDepth += braceDelta(line);
+      continue;
+    }
+
+    const container = containers.at(-1);
+    if (container?.exported && braceDepth === container.depth + 1) {
+      if (container.kind === "enum") {
+        const enumMember = line.match(/^\s*([A-Z][A-Z0-9_]*)\b\s*(?:\(|,|;)/u);
+        if (enumMember) {
+          entries.push(
+            entry(
+              enumMember[1],
+              `${container.qualifiedName}.${enumMember[1]}`,
+              "enum-member",
+              sourceFile,
+              lineNumber,
+            ),
+          );
+        }
+      }
+
+      const compactConstructor = line.match(
+        /^\s*public\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*\{/u,
       );
-      if (constructor?.[1] === container.name) {
+      if (compactConstructor?.[1] === container.name) {
         entries.push(
           entry(
-            constructor[1],
-            `${container.name}.${constructor[1]}`,
+            compactConstructor[1],
+            `${container.qualifiedName}.${compactConstructor[1]}`,
             "constructor",
             sourceFile,
             lineNumber,
           ),
         );
       } else {
-        const method = line.match(
-          /^\s*(public\s+)?(?:(?:static|final|default|synchronized|abstract)\s+)*(?:<[^>]+>\s+)?(?:[A-Za-z_$][A-Za-z0-9_$.?<>,\[\]]*\s+)+([A-Za-z_$][A-Za-z0-9_$]*)\s*\(/u,
+        const constructor = line.match(
+          /^\s*public\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*\(/u,
         );
-        if (method && (container.kind === "interface" || method[1])) {
-          const name = method[2];
+        if (constructor?.[1] === container.name) {
           entries.push(
             entry(
-              name,
-              `${container.name}.${name}`,
-              "method",
+              constructor[1],
+              `${container.qualifiedName}.${constructor[1]}`,
+              "constructor",
+              sourceFile,
+              lineNumber,
+            ),
+          );
+        } else {
+          const method = line.match(
+            /^\s*(public\s+)?(?:(?:static|final|default|synchronized|abstract|native|strictfp)\s+)*(?:<[^>]+>\s+)?(?:[A-Za-z_$][A-Za-z0-9_$.?<>,\[\]]*\s+)+([A-Za-z_$][A-Za-z0-9_$]*)\s*\(/u,
+          );
+          if (method && (container.kind === "interface" || method[1])) {
+            const name = method[2];
+            entries.push(
+              entry(
+                name,
+                `${container.qualifiedName}.${name}`,
+                "method",
+                sourceFile,
+                lineNumber,
+              ),
+            );
+          }
+        }
+      }
+
+      const constant = line.match(
+        /^\s*public\s+static\s+final\s+.+\s+([A-Z][A-Z0-9_]*)\s*(?:=|;)/u,
+      );
+      if (constant) {
+        entries.push(
+          entry(
+            constant[1],
+            `${container.qualifiedName}.${constant[1]}`,
+            "constant",
+            sourceFile,
+            lineNumber,
+          ),
+        );
+      } else if (!line.includes("(")) {
+        const field = line.match(
+          /^\s*public\s+(?:(?:static|final|volatile|transient)\s+)*.+\s+([A-Za-z_$][A-Za-z0-9_$]*)\s*(?:=|;)/u,
+        );
+        if (field) {
+          entries.push(
+            entry(
+              field[1],
+              `${container.qualifiedName}.${field[1]}`,
+              "field",
               sourceFile,
               lineNumber,
             ),
@@ -498,6 +686,25 @@ function parseCpp(sourceFile, source) {
   let braceDepth = 0;
   let container;
 
+  function addEnumMembers(containerName, contents, lineNumber) {
+    for (const rawMember of contents.split(",")) {
+      const member = rawMember
+        .trim()
+        .match(/^([A-Za-z_][A-Za-z0-9_]*)\b/u)?.[1];
+      if (member) {
+        entries.push(
+          entry(
+            member,
+            `${containerName}.${member}`,
+            "enum-member",
+            sourceFile,
+            lineNumber,
+          ),
+        );
+      }
+    }
+  }
+
   for (const [index, line] of lines.entries()) {
     const lineNumber = index + 1;
     if (container && braceDepth <= container.depth) container = undefined;
@@ -505,20 +712,36 @@ function parseCpp(sourceFile, source) {
     const declaration = line.match(
       /^\s*(class|struct|enum(?:\s+class)?)\s+([A-Za-z][A-Za-z0-9_]*)\b/u,
     );
-    if (declaration) {
+    const declarationIsPublic =
+      !container ||
+      (braceDepth === container.depth + 1 && container.public === true);
+    if (declaration && declarationIsPublic) {
       const [, kind, name] = declaration;
+      const qualifiedName = container ? `${container.name}.${name}` : name;
       entries.push(
         entry(
           name,
-          name,
+          qualifiedName,
           kind.startsWith("enum") ? "enum" : kind,
           sourceFile,
           lineNumber,
         ),
       );
-      if (["class", "struct"].includes(kind) && line.includes("{")) {
+      if (kind.startsWith("enum") && line.includes("{")) {
+        const enumBody = line.slice(line.indexOf("{") + 1).split("}", 1)[0];
+        addEnumMembers(qualifiedName, enumBody, lineNumber);
+        if (braceDelta(line) > 0) {
+          container = {
+            name: qualifiedName,
+            kind: "enum",
+            depth: braceDepth,
+            public: true,
+          };
+        }
+      } else if (["class", "struct"].includes(kind) && line.includes("{")) {
         container = {
-          name,
+          name: qualifiedName,
+          kind,
           depth: braceDepth,
           public: kind === "struct",
         };
@@ -529,7 +752,7 @@ function parseCpp(sourceFile, source) {
       entries.push(entry(alias[1], alias[1], "type", sourceFile, lineNumber));
     }
     const constant = line.match(
-      /^\s*(?:inline\s+)?constexpr\s+[^;=]+\s+([A-Z][A-Z0-9_]*)\b/u,
+      /^\s*(?:inline\s+)?constexpr\s+[^;=]+\s+([A-Za-z_][A-Za-z0-9_]*)\s*=/u,
     );
     if (!container && constant) {
       entries.push(
@@ -538,29 +761,93 @@ function parseCpp(sourceFile, source) {
     }
 
     if (container && braceDepth === container.depth + 1) {
-      if (/^\s*public\s*:/u.test(line)) container.public = true;
-      if (/^\s*(?:private|protected)\s*:/u.test(line)) container.public = false;
-      if (container.public) {
-        const methodMatches = [
-          ...line.matchAll(/(~?[A-Za-z_][A-Za-z0-9_]*)\s*\(/gu),
-        ];
-        const method = methodMatches.at(-1)?.[1];
-        if (
-          method &&
-          !["if", "for", "while", "switch", "sizeof"].includes(method)
-        ) {
-          const name = method.startsWith("~") ? method.slice(1) : method;
-          entries.push(
-            entry(
-              name,
-              `${container.name}.${method}`,
-              method === container.name || method === `~${container.name}`
-                ? "constructor"
-                : "method",
-              sourceFile,
-              lineNumber,
-            ),
+      if (container.kind === "enum") {
+        addEnumMembers(container.name, line, lineNumber);
+      } else {
+        if (/^\s*public\s*:/u.test(line)) container.public = true;
+        if (/^\s*(?:private|protected)\s*:/u.test(line)) {
+          container.public = false;
+        }
+        if (container.public) {
+          const usingDeclaration = line.match(
+            /^\s*using\s+(?:[A-Za-z_][A-Za-z0-9_]*::)*([A-Za-z_][A-Za-z0-9_]*)\s*;/u,
           );
+          if (usingDeclaration) {
+            entries.push(
+              entry(
+                usingDeclaration[1],
+                `${container.name}.${usingDeclaration[1]}`,
+                "using-declaration",
+                sourceFile,
+                lineNumber,
+              ),
+            );
+          }
+
+          const operator = line.match(
+            /operator\s*(<=>|==|!=|<=|>=|=|<|>|\(\)|\[\]|[A-Za-z_][A-Za-z0-9_:]*)\s*\(/u,
+          )?.[1];
+          if (operator) {
+            const name = `operator${/^[A-Za-z_]/u.test(operator) ? " " : ""}${operator}`;
+            entries.push(
+              entry(
+                name,
+                `${container.name}.${name}`,
+                "operator",
+                sourceFile,
+                lineNumber,
+              ),
+            );
+          } else {
+            const methodMatches = [
+              ...line.matchAll(/(~?[A-Za-z_][A-Za-z0-9_]*)\s*\(/gu),
+            ];
+            const method = methodMatches.at(-1)?.[1];
+            if (
+              method &&
+              !["if", "for", "while", "switch", "sizeof"].includes(method)
+            ) {
+              const constructor = method === container.name.split(".").at(-1);
+              const destructor =
+                method === `~${container.name.split(".").at(-1)}`;
+              entries.push(
+                entry(
+                  method,
+                  `${container.name}.${method}`,
+                  constructor
+                    ? "constructor"
+                    : destructor
+                      ? "destructor"
+                      : "method",
+                  sourceFile,
+                  lineNumber,
+                ),
+              );
+            }
+          }
+
+          if (
+            !usingDeclaration &&
+            !/^\s*(?:\/\/|\/\*|\*)/u.test(line) &&
+            !line.includes("(") &&
+            !line.includes(")") &&
+            /;\s*$/u.test(line)
+          ) {
+            const field = line.match(
+              /([A-Za-z_][A-Za-z0-9_]*)\s*(?:=[^;]*)?;\s*$/u,
+            )?.[1];
+            if (field) {
+              entries.push(
+                entry(
+                  field,
+                  `${container.name}.${field}`,
+                  "field",
+                  sourceFile,
+                  lineNumber,
+                ),
+              );
+            }
+          }
         }
       }
     } else if (!container && line.includes("(") && /;\s*$/u.test(line)) {
@@ -621,6 +908,52 @@ function typescriptSourceSelections(repo, commit) {
     .sort((left, right) => compareStrings(left.sourceFile, right.sourceFile));
 }
 
+function rustSourceSelections(repo, commit) {
+  const libPath = "src/lib.rs";
+  const libSource = sourceAt(repo, commit, libPath);
+  const selections = new Map([[libPath, null]]);
+
+  for (const match of libSource.matchAll(
+    /pub\s+use\s+([a-z][a-z0-9_]*)::\{([\s\S]*?)\};/gu,
+  )) {
+    const sourceFile = `src/${match[1]}.rs`;
+    const exportedNames = selections.get(sourceFile) ?? new Set();
+    assert.notEqual(
+      exportedNames,
+      null,
+      `${sourceFile} cannot combine wildcard and selective Rust exports`,
+    );
+    for (const rawSpecifier of match[2].split(",")) {
+      const specifier = rawSpecifier.trim();
+      if (!specifier) continue;
+      const parsed = specifier.match(
+        /^([A-Za-z][A-Za-z0-9_]*)(?:\s+as\s+[A-Za-z][A-Za-z0-9_]*)?$/u,
+      );
+      assert.ok(parsed, `unsupported Rust export specifier ${specifier}`);
+      exportedNames.add(parsed[1]);
+    }
+    selections.set(sourceFile, exportedNames);
+  }
+
+  for (const match of libSource.matchAll(
+    /pub\s+use\s+([a-z][a-z0-9_]*)::([A-Za-z][A-Za-z0-9_]*)(?:\s+as\s+[A-Za-z][A-Za-z0-9_]*)?\s*;/gu,
+  )) {
+    const sourceFile = `src/${match[1]}.rs`;
+    const exportedNames = selections.get(sourceFile) ?? new Set();
+    assert.notEqual(
+      exportedNames,
+      null,
+      `${sourceFile} cannot combine wildcard and selective Rust exports`,
+    );
+    exportedNames.add(match[2]);
+    selections.set(sourceFile, exportedNames);
+  }
+
+  return [...selections.entries()]
+    .map(([sourceFile, exportedNames]) => ({ sourceFile, exportedNames }))
+    .sort((left, right) => compareStrings(left.sourceFile, right.sourceFile));
+}
+
 function sourceSelectionsFor(sdk, repo) {
   const allPaths = gitPaths(repo, sdk.commit);
   if (sdk.id === "python") {
@@ -642,14 +975,7 @@ function sourceSelectionsFor(sdk, repo) {
       .map((sourceFile) => ({ sourceFile, exportedNames: null }));
   }
   if (sdk.id === "rust") {
-    const libPath = "src/lib.rs";
-    const libSource = sourceAt(repo, sdk.commit, libPath);
-    const modules = [...libSource.matchAll(/^mod\s+([a-z][a-z0-9_]*)\s*;/gmu)]
-      .map((match) => `src/${match[1]}.rs`)
-      .sort();
-    return [libPath, ...modules]
-      .sort()
-      .map((sourceFile) => ({ sourceFile, exportedNames: null }));
+    return rustSourceSelections(repo, sdk.commit);
   }
   if (sdk.id === "java") {
     return allPaths

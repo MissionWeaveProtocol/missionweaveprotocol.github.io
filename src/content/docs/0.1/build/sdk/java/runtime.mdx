@@ -1,0 +1,118 @@
+---
+title: "Java runtime reference"
+description:
+  "The complete public package surface and runtime boundaries of the
+  exact-pinned Java SDK."
+---
+
+import SupportStatus from "../../../../../../components/SupportStatus.astro";
+
+# Java runtime reference
+
+This page covers the complete Java surface represented by the
+[exact API inventory](../api/). Shared protocol behavior remains defined by the
+local [runtime reference](../../../runtime/architecture-and-bootstrap/) and
+[Reference clauses](../../../../reference/specification/). Public application
+types live under `org.missionweaveprotocol.sdk`; the conformance entry point is
+under `org.missionweaveprotocol.sdk.cli`.
+
+<SupportStatus status="implemented" /> applies to the public classes and
+in-process behavior listed below.
+
+<SupportStatus status="deployment-adapter-required" /> applies to current
+Registry authority, trusted Admission context, authenticated log access, and
+other deployment services.
+
+<SupportStatus status="not-implemented" /> means the exact-pinned artifact has
+no corresponding runtime.
+
+## Artifact and execution model
+
+The Maven artifact is
+`org.missionweaveprotocol:missionweaveprotocol-sdk:0.1.0-SNAPSHOT`, compiled for
+Java 21 and built with Maven 3.9. It declares automatic module name
+`org.missionweaveprotocol.sdk` and packages the exact protocol, cryptography,
+and Admission resources inside the JAR.
+
+Installing the artifact starts no service, opens no socket, creates no durable
+store, and grants no authority. Checked `IOException`, verification exceptions,
+and Admission exceptions remain part of the Java call boundary.
+
+## Complete source map
+
+| Runtime concern               | Public implementation source                                                              | Contract at the pinned commit                                                                                         |
+| ----------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Versions and metadata         | `MissionWeaveProtocol.java`, `ProtocolBundle.java`                                        | Protocol identity, wire version, namespace, and exact protocol and bundle provenance.                                 |
+| Strict JSON                   | `StrictJson.java`                                                                         | UTF-8 parsing with duplicate-member, BOM, malformed input, and trailing-data rejection.                               |
+| Schema and exact time         | `SchemaCatalog.java`, `ExactInstant.java`                                                 | Offline Draft 2020-12 validation, asserted formats, packaged Schema access, and exact RFC 3339 comparison.            |
+| Canonical JSON and Ed25519    | `CanonicalJson.java`, `Ed25519.java`, `Base64Url.java`                                    | RFC 8785 bytes and hashes plus strict Ed25519 helpers.                                                                |
+| Signed Documents and Registry | `SignedDocumentCodec.java`, `AgentRegistryKeyResolution.java`, `KeyRegistrySnapshot.java` | Nine document kinds, signing, complete Registry validation, six-stage verification, and immutable evidence.           |
+| Frames                        | `FrameCodec.java`                                                                         | Strict decode and canonical encode for generic WebSocket frame values. This is a codec, not a hosted gateway service. |
+| Structural conformance        | `ConformanceRunner.java`, `cli/ConformanceCli.java`                                       | Packaged or explicit-root Schema-vector execution and process exit status.                                            |
+| Embedded bundles              | `ProtocolBundle.java`                                                                     | Source-root and packaged verification of protocol, cryptography, and Admission artifact sets.                         |
+| First Admission               | `AdmissionService.java` and the Admission records/interfaces                              | First Admission and Historical Trust above successful Signed Document verification.                                   |
+
+## Validation, signing, and Registry evidence
+
+`StrictJson.parse` accepts exactly one UTF-8 JSON value.
+`SchemaCatalog.packaged` loads the 22 exact Schemas, while `validate` checks a
+selected Draft 2020-12 contract. `CanonicalJson.canonicalize`,
+`canonicalString`, `sha256Hex`, and `canonicalHash` implement the RFC 8785 and
+digest surface.
+
+`SigningKey` is the application-owned signing seam. `SignedDocumentCodec.sign`
+and `verify` select one of nine `SignedDocumentKind` values and run parse,
+Schema, signature-envelope, key-resolution, canonicalization, and signature
+stages. `KeyResolver.resolve` must return `KeyRegistrySnapshot.organizationWide`
+evidence for one coherent applicable Organization revision with complete
+retained history. A selected key, partial projection, cache hit, or
+caller-provided trust flag is insufficient.
+
+`VerifiedSignedDocument` exposes defensive copies of the received, signing, and
+canonical bytes plus hashes, protected time, signature material, and the
+resolved Registry key and Principal.
+
+## Frames, bundles, and conformance
+
+`FrameCodec.decode` and `encode` validate frame values but do not own transport,
+TLS, Session authentication, Cursor persistence, routing, backpressure, or
+authoritative state transitions.
+
+`ProtocolBundle.verifyPackaged`, `verifyPackagedCryptographyBundle`, and
+`verifyPackagedAdmissionBundle` validate the JAR's exact pins, counts, paths,
+byte lengths, and digests. The corresponding `Path` overloads validate a source
+or release-bundle root. These methods do not execute every cryptography or
+Admission evaluation.
+
+`ConformanceRunner.runPackaged` and `ConformanceCli` execute only the structural
+Schema vectors. Supplying `--root PATH` selects an explicit protocol or release
+bundle instead of packaged resources.
+
+## First Admission
+
+`AdmissionService` exposes `prepareFirstAdmission`, `admitFirst`, and
+`verifyHistoricalAdmission`. Continue with the
+[Java Admission reference](../admission/) for exact adapter outcomes, call
+order, and the runnable package example.
+
+## Explicit availability boundaries
+
+<SupportStatus status="deployment-adapter-required" /> **Admission authority** —
+the application provides current Registry evidence, historical Registry
+evidence, trusted acceptance context, and an authenticated append-only log.
+
+<SupportStatus status="not-implemented" /> **Mission orchestration** — no
+high-level Mission state machine or orchestration façade is exported.
+
+<SupportStatus status="not-implemented" /> **Worker scheduler** — no Worker
+queue, scheduler, lease runner, or recovery loop is exported.
+
+<SupportStatus status="not-implemented" /> **Hosted gateway service** — the
+artifact supplies `FrameCodec`, not a gateway service with transport, TLS,
+Session, routing, or backpressure ownership.
+
+<SupportStatus status="not-implemented" /> **Authoritative persistence runtime**
+— no database-backed or Agent-local persistence runtime is exported.
+
+These absences are part of the documented support contract; Python
+reference-runtime capabilities must not be inferred from shared protocol names.

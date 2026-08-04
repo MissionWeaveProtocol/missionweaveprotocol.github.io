@@ -30,6 +30,18 @@ const requiredOutputs = [
   "0.1/build/sdk/go/runtime/index.html",
   "0.1/build/sdk/go/admission/index.html",
   "0.1/build/sdk/go/api/index.html",
+  "0.1/build/sdk/rust/index.html",
+  "0.1/build/sdk/rust/runtime/index.html",
+  "0.1/build/sdk/rust/admission/index.html",
+  "0.1/build/sdk/rust/api/index.html",
+  "0.1/build/sdk/java/index.html",
+  "0.1/build/sdk/java/runtime/index.html",
+  "0.1/build/sdk/java/admission/index.html",
+  "0.1/build/sdk/java/api/index.html",
+  "0.1/build/sdk/cpp/index.html",
+  "0.1/build/sdk/cpp/runtime/index.html",
+  "0.1/build/sdk/cpp/admission/index.html",
+  "0.1/build/sdk/cpp/api/index.html",
   "reference/specification/index.html",
   "reference/schemas/index.html",
   "reference/conformance/index.html",
@@ -37,6 +49,9 @@ const requiredOutputs = [
   "sdk/python/index.html",
   "sdk/typescript/index.html",
   "sdk/go/index.html",
+  "sdk/rust/index.html",
+  "sdk/java/index.html",
+  "sdk/cpp/index.html",
   "artifacts/0.1/normative-release.json",
   "artifacts/0.1/protocol/CONTEXT.md",
   "artifacts/0.1/protocol/spec/PROTOCOL.md",
@@ -86,6 +101,9 @@ const latestSdkAliases = localePrefixes.flatMap((locale) => {
       `/${prefix}0.1/build/sdk/typescript/`,
     ],
     [`${prefix}sdk/go/index.html`, `/${prefix}0.1/build/sdk/go/`],
+    [`${prefix}sdk/rust/index.html`, `/${prefix}0.1/build/sdk/rust/`],
+    [`${prefix}sdk/java/index.html`, `/${prefix}0.1/build/sdk/java/`],
+    [`${prefix}sdk/cpp/index.html`, `/${prefix}0.1/build/sdk/cpp/`],
   ];
 });
 
@@ -120,6 +138,9 @@ for (const locale of localePrefixes) {
     `/${prefix}0.1/build/sdk/python/`,
     `/${prefix}0.1/build/sdk/typescript/`,
     `/${prefix}0.1/build/sdk/go/`,
+    `/${prefix}0.1/build/sdk/rust/`,
+    `/${prefix}0.1/build/sdk/java/`,
+    `/${prefix}0.1/build/sdk/cpp/`,
   ]) {
     const targetWithBase = withBase(target);
     if (!html.includes(`href="${targetWithBase}"`)) {
@@ -133,6 +154,9 @@ for (const locale of localePrefixes) {
     `/${prefix}sdk/python/`,
     `/${prefix}sdk/typescript/`,
     `/${prefix}sdk/go/`,
+    `/${prefix}sdk/rust/`,
+    `/${prefix}sdk/java/`,
+    `/${prefix}sdk/cpp/`,
   ]) {
     const staleTargetWithBase = withBase(staleTarget);
     if (html.includes(`href="${staleTargetWithBase}"`)) {

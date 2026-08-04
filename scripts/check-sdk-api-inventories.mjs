@@ -55,10 +55,55 @@ const requiredQualifiedEntries = new Map([
       ["AuthenticatedAdmissionRecord.RecordBytes", "field"],
     ]),
   ],
+  [
+    "rust",
+    new Map([
+      ["AdmissionReason.RecordMissing", "enum-member"],
+      ["ProtocolPin.repository", "field"],
+    ]),
+  ],
+  [
+    "java",
+    new Map([
+      ["AdmissionLookup.Found", "record"],
+      ["AdmissionLookup.AuthoritativeAbsence", "record"],
+      ["ProtocolBundle.Verification", "record"],
+      ["ProtocolBundle.COMMIT", "constant"],
+      ["AdmissionReason.COMMIT_FAILED", "enum-member"],
+      ["Principal.type", "record-component"],
+    ]),
+  ],
+  [
+    "cpp",
+    new Map([
+      ["ValidationResult.valid", "field"],
+      ["ValidationResult.issue", "field"],
+      ["ValidationResult.operator bool", "operator"],
+      ["BundleSummary.schema_files", "field"],
+      ["SignedDocumentKind.command", "enum-member"],
+      ["Principal.operator==", "operator"],
+      ["sdk_version", "constant"],
+    ]),
+  ],
+]);
+const prohibitedQualifiedEntries = new Map([
+  ["rust", new Set(["ArtifactPin", "ArtifactPins", "ConformanceError"])],
+  [
+    "java",
+    new Set([
+      "Verification",
+      "CryptographyVerification",
+      "AdmissionVerification",
+    ]),
+  ],
+  ["cpp", new Set(["ValidationResult.bool", "KeyResolver.key"])],
 ]);
 const requiredEntryCounts = new Map([
   ["typescript", 192],
   ["go", 241],
+  ["rust", 311],
+  ["java", 298],
+  ["cpp", 314],
 ]);
 
 function safeSourcePath(sourcePath) {
@@ -226,6 +271,38 @@ if (matrix?.sdks) {
       }
     }
 
+    if (sdk.id === "cpp") {
+      const privateNestedDeclarations = [
+        {
+          name: "Impl",
+          sourceFile: "include/missionweaveprotocol/schema.hpp",
+          label: "SchemaCatalog.Impl",
+        },
+        {
+          name: "ParsedAdmissionRecord",
+          sourceFile: "include/missionweaveprotocol/admission.hpp",
+          label: "AdmissionService.ParsedAdmissionRecord",
+        },
+      ];
+      for (const privateDeclaration of privateNestedDeclarations) {
+        const matches = inventory.entries.filter(
+          (entry) =>
+            entry.name === privateDeclaration.name &&
+            entry.sourceFile === privateDeclaration.sourceFile,
+        );
+        if (matches.length > 0) {
+          failures.push(
+            `${prefix}: private ${privateDeclaration.label} must not appear in the public API inventory`,
+          );
+        }
+      }
+      if (inventory.entries.some((entry) => entry.name === "const")) {
+        failures.push(
+          `${prefix}: multiline method continuations must not be parsed as fields`,
+        );
+      }
+    }
+
     const requiredEntries = requiredQualifiedEntries.get(sdk.id);
     if (requiredEntries) {
       for (const [qualifiedName, kind] of requiredEntries) {
@@ -237,6 +314,19 @@ if (matrix?.sdks) {
           failures.push(
             `${prefix}: expected one ${kind} entry for ${qualifiedName}, found ${matches.length}`,
           );
+        }
+      }
+    }
+
+    const prohibitedEntries = prohibitedQualifiedEntries.get(sdk.id);
+    if (prohibitedEntries) {
+      for (const qualifiedName of prohibitedEntries) {
+        if (
+          inventory.entries.some(
+            (entry) => entry.qualifiedName === qualifiedName,
+          )
+        ) {
+          failures.push(`${prefix}: prohibited public entry ${qualifiedName}`);
         }
       }
     }

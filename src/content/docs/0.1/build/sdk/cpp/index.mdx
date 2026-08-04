@@ -1,0 +1,76 @@
+---
+title: "C++ SDK"
+description:
+  "Install and navigate the complete exact-pinned C++ runtime reference for
+  MissionWeaveProtocol 0.1."
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../components/SdkRuntimeMatrix.astro";
+
+# C++ SDK
+
+`MissionWeaveProtocol::sdk` is the installed CMake target for the official C++
+SDK. This reference describes exact commit
+`481b0ce3a65c1f2265935318b54481ece5032fdf`, version `0.1.0`, C++20, CMake 3.24
+or newer, OpenSSL 3, and jsoncons 1.8.1. A different source revision or
+installed prefix is a different implementation input.
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="cpp"
+  command={`git clone https://github.com/MissionWeaveProtocol/cpp-sdk.git missionweaveprotocol-cpp-sdk
+cd missionweaveprotocol-cpp-sdk
+git checkout --detach 481b0ce3a65c1f2265935318b54481ece5032fdf
+cmake -S . -B build -DMISSIONWEAVEPROTOCOL_BUILD_TESTS=ON -DMISSIONWEAVEPROTOCOL_BUILD_EXAMPLES=ON
+cmake --build build --parallel 2
+ctest --test-dir build --output-on-failure
+cmake --install build --prefix /absolute/install/prefix`}
+  verifyCommand={`/absolute/install/prefix/bin/missionweaveprotocol-conformance`}
+>
+  <p slot="notes">
+    Configure with <code>OPENSSL_ROOT_DIR</code> when CMake would otherwise find
+    a non-OpenSSL or pre-3.0 implementation. The build first searches for
+    jsoncons 1.8.1 and otherwise downloads the exact v1.8.1 archive with a
+    pinned SHA-256. Downstream CMake projects configure
+    <code>find_package(missionweaveprotocol CONFIG)</code>, fail their own build
+    when the package is absent, and link <code>MissionWeaveProtocol::sdk</code>.
+  </p>
+</SdkInstall>
+
+:::
+
+The installed `missionweaveprotocol-conformance` executable runs the embedded
+structural Schema vectors. It accepts no documented options and does not
+establish Registry currency, Admission Log durability, network security, or
+production readiness.
+
+## Use this reference
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every installed header concern, codec, bundle verifier, executable boundary, and explicit non-implementation."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, trusted-context, and Admission Log interfaces with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="Every installed-header declaration resolved to its exact source line."
+    href="./api/"
+  />
+</CardGrid>
+
+## Support at the documented commit
+
+<SdkRuntimeMatrix sdk="cpp" />
+
+The library supplies in-process protocol behavior, not deployment authority.
+Applications still provide authenticated current and historical Registry
+evidence, trusted Admission context, and an authoritative Admission Log.

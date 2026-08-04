@@ -1,0 +1,117 @@
+---
+title: "C++ runtime reference"
+description:
+  "The complete installed-header surface and runtime boundaries of the
+  exact-pinned C++ SDK."
+---
+
+import SupportStatus from "../../../../../../components/SupportStatus.astro";
+
+# C++ runtime reference
+
+This page covers the complete C++ surface represented by the
+[exact API inventory](../api/). Shared protocol behavior remains defined by the
+local [runtime reference](../../../runtime/architecture-and-bootstrap/) and
+[Reference clauses](../../../../reference/specification/). Public declarations
+are in namespace `missionweaveprotocol`; downstream CMake targets link
+`MissionWeaveProtocol::sdk`.
+
+<SupportStatus status="implemented" /> applies to the installed headers and
+in-process behavior listed below.
+
+<SupportStatus status="deployment-adapter-required" /> applies to current
+Registry authority, trusted Admission context, authenticated log access, and
+other deployment services.
+
+<SupportStatus status="not-implemented" /> means the exact-pinned library has no
+corresponding runtime.
+
+## Library and execution model
+
+The installed package requires C++20, CMake 3.24, OpenSSL 3, and jsoncons 1.8.1.
+Its exported target is `MissionWeaveProtocol::sdk`; installed public headers are
+under `include/missionweaveprotocol`. The separate installed executable is
+`missionweaveprotocol-conformance`.
+
+Linking the library starts no service, opens no socket, creates no durable
+store, and grants no authority. `std::span` results reference SDK-owned or
+object-owned bytes according to the declaring API and must not outlive their
+owner.
+
+## Complete header map
+
+| Runtime concern               | Installed public headers            | Contract at the pinned commit                                                                                                       |
+| ----------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Version and asset types       | `version.hpp`, `bundle.hpp`         | SDK and protocol identity, immutable embedded asset spans, exact pins, and bundle summaries.                                        |
+| Strict JSON                   | `json.hpp`                          | `parse_strict_json` over text or bytes with duplicate-member, malformed UTF-8/JSON, and trailing-data rejection.                    |
+| Schema and exact time         | `schema.hpp`, `signed_document.hpp` | Offline Draft 2020-12 validation, asserted formats, and exact protected-time evidence.                                              |
+| Canonical JSON and Ed25519    | `canonical.hpp`, `crypto.hpp`       | RFC 8785 strings and hashes plus strict Ed25519 signing and verification helpers.                                                   |
+| Signed Documents and Registry | `signed_document.hpp`               | Nine document kinds, signing, complete Registry validation, six-stage verification, and immutable evidence.                         |
+| Frames                        | `frame.hpp`                         | Strict decode, canonical encode, and document validation for WebSocket frame values. This is a codec, not a hosted gateway service. |
+| Structural conformance        | `conformance.hpp`                   | Embedded Schema-vector execution, vector results, and report summary.                                                               |
+| Embedded bundles              | `bundle.hpp`                        | Exact asset access and digest verification for protocol, cryptography, and Admission bundles.                                       |
+| First Admission               | `admission.hpp`                     | First Admission and Historical Trust above successful Signed Document verification.                                                 |
+
+## Validation, signing, and Registry evidence
+
+`parse_strict_json` accepts exactly one JSON value. `SchemaCatalog::validate`
+checks the 22 embedded Draft 2020-12 Schemas. `canonical_json`,
+`canonicalize_json`, `canonical_sha256`, and `canonical_sha256_document`
+implement the RFC 8785 surface.
+
+`SigningKey` is the application-owned signing interface. `Ed25519` exposes
+strict key, signature, and document helpers. `SignedDocumentCodec::sign` and
+`verify` select one of nine `SignedDocumentKind` values and run parse, Schema,
+signature-envelope, key-resolution, canonicalization, and signature stages.
+
+`KeyResolver::resolve` must return `KeyRegistrySnapshot::organization_wide`
+evidence for one coherent applicable Organization revision with complete
+retained history. A selected key, partial projection, cache hit, or
+caller-provided trust flag is insufficient. `VerifiedSignedDocument` exposes the
+received bytes, signing and canonical strings and hashes, protected time,
+signature material, and resolved Registry key and Principal.
+
+## Frames, bundles, and conformance
+
+`FrameCodec::decode`, `encode`, and `validate_document` validate frame values;
+they do not own transport, TLS, Session authentication, Cursor persistence,
+routing, backpressure, or authoritative state transitions.
+
+`ProtocolBundle::verify` checks the 22-Schema and 59-file structural bundle.
+`verify_cryptography` checks 98 artifacts, 22 cases, and 62 declared
+evaluations; `verify_admission` checks 19 artifacts, 5 cases, and 30 declared
+evaluations. Those calls verify pins, counts, paths, byte lengths, and digests
+but do not execute every cryptography or Admission evaluation.
+
+`ConformanceRunner::run` and `missionweaveprotocol-conformance` execute only the
+embedded structural Schema vectors. The executable returns zero only when all
+vectors match their expected validity.
+
+## First Admission
+
+`AdmissionService` exposes `prepare_first_admission`, `admit_first`, and
+`verify_historical_admission`. Continue with the
+[C++ Admission reference](../admission/) for exact adapter outcomes, call order,
+and the runnable linked example.
+
+## Explicit availability boundaries
+
+<SupportStatus status="deployment-adapter-required" /> **Admission authority** —
+the application provides current Registry evidence, historical Registry
+evidence, trusted acceptance context, and an authenticated append-only log.
+
+<SupportStatus status="not-implemented" /> **Mission orchestration** — no
+high-level Mission state machine or orchestration façade is exported.
+
+<SupportStatus status="not-implemented" /> **Worker scheduler** — no Worker
+queue, scheduler, lease runner, or recovery loop is exported.
+
+<SupportStatus status="not-implemented" /> **Hosted gateway service** — the
+library supplies `FrameCodec`, not a gateway service with transport, TLS,
+Session, routing, or backpressure ownership.
+
+<SupportStatus status="not-implemented" /> **Authoritative persistence runtime**
+— no database-backed or Agent-local persistence runtime is exported.
+
+These absences are part of the documented support contract; Python
+reference-runtime capabilities must not be inferred from shared protocol names.
