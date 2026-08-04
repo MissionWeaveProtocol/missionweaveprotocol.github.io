@@ -27,7 +27,7 @@ und die genauen Anforderungen sind die lokalen
 | `AdmissionLog.AppendOrReturnExisting`        | Hängen Sie Kandidatenbytes atomar an oder geben Sie den gleichzeitigen autorisierenden Gewinner über eine authentifizierte Dienstidentität zurück.                                                                                                                                                                                      |
 | `AuthenticatedAdmissionRecord`               | Binden Sie `RecordBytes` an den vom Adapter authentifizierten Dienst, damit [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) den zurückgegebenen Datensatz validieren kann.                                                                                                         |
 | `AdmissionService.PrepareFirstAdmission`     | Erstellen und validieren Sie Kandidatennachweise aus einem von SDK erstellten `VerifiedSignedDocument`. Es stellt keine Zulassung dar und impliziert auch keine Zulassung.                                                                                                                                                              |
-| `AdmissionService.AdmitFirst`                | Führen Sie unter [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006)] eine aktuelle Überprüfung, eine autorisierende Suche, eine Kandidatenerstellung, eine atomare Append-or-Return-Existing- und zurückgegebene Datensatzvalidierung durch.                                          |
+| `AdmissionService.AdmitFirst`                | Führen Sie unter [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006) eine aktuelle Überprüfung, eine autorisierende Suche, eine Kandidatenerstellung, eine atomare Append-or-Return-Existing- und zurückgegebene Datensatzvalidierung durch.                                           |
 | `AdmissionService.VerifyHistoricalAdmission` | Führen Sie die sechsstufige Überprüfung erneut mit historischen Registry-Beweisen durch und fordern Sie einen vorhandenen Datensatz an, ohne Kontext auszugeben oder anzuhängen, wie von [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) gefordert.                                |
 | `AdmittedSignedDocument`                     | Geben Sie verifizierte und analysierte Datensatzbeweise sowie eine defensive `RecordBytes()`-Kopie zurück.                                                                                                                                                                                                                              |
 
@@ -61,7 +61,7 @@ Gewinner ist nur akzeptabel, wenn sein Schema, sein authentifizierter Dienst,
 seine Dokumentbindung und seine vertrauenswürdige Zeit
 [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
 und
-[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)]
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)
 verstreichen.
 
 ## Historische Wiederholung
@@ -89,7 +89,7 @@ durch die Zustandsmaschine oder die Überprüfung der tragbaren
 Protokollsicherheit. Diese bleiben unter
 [MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
 und
-[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)]
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)
 getrennt.
 
 ## Fehleroberfläche

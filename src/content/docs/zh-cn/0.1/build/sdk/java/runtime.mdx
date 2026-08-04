@@ -8,14 +8,14 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 # Java 运行时参考
 
 此页面涵盖了由[确切的 API inventory](../api/)
-表示的完整 Java 表面。共享协议行为仍然由本地[运行时参考](../../../runtime/architecture-and-bootstrap/)和[参考子句](../../../../reference/specification/)]定义。公共应用程序类型位于
+表示的完整 Java 表面。共享协议行为仍然由本地[运行时参考](../../../runtime/architecture-and-bootstrap/)和[参考子句](../../../../reference/specification/)定义。公共应用程序类型位于
 `org.missionweaveprotocol.sdk` 下；一致性入口点位于
 `org.missionweaveprotocol.sdk.cli` 下。
 
 <SupportStatus status="implemented" /> 适用于下面列出的公共类和进程内行为。
 
 <SupportStatus status="deployment-adapter-required" /> 适用于当前 Registry
-权限、可信准入上下文、经过身份验证的日志访问和其他部署服务。
+权威性、可信准入上下文、经过身份验证的日志访问和其他部署服务。
 
 <SupportStatus status="not-implemented" /> 表示精确固定的工件没有相应的运行时。
 
@@ -80,7 +80,7 @@ Maven 工件是
 
 ## 明确的可用性边界
 
-<SupportStatus status="deployment-adapter-required" /> **准入权限** —
+<SupportStatus status="deployment-adapter-required" /> **准入权威服务** —
 应用程序提供当前 Registry 证据、历史 Registry
 证据、可信接受上下文以及经过身份验证的仅附加日志。
 
@@ -96,4 +96,4 @@ Maven 工件是
 <SupportStatus status="not-implemented" /> **权威持久性运行时** —
 不导出数据库支持的或 Agent 本地持久性运行时。
 
-这些缺勤是书面支持合同的一部分； Python 不得从共享协议名称推断引用运行时功能。
+这些未实现项是书面支持合同的一部分；不得从共享协议名称推断 Python 参考运行时能力。

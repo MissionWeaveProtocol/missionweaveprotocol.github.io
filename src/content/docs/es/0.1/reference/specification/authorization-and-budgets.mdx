@@ -11,13 +11,13 @@ import NormativeClause from "../../../../../../components/NormativeClause.astro"
 
 <NormativeClause id="MWP-AUT-001" level="MUST">
 
-Después de la aceptación de WorkItem y todas las aprobaciones requeridas, el
+Después de aceptar el WorkItem y completar todas las Approval requeridas, el
 servicio de autorización emite un token de capacidad de privilegio mínimo de
-corta duración. El token MUST estará vinculado a:
+corta duración. El token MUST vincularse a:
 
 - el ID Worker Agent y el Session Epoch actual;
-- WorkItem ID y época de propiedad;
-- el ID actual del arrendamiento de ejecución;
+- WorkItem ID y Ownership Epoch;
+- el Execution Lease ID actual;
 - herramientas, recursos, datos y operaciones permitidos;
 - límites financieros, de tokens, de llamadas, de cálculo, de tiempo y de
   efectos secundarios; y
@@ -28,20 +28,20 @@ corta duración. El token MUST estará vinculado a:
 
 <NormativeClause id="MWP-AUT-002" level={["MAY","MUST NOT","MUST"]}>
 
-El Coordinator MAY solicita autorización pero MUST NOT fabrica, copia o reenvía
-una credencial de Worker. Los tokens y secretos MUST NOT aparecen en Mensajes,
-Tarjetas Agent, Paquetes de contexto, Artefactos o Eventos Group. Se rechazarán
-los tokens MUST caducados, revocados, no coincidentes o que excedan el
-presupuesto.
+El Coordinator MAY solicitar autorización, pero MUST NOT fabricar, copiar ni
+reenviar credenciales de un Worker. Los token y secret MUST NOT aparecer en
+Message, Agent Card, Context Package, Artifact ni Group Event. Los token
+caducados, revocados, no coincidentes o por encima del presupuesto MUST ser
+rechazados.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-AUT-003" level={["MUST","MAY"]}>
 
-Política Organization MUST poder colocar un WorkItem en
+La política Organization MUST poder colocar un WorkItem en
 `awaiting_execution_approval` antes de la implementación de producción, pagos,
 comunicaciones externas, cambios destructivos o acceso a datos confidenciales.
-El servicio de autorización MUST retiene el token de capacidad hasta que se
+El servicio de autorización MUST retener el token de capacidad hasta que se
 cumpla la puerta de aprobación firmada. El trabajo de bajo riesgo MAY se realiza
 automáticamente según la política.
 
@@ -50,33 +50,34 @@ automáticamente según la política.
 <NormativeClause id="MWP-AUT-004" level="MUST NOT">
 
 Los presupuestos Mission y WorkItem son conceptos de protocolo obligatorios.
-MissionOwner establece límites Mission, Coordinator no asigna más que esos
-límites a WorkItems y subtareas, y el servicio de autorización aplica límites
-estrictos. El agotamiento del presupuesto detiene el trabajo afectado y requiere
-una escalada explícita; Los agentes MUST NOT exceden silenciosamente un límite.
+MissionOwner establece los límites Mission, el Coordinator no asigna más que
+esos límites a WorkItem y subtareas, y el servicio de autorización aplica
+límites estrictos. El agotamiento del presupuesto detiene el trabajo afectado y
+requiere una escalada explícita; los Agent MUST NOT exceder silenciosamente un
+límite.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-AUT-005" level="MUST">
 
-El Group Authority MUST persiste en un libro mayor de presupuesto agregado de
-seis dimensiones. Un `ext.missionweaveprotocol.core.resource_usage_record`
-Command firmado registra un delta distinto de cero frente a un WorkItem, una
-época de propiedad y un ID de arrendamiento de ejecución; el
+El Group Authority MUST persistir un libro mayor de presupuesto agregado de seis
+dimensiones. Un `ext.missionweaveprotocol.core.resource_usage_record` Command
+firmado registra un delta distinto de cero frente a un WorkItem, una época de
+propiedad y un ID de arrendamiento de ejecución; el
 `ext.missionweaveprotocol.core.resource_usage_recorded` Event correspondiente
 lleva el delta, el uso acumulado y el presupuesto restante. El consumo MUST
-actualiza el WorkItem y su ascendencia WorkItem/Mission completa en una
-transición atómica. Un desbordamiento unidimensional MUST rechaza toda la
+actualizar el WorkItem y toda su ascendencia WorkItem/Mission en una transición
+atómica. El desbordamiento de una sola dimensión MUST rechazar toda la
 transición como `BUDGET_EXCEEDED`. Los presupuestos de tokens de capacidad MUST
 estarán limitados tanto por el contrato de trabajo como por el presupuesto
-restante autorizado.
+restante autoritativo.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-AUT-006" level="MUST">
 
-Cancelación o terminación de emergencia MUST revoca arrendamientos y tokens de
-capacidad relevantes, detiene nuevas asignaciones e inicia elementos de trabajo
-de compensación o limpieza definidos por contrato cuando sea necesario.
+La cancelación o terminación de emergencia MUST revocar los lease y token de
+capacidad relevantes, detener nuevas asignaciones e iniciar WorkItem de
+compensación o limpieza definidos por contrato cuando sea necesario.
 
 </NormativeClause>

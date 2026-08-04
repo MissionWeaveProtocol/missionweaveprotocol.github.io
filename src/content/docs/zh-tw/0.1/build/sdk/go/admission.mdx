@@ -1,12 +1,12 @@
 ---
-title: 優先入場和歷史信託
+title: Go 首次准入與歷史信任
 description:
   類型化的 Go 適配器、精確的呼叫順序、信任邊界、原子日誌要求和可運行的准入範例。
 ---
 
 import goAdmissionExample from "../../../../../../../../examples/sdk/go/admission/main.go?raw";
 
-# Go First 入场和历史信托
+# Go 首次准入與歷史信任
 
 Go `AdmissionService` 在六階段 Signed
 Document 驗證器（[MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)）之上分層首次存取和歷史信任。與語言無關的流程是本地[首次接納和歷史信任運行時頁面](../../../runtime/first-admission-and-historical-trust/)，確切的要求是本地[首次接納和歷史信任子句](../../../../reference/specification/first-admission-and-historical-trust/)。
@@ -47,7 +47,8 @@ first, err := missionweaveprotocol.NewAdmissionService().AdmitFirst(
 在查閱日誌之前完成所有六個簽章文件階段。找到的記錄經過驗證並返回，無需發出可信上下文或附加。權威缺席後，服務發出可信任上下文，呼叫`PrepareFirstAdmission`，呼叫`AppendOrReturnExisting`，對回傳值進行快照，並驗證實際傳回的記錄。只有當其架構、經過驗證的服務、文件綁定和可信任時間通過
 [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
 和
-[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)] 時，並發獲勝者才是可接受的。
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)
+時，並發獲勝者才是可接受的。
 
 ## 歷史回放
 
@@ -69,7 +70,8 @@ historical, err := missionweaveprotocol.NewAdmissionService().VerifyHistoricalAd
 `AdmissionLog.AppendOrReturnExisting`。匹配的記錄ID表明恢復了相同的權威記錄；它們不證明 Command 新鮮度、簽署者授權、狀態機接受或便攜式日誌證明驗證。這些在
 [MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
 和
-[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)] 下保持獨立。
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)
+下保持獨立。
 
 ## 誤差面
 

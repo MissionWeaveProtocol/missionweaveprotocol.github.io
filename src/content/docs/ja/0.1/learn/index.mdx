@@ -11,7 +11,7 @@ import { CardGrid, LinkCard } from "@astrojs/starlight/components";
 
 :::caution[Draft Standard 0.1]
 
-このバージョン付きの学習パスは、標準的な Web サイト出版物の一部です。読者の順序でモデルを説明し、すべてのルールをローカルの参照仕様の安定した条項にリンクします。
+このバージョン付き Learn パスは、規範的な Web サイト公開物の一部です。読者の理解順にモデルを説明し、すべての規則をローカルの Reference 仕様にある安定した条項へリンクします。
 
 :::
 
@@ -23,7 +23,7 @@ MissionWeaveProtocol は、1 つの信頼できる Organization 内の自律エ�
 
 1. 人間の MissionOwner は、done の定義を持つ制限された Mission を作成します。期限、予算、承認ポリシー。
 2. Mission は、プライマリ Group を 1 つと、永続的な Event 履歴を 1 つ受け取ります。および置き換え可能な Coordinator。
-3. Group メンバーは永続的なメッセージを交換し、作業を提案する可能性がありますが、Message 実行可能権限を単独で作成することはありません ([MWP-FND-014](../reference/specification/foundations/#mwp-fnd-014)])。
+3. Group メンバーは永続的なメッセージを交換し、作業を提案する可能性がありますが、Message 実行可能権限を単独で作成することはありません ([MWP-FND-014](../reference/specification/foundations/#mwp-fnd-014))。
 4. 許可されたアクターは、機械可読な作業契約を含む WorkItem を作成します。
 5. Worker はアドミッション コントロールを実行し、Group ごとにオファーを受け入れます。キューに登録し、独自のスケジューラを通じてグループ全体でスケジュールを設定します。
 6. 作業により、コンテンツに対応したアーティファクトと受諾にマッピングされた Evidence が生成されます。基準。
@@ -77,8 +77,8 @@ MissionWeaveProtocol は、1 つの信頼できる Organization 内の自律エ�
 ## プロトコル境界
 
 MissionWeaveProtocol は、Agent から Agent
-RPC、組織間フェデレーション、物理ピアツーピア ルーティング、分散コンセンサス、モデル プロンプト、またはプライベート モデル推論を定義しません。 1 つの Organization は、アイデンティティ、ポリシー、認可、永続的な Group 順序付け、および人間の説明責任を提供します。 Mission コンテンツはデフォルトで Group スコープのままですが ([MWP-FND-019](../reference/specification/foundations/#mwp-fnd-019)])、監査可能な決定と結果にはプライベートな思考連鎖の開示は必要ありません([MWP-FND-022](../reference/specification/foundations/#mwp-fnd-022))。
+RPC、組織間フェデレーション、物理ピアツーピア ルーティング、分散コンセンサス、モデル プロンプト、またはプライベート モデル推論を定義しません。 1 つの Organization は、アイデンティティ、ポリシー、認可、永続的な Group 順序付け、および人間の説明責任を提供します。 Mission コンテンツはデフォルトで Group スコープのままですが ([MWP-FND-019](../reference/specification/foundations/#mwp-fnd-019))、監査可能な決定と結果にはプライベートな思考連鎖の開示は必要ありません([MWP-FND-022](../reference/specification/foundations/#mwp-fnd-022))。
 
 正確な要件の文言については、ローカルの
-[参照仕様](../reference/specification/)、[用語](../reference/terminology/)、[スキーマ](../reference/schemas/)]、[適合表面](../reference/conformance/)]を使用してください。正確なコミット、プロファイル、ダイジェスト、および構築されたサイト ID は、ローカルの
+[参照仕様](../reference/specification/)、[用語](../reference/terminology/)、[スキーマ](../reference/schemas/)、[適合表面](../reference/conformance/)を使用してください。正確なコミット、プロファイル、ダイジェスト、および構築されたサイト ID は、ローカルの
 [標準リリース ページ ](../reference/normative-release/).

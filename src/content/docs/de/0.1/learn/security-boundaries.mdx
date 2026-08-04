@@ -18,7 +18,7 @@ eine neue Verifizierung oder Erstzulassungsentscheidung anwendbar ist. Eine
 ersetzte Revision kann nicht als aktuell dargestellt werden. Die
 Bereitstellungsnaht legt die Revisionswährung, den Organization-Umfang, die
 Vollständigkeit und die historische Abdeckung fest, wie in
-[MWP-SDV-010](../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)]
+[MWP-SDV-010](../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)
 beschrieben. Die erste Zulassung hängt daher vom aktuellen Registry-Beweis ab
 und nicht nur von der neuesten Revision, die in einem nicht spezifizierten Cache
 sichtbar ist.
@@ -39,7 +39,7 @@ vorhandenes First-Admission Record.
 | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Command Frische                                   | Ein neu präsentiertes Command hat eine separate Grenze `issuedAt` Frische- und Clock-Skew-Check ([MWP-ADM-013](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)).                                                                                      |
 | Autorisierung des Unterzeichners                  | Eine verifizierte Schlüsselbindung Principal benötigt noch eine maßgebliche Rolle und Richtlinienautorisierung vor der staatlichen Akzeptanz ([MWP-ADM-014](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)).                                         |
-| tragbar Admission Log Beweis                      | Version 0.1 definiert typisierte Adapterergebnisse und Datensatzvalidierung, kein tragbares bereitgestelltes Proofformat ([MWP-EXT-013](../../reference/specification/errors-extensions-and-security/#mwp-ext-013)).                                                                   |
+| portabler Admission-Log-Nachweis                  | Version 0.1 definiert typisierte Adapterergebnisse und Datensatzvalidierung, aber kein portables Format für einen bereitgestellten Nachweis ([MWP-EXT-013](../../reference/specification/errors-extensions-and-security/#mwp-ext-013)).                                                |
 | Zustandsmaschinenakzeptanz                        | Kryptographie und Zulassung enden vor dem Organization oder Group Authority validiert die aktuelle Revision, Rollen, Richtlinien, Epochen, Budgets und Mietverträge ([MWP-EVT-004](../../reference/specification/commands-events-and-ordering/#mwp-evt-004)).                          |
 | Vom Anrufer bereitgestellte Trust-Boolesche Werte | Ein vom Aufrufer bereitgestellter boolescher Wert kann authentifizierte, typisierte Admission Log-Ergebnisse oder deren Integritäts- und Abwesenheitsunterscheidungen nicht ersetzen ([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)). |
 

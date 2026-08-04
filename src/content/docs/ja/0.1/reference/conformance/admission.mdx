@@ -1,13 +1,14 @@
 ---
-title: 初回入場と歴史的信頼への適合
-description: 6 段階の検証の上に重ねられた、完全な現地入場証拠バンドル。
+title: 初回アドミッションと履歴信頼への適合
+description:
+  6 段階の検証の上に重ねられた、完全なローカルアドミッション証拠バンドル。
 ---
 
 import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
 import BundleArtifactCatalog from "../../../../../../components/BundleArtifactCatalog.astro";
 import release from "../../../../../../data/normative/0.1/release-source.json";
 
-# 最初の入場と歴史的信頼への適合
+# 初回アドミッションと履歴信頼への適合
 
 プロファイル <code>{release.admission.profile}</code>
 は、**{release.admission.artifacts} アーティファクト**、**{release.admission.cases} ケース**、**{release.admission.evaluations} 評価**をバインドします。正確に
@@ -18,7 +19,7 @@ import release from "../../../../../../data/normative/0.1/release-source.json";
 <code>{release.admission.cryptographyDigest}</code> を固定します。
 
 - <ArtifactLink path="protocol/admission/manifest.json">
-    入学マニフェスト
+    アドミッションマニフェスト
   </ArtifactLink>
 - <ArtifactLink path="protocol/admission/manifest.schema.json">
     Manifest schema
@@ -27,12 +28,12 @@ import release from "../../../../../../data/normative/0.1/release-source.json";
     Local bundle semantics
   </ArtifactLink>
 
-すべての評価では、最初に同じ 6 段階の暗号検証が繰り返され、次に初回承認または履歴再生が実行されます。規範的なオーケストレーションと障害マッピングは、[First Admission and Historical Trust の仕様ページ ](../../specification/first-admission-and-historical-trust/)] にあります。
+すべての評価では、最初に同じ 6 段階の暗号検証が繰り返され、次に初回承認または履歴再生が実行されます。規範的なオーケストレーションと障害マッピングは、[First Admission and Historical Trust の仕様ページ ](../../specification/first-admission-and-historical-trust/)
+にあります。
 
 ## Scope exclusions
 
-このバンドルは、Command の鮮度またはクロック スキューの強制、署名者の承認、ステート マシンの移行、Event の作成、移植可能な Admission
-Log 証明形式、またはデプロイメント固有の承認および保持ポリシーを実証しません。 Those
-concerns require separate evidence.
+このバンドルは、Command の鮮度またはクロック スキューの強制、署名者の認可、ステートマシン遷移、Event の作成、ポータブルな Admission
+Log 証明形式、またはデプロイメント固有の認可および保持ポリシーを実証しません。これらの事項には個別の証拠が必要です。
 
 <BundleArtifactCatalog bundle="admission" />

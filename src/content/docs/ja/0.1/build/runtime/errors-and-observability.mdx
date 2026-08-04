@@ -5,7 +5,7 @@ description: ワイヤーセーフなエラー、再試行の決定、保護さ�
 
 # エラーと可観測性
 
-ワイヤ エラーは安定したプロトコルの結果であり、内部例外のダンプではありません。エラーはローカル エラー スキーマに準拠し、再試行が安全かどうかを示し、未承認のデータを公開することなく関連フレームまたはアクション ID を識別できます ([MWP-EXT-004](../../../reference/specification/errors-extensions-and-security/#mwp-ext-004)])。
+ワイヤ エラーは安定したプロトコルの結果であり、内部例外のダンプではありません。エラーはローカル エラー スキーマに準拠し、再試行が安全かどうかを示し、未承認のデータを公開することなく関連フレームまたはアクション ID を識別できます ([MWP-EXT-004](../../../reference/specification/errors-extensions-and-security/#mwp-ext-004))。
 
 ## 正しいレイヤーで分類する
 
@@ -14,15 +14,15 @@ description: ワイヤーセーフなエラー、再試行の決定、保護さ�
 | 無効な JSON、重複メンバー、または不可能な JCS 値                  | `PROTOCOL_VIOLATION`                                        |
 | 完全なスキーマまたは必須エンベロープの失敗                        | `SCHEMA_VALIDATION_FAILED`                                  |
 | 暗号化ステージ 3、4、または 6 の失敗                              | `AUTH_INVALID_SIGNATURE`                                    |
-| 入場または Command - 鮮度の失敗                                   | `AUTH_INVALID_SIGNATURE`                                    |
+| アドミッションまたは Command 鮮度の失敗                           | `AUTH_INVALID_SIGNATURE`                                    |
 | 権限またはポリシーの資格がありません                              | `AUTH_FORBIDDEN`                                            |
 | 古いセッション、Membership、Coordinator、所有権、またはリース状態 | 対応する安定したフェンシング コード                         |
 | 現在の集計リビジョンの不一致                                      | `REVISION_CONFLICT`                                         |
 | 許容圧力限界                                                      | `BACKPRESSURE` または `RATE_LIMITED` (再試行ガイダンスあり) |
 
-暗号化およびアドミッションの失敗は、ネットワーク上で意図的に崩壊します。 Organization は、最初に失敗したセマンティック ステージと特定の理由を、保護されアクセス制御された監査レコードにのみ保持します ([MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)])。ステージ番号は、必要な内部関数境界ではなく、意味論的な分類です ([MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016)])。アドミッション パスの 6 ステージ完了後のすべての失敗では、保護されたステージ
+暗号化およびアドミッションの失敗は、ネットワーク上で意図的に崩壊します。 Organization は、最初に失敗したセマンティック ステージと特定の理由を、保護されアクセス制御された監査レコードにのみ保持します ([MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018))。ステージ番号は、必要な内部関数境界ではなく、意味論的な分類です ([MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016))。アドミッション パスの 6 ステージ完了後のすべての失敗では、保護されたステージ
 `admission` と同じパブリック コード `AUTH_INVALID_SIGNATURE`
-([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)]) が使用されます。
+([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)) が使用されます。
 
 ## 決定を再試行する
 
@@ -34,7 +34,7 @@ description: ワイヤーセーフなエラー、再試行の決定、保護さ�
 - 有効期限が切れた Command の鮮度には、新しい Command、アクション ID、保護された時間が必要です。そして署名。
 - `ACTION_ID_COLLISION`
   には常に新しいアクション ID と署名されたコンテンツが必要です。そして
-- 古いフェンシング エラーには、現在の権限のあるエポックに加えて新しい Command が必要ですそしてサイン。
+- 古いフェンシング エラーには、現在の権威あるエポックに加えて新しい Command が必要ですそしてサイン。
 
 完全なルールは
 [MWP-EXT-005](../../../reference/specification/errors-extensions-and-security/#mwp-ext-005)) です。信頼できる応答がない場合のトランスポート タイムアウトは不定です。新しい遷移を送信するかどうかを決定する前に、安定した ID によってクエリまたはリプレイが行われます。
@@ -65,10 +65,11 @@ description: ワイヤーセーフなエラー、再試行の決定、保護さ�
 - 権威ある状態が変化したかどうか。
 
 コマンドはすでに安定したアクションと相関 ID
-([MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001))] を保持しており、受け入れられたイベントは不変の原因、アクター、相関、シーケンス、リビジョン コンテキスト ([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005))] を保持します。無関係なトレース ID への参照を優先します。
+([MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001)) を保持しており、受け入れられたイベントは不変の原因、アクター、相関、シーケンス、リビジョン コンテキスト ([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)) を保持します。無関係なトレース ID への参照を優先します。
 
 有用なメトリクスには、パブリック コードによる受け入れおよび拒否されたコマンド、制限付きテレメトリで最初に失敗した保護ステージ、Group によるリプレイ ラグ、カーソル ギャップ カウント、重複 Event カウント、リースおよびバジェットの拒否カウント、バックプレッシャー期間、アドミッション アダプターの結果、およびエンドツーエンドの移行レイテンシが含まれます。 Organization、Group、アクター、アクション、キー、または署名ハッシュ識別子をアタッチする前に、有界カーディナリティを定義します。
 
 :::
 
-リリースのサポートを申請する前に、[適合性とアップグレード](../conformance-and-upgrades/)] を完了してください。
+リリースのサポートを申請する前に、[適合性とアップグレード](../conformance-and-upgrades/)
+を完了してください。

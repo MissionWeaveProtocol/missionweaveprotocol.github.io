@@ -1,5 +1,5 @@
 ---
-title: Primera Admisión y Fideicomiso Histórico
+title: Primera Admisión y Confianza Histórica
 description: >-
   Cómo un tiempo de ejecución superpone los resultados Admission Log
   autenticados, la adición atómica, la validación de registros devueltos y la
@@ -28,11 +28,11 @@ La capa de Admisión depende de estos distintos límites de autoridad y evidenci
 Representa cada límite con una interfaz escrita:
 
 - evidencia Registry actual para una nueva decisión de primera admisión;
-- evidencia histórica autorizada Registry para repetición;
+- evidencia histórica autoritativa del Registry para la reproducción;
 - una búsqueda Admission Log autenticada;
 - una operación atómica de añadir o devolver existente; y
 - Organization: contexto de aceptación confiable que se usa solo después de una
-  ausencia autorizada.
+  constatación autoritativa de ausencia.
 
 :::
 
@@ -63,9 +63,10 @@ six-stage cryptographic verification
 → admitted result
 ```
 
-Sólo la ausencia de autoridad permite la adquisición de un contexto confiable y
-la preparación de candidatos. El anexo puede devolver el candidato local o un
-ganador simultáneo, y el registro devuelto siempre se valida antes del éxito
+Solo una constatación autoritativa de ausencia permite adquirir un contexto
+confiable y la preparación de candidatos. El anexo puede devolver el candidato
+local o un ganador simultáneo, y el registro devuelto siempre se valida antes
+del éxito
 ([MWP-ADM-006](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006)).
 
 First-Admission Record es un objeto independiente de nueve campos sin firmar. No
@@ -119,9 +120,9 @@ confiable nuevo ni tratar un documento antiguo como recién admitido
 
 ## Límites después de la admisión
 
-Un resultado admitido aún no establece la actualización Command ni la
-autorización del firmante. Un Command recién presentado tiene una verificación
-separada de actualización y asimetría del reloj
+Un resultado admitido aún no establece la frescura de Command ni la autorización
+del firmante. Un Command recién presentado tiene una verificación separada de
+actualización y asimetría del reloj
 ([MWP-ADM-013](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)),
 y la autoridad relevante valida por separado la función y la política del
 firmante en los momentos de aceptación protegidos y confiables
@@ -137,7 +138,7 @@ Mantenga la resolución de clave actual, la resolución de clave histórica, el
 acceso Admission Log y la adquisición de contexto confiable como adaptadores de
 tipos distintos incluso cuando un servicio implemente varios de ellos. Esto
 evita que una pérdida de caché, un error de transporte o un valor booleano de la
-persona que llama se tergiversen como ausencia autorizada.
+persona que llama se tergiversen como una constatación autoritativa de ausencia.
 
 El adaptador API debe devolver la identidad del servicio autenticado junto con
 los bytes encontrados o añadidos para que la validación del registro no pueda

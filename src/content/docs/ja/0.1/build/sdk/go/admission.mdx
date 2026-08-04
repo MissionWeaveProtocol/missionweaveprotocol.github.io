@@ -1,5 +1,5 @@
 ---
-title: Go の初回入場と歴史的信頼
+title: Go 初回アドミッションと履歴信頼
 description:
   型指定された Go アダプター、正確な呼び出し順序、信​​頼境界、アトミック
   ログ要件、および実行可能なアドミッションの例。
@@ -7,26 +7,27 @@ description:
 
 import goAdmissionExample from "../../../../../../../../examples/sdk/go/admission/main.go?raw";
 
-# Go First Admission と歴史的信頼
+# Go 初回アドミッションと履歴信頼
 
 Go `AdmissionService` は、6 段階の Signed
-Document 検証者 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005))] の上に、初回入場と歴史的信頼を重ねます。言語に依存しないフローはローカルの
-[First Admission and Historical Trust ランタイム ページ ](../../../runtime/first-admission-and-historical-trust/)] であり、正確な要件はローカルの
+Document 検証者 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)) の上に、初回アドミッションと履歴信頼を重ねます。言語に依存しないフローはローカルの
+[First Admission and Historical Trust ランタイム ページ ](../../../runtime/first-admission-and-historical-trust/)
+であり、正確な要件はローカルの
 [First-Admission and Historical-Trust 句 ](../../../../reference/specification/first-admission-and-historical-trust/).
 
 ## パブリックアダプターと結果
 
-| パブリック API                               | 責任                                                                                                                                                                                                                                                                                                       |
-| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `AdmissionCurrentKeyResolver.ResolveCurrent` | デプロイメントがこの決定に対して最新であると主張する完全な Organization 全体の Registry 証拠を返します。                                                                                                                                                                                                   |
-| `TrustedAdmissionContext.Issue`              | 信頼できるレコード ID を発行し、即時に受け入れ、正式な不在の後にのみサービスを受け入れます。                                                                                                                                                                                                               |
-| `AdmissionLog.Lookup`                        | 見つかった認証済みレコードまたは `AdmissionLookup{AuthoritativeAbsence: true}` を返します。キャッシュミス、タイムアウト、認証されていない不在、および不定状態は [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)] に基づいてフェールクローズされます。 |
-| `AdmissionLog.AppendOrReturnExisting`        | 候補バイトをアトミックに追加するか、認証されたサービス ID を通じて同時に権威のある勝者を返します。                                                                                                                                                                                                         |
-| `AuthenticatedAdmissionRecord`               | [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) が返されたレコードを検証できるように、`RecordBytes` をアダプターによって認証されたサービスにバインドします。                                                                                          |
-| `AdmissionService.PrepareFirstAdmission`     | SDK によって生成された `VerifiedSignedDocument` から候補証拠を作成し、検証します。追加したり、入場を暗示したりするものではありません。                                                                                                                                                                     |
-| `AdmissionService.AdmitFirst`                | [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006)] に基づいて、現在の検証、権限のある検索、候補の作成、アトミックな追加または既存の戻り、および返されたレコードの検証を実行します。                                                                     |
-| `AdmissionService.VerifyHistoricalAdmission` | 過去の Registry 証拠を使用して 6 段階の検証を再実行し、[MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                                                                                                                                               |
-| `AdmittedSignedDocument`                     | 検証および解析された記録証拠と防御用の `RecordBytes()` コピーを返します。                                                                                                                                                                                                                                  |
+| パブリック API                               | 責任                                                                                                                                                                                                                                                                                                      |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.ResolveCurrent` | デプロイメントがこの決定に対して最新であると主張する完全な Organization 全体の Registry 証拠を返します。                                                                                                                                                                                                  |
+| `TrustedAdmissionContext.Issue`              | 権威ある不存在判定の後にだけ、信頼できるレコード ID、受け入れ時刻、および受け入れサービスを発行します。                                                                                                                                                                                                   |
+| `AdmissionLog.Lookup`                        | 見つかった認証済みレコードまたは `AdmissionLookup{AuthoritativeAbsence: true}` を返します。キャッシュミス、タイムアウト、認証されていない不在、および不定状態は [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003) に基づいてフェールクローズされます。 |
+| `AdmissionLog.AppendOrReturnExisting`        | 候補バイトをアトミックに追加するか、認証されたサービス ID を通じて同時に権威のある勝者を返します。                                                                                                                                                                                                        |
+| `AuthenticatedAdmissionRecord`               | [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) が返されたレコードを検証できるように、`RecordBytes` をアダプターによって認証されたサービスにバインドします。                                                                                         |
+| `AdmissionService.PrepareFirstAdmission`     | SDK によって生成された `VerifiedSignedDocument` から候補証拠を作成し、検証します。追加したり、入場を暗示したりするものではありません。                                                                                                                                                                    |
+| `AdmissionService.AdmitFirst`                | [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006) に基づいて、現在の検証、権威ある検索、候補の作成、アトミックな追加または既存の戻り、および返されたレコードの検証を実行します。                                                                       |
+| `AdmissionService.VerifyHistoricalAdmission` | 過去の Registry 証拠を使用して 6 段階の検証を再実行し、[MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                                                                                                                                              |
+| `AdmittedSignedDocument`                     | 検証および解析された記録証拠と防御用の `RecordBytes()` コピーを返します。                                                                                                                                                                                                                                 |
 
 呼び出し元が提供する信頼ブール値はアドミッション検索結果ではないため、成功パスを選択してはなりません。
 
@@ -47,12 +48,12 @@ first, err := missionweaveprotocol.NewAdmissionService().AdmitFirst(
 :::
 
 `AdmitFirst`
-は、ログを参照する前に 6 つの署名付き文書ステージをすべて完了します。見つかったレコードは検証され、信頼できるコンテキストの発行や追加を行わずに返されます。権限のある不在の後、サービスは信頼できるコンテキストを発行し、`PrepareFirstAdmission`
+は、ログを参照する前に 6 つの署名付き文書ステージをすべて完了します。見つかったレコードは検証され、信頼できるコンテキストの発行や追加を行わずに返されます。権威ある不存在判定の後、サービスは信頼できるコンテキストを発行し、`PrepareFirstAdmission`
 を呼び出し、`AppendOrReturnExisting`
 を呼び出し、戻り値のスナップショットを作成し、実際に返されたレコードを検証します。同時勝者は、そのスキーマ、認証されたサービス、ドキュメント バインディング、および信頼できる時間が経過した場合にのみ受け入れられます
 [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
 および
-[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)]。
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)。
 
 ## 歴史的なリプレイ
 
@@ -71,10 +72,11 @@ historical, err := missionweaveprotocol.NewAdmissionService().VerifyHistoricalAd
 
 履歴リプレイでは、保持されている Registry 履歴を使用して検証が再実行され、見つかったレコードが必要ですが、`TrustedAdmissionContext.Issue`
 または `AdmissionLog.AppendOrReturnExisting`
-は呼び出されません。レコード ID が一致すると、同じ権限のあるレコードが復元されたことがわかります。これらは、Command の鮮度、署名者の承認、ステートマシンの受け入れ、ポータブル ログプルーフ検証を証明するものではありません。これらは
+は呼び出されません。レコード ID が一致すると、同じ権威あるレコードが復元されたことがわかります。これらは、Command の鮮度、署名者の認可、ステートマシンの受け入れ、ポータブル ログプルーフ検証を証明するものではありません。これらは
 [MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
 および
-[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)] で別々のままです。
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)
+で別々のままです。
 
 ## エラー曲面
 
@@ -84,7 +86,7 @@ historical, err := missionweaveprotocol.NewAdmissionService().VerifyHistoricalAd
 
 デプロイメント アダプタは、信頼できるローカル障害を再マッピングするサービスが必要な場合、サポートされている理由とともに
 `NewAdmissionAdapterError`
-を返す必要があります。恣意的なエラーは権限のある不在の証拠にはなりません。
+を返す必要があります。任意のエラーは権威ある不存在判定の証拠にはなりません。
 
 ## 実行可能な完全に固定された例
 
@@ -93,7 +95,7 @@ historical, err := missionweaveprotocol.NewAdmissionService().VerifyHistoricalAd
 この例では、1 つの Ed25519 キーを決定的に導出し、完全な Registry と署名付き Command を構築し、型指定されたメモリ内アダプターを提供します。 1 つの
 `sync.Mutex` は共有権限マップを保護します。 `Lookup` と `AppendOrReturnExisting`
 は個別に取得します。ミューテックスは、同時勝者をチェックして条件付きで追加するときに、`AppendOrReturnExisting`
-をアトミックにします。このプロトコルでは、両方の呼び出しにまたがる 1 つのトランザクションではなく、権限のある検索とアトミックな追加または返される既存の動作が必要です。固定シードはデモンストレーション用の素材であり、サンプル以外では決して使用しないでください。
+をアトミックにします。このプロトコルでは、両方の呼び出しにまたがる 1 つのトランザクションではなく、権威ある検索とアトミックな追加または返される既存の動作が必要です。固定シードはデモンストレーション用の素材であり、サンプル以外では決して使用しないでください。
 
 <pre>
   <code>{goAdmissionExample}</code>

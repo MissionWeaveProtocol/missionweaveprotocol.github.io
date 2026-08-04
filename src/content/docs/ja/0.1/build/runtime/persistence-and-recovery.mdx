@@ -1,30 +1,30 @@
 ---
 title: 持続性と回復
-description: 権限のある状態、再構築可能なプロジェクション、レシート、オプティミスティック同時実行性、リプレイ、カーソル、スナップショット、外部副作用の回復。
+description: 権威ある状態、再構築可能なプロジェクション、レシート、オプティミスティック同時実行性、リプレイ、カーソル、スナップショット、外部副作用の回復。
 ---
 
 # 永続化と回復
 
-永続性は権限によって分割されます。ミッション、メンバーシップ、作業項目、所有権とリースのエポック、重複排除の受領書、承認、および Group イベントには権限があります。 Agent-local カーソル、キュー、チェックポイント、受信ボックス、送信ボックス、およびスケジューラの状態は再構築可能なプロジェクションです。それらを失うと、Mission の真実 ([MWP-FND-023](../../../reference/specification/foundations/#mwp-fnd-023))] を変えることはできません。
+永続性は権限によって分割されます。ミッション、メンバーシップ、作業項目、所有権とリースのエポック、重複排除の受領書、承認、および Group イベントには権限があります。 Agent-local カーソル、キュー、チェックポイント、受信ボックス、送信ボックス、およびスケジューラの状態は再構築可能なプロジェクションです。それらを失うと、Mission の真実 ([MWP-FND-023](../../../reference/specification/foundations/#mwp-fnd-023)) を変えることはできません。
 
-## 権限のある受け入れトランザクション
+## 権威ある受け入れトランザクション
 
-1 つの Group 遷移について、当局は受け入れられた状態の変更、Event の追加、集約リビジョン、フェンシングの更新、予算または承認の効果、冪等性の受信を 1 つのアトミックな結果として表示する必要があります。 Event は、Group シーケンスと集計リビジョン ([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005))] を保持する不変の承認されたファクトです。
+1 つの Group 遷移について、当局は受け入れられた状態の変更、Event の追加、集約リビジョン、フェンシングの更新、予算または承認の効果、冪等性の受信を 1 つのアトミックな結果として表示する必要があります。 Event は、Group シーケンスと集計リビジョン ([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)) を保持する不変の承認されたファクトです。
 
 同じ `(actor ID, Action ID)`
 およびバイト相当の正規コンテンツは、別の遷移を追加する代わりに、元のレシートを返します。同じアクション ID の異なるコンテンツは
 `ACTION_ID_COLLISION`
-([MWP-EVT-003](../../../reference/specification/commands-events-and-ordering/#mwp-evt-003))] で失敗します。
+([MWP-EVT-003](../../../reference/specification/commands-events-and-ordering/#mwp-evt-003)) で失敗します。
 
-構造化更新ではオプティミスティック同時実行性が使用されます。リビジョンの不一致により Command 全体が拒否されますが、最初の所有権、リース更新、Membership の変更、および Approval では常に比較と設定の受け入れが使用されます ([MWP-EVT-007](../../../reference/specification/commands-events-and-ordering/#mwp-evt-007)])。
+構造化更新ではオプティミスティック同時実行性が使用されます。リビジョンの不一致により Command 全体が拒否されますが、最初の所有権、リース更新、Membership の変更、および Approval では常に比較と設定の受け入れが使用されます ([MWP-EVT-007](../../../reference/specification/commands-events-and-ordering/#mwp-evt-007))。
 
 ## 投影トランザクション
 
 Event の配信は少なくとも 1 回であるため、各コンシューマは Event
-ID によって重複を排除し、各 Group を順番に処理します。後のイベントをバッファーすることはできますが、ギャップを越えて永続カーソルを進めることはできません ([MWP-WRK-029](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)])。これは、少なくとも 1 回の不変式 ([MWP-FND-018](../../../reference/specification/foundations/#mwp-fnd-018))] の実行時形式です。各 Worker は、Group ごとに個別の耐久性のある Event 受信ボックス、カーソル、およびワーク キューを保持します。これらはすべて、受け入れられた Group イベントから再構築可能です。 ([MWP-WRK-008](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008))。
+ID によって重複を排除し、各 Group を順番に処理します。後のイベントをバッファーすることはできますが、ギャップを越えて永続カーソルを進めることはできません ([MWP-WRK-029](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029))。これは、少なくとも 1 回の不変式 ([MWP-FND-018](../../../reference/specification/foundations/#mwp-fnd-018)) の実行時形式です。各 Worker は、Group ごとに個別の耐久性のある Event 受信ボックス、カーソル、およびワーク キューを保持します。これらはすべて、受け入れられた Group イベントから再構築可能です。 ([MWP-WRK-008](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008))。
 
 `ACK`
-は、最も高い連続持続カーソルを報告します。配信のクリーンアップは許可されますが、権限のある Group 履歴は削除されません。再接続のリプレイには、切断付近の重複が含まれる場合があります ([MWP-WRK-030](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)])。
+は、最も高い連続持続カーソルを報告します。配信のクリーンアップは許可されますが、権威ある Group 履歴は削除されません。再接続のリプレイには、切断付近の重複が含まれる場合があります ([MWP-WRK-030](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030))。
 
 ## スナップショットと長いギャップ
 
@@ -34,36 +34,37 @@ ID によって重複を排除し、各 Group を順番に処理します。後�
 [配信、再生、確認セクション ](../../../reference/specification/work-scheduling-and-recovery/#16-delivery-replay-and-acknowledgement)
 は、この回復パスを定義します。
 
-アクティブなグループは、完全な Event 履歴を保持します。アーカイブは、署名された最終スナップショットを生成し、Organization ポリシーに基づいて暗号化された監査ログを保持し、以前の ID やシーケンスを書き換えるのではなく、監査可能な廃棄石を通じて法的削除またはセキュリティ編集を記録します ([MWP-MSN-009](../../../reference/specification/missions-groups-and-membership/#mwp-msn-009)])。
+アクティブなグループは、完全な Event 履歴を保持します。アーカイブは、署名された最終スナップショットを生成し、Organization ポリシーに基づいて暗号化された監査ログを保持し、以前の ID やシーケンスを書き換えるのではなく、監査可能な廃棄石を通じて法的削除またはセキュリティ編集を記録します ([MWP-MSN-009](../../../reference/specification/missions-groups-and-membership/#mwp-msn-009))。
 
 ## チェックポイント、リース、および再起動
 
 キューに入れられた所有権とアクティブな実行は隔離されます。実行リースは、Agent、Session
 Epoch、WorkItem、所有権エポック、安定したリース ID、および時間境界をバインドします。すべてのチェックポイント、ブロック、パブリケーション、送信、および報告された失敗は、現在のリース ID
-([MWP-WRK-013](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013)]) を参照します。
+([MWP-WRK-013](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013)) を参照します。
 
 チェックポイント、ブロック、送信によりリースが解放されます。セッションの置換、再割り当て、キャンセル、および失敗によりセッションが取り消されます。代替セッションは、新しいリースの下で実行が再開される前に、影響を受ける作業を
 `queued`
-に返します ([MWP-WRK-014](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-014)])。
+に返します ([MWP-WRK-014](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-014))。
 
-作業チェックポイントをブロックし、必要な解決策を発行し、スロットを解放し、解決後に準備完了キューに戻ります ([MWP-WRK-017](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-017)])。自動再試行は、作業契約の試行、バックオフ、コスト、期限の予算内に留まり、安定した外部試行キー ([MWP-WRK-018](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-018)]) を使用します。
+作業チェックポイントをブロックし、必要な解決策を発行し、スロットを解放し、解決後に準備完了キューに戻ります ([MWP-WRK-017](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-017))。自動再試行は、作業契約の試行、バックオフ、コスト、期限の予算内に留まり、安定した外部試行キー ([MWP-WRK-018](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-018)) を使用します。
 
 Worker が開始期限またはリース更新に間に合わなかった場合、新しい所有者はより高い所有権エポックの下で最新のチェックポイントから再開できます。遅い結果は依然として権限のない Evidence
-([MWP-WRK-019](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-019))] です。
+([MWP-WRK-019](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-019)) です。
 
 ## 制限付きの停止からの回復
 
-Group サービスが利用できない間、Worker は、制限された猶予期間内ですでにアクティブな可逆計算のみを継続できます。現在のリースとトークンがなければ、新しい作業を開始したり、リスクの高い、元に戻せない、または外部から認識できる新しい操作を実行することはできません。また、送信またはさらなる副作用が発生する前に調整されます ([MWP-WRK-020](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-020)])。
+Group サービスが利用できない間、Worker は、制限された猶予期間内ですでにアクティブな可逆計算のみを継続できます。現在のリースとトークンがなければ、新しい作業を開始したり、リスクの高い、元に戻せない、または外部から認識できる新しい操作を実行することはできません。また、送信またはさらなる副作用が発生する前に調整されます ([MWP-WRK-020](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-020))。
 
-バッファされたコマンドは、重要な境界オフライン実行バインディングを保持し、現在のセッション フィールドをリベースし、再接続時に再署名されます ([MWP-WRK-021](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-021)])。調整とそのリソース請求は、1 つの正式なトランザクションです。予算オーバーフローは、部分的な状態なしで請求と進行状況の両方を拒否します ([MWP-WRK-022](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-022)])。
+バッファされたコマンドは、重要な境界オフライン実行バインディングを保持し、現在のセッション フィールドをリベースし、再接続時に再署名されます ([MWP-WRK-021](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-021))。調整とそのリソース請求は、1 つの正式なトランザクションです。予算オーバーフローは、部分的な状態なしで請求と進行状況の両方を拒否します ([MWP-WRK-022](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-022))。
 
-再試行で鮮度または現在のフェンシングの変更が必要な場合は、[MWP-EXT-005](../../../reference/specification/errors-extensions-and-security/#mwp-ext-005)] の新しいアクション ID と署名ルールに従ってください。
+再試行で鮮度または現在のフェンシングの変更が必要な場合は、[MWP-EXT-005](../../../reference/specification/errors-extensions-and-security/#mwp-ext-005)
+の新しいアクション ID と署名ルールに従ってください。
 
 ## 外部の副作用
 
 ネットワーク配信では、1 回だけの外部効果を提供することはできません。ツール操作では、Mission
 ID、WorkItem ID、所有権エポック、および論理操作 ID
-([MWP-WRK-031](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-031))] から派生した安定した冪等キーを使用します。
+([MWP-WRK-031](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-031)) から派生した安定した冪等キーを使用します。
 
 :::note[Implementation note]
 
@@ -85,8 +86,9 @@ begin local transaction
 `record side-effect receipt`
 は、無関係なオブジェクト保存内に非表示にすべきではありません。
 
-送信ボックスは権限のあるコミット後のトランスポート パブリケーションに役立ち、受信ボックスまたは処理済み Event テーブルはローカルの重複排除に役立ちます。保持、スナップショットの頻度、パーティショニング、圧縮、およびデータベースの選択は運用上の決定です。追加専用義務と再生義務を消去することはできません。
+送信ボックスは権威あるコミット後のトランスポート パブリケーションに役立ち、受信ボックスまたは処理済み Event テーブルはローカルの重複排除に役立ちます。保持、スナップショットの頻度、パーティショニング、圧縮、およびデータベースの選択は運用上の決定です。追加専用義務と再生義務を消去することはできません。
 
 :::
 
-[トランスポートとフレーミング](../transport-and-framing/)] に進み、永続的なリプレイをワイヤー プロトコルに接続します。
+[トランスポートとフレーミング](../transport-and-framing/)
+に進み、永続的なリプレイをワイヤー プロトコルに接続します。

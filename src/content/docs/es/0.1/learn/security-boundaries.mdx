@@ -22,10 +22,10 @@ histórica como se describe en
 Por lo tanto, la primera admisión depende de la evidencia Registry actual, no
 simplemente de la última revisión visible en un caché no especificado.
 
-**La evidencia histórica Registry** conserva el `validFrom` original y todos los
-cambios efectivos de `validUntil` o `revokedAt` necesarios para evaluar una hora
-firmada protegida anterior. Ese historial se puede agregar únicamente o se
-versiona explícitamente
+**La evidencia histórica autoritativa del Registry** conserva el `validFrom`
+original y todos los cambios efectivos de `validUntil` o `revokedAt` necesarios
+para evaluar una hora firmada protegida anterior. Ese historial se puede agregar
+únicamente o se versiona explícitamente
 ([MWP-SDV-012](../../reference/specification/signed-documents-and-trust/#mwp-sdv-012)).
 
 La primera admisión utiliza evidencia actual; La repetición histórica utiliza
@@ -38,7 +38,7 @@ existente.
 | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Command frescura                                               | Un Command recién presentado tiene una verificación de frescura y sesgo de reloj `issuedAt` delimitada separada ([MWP-ADM-013](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)).                                                                         |
 | autorización del firmante                                      | Un Principal vinculado a clave verificada aún necesita autorización de política y función autorizada antes de la aceptación estatal ([MWP-ADM-014](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)).                                                     |
-| portátil Admission Log prueba                                  | La versión 0.1 define los resultados del adaptador escrito y la validación de registros, no un formato de prueba implementado portátil ([MWP-EXT-013](../../reference/specification/errors-extensions-and-security/#mwp-ext-013)).                                                        |
+| prueba portátil de Admission Log                               | La versión 0.1 define resultados tipados del adaptador y validación de registros, no un formato portátil para una prueba desplegada ([MWP-EXT-013](../../reference/specification/errors-extensions-and-security/#mwp-ext-013)).                                                           |
 | aceptación de la máquina de estados                            | La criptografía y la admisión finalizan antes de que Organization o Group Authority validen la revisión, las funciones, la política, las épocas, los presupuestos y los arrendamientos actuales ([MWP-EVT-004](../../reference/specification/commands-events-and-ordering/#mwp-evt-004)). |
 | booleanos de confianza proporcionados por la persona que llama | Un valor booleano proporcionado por la persona que llama no puede reemplazar los resultados Admission Log autenticados y escritos ni sus distinciones de integridad y ausencia ([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).          |
 

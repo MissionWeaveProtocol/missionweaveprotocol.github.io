@@ -9,9 +9,11 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 
 # Java ランタイムリファレンス
 
-このページでは、[正確な API インベントリ](../api/)] で表される完全な Java サーフェスについて説明します。共有プロトコルの動作は、ローカルの
+このページでは、[正確な API インベントリ](../api/)
+で表される完全な Java サーフェスについて説明します。共有プロトコルの動作は、ローカルの
 [ランタイム参照 ](../../../runtime/architecture-and-bootstrap/) および
-[参照句 ](../../../../reference/specification/)] によって定義されたままです。パブリック アプリケーション タイプは
+[参照句 ](../../../../reference/specification/)
+によって定義されたままです。パブリック アプリケーション タイプは
 `org.missionweaveprotocol.sdk` の下に存在します。適合エントリ ポイントは
 `org.missionweaveprotocol.sdk.cli` の下にあります。
 
@@ -19,7 +21,7 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 クラスとプロセス内動作に適用されます。
 
 <SupportStatus status="deployment-adapter-required" /> は、現在の Registry
-権限、信頼されたアドミッション コンテキスト、認証されたログ
+の権威性、信頼済みアドミッションコンテキスト、認証済みログ
 アクセス、およびその他のデプロイメント サービスに適用されます。
 
 <SupportStatus status="not-implemented" />
@@ -48,7 +50,7 @@ Maven アーティファクトは
 | フレーム                        | `FrameCodec.java`                                                                         | 汎用 WebSocket フレーム値の厳密なデコードと正規のエンコード。これはコーデックであり、ホストされたゲートウェイ サービスではありません。 |
 | 構造適合性                      | `ConformanceRunner.java`、`cli/ConformanceCli.java`                                       | パッケージ化されたまたは明示的なルートのスキーマ ベクターの実行とプロセスの終了ステータス。                                            |
 | 埋め込みバンドル                | `ProtocolBundle.java`                                                                     | プロトコル、暗号化、およびアドミッション アーティファクト セットのソース ルートおよびパッケージ化された検証。                          |
-| 初回入場                        | `AdmissionService.java` と入場レコード/インターフェイス                                   | Signed Document 検証が成功した後の最初の入場と歴史的信頼。                                                                             |
+| 初回アドミッション              | `AdmissionService.java` とアドミッションレコード/インターフェイス                         | Signed Document 検証が成功した後の初回アドミッションと履歴信頼。                                                                       |
 
 ## 検証、署名、および Registry の証拠
 
@@ -72,7 +74,7 @@ Maven アーティファクトは
 ## フレーム、バンドル、および適合性
 
 `FrameCodec.decode` および `encode`
-はフレーム値を検証しますが、トランスポート、TLS、セッション認証、カーソル永続性、ルーティング、バックプレッシャー、または権限のある状態遷移を所有しません。
+はフレーム値を検証しますが、トランスポート、TLS、セッション認証、カーソル永続性、ルーティング、バックプレッシャー、または権威ある状態遷移を所有しません。
 
 `ProtocolBundle.verifyPackaged`、`verifyPackagedCryptographyBundle`、および
 `verifyPackagedAdmissionBundle`
@@ -84,16 +86,17 @@ Maven アーティファクトは
 は、構造スキーマ ベクトルのみを実行します。 `--root PATH`
 を指定すると、パッケージ化されたリソースの代わりに明示的なプロトコルまたはリリース バンドルが選択されます。
 
-## 初回入場
+## 初回アドミッション
 
 `AdmissionService` は、`prepareFirstAdmission`、`admitFirst`、および
 `verifyHistoricalAdmission` を公開します。
-[Java アドミッション リファレンス ](../admission/)] に進み、アダプターの正確な結果、呼び出し順序、および実行可能なパッケージの例を確認してください。
+[Java アドミッション リファレンス ](../admission/)
+に進み、アダプターの正確な結果、呼び出し順序、および実行可能なパッケージの例を確認してください。
 
 ## 明示的な可用性境界
 
-<SupportStatus status="deployment-adapter-required" /> **承認権限** -
-アプリケーションは、現在の Registry 証拠、過去の Registry
+<SupportStatus status="deployment-adapter-required" /> **Admission authority
+の境界** - アプリケーションは、現在の Registry 証拠、過去の Registry
 証拠、信頼できる受け入れコンテキスト、および認証された追加専用ログを提供します。
 
 <SupportStatus status="not-implemented" /> **Mission オーケストレーション** -
@@ -109,8 +112,8 @@ Maven アーティファクトは
 を提供しますが、トランスポート、TLS、セッション、ルーティング、またはバックプレッシャーの所有権を持つゲートウェイ
 サービスではありません。
 
-<SupportStatus status="not-implemented" /> **権限のある永続性ランタイム** -
+<SupportStatus status="not-implemented" /> **権威ある永続性ランタイム** -
 データベースベースまたは Agent
 ローカルの永続性ランタイムはエクスポートされません。
 
-これらの不在は、文書化されたサポート契約の一部です。 Python 参照ランタイム機能は、共有プロトコル名から推測してはなりません。
+これらの未実装項目は、文書化されたサポート契約の一部です。共有プロトコル名から Python リファレンスランタイムの機能を推測してはなりません。

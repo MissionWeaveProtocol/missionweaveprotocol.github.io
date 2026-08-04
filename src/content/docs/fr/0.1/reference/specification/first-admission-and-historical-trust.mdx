@@ -9,15 +9,15 @@ import NormativeClause from "../../../../../../components/NormativeClause.astro"
 
 <NormativeClause id="MWP-ADM-001" level={["MUST","MUST NOT"]}>
 
-Un **First-Admission Record** fait autorité pour ajouter des métadonnées en
-dehors du profil de vérification Signed Document. Il MUST est conforme à
-`schemas/first-admission-record.schema.json` et contient exactement ces neuf
+Un **First-Admission Record** constitue les métadonnées d’ajout faisant autorité
+en dehors du profil de vérification Signed Document. Il MUST être conforme à
+`schemas/first-admission-record.schema.json` et contenir exactement ces neuf
 champs obligatoires : `protocolVersion`, `admissionRecordId`, `organizationId`,
 `documentKind`, `signingHash`, `keyId`, `principal`, `trustedAcceptedAt` et
-`acceptedBy`. `trustedAcceptedAt` est l'instant d'acceptation approuvé attribué
-par Organization. L'enregistrement n'est pas un Signed Document, MUST NOT
-contient un `signature`, ne s'authentifie pas et MUST NOT est accepté sur la
-base de ses propres octets uniquement.
+`acceptedBy`. `trustedAcceptedAt` est l’instant d’acceptation de confiance
+attribué par la Organization. L’enregistrement n’est pas un Signed Document,
+MUST NOT contenir de `signature`, ne s’authentifie pas lui-même et MUST NOT être
+accepté sur la seule base de ses propres octets.
 
 </NormativeClause>
 
@@ -45,16 +45,17 @@ d'utiliser des majuscules `Z` ; il est comparé à un instant exact.
 
 <NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]} exclusions={["caller-provided-trust-booleans"]}>
 
-Dans un Admission Log de Organization, la clé de recherche et d'ajout logique
-est `(organizationId, signingHash)`. Le journal MUST authentifie le service
-d'acceptation, restreint les écritures aux services autorisés Organization,
-préserve l'intégrité des ajouts uniquement, prend en charge une recherche
-faisant autorité qui distingue les éléments trouvés des absences faisant
-autorité et fournit une opération atomique d'ajout ou de retour existante pour
-cette clé logique. Résultats indisponibles, indéterminés, non authentifiés, avec
-échec d'intégrité, conflits ou échec de validation MUST échec de fermeture. Un
-booléen d'approbation, d'authentification ou d'intégrité fourni par l'appelant
-MUST NOT remplace le résultat saisi par l'adaptateur.
+Dans l'Admission Log d'une Organization, la clé logique de recherche et d'ajout
+est `(organizationId, signingHash)`. Le journal MUST authentifier le service
+d'acceptation, limiter les écritures aux services autorisés par l'Organization,
+préserver l'intégrité en ajout uniquement, fournir une recherche faisant
+autorité qui distingue un enregistrement trouvé d'une constatation faisant
+autorité de son absence, et fournir une unique opération atomique d'ajout ou de
+retour de l'enregistrement existant pour cette clé logique. Les résultats
+indisponibles, indéterminés, non authentifiés, avec échec d'intégrité,
+conflictuels ou avec échec de validation MUST échouer en mode fermé. Un booléen
+de confiance, d'authentification ou d'intégrité fourni par l'appelant MUST NOT
+remplacer le résultat typé de l'adaptateur.
 
 </NormativeClause>
 
@@ -85,18 +86,18 @@ l'intervalle de validité de clé effectif.
 
 <NormativeClause id="MWP-ADM-006" level="MUST">
 
-Pour la première admission, les preuves Registry fournies à l'étape 4 MUST
-doivent être à jour et applicables à une nouvelle décision d'admission
-[comme requis ci-dessus](../signed-documents-and-trust/#mwp-sdv-010). Après une
-vérification en six étapes, l'implémentation MUST recherche
-`(organizationId, signingHash)`. Un enregistrement trouvé MUST doit être validé
-comme décrit ci-dessous. Seule une absence faisant autorité permet à
-l'implémentation d'obtenir un contexte d'acceptation fiable, de préparer un
-candidat First-Admission Record et d'appeler append-or-return-existing. La
-première admission n'est complète que lorsque l'enregistrement authentifié
-renvoyé par cette opération, qu'il soit nouvellement validé ou existant
-simultanément, a lui-même été validé. Valider uniquement les octets candidats
-n’est pas suffisant.
+Pour la première admission, les preuves Registry fournies à l’étape 4 MUST être
+actuelles et applicables à une nouvelle décision d’admission
+[comme requis ci-dessus](../signed-documents-and-trust/#mwp-sdv-010). Après la
+vérification en six étapes, l’implémentation MUST rechercher
+`(organizationId, signingHash)`. Un enregistrement trouvé MUST être validé comme
+décrit ci-dessous. Seule une absence faisant autorité permet à l’implémentation
+d’obtenir un contexte d’acceptation de confiance, de préparer un candidat
+First-Admission Record et d’appeler append-or-return-existing. La première
+admission n’est complète qu’après validation de l’enregistrement authentifié
+renvoyé par cette opération, nouvellement consigné ou déjà existant du fait
+d’une écriture concurrente. Valider uniquement les octets candidats n’est pas
+suffisant.
 
 </NormativeClause>
 
@@ -126,17 +127,17 @@ l'intervalle de la clé sélectionnée.
 
 <NormativeClause id="MWP-ADM-009" level={["MUST","MUST NOT"]}>
 
-La validation de l'enregistrement MUST analyse strictement une seule valeur
-UTF-8 JSON, applique le schéma normatif et exige une égalité exacte entre
-l'enregistrement et la preuve en six étapes pour `organizationId`,
-`documentKind`, `signingHash`, `keyId` et `principal`. Le `acceptedBy` MUST de
-l'enregistrement correspond exactement à l'identité de service authentifiée par
-le résultat Admission Log. Un enregistrement pour le même contenu non signé sous
-un autre Organization, type de document, ID de clé ou Principal MUST NOT soit
-réutilisé. L'intégrité de l'ajout uniquement et l'identité du service
-authentifié de l'enregistrement sont des assertions de déploiement du résultat
-réussi de l'adaptateur Admission Log ; le dossier ne prouve aucune de ces
-propriétés en soi.
+La validation de l’enregistrement MUST analyser strictement une seule valeur
+JSON UTF-8, appliquer le Schema normatif et exiger une égalité exacte entre
+l’enregistrement et la preuve en six étapes pour `organizationId`,
+`documentKind`, `signingHash`, `keyId` et `principal`. Le champ `acceptedBy` de
+l’enregistrement MUST être exactement égal à l’identité de service authentifiée
+par le résultat Admission Log. Un enregistrement portant sur le même contenu non
+signé sous une autre Organization, un autre type de document, un autre ID de clé
+ou un autre Principal MUST NOT être réutilisé. L’intégrité en ajout uniquement
+de l’enregistrement et l’identité de service authentifiée sont des assertions de
+déploiement établies par le résultat réussi de l’adaptateur Admission Log ;
+l’enregistrement ne prouve aucune de ces propriétés à lui seul.
 
 </NormativeClause>
 
@@ -155,50 +156,52 @@ l'expiration ou la révocation.
 
 <NormativeClause id="MWP-ADM-011" level={["MUST NOT","MAY"]}>
 
-Pour un Signé Event, que Event document MUST NOT servir comme sien
-First-Admission Record via une recherche ou un ajout ou un retour existant, et
-sa signature MUST NOT être considéré comme authentifiant le document ou son
-point d'entrée d'admission. Un signé plus tard Event MAY publier ou référencer
-un enregistrement distinct ; sa signature authentifie uniquement le Eventla
-référence.
+Pour un Event signé, ce document Event MUST NOT servir de son propre
+First-Admission Record, que ce soit par recherche ou par l’opération
+append-or-return-existing, et sa signature MUST NOT être considérée comme
+authentifiant l’enregistrement ou son ancre d’admission. Un Event signé
+ultérieur MAY publier ou référencer un enregistrement distinct ; sa signature
+authentifie uniquement la référence de l’Event.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-012" level="MUST">
 
-Chaque échec après l'achèvement de six étapes dans la recherche, la préparation
-des candidats, la validation d'intervalle de temps de confiance, l'ajout ou le
-retour d'un enregistrement existant, l'analyse d'enregistrement renvoyé, la
-validation de schéma, la liaison, la comparaison de services authentifiés ou
-Event auto-ancrage MUST carte sur le fil pour `AUTH_INVALID_SIGNATURE`. Le
-diagnostic d’audit protégé MUST conserver la scène `admission` et une raison
-stable sans révéler cette raison à l'appelant non fiable.
+Tout échec après l’achèvement des six étapes, lors de la recherche, de la
+préparation du candidat, de la validation de l’intervalle de temps de confiance,
+de l’opération append-or-return-existing, de l’analyse de l’enregistrement
+renvoyé, de la validation du Schema, de la liaison, de la comparaison du service
+authentifié ou du contrôle d’auto-ancrage d’un Event, MUST être mappé sur le
+wire vers `AUTH_INVALID_SIGNATURE`. Le diagnostic d’audit protégé MUST conserver
+l’étape `admission` et une raison stable sans révéler cette raison à l’appelant
+non fiable.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-013" level="MUST" exclusions={["command-freshness","signer-authorization"]}>
 
-Un nouveau présenté Command MUST satisfaire en outre un Organization-fraîcheur
-définie et limitée et fenêtre de décalage d'horloge pour `issuedAt`. Ce contrôle
-de fraîcheur et cette autorisation de signataire en vertu du rôle et de la
-politique applicables restent distincts de First-Admission Record validation.
+Un Command nouvellement présenté MUST également respecter une fenêtre bornée de
+fraîcheur et de décalage d’horloge, définie par Organization pour `issuedAt`.
+Cette vérification de fraîcheur et l’autorisation du signataire selon le rôle et
+la politique applicables restent distinctes de la validation du First-Admission
+Record.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-014" level="MUST" exclusions={["signer-authorization","state-machine-acceptance"]}>
 
-La vérification cryptographique authentifie le Principal lié à la clé ; il
-n'accorde pas cette autorité de protocole Principal. Avant d'accepter une
-transition d'état, le Organization ou le Group Authority MUST correspondant
-vérifie le rôle et l'autorisation du signataire à l'aide de la politique et de
-l'état faisant autorité applicables à l'heure de signature protégée et, pour la
-première admission, l'heure d'acceptation approuvée. En particulier,
-`acceptedBy` MUST être un service Group Authority ou Organization Event
-autorisé, un émetteur Agent Card MUST être autorisé pour son Organization, un
-approbateur Extension Profile et un approbateur Approval MUST satisfont à la
-stratégie Organization, et un créateur Group Snapshot MUST être un service
-d'archives autorisé. Cette vérification d'autorisation n'a lieu qu'après la
-réussite des six étapes cryptographiques et de toute validation de première
-admission ou de confiance historique applicable ; l'échec est `AUTH_FORBIDDEN`.
+La vérification cryptographique authentifie le Principal lié à la clé ; elle
+n’accorde aucune autorité de protocole à ce Principal. Avant d’accepter une
+transition d’état, la Organization ou Group Authority concernée MUST vérifier le
+rôle et l’autorisation du signataire à l’aide de la politique et de l’état
+faisant autorité applicables à l’heure de signature protégée et, pour la
+première admission, à l’heure d’acceptation de confiance. En particulier,
+`acceptedBy` MUST être un service autorisé de Group Authority ou de Organization
+Event ; un émetteur d’Agent Card MUST être autorisé pour son Organization ; un
+approbateur d’Extension Profile et un approbateur d’Approval MUST satisfaire la
+politique de Organization ; et un créateur de Group Snapshot MUST être un
+service d’archives autorisé. Cette vérification d’autorisation n’a lieu qu’après
+la réussite des six étapes cryptographiques et de toute validation applicable de
+première admission ou de confiance historique ; l’échec est `AUTH_FORBIDDEN`.
 
 </NormativeClause>

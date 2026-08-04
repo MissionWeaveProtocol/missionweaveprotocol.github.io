@@ -9,7 +9,7 @@ description:
 
 ランタイムは、明示的な信頼と状態の境界から始まります。 MissionWeaveProtocol は、Agent から Agent
 RPC
-([MWP-FND-002](../../../reference/specification/foundations/#mwp-fnd-002))] ではありません。メッセージとモデル出力では副作用を承認できません ([MWP-FND-014](../../../reference/specification/foundations/#mwp-fnd-014))。結果的なアクションは、承認された作業、現在のフェンシング、ポリシー、およびスコープ付き機能トークン ([MWP-FND-015](../../../reference/specification/foundations/#mwp-fnd-015)]) に関連付けられます。
+([MWP-FND-002](../../../reference/specification/foundations/#mwp-fnd-002)) ではありません。メッセージとモデル出力では副作用を承認できません ([MWP-FND-014](../../../reference/specification/foundations/#mwp-fnd-014))。結果的なアクションは、承認された作業、現在のフェンシング、ポリシー、およびスコープ付き機能トークン ([MWP-FND-015](../../../reference/specification/foundations/#mwp-fnd-015)) に関連付けられます。
 
 ## 論理ランタイムの責任
 
@@ -17,16 +17,16 @@ RPC
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Agent Registry         | Organization によって管理される Agent の ID、機能、エンドポイント、署名キー、および履歴を公開します。                                               |
 | Signed Document 検証者 | 正確なドキュメントバイトと信頼できる Registry 証拠から 6 段階の暗号結果を生成します。                                                               |
-| 入学サービス           | 認証された Admission Log 結果を取得し、First-Admission または Historical Trust 結果を生成します。                                                   |
+| アドミッションサービス | 認証された Admission Log 結果を取得し、First Admission または Historical Trust の結果を生成します。                                                 |
 | Group Authority        | アクターを認証し、現在の状態とポリシーを検証し、受け入れられた遷移をシリアル化し、Group イベントを追加します。                                      |
-| 認証サービス           | 受け入れられた作業、エポック、リース、ポリシー、予算にバインドされた短期間の機能トークンを発行します。                                              |
+| 認可サービス           | 受け入れられた作業、エポック、リース、ポリシー、予算にバインドされた短期間の機能トークンを発行します。                                              |
 | Agent ランタイム       | Group スコープのローカル プロジェクションを維持し、イベントを消費し、受け入れられた作業をスケジュールし、アーティファクトと Evidence を生成します。 |
 
 Group
-Authority は、Group ごとに 1 つの論理権限です。レプリケーションは内部実装の選択である可能性がありますが、コンセンサスとレプリカ トポロジはプロトコル セマンティクスではありません ([MWP-FND-012](../../../reference/specification/foundations/#mwp-fnd-012)])。
+Authority は、Group ごとに 1 つの論理権限です。レプリケーションは内部実装の選択である可能性がありますが、コンセンサスとレプリカ トポロジはプロトコル セマンティクスではありません ([MWP-FND-012](../../../reference/specification/foundations/#mwp-fnd-012))。
 
 Organization によって発行された Agent
-Card は、安定した ID と機能のルートです。自己宣言された機能では十分ではありません ([MWP-IDN-001](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-001))。また、すべての実装では、会話/非権限、フェンシング、追加のみの履歴、少なくとも 1 回の配信、Mission 分離、予算の絞り込みなど、完全な不変セットを保存する必要があります ([MWP-FND-013](../../../reference/specification/foundations/#mwp-fnd-013)])。 Mission のコンテンツ、認証情報、中間状態、および Agent メモリは、開示が明示的かつ許可されていない限り、Group のスコープのままになります ([MWP-FND-019](../../../reference/specification/foundations/#mwp-fnd-019)])。
+Card は、安定した ID と機能のルートです。自己宣言された機能では十分ではありません ([MWP-IDN-001](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-001))。また、すべての実装では、会話/非権限、フェンシング、追加のみの履歴、少なくとも 1 回の配信、Mission 分離、予算の絞り込みなど、完全な不変セットを保存する必要があります ([MWP-FND-013](../../../reference/specification/foundations/#mwp-fnd-013))。 Mission のコンテンツ、認証情報、中間状態、および Agent メモリは、開示が明示的かつ許可されていない限り、Group のスコープのままになります ([MWP-FND-019](../../../reference/specification/foundations/#mwp-fnd-019))。
 
 ## ブートストラップ順序
 
@@ -35,21 +35,21 @@ Card は、安定した ID と機能のルートです。自己宣言された�
 2. **スキーマとスカラーバリデータをロードします。**
    登録ドラフト 2020-12 形式プロトコル トラフィックをデコードする前のアサーション、厳密な JSON 処理、タイムスタンプ、URI、base64url、JCS、および Ed25519 の動作。
 3. **信頼の前提条件を確認します。**
-   ランタイムが許可しない限り、準備を拒否します。該当する現在または過去の Registry 証拠 ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010))] および認証された Admission
-   Log 結果 ([MWP-ADM-003](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003))] を確立します。証拠が入手できない、または不確定である場合は、正式な欠席とは言えません。
+   ランタイムが許可しない限り、準備を拒否します。該当する現在または過去の Registry 証拠 ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)) および認証された Admission
+   Log 結果 ([MWP-ADM-003](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)) を確立します。証拠が入手できない、または不確定である場合は、正式な欠席とは言えません。
 4. **永続的な状態を開きます。**
-   権限のあるサービス状態と Agent-local を回復します。この 2 つを混同することなく投影できます。ローカル キューまたはカーソルの損失によって、Mission の真実 ([MWP-FND-023](../../../reference/specification/foundations/#mwp-fnd-023)]) が変更されてはなりません。
+   権威あるサービス状態と Agent-local を回復します。この 2 つを混同することなく投影できます。ローカル キューまたはカーソルの損失によって、Mission の真実 ([MWP-FND-023](../../../reference/specification/foundations/#mwp-fnd-023)) が変更されてはなりません。
 5. **ランタイム ID を確立します。**
-   フレッシュチャレンジの HELLO 交換を完了します。Agent コマンド ([MWP-IDN-007](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-007))] を発行する前に、新しい Session
+   フレッシュチャレンジの HELLO 交換を完了します。Agent コマンド ([MWP-IDN-007](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-007)) を発行する前に、新しい Session
    Epoch を取得します。後の Session Epoch は、その Agent ID
-   ([MWP-IDN-008](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-008))] の以前のランタイムごとにフェンスします。 永続コマンドと Artifact マニフェストは、認証されたセッションでも個別に署名されたままになります ([MWP-IDN-009](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-009)])。
+   ([MWP-IDN-008](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-008)) の以前のランタイムごとにフェンスします。 永続コマンドと Artifact マニフェストは、認証されたセッションでも個別に署名されたままになります ([MWP-IDN-009](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-009))。
 6. **サブスクライブして再実行します。**
    承認された各 Group を永続的な状態から再開します。連続したカーソル、Group
    ID によってルーティングし、ライブ処理の前にシーケンスのギャップを閉じます。
 7. **状態遷移を有効にします。** Group
-   Authority は、その後にのみ Command を受け入れます。アクターを認証し、スキーマ、エポック、リビジョン、ロール、委任、予算、ポリシー、リースをアトミックに検証します ([MWP-EVT-004](../../../reference/specification/commands-events-and-ordering/#mwp-evt-004)])。
+   Authority は、その後にのみ Command を受け入れます。アクターを認証し、スキーマ、エポック、リビジョン、ロール、委任、予算、ポリシー、リースをアトミックに検証します ([MWP-EVT-004](../../../reference/specification/commands-events-and-ordering/#mwp-evt-004))。
 8. **副作用を最後に有効にします。**
-   最小権限の機能トークンのみを発行します。WorkItem の受諾と必要な承認の後、バインディングは現在の実行リース ([MWP-AUT-001](../../../reference/specification/authorization-and-budgets/#mwp-aut-001))] よりも広範囲または長寿命ではありません。
+   最小権限の機能トークンのみを発行します。WorkItem の受諾と必要な承認の後、バインディングは現在の実行リース ([MWP-AUT-001](../../../reference/specification/authorization-and-budgets/#mwp-aut-001)) よりも広範囲または長寿命ではありません。
 
 ## フェールクローズ起動
 
@@ -63,11 +63,12 @@ Authority、トランスポートを組み合わせることができます。�
 
 1 つのサービスがそれらの複数を実装する場合でも、Organization
 Registry、現在および過去のキー解決、Admission
-Log アクセス、および信頼できる受け入れコンテキストに対して個別に型指定されたアダプターを初期化します。これにより、トランスポート エラー、キャッシュ ミス、権限のある不在が異なる結果として保持されます。
+Log アクセス、および信頼できる受け入れコンテキストに対して個別の型付きアダプターを初期化します。これにより、トランスポートエラー、キャッシュミス、権威ある不存在判定が異なる結果として維持されます。
 
 すべての失敗を単一の `healthy`
 ブール値にまとめるのではなく、依存関係ごとに 1 つの明示的な準備状態を保持します。これにより、読み取り専用の回復ランタイムとコマンドの受け入れが許可された回復ランタイムを区別できるようになります。
 
 :::
 
-コーデックまたは生成された言語モデルを実装する前に、[プロトコル タイプ](../protocol-types/)] に進みます。
+コーデックまたは生成された言語モデルを実装する前に、[プロトコル タイプ](../protocol-types/)
+に進みます。

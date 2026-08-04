@@ -13,7 +13,7 @@ Esta página cubre la superficie C++ completa representada por el
 [inventario API exacto](../api/). El comportamiento del protocolo compartido
 permanece definido por la
 [referencia de tiempo de ejecución ](../../../runtime/architecture-and-bootstrap/)
-y las [cláusulas de referencia ](../../../../reference/specification/)] locales.
+y las [cláusulas de referencia ](../../../../reference/specification/) locales.
 Las declaraciones públicas están en el espacio de nombres
 `missionweaveprotocol`; Enlace de destinos CMake descendentes
 `MissionWeaveProtocol::sdk`.
@@ -80,7 +80,7 @@ Registry y Principal resueltas.
 
 `FrameCodec::decode`, `encode` y `validate_document` validan los valores del
 marco; no poseen transporte, TLS, autenticación de sesión, persistencia del
-cursor, enrutamiento, contrapresión ni transiciones de estado autorizadas.
+cursor, enrutamiento, contrapresión ni transiciones de estado autoritativas.
 
 `ProtocolBundle::verify` comprueba el paquete estructural de 22 esquemas y 59
 archivos. `verify_cryptography` verifica 98 artefactos, 22 casos y 62
@@ -119,8 +119,8 @@ Worker.
 alojada**: la biblioteca proporciona `FrameCodec`, no un servicio de puerta de
 enlace con transporte, TLS, sesión, enrutamiento o propiedad de contrapresión.
 
-<SupportStatus status="not-implemented" /> **Tiempo de ejecución de persistencia
-autorizado**: no se exporta ningún tiempo de ejecución de persistencia local
+<SupportStatus status="not-implemented" /> **Runtime de persistencia
+autoritativa**: no se exporta ningún tiempo de ejecución de persistencia local
 respaldado por una base de datos o Agent.
 
 Estas ausencias son parte del contrato de soporte documentado; Las capacidades

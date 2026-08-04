@@ -100,7 +100,8 @@ MUST 等于身份。长度检查、小阶黑名单或成功导入通用加密后
 <NormativeClause id="MWP-SDV-007" level="MUST">
 
 Registry
-MUST 在接受任何绑定之前在 Organization 中强制执行这些不变量，并且 MUST 保留足够的索引和历史记录来建立密钥 ID 唯一性以及不存在公钥或元组别名。当 Registry 无法为解析的绑定建立这些不变量时，关键解析 MUST 无法关闭。
+MUST 在接受任何绑定之前在 Organization 中强制执行这些不变量，并且 MUST 保留足够的索引和历史记录来建立密钥 ID 唯一性以及不存在公钥或元组别名。当 Registry 无法为解析的绑定建立这些不变量时，key
+resolution MUST 失败关闭。
 
 </NormativeClause>
 

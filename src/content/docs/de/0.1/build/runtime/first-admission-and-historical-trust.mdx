@@ -38,10 +38,11 @@ Stellen Sie jede Grenze mit einer typisierten Schnittstelle dar:
 :::
 
 Der logische Schlüssel Admission Log ist `(organizationId, signingHash)`. Es
-muss den akzeptierenden Dienst authentifizieren, zwischen gefundenem und
-autorisierendem Fehlen unterscheiden, die Nur-Anhänge-Integrität wahren und bei
-nicht verfügbaren, unbestimmten, nicht authentifizierten, integritätsbedingten,
-widersprüchlichen oder fehlgeschlagenen Festschreibungsergebnissen fehlschlagen
+muss den akzeptierenden Dienst authentifizieren, zwischen einem gefundenen
+Datensatz und einer maßgeblichen Nichtvorhandenseinsfeststellung unterscheiden,
+die Nur-Anhänge-Integrität wahren und bei nicht verfügbaren, unbestimmten, nicht
+authentifizierten, integritätsbedingten, widersprüchlichen oder fehlgeschlagenen
+Festschreibungsergebnissen zu einer geschlossenen Ablehnung führen
 ([MWP-ADM-003](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).
 Ein vom Anrufer bereitgestellter Trust-Boolescher Wert ist keines dieser
 Ergebnisse.
@@ -130,8 +131,9 @@ und die zuständige Behörde validiert separat die Rolle und Richtlinie des
 Unterzeichners zu den geschützten und vertrauenswürdigen Akzeptanzzeiten
 ([MWP-ADM-014](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)).
 
-Bei jedem postkryptografischen Zulassungsfehler bleibt die geschützte Phase
-erhalten `admission` und Karten auf dem Draht zu `AUTH_INVALID_SIGNATURE`
+Jeder postkryptografische Zulassungsfehler wird auf der Wire-Ebene
+`AUTH_INVALID_SIGNATURE` zugeordnet; die geschützte Stufe `admission` bleibt
+erhalten
 ([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).
 
 :::note[Implementation note]

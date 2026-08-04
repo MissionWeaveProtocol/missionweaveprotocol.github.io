@@ -1,11 +1,11 @@
 ---
-title: 首次入场和历史信托
+title: 首次准入与历史信任
 description:
   运行时如何在加密之上分层验证 Admission Log
   结果、原子追加、返回记录验证和历史重播。
 ---
 
-# 首次入场和历史信托
+# 首次准入与历史信任
 
 准入是经过六阶段密码验证后的一个单独的语义层。它不会更改签名字节、签名哈希、密钥解析或签名结果 ([MWP-ADM-005](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005))。其先决条件是完整的六阶段结果 ([MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)) 以及与准入无关的签名哈希 ([MWP-SDV-017](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-017)) 和正确的当前或历史 Registry 证据合约（[MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)）。
 
@@ -63,7 +63,7 @@ Schema；3. 比较 `organizationId`、`documentKind`、`signingHash`、`keyId`�
 与六阶段结果完全一致；4. 将`acceptedBy`与认证的服务身份进行准确比较Admission
 Log适配器；和5. 独立检查 `trustedAcceptedAt` 与所选密钥的保留情况半开有效区间。
 
-确切的绑定规则为[MWP-ADM-009](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)，可信时间间隔规则为[MWP-ADM-010](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)]。仅验证候选字节是不够的。已签名的 Event 不能充当其自己的 First-Admission
+确切的绑定规则为[MWP-ADM-009](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)，可信时间间隔规则为[MWP-ADM-010](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)。仅验证候选字节是不够的。已签名的 Event 不能充当其自己的 First-Admission
 Record；稍后的 Event 只能发布或引用单独的记录 ([MWP-ADM-011](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-011))。
 
 ## 历史回放

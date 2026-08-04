@@ -63,11 +63,11 @@ Leasingregeln von Worker.
 
 <NormativeClause id="MWP-MSN-004" level="MAY">
 
-Es muss genau eine Coordinator Lease-Epoche MAY aktuell sein. Der Mietvertrag
-identifiziert die Epoche Agent, Coordinator, Session Epoch, Ablauf und
-Verlängerungsrichtlinie. Nur die aktuelle Coordinator-Epoche darf WorkItems
-autorisieren oder zuweisen, Worker-Ergebnisse akzeptieren, Mission übermitteln
-oder Unteraufgaben erstellen.
+Zu jedem Zeitpunkt MAY höchstens eine Coordinator Lease Epoch aktuell sein. Der
+Lease identifiziert den Agent, die Coordinator Epoch, die Session Epoch, den
+Ablauf und die Verlängerungsrichtlinie. Nur die aktuelle Coordinator Epoch darf
+WorkItems autorisieren oder zuweisen, Worker-Ergebnisse akzeptieren, Mission
+übermitteln oder Unteraufgaben erstellen.
 
 </NormativeClause>
 
@@ -151,7 +151,7 @@ Worker Membership SHOULD Sei gerade noch rechtzeitig:
 
 1. die Coordinator wählt einen Kandidaten aus und bewilligt eine vorläufige
    Genehmigung mit begrenztem Umfang Membership;
-2. die Worker erhält ein auslaufendes Angebot und unterschreibt es Context
+2. der Worker erhält ein auslaufendes Angebot und ein signiertes Context
    Package;
 3. Die Annahme des Angebots wird aktiviert Membership und schafft Eigentum; und
 4. Membership endet, wenn die Worker hat keine WorkItems oder
@@ -345,9 +345,9 @@ das untergeordnete Element als unverzichtbar und ohne Alternative deklariert.
 
 Der übergeordnete Coordinator empfängt untergeordnete Statusänderungen,
 Fortschrittszusammenfassungen, überarbeitete Schätzungen, Blocker,
-Budget-/Richtlinieneskalationen und Endergebnisse. Es ist MUST NOT erforderlich,
-jedes untergeordnete Element zu erfassen, Message, behält jedoch die
-autorisierte On-Demand-Prüfung bei. Die Wurzel MissionOwner MUST kann den
-gesamten Mission-Baum untersuchen.
+Budget-/Richtlinieneskalationen und Endergebnisse. Der übergeordnete Coordinator
+MUST NOT verpflichtet sein, jede untergeordnete Message aufzunehmen, behält
+jedoch die autorisierte On-Demand-Prüfung bei. Der MissionOwner der Wurzel MUST
+den gesamten Mission-Baum untersuchen.
 
 </NormativeClause>

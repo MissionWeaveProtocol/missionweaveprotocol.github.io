@@ -37,49 +37,54 @@ Epoch、所有権エポック、リース、予算、 Approval、Artifact 来歴
 <NormativeClause id="MWP-EXT-004" level={["MUST","SHOULD"]}>
 
 エラー MUST は `schemas/error.schema.json`
-に準拠します。エラー応答 MUST は機械可読であり、MUST は再試行が安全かどうかを示し、SHOULD は無許可のデータを公開することなく関連するフレームまたはアクション ID を識別します。コアコードは次のとおりです。
+に準拠します。エラー応答 MUST は機械可読で、再試行が安全かどうかを MUST 示し、未認可データを開示せずに関連する frame または Action
+ID を SHOULD 識別します。コアエラーコードは次のとおりです。
 
-| コード                       | 意味                                                                         |
-| ---------------------------- | ---------------------------------------------------------------------------- |
-| `UNSUPPORTED_VERSION`        | 互換性のあるプロトコル バージョンがありません                                |
-| `AUTH_REQUIRED`              | 認証がありません                                                             |
-| `AUTH_INVALID_SIGNATURE`     | 署名付き文書の署名、鍵の有効性、入場証明、または鮮度チェックに失敗しました。 |
-| `AUTH_STALE_SESSION`         | Session Epoch はフェンスで囲まれています                                     |
-| `AUTH_STALE_COORDINATOR`     | Coordinator エポックはフェンスで囲まれています                               |
-| `AUTH_FORBIDDEN`             | アクターには許可またはポリシーの資格がありません。                           |
-| `GROUP_NOT_FOUND`            | Group が存在しないか、意図的に非公開です。                                   |
-| `MEMBERSHIP_REQUIRED`        | 該当なし Membership                                                          |
-| `MEMBERSHIP_STALE`           | Membership エポックはフェンスで囲まれています                                |
-| `SCHEMA_VALIDATION_FAILED`   | オブジェクトがそのスキーマに準拠していません。                               |
-| `INVALID_COMMAND`            | Command は整形式ですが、意味的には無効です。                                 |
-| `INVALID_STATE_TRANSITION`   | 集約状態は遷移を禁止します                                                   |
-| `REVISION_CONFLICT`          | 予期されたリビジョンが一致しません                                           |
-| `ACTION_ID_COLLISION`        | 安定したアクション ID が別のコンテンツで再利用されました                     |
-| `UNKNOWN_CRITICAL_EXTENSION` | 必要な拡張子を解釈できません。                                               |
-| `WORK_CONTRACT_INCOMPLETE`   | 必要な作業契約情報が欠落しています                                           |
-| `WORK_OFFER_EXPIRED`         | オファーはもう有効ではありません                                             |
-| `WORK_ALREADY_OWNED`         | 別の候補者が独占的所有権を獲得                                               |
-| `WORK_LEASE_EXPIRED`         | 必要なリースはもう有効ではありません                                         |
-| `WORK_STALE_OWNERSHIP`       | 所有権エポックは囲われています                                               |
-| `APPROVAL_REQUIRED`          | ポリシーゲートが満たされていません                                           |
-| `BUDGET_EXCEEDED`            | ハード Mission または WorkItem 予算は、 疲れ果てた                           |
-| `RATE_LIMITED`               | ポリシー レートまたは再帰のしきい値に達しました                              |
-| `BACKPRESSURE`               | 受信機は現在、これ以上のトラフィックを受け入れることができません。           |
-| `CURSOR_TOO_OLD`             | オンライン再生には要求された位置が含まれなくなりました                       |
-| `PROTOCOL_VIOLATION`         | ピアがフレーミングまたはコアの不変条件に違反しました。                       |
-| `INTERNAL_ERROR`             | 権限は移行を受け入れずに失敗しました                                         |
+| コード                       | 意味                                                                               |
+| ---------------------------- | ---------------------------------------------------------------------------------- |
+| `UNSUPPORTED_VERSION`        | 互換性のあるプロトコル バージョンがありません                                      |
+| `AUTH_REQUIRED`              | 認証がありません                                                                   |
+| `AUTH_INVALID_SIGNATURE`     | Signed Document の署名、key validity、Admission proof、または freshness 検査が失敗 |
+| `AUTH_STALE_SESSION`         | Session Epoch はフェンスで囲まれています                                           |
+| `AUTH_STALE_COORDINATOR`     | Coordinator エポックはフェンスで囲まれています                                     |
+| `AUTH_FORBIDDEN`             | アクターには許可またはポリシーの資格がありません。                                 |
+| `GROUP_NOT_FOUND`            | Group が存在しないか、意図的に非公開です。                                         |
+| `MEMBERSHIP_REQUIRED`        | 該当なし Membership                                                                |
+| `MEMBERSHIP_STALE`           | Membership エポックはフェンスで囲まれています                                      |
+| `SCHEMA_VALIDATION_FAILED`   | オブジェクトがそのスキーマに準拠していません。                                     |
+| `INVALID_COMMAND`            | Command は整形式ですが、意味的には無効です。                                       |
+| `INVALID_STATE_TRANSITION`   | 集約状態は遷移を禁止します                                                         |
+| `REVISION_CONFLICT`          | 予期されたリビジョンが一致しません                                                 |
+| `ACTION_ID_COLLISION`        | 安定したアクション ID が別のコンテンツで再利用されました                           |
+| `UNKNOWN_CRITICAL_EXTENSION` | 必要な拡張子を解釈できません。                                                     |
+| `WORK_CONTRACT_INCOMPLETE`   | 必要な作業契約情報が欠落しています                                                 |
+| `WORK_OFFER_EXPIRED`         | オファーはもう有効ではありません                                                   |
+| `WORK_ALREADY_OWNED`         | 別の候補者が独占的所有権を獲得                                                     |
+| `WORK_LEASE_EXPIRED`         | 必要なリースはもう有効ではありません                                               |
+| `WORK_STALE_OWNERSHIP`       | 所有権エポックは囲われています                                                     |
+| `APPROVAL_REQUIRED`          | ポリシーゲートが満たされていません                                                 |
+| `BUDGET_EXCEEDED`            | Mission または WorkItem のハード budget が枯渇                                     |
+| `RATE_LIMITED`               | ポリシー レートまたは再帰のしきい値に達しました                                    |
+| `BACKPRESSURE`               | 受信機は現在、これ以上のトラフィックを受け入れることができません。                 |
+| `CURSOR_TOO_OLD`             | オンライン再生には要求された位置が含まれなくなりました                             |
+| `PROTOCOL_VIOLATION`         | ピアがフレーミングまたはコアの不変条件に違反しました。                             |
+| `INTERNAL_ERROR`             | 権限は移行を受け入れずに失敗しました                                               |
 
 </NormativeClause>
 
 <NormativeClause id="MWP-EXT-005" level={["MUST","MUST NOT","MAY"]}>
 
-変更しない Command 再試行 MUST では、元のアクション ID と署名されたコンテンツが保持されます。
-`AUTH_INVALID_SIGNATURE` MUST
-NOT は、原因が修正される前に変更せずに再試行してください。署名エンベロープ、権限のあるキー、またはアドミッション状態のローカル修正後、送信者 MAY は、すべての保護されたコンテンツが有効なままである間のみ、元のアクション ID を再試行します。 Command の鮮度が期限切れになっている場合、送信者 MUST は代わりに、新しいアクション ID、現在の
-`issuedAt`、一致する
-`signature.createdAt`、および新しい署名を使用して新しい Command を作成します。
-`ACTION_ID_COLLISION`
-には、新しいアクション ID を持つ新しい Command が必要です。古いフェンシング エラーには、現在の権限のあるエポックと、新しいアクション ID と署名を持つ新しい Command が必要です。
+変更されていない Command の再試行は、元の Action
+ID と署名内容を保持しなければなりません（MUST）。`AUTH_INVALID_SIGNATURE`
+は、原因が修正される前に同じ内容で再試行してはなりません（MUST
+NOT）。署名エンベロープ、権威ある key、または Admission 状態をローカルで修正した後、保護された内容がすべて有効な間に限り、送信者は元の Action
+ID で再試行できます（MAY）。Command
+freshness が期限切れの場合、送信者は代わりに、新しい Action ID、現在の
+`issuedAt`、対応する
+`signature.createdAt`、および新しい署名を持つ新しい Command を作成しなければなりません（MUST）。`ACTION_ID_COLLISION`
+には、新しい Action ID を持つ新しい Command が必要です。古い fencing
+error では、現在の権威ある Epoch と、新しい Action
+ID および署名を持つ新しい Command が必要です。
 
 </NormativeClause>
 
@@ -161,7 +166,7 @@ MUST は、引用された付与が存在すること、期限切れおよび消
   のすべての評価に合格し、9 つすべてをカバーします Signed
   Document 検証プロファイル内のスキーマ プロファイルとその正規署名バイト、ハッシュ、キー バインディング、および署名。
 - 独立した `admission/manifest.json`
-  の 30 件の評価すべてに合格します。行動バンドル。5 件の症例にわたる最初の入院と過去の再現をカバー。
+  の 30 件の評価すべてに合格します。このアドミッションバンドルは、5 件のケースにわたる初回アドミッションと履歴リプレイを対象とします。
 - すべての Mission および WorkItem 遷移を強制します。
 - リプレイ、重複排除、オプティミスティック同時実行性、およびフェンシングを示します。
 - 認可と Message/non-authority の不変式を示します。そして
@@ -191,17 +196,15 @@ Record および Registry フィクスチャ スキーマを識別し、`manifes
 <NormativeClause id="MWP-EXT-013" level="MUST" exclusions={["command-freshness","signer-authorization","portable-log-proof-verification","state-machine-acceptance"]}>
 
 `missionweaveprotocol-conformance`
-またはリポジトリのスキーマ ベクターを渡すと、スキーマとベクターの適合性のみが示されます。これはプロトコルに完全に準拠していることの必要な証拠ではありますが、十分ではありません。
-`cryptography/manifest.json`
-を渡すことは、[セクション 6.4](../signed-documents-and-trust/#mwp-sdv-015)
-の 6 つの暗号検証段階のみを示しています。 `admission/manifest.json`
-を渡すと、宣言された First-Admission
-Record と履歴リプレイ評価がさらに実証されますが、Command の鮮度およびクロック スキューの強制、該当するロールとポリシーに基づく署名者の承認、またはポータブルに展開された Admission
-Log 証明形式は実証されません。実装 MUST は、これらの要件を個別に証明します。参照実装 MUST は、自動化された肯定的および否定的な証拠が[上記](../commands-events-and-ordering/#core-command-kinds)のすべてのコア Command および Event の種類と、
-[セクション 7.1](../missions-groups-and-membership/#mission-transition-table)
-および [10.2](../work-scheduling-and-recovery/#workitem-transition-table)
-のすべての遷移行をカバーする場合にのみ、完全な MissionWeaveProtocol
-0.1 準拠を主張します。それ以外の場合、MUST は、より狭い検証済みのサブセットを明示的に報告します。
+またはリポジトリの Schema ベクターに合格しても、Schema とベクターへの適合性だけが証明されます。これは完全なプロトコル適合性のために必要ですが、十分な証拠ではありません。
+`cryptography/manifest.json` への合格は、
+[セクション 6.4](../signed-documents-and-trust/#mwp-sdv-015)の 6 つの暗号検証段階だけを証明します。`admission/manifest.json`
+への合格は、宣言された First-Admission
+Record と履歴リプレイ評価も証明しますが、Command の鮮度とクロックスキューの強制、適用されるロールとポリシーに基づく署名者の認可、またはデプロイ済み Admission
+Log のポータブルな証明形式を証明するものではありません。実装は、これらの要件を個別に証明しなければなりません（MUST）。参照実装は、自動化された肯定的および否定的な証拠が
+[上記](../commands-events-and-ordering/#core-command-kinds)のすべてのコア Command と Event の種類、および[セクション 7.1](../missions-groups-and-membership/#mission-transition-table)
+と[10.2](../work-scheduling-and-recovery/#workitem-transition-table)のすべての遷移行を網羅する場合に限り、MissionWeaveProtocol
+0.1 への完全適合を主張しなければなりません（MUST）。それ以外の場合は、より狭い検証済みサブセットを明示的に報告しなければなりません（MUST）。
 
 </NormativeClause>
 

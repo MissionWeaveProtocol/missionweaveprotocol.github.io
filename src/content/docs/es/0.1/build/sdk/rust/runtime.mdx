@@ -1,7 +1,7 @@
 ---
 title: Referencia de tiempo de ejecución Rust
 description: >-
-  La superficie completa de la raíz de la caja y los límites de tiempo de
+  La superficie completa de la raíz del crate y los límites de tiempo de
   ejecución del Rust SDK fijado exactamente.
 ---
 
@@ -9,33 +9,33 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 
 # Rust referencia de tiempo de ejecución
 
-Esta página cubre la superficie completa de la raíz de la caja representada por
+Esta página cubre la superficie completa de la raíz del crate representada por
 el [exacto API inventario](../api/). El comportamiento del protocolo compartido
 permanece definido por la
 [referencia de tiempo de ejecución ](../../../runtime/architecture-and-bootstrap/)
-y las [cláusulas de referencia ](../../../../reference/specification/)] locales.
+y las [cláusulas de referencia ](../../../../reference/specification/) locales.
 Los nombres de los módulos a continuación identifican el origen de la
 implementación; Las personas que llaman importan las reexportaciones públicas de
 `missionweaveprotocol` porque los módulos en sí son privados.
 
-<SupportStatus status="implemented" /> se aplica a las API de raíz de caja y al
-comportamiento en proceso que se enumeran a continuación.
+<SupportStatus status="implemented" /> se aplica a las API de raíz del crate y
+al comportamiento en proceso que se enumeran a continuación.
 
 <SupportStatus status="deployment-adapter-required" /> se aplica a la autoridad
 Registry actual, al contexto de admisión confiable, al acceso a registros
 autenticados y a otros servicios de implementación.
 
-<SupportStatus status="not-implemented" /> significa que la caja fijada
+<SupportStatus status="not-implemented" /> significa que el crate fijado
 exactamente no tiene un tiempo de ejecución correspondiente.
 
-## Modelo de caja y ejecución
+## Modelo del crate y ejecución
 
-La caja es la versión `0.1.0`, usa la edición 2024, declara Rust 1.85 como su
-cadena de herramientas mínima admitida y expone un binario:
+El crate tiene la versión `0.1.0`, usa la edición 2024, declara Rust 1.85 como
+su cadena de herramientas mínima admitida y expone un binario:
 `missionweaveprotocol-conformance`. `src/lib.rs` es la única raíz de importación
 pública; Las rutas de los módulos internos no son API compatibles.
 
-La instalación de la caja no inicia ningún servicio, no abre ningún socket, no
+La instalación del crate no inicia ningún servicio, no abre ningún socket, no
 persiste ningún estado y no otorga ninguna autoridad. Los fragmentos de bytes
 devueltos y los objetos de evidencia siguen siendo valores de proceso local a
 menos que la aplicación los almacene o transmita deliberadamente.
@@ -81,7 +81,7 @@ evidencia Registry resuelta.
 
 `FrameCodec::decode`, `encode` y `validate_document` validan los valores del
 marco; no poseen transporte, autenticación de sesión, persistencia del cursor,
-contrapresión, enrutamiento ni transiciones de estado autorizadas.
+contrapresión, enrutamiento ni transiciones de estado autoritativas.
 
 `ProtocolBundle::verify` comprueba el paquete estructural de 22 esquemas y 59
 archivos. `verify_cryptography` verifica 98 artefactos, 22 casos y 62
@@ -115,11 +115,11 @@ ninguna cola, programador, ejecutor de concesión ni bucle de recuperación
 Worker.
 
 <SupportStatus status="not-implemented" /> **Servicio de puerta de enlace
-alojado**: la caja proporciona un códec de trama, no un servicio de puerta de
+alojado**: el crate proporciona un códec de trama, no un servicio de puerta de
 enlace con transporte, TLS, sesión, enrutamiento o propiedad de contrapresión.
 
-<SupportStatus status="not-implemented" /> **Tiempo de ejecución de persistencia
-autorizado**: no se exporta ningún tiempo de ejecución de persistencia local
+<SupportStatus status="not-implemented" /> **Runtime de persistencia
+autoritativa**: no se exporta ningún tiempo de ejecución de persistencia local
 respaldado por una base de datos o Agent.
 
 Estas ausencias son parte del contrato de soporte documentado; Las capacidades

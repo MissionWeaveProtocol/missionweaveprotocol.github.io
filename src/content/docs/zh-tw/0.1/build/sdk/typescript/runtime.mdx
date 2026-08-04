@@ -8,13 +8,13 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 # TypeScript 運行時參考
 
 此頁面涵蓋了由[確切的 API inventory](../api/)
-表示的完整 TypeScript 表面。共享協定行為仍由本地[運行時參考](../../../runtime/architecture-and-bootstrap/)和[參考子句](../../../../reference/specification/)]定義。下面的名稱定義了固定包如何公開該行為。
+表示的完整 TypeScript 表面。共享協定行為仍由本地[運行時參考](../../../runtime/architecture-and-bootstrap/)和[參考子句](../../../../reference/specification/)定義。下面的名稱定義了固定包如何公開該行為。
 
 <SupportStatus status="implemented" /> 適用於下列所列的包根 API
 和進程內編解碼器。
 
 <SupportStatus status="deployment-adapter-required" /> 適用於目前 Registry
-權限、可信任存取情境、經過驗證的原子日誌存取以及部署提供的其他外部服務。
+權威性、可信任准入情境、經過驗證的原子日誌存取以及部署提供的其他外部服務。
 
 <SupportStatus status="not-implemented" />
 表示精確固定的包沒有對應的公共運行時。
@@ -89,4 +89,4 @@ Log 尋找和追加是異步的。繼續使用
 <SupportStatus status="not-implemented" /> **權威持久性運行時** —
 不導出資料庫支援的或 Agent 本地持久性運行時。
 
-這些缺席是受支援的運行時合約的一部分。應用程式不得從共享協定名稱推斷 Python 引用運行時功能。
+這些未實作項目是受支援執行階段合約的一部分。應用程式不得從共享協定名稱推斷 Python 參考執行階段能力。

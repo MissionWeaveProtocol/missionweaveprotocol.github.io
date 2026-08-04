@@ -9,15 +9,16 @@ import NormativeClause from "../../../../../../components/NormativeClause.astro"
 
 <NormativeClause id="MWP-ADM-001" level={["MUST","MUST NOT"]}>
 
-A **First-Admission Record** ist maßgeblich für das Anhängen von Metadaten
-außerhalb von Signed Document Verifizierungsprofil. Es MUST entsprechen
-`schemas/first-admission-record.schema.json` und enthalten genau diese neun
-Pflichtfelder: `protocolVersion`, `admissionRecordId`, `organizationId`,
-`documentKind`, `signingHash`, `keyId`, `principal`, `trustedAcceptedAt`, Und
-`acceptedBy`. `trustedAcceptedAt` ist das Organization-zugewiesener
-vertrauenswürdiger Akzeptanzzeitpunkt. Der Datensatz ist kein Signed Document,
-MUST NOT enthalten a `signature`, authentifiziert sich nicht und MUST NOT allein
-aufgrund seiner eigenen Bytes akzeptiert werden.
+Ein **First-Admission Record** ist ein maßgeblicher Metadatensatz des
+Anfügevorgangs außerhalb des Signed Document Verification Profile. Er MUST
+`schemas/first-admission-record.schema.json` entsprechen und genau diese neun
+Pflichtfelder enthalten: `protocolVersion`, `admissionRecordId`,
+`organizationId`, `documentKind`, `signingHash`, `keyId`, `principal`,
+`trustedAcceptedAt` und `acceptedBy`. `trustedAcceptedAt` ist der von der
+Organization zugewiesene vertrauenswürdige Annahmezeitpunkt. Der Datensatz ist
+kein Signed Document, MUST NOT eine `signature` enthalten, authentifiziert sich
+nicht selbst und MUST NOT allein auf Grundlage seiner eigenen Bytes akzeptiert
+werden.
 
 </NormativeClause>
 
@@ -46,18 +47,18 @@ verglichen.
 
 <NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]} exclusions={["caller-provided-trust-booleans"]}>
 
-Innerhalb eines Organization Admission Log ist der logische Such- und
-Anhängeschlüssel `(organizationId, signingHash)`. Das Protokoll MUST
-authentifiziert den akzeptierenden Dienst, beschränkt Schreibvorgänge auf von
-Organization autorisierte Dienste, bewahrt die Nur-Anhänge-Integrität,
-unterstützt eine autorisierende Suche, die zwischen Gefundenem und
-autorisierendem Nichtvorhandensein unterscheidet, und stellt einen atomaren
-Vorgang zum Anhängen oder Zurückgeben eines vorhandenen Schlüssels für diesen
-logischen Schlüssel bereit. Nicht verfügbare, unbestimmte, nicht
-authentifizierte, Integritätsfehler, Konflikte oder fehlgeschlagene
-Commit-Ergebnisse MUST fehlgeschlagen. Ein vom Aufrufer bereitgestellter
-Vertrauens-, Authentifizierungs- oder Integritätsboolean MUST NOT ersetzt das
-typisierte Ergebnis des Adapters.
+Im Admission Log einer Organization ist der logische Such- und Anhängeschlüssel
+`(organizationId, signingHash)`. Das Log MUST den akzeptierenden Dienst
+authentifizieren, Schreibvorgänge auf von der Organization autorisierte Dienste
+beschränken, die Nur-Anhänge-Integrität bewahren, eine maßgebliche Suche
+bereitstellen, die einen gefundenen Datensatz von einer maßgeblichen
+Nichtvorhandenseinsfeststellung unterscheidet, und für diesen logischen
+Schlüssel genau einen atomaren Append-or-return-existing-Vorgang bereitstellen.
+Nicht verfügbare, unbestimmte, nicht authentifizierte, integritätsverletzte,
+widersprüchliche oder fehlgeschlagene Commit-Ergebnisse MUST zu einer
+geschlossenen Ablehnung führen. Ein vom Aufrufer bereitgestellter Vertrauens-,
+Authentifizierungs- oder Integritätsboolean MUST NOT das typisierte Ergebnis des
+Adapters ersetzen.
 
 </NormativeClause>
 
@@ -173,14 +174,14 @@ Signatur authentifiziert nur die Event's Referenz.
 
 <NormativeClause id="MWP-ADM-012" level="MUST">
 
-Jeder Fehler nach dem sechsstufigen Abschluss bei der Suche, der
-Kandidatenvorbereitung, der Validierung vertrauenswürdiger Zeitintervalle, dem
-Anhängen oder Zurückgeben vorhandener Dateien, dem Parsen zurückgegebener
-Datensätze, der Schemavalidierung, der Bindung, dem Vergleich authentifizierter
-Dienste usw Event selbstverankernd MUST Karte auf dem Draht zu
-`AUTH_INVALID_SIGNATURE`. Die geschützte Audit-Diagnose MUST Bühne behalten
-`admission` und einen stabilen Grund, ohne diesen Grund dem nicht
-vertrauenswürdigen Anrufer preiszugeben.
+Jeder Fehler nach Abschluss der sechs Stufen bei der Suche, der
+Kandidatenvorbereitung, der Validierung des vertrauenswürdigen Zeitintervalls,
+dem Append-or-return-existing-Vorgang, dem Parsen des zurückgegebenen
+Datensatzes, der Schemavalidierung, der Bindung, dem Vergleich des
+authentifizierten Dienstes oder der Event-Selbstverankerungsprüfung MUST auf der
+Wire-Ebene `AUTH_INVALID_SIGNATURE` zugeordnet werden. Die geschützte
+Auditdiagnose MUST die Stufe `admission` und einen stabilen Grund beibehalten,
+ohne diesen Grund dem nicht vertrauenswürdigen Aufrufer offenzulegen.
 
 </NormativeClause>
 

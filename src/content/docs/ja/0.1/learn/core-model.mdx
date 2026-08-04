@@ -39,24 +39,27 @@ Organization
 - **カーソル**は、永続的に処理される連続した最大の Group
   Event を記録します。Agent。
 
-メッセージはコンテキストや提案を提供します。実行可能な責任は、承認された WorkItem 移行と Worker の受け入れを通じてのみ開始されます。これは、[MWP-FND-014](../../reference/specification/foundations/#mwp-fnd-014)] の会話境界と
-[MWP-FND-015](../../reference/specification/foundations/#mwp-fnd-015)] の構造化実行境界です。
+メッセージはコンテキストや提案を提供します。実行可能な責任は、承認された WorkItem 移行と Worker の受け入れを通じてのみ開始されます。これは、[MWP-FND-014](../../reference/specification/foundations/#mwp-fnd-014)
+の会話境界と
+[MWP-FND-015](../../reference/specification/foundations/#mwp-fnd-015)
+の構造化実行境界です。
 
 ## 権威ある州と地方の予測
 
 MissionWeaveProtocol は、共有された真実を再構築可能な Worker 状態から分離します。
 
-**権限のある状態**には、ミッション、メンバーシップ、作業項目、所有権とリースのエポック、重複排除の受領書、承認、および Group イベントが含まれます。 Group
+**権威ある状態**には、ミッション、メンバーシップ、作業項目、所有権とリースのエポック、重複排除の受領書、承認、および Group イベントが含まれます。 Group
 Authority は、受け入れられた変更をこの状態にシリアル化します。
 
 **Agent ローカル プロジェクション**
-には、カーソル、Group ごとのキュー、チェックポイント、送信ボックス、受信ボックス、およびスケジューラの状態が含まれます。 Agent は、永続的なイベントからイベントを再構築できます。ローカル ストレージを失っても、権限のある Mission 状態は変わりません。完全な境界は
-[MWP-FND-023](../../reference/specification/foundations/#mwp-fnd-023)] です。
+には、カーソル、Group ごとのキュー、チェックポイント、送信ボックス、受信ボックス、およびスケジューラの状態が含まれます。 Agent は、永続的なイベントからイベントを再構築できます。ローカル ストレージを失っても、権威ある Mission 状態は変わりません。完全な境界は
+[MWP-FND-023](../../reference/specification/foundations/#mwp-fnd-023) です。
 
 ## 覚えておく価値のある不変式
 
 規範的不変式セットは
-[MWP-FND-013](../../reference/specification/foundations/#mwp-fnd-013)] で始まります。概念的な概要は次のとおりです。
+[MWP-FND-013](../../reference/specification/foundations/#mwp-fnd-013)
+で始まります。概念的な概要は次のとおりです。
 
 - 1 つの Mission には、1 つのプライマリ Group と 1 つの Group
   Event ごとの注文があります。
@@ -69,4 +72,5 @@ Authority は、受け入れられた変更をこの状態にシリアル化し�
   Mission の完了には、正確なリビジョンに対する人間の承認が必要です。Artifact セット;そして
 - エージェントは、監査可能な決定、入力、Evidence、ブロッカー、および結果を公開します。プライベートな思考連鎖ではありません。
 
-[ID、役割、および権限](../identity-roles-and-authority/)] に進み、これらのレコードが信頼できるアクターと範囲指定された権限をどのように取得するかを確認します。
+[ID、役割、および権限](../identity-roles-and-authority/)
+に進み、これらのレコードが信頼できるアクターと範囲指定された権限をどのように取得するかを確認します。

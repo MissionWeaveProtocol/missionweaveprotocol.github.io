@@ -7,7 +7,7 @@ description:
 
 # 仕事のライフサイクル
 
-MissionWeaveProtocol は、実行可能な責任を明確にしながら、会話の協力を円滑に保ちます。 Message はコンテキストやリクエスト作業を提供できますが、インターフェイスはそれを実行可能な命令として提示できません ([MWP-MSN-017](../../reference/specification/missions-groups-and-membership/#mwp-msn-017)])。
+MissionWeaveProtocol は、実行可能な責任を明確にしながら、会話の協力を円滑に保ちます。 Message はコンテキストやリクエスト作業を提供できますが、インターフェイスはそれを実行可能な命令として提示できません ([MWP-MSN-017](../../reference/specification/missions-groups-and-membership/#mwp-msn-017))。
 
 ## 議論からコミットメントへ
 
@@ -29,7 +29,8 @@ MissionWeaveProtocol は、実行可能な責任を明確にしながら、会�
 ## 労働契約
 
 すべての WorkItem には、バージョン管理された機械可読な作業契約が含まれています。その必要な形状は
-[MWP-WRK-001](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-001)] によって識別され、次のものが含まれます。
+[MWP-WRK-001](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-001)
+によって識別され、次のものが含まれます。
 
 - 目標、成果物、および承認基準。
 - 必須の Evidence および入力または依存関係の参照。
@@ -40,7 +41,7 @@ MissionWeaveProtocol は、実行可能な責任を明確にしながら、会�
 - 再試行、バックオフ、期限、コストポリシー。そして
 - リスク分類と実行前の承認ゲート。
 
-本質的な曖昧さは、受け入れられる前に解決されます。重要な契約改訂は、更新された Worker 受諾を通じて返されます ([MWP-WRK-002](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-002)])。
+本質的な曖昧さは、受け入れられる前に解決されます。重要な契約改訂は、更新された Worker 受諾を通じて返されます ([MWP-WRK-002](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-002))。
 
 ## 一般的な成功パス
 
@@ -63,11 +64,13 @@ verified
 アクティブな作業は、チェックポイントで `queued` に戻るか、永続チェックポイントで
 `blocked`
 に入るか、Evidence で失敗するか、キャンセルされる可能性があります。完全な遷移テーブルは
-[WorkItem 仕様ページ ](../../reference/specification/work-scheduling-and-recovery/#workitem-transition-table)] にあります。
+[WorkItem 仕様ページ ](../../reference/specification/work-scheduling-and-recovery/#workitem-transition-table)
+にあります。
 
 ## 承認前 Evidence
 
 Worker クレームは完了の十分な証拠ではありません。送信には、受け入れ基準にマップされたアーティファクトと Evidence が含まれます。 Coordinator レビューは、Artifact の整合性、決定論的テスト、定性的レビュー担当者 Evidence、および
-[MWP-WRK-025](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-025)] で説明されている順序で記録された受諾決定をチェックします。
+[MWP-WRK-025](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-025)
+で説明されている順序で記録された受諾決定をチェックします。
 
-必要な WorkItem が検証された後、Coordinator は特定の Mission リビジョンと Artifact セットを送信します。 MissionOwner は、最終的な Approval に署名するか、以前の送信を消去せずに変更を要求します ([MWP-MSN-008](../../reference/specification/missions-groups-and-membership/#mwp-msn-008)])。
+必要な WorkItem が検証された後、Coordinator は特定の Mission リビジョンと Artifact セットを送信します。 MissionOwner は、最終的な Approval に署名するか、以前の送信を消去せずに変更を要求します ([MWP-MSN-008](../../reference/specification/missions-groups-and-membership/#mwp-msn-008))。

@@ -33,8 +33,8 @@ NOT には、再利用可能な資格情報が含まれるか、ツールまた�
 <NormativeClause id="MWP-IDN-003" level={["MUST","MAY"]}>
 
 割り当て MUST は、Agent
-Card バージョンとすべての必要な機能バージョンを固定します。互換性のあるインプレース アップグレード MAY は、Organization ポリシーに基づいて続行されます。互換性のないアップグレード MUST チェックポイントがアクティブに動作し、実行を続行する前に新たな承認を取得します。すべての Artifact
-MUST は、生成された Agent Card と機能のバージョンを記録します。
+Card バージョンと必要なすべての capability バージョンを固定します。互換性のあるインプレースアップグレード MAY は、Organization ポリシーに従って継続できます。互換性のないアップグレードは、アクティブな作業を MUST チェックポイント化し、実行を継続する前に再承諾を得なければなりません。すべての Artifact
+MUST は、生成元の Agent Card と capability のバージョンを記録します。
 
 </NormativeClause>
 
@@ -68,30 +68,31 @@ NOT 別のものを公開する Groupの ID、コンテンツ、WorkItem、ま�
 
 <NormativeClause id="MWP-IDN-007" level="MUST">
 
-それぞれ Agent
-MUST 少なくとも 1 つ持っている Organization-登録済み Ed25519 公開鍵。 v0.1
-WebSocket ハンドシェイクではフレッシュ サーバー チャレンジが使用されます。
+各 Agent
+MUST は、Organization に登録された Ed25519 公開鍵を少なくとも 1 つ持ちます。v0.1
+WebSocket ハンドシェイクは、新しいサーバーチャレンジを使用します。
 
-1. Agent 送信します `HELLO/client_init` それと Agent
-   ID、キーID、ノンス、サポートされているプロトコルのバージョン。
-2. サーバーが応答します `HELLO/server_challenge`
-   予測不可能な挑戦とともにおよび選択されたバージョン。
-3. Agent 返信する `HELLO/client_response`
-   と Ed25519 の上に署名正規のチャレンジ記録。そして
-4. サーバーが応答します `HELLO/server_accept`
-   有効期間の短いセッション トークンを使用し、新しく発行された Session Epoch.
+1. Agent は Agent ID、key ID、nonce、および対応プロトコルバージョンを含む
+   `HELLO/client_init` を送信します。
+2. サーバーは予測不能な challenge と選択したバージョンを含む
+   `HELLO/server_challenge` を返します。
+3. Agent は正規 challenge transcript に対する Ed25519 署名を含む
+   `HELLO/client_response` を返します。
+4. サーバーは短期間有効な session token と新たに発行した Session Epoch を含む
+   `HELLO/server_accept` を返します。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-IDN-008" level={["MUST","MUST NOT","MAY"]}>
 
-エポック `n + 1` を発行すると、その Agent ID のエポック `n`
-以下のすべてのセッションが無効になります。 Group Authority
-MUST は、状態が変化するすべての Agent Command で Session
-Epoch を検証します。人間のコマンドと Organization サービス コマンドには、Agent
-Session Epoch および MUST
-NOT が作成されません。再起動されたランタイム MAY は安定した Agent
-ID を再利用します。 2 つのランタイム MUST NOT がその ID を同時に操作します。
+Epoch `n + 1` を発行すると、その Agent ID の Epoch `n`
+以下にあるすべての session が無効になります。Group Authority
+MUST は、状態を変更するすべての Agent Command で Session
+Epoch を検証します。人間の Command と Organization サービスの Command は Agent
+Session Epoch を持たず、その値を MUST NOT 捏造します。再起動した runtime
+MAY は安定した Agent
+ID を再利用できますが、2 つの runtime が同じ identity を同時に運用することは MUST
+NOT 許されません。
 
 </NormativeClause>
 

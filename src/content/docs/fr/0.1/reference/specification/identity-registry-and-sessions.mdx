@@ -36,12 +36,12 @@ actuelle restent des décisions Organization.
 
 <NormativeClause id="MWP-IDN-003" level={["MUST","MAY"]}>
 
-Les affectations MUST épinglent la version Agent Card et chaque version de
-fonctionnalité requise. Une mise à niveau sur place compatible MAY se poursuit
-sous la stratégie Organization. Un point de contrôle de mise à niveau
-incompatible MUST fonctionne et obtient une acceptation renouvelée avant la
-poursuite de l'exécution. Chaque Artifact MUST enregistre le Agent Card
-producteur et les versions de fonctionnalités.
+Les affectations MUST épingler la version de l'Agent Card et chaque version de
+capability requise. Une mise à niveau sur place compatible MAY se poursuivre
+selon la politique Organization. Une mise à niveau incompatible MUST créer un
+point de contrôle du travail actif et obtenir une nouvelle acceptation avant la
+reprise de l'exécution. Chaque Artifact MUST enregistrer les versions de l'Agent
+Card et des capabilities qui l'ont produit.
 
 </NormativeClause>
 
@@ -85,12 +85,12 @@ exacte de la file d'attente d'un autre Group.
 Chaque Agent MUST possède au moins une clé publique Organization enregistrée
 Ed25519. La poignée de main v0.1 WebSocket utilise un nouveau défi de serveur :
 
-1. le Agent envoie `HELLO/client_init` avec son ID Agent, son ID de clé, son nom
-   occasionnel et versions de protocole prises en charge ;
+1. l'Agent envoie `HELLO/client_init` avec son Agent ID, son key ID, son nonce
+   et les versions de protocole prises en charge ;
 2. le serveur répond `HELLO/server_challenge` avec un défi imprévisible et
    version sélectionnée ;
 3. le Agent répond à `HELLO/client_response` avec une signature Ed25519 sur le
-   transcription de la contestation canonique ; et
+   transcription canonique du défi ; et
 4. le serveur répond à `HELLO/server_accept` avec un jeton de session de courte
    durée et un Session Epoch nouvellement émis.
 
@@ -98,12 +98,12 @@ Ed25519. La poignée de main v0.1 WebSocket utilise un nouveau défi de serveur�
 
 <NormativeClause id="MWP-IDN-008" level={["MUST","MUST NOT","MAY"]}>
 
-L'émission de l'époque `n + 1` invalide chaque session à l'époque `n` ou
-inférieure pour cet ID Agent. Le Group Authority MUST valide le Session Epoch à
-chaque changement d'état Agent Command. Les commandes humaines et
-Organization-service ne portent pas de Agent, Session Epoch et MUST NOT en
-inventent un. Un runtime redémarré MAY récupère son ID stable Agent ; deux
-environnements d'exécution MUST NOT exploitent cette identité simultanément.
+L'émission de l'Epoch `n + 1` invalide chaque session à l'Epoch `n` ou
+inférieure pour cet Agent ID. Le Group Authority MUST valider le Session Epoch
+sur chaque Agent Command qui modifie l'état. Les Command humains et ceux des
+services Organization ne portent pas d'Agent Session Epoch et MUST NOT en
+inventer un. Un runtime redémarré MAY récupérer son Agent ID stable ; deux
+runtime MUST NOT exploiter cette identité simultanément.
 
 </NormativeClause>
 

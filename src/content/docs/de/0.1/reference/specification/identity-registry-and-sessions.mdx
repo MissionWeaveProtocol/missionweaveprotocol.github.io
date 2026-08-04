@@ -36,11 +36,12 @@ bleiben Organization Entscheidungen.
 
 <NormativeClause id="MWP-IDN-003" level={["MUST","MAY"]}>
 
-Zuweisungen MUST heften die Agent Card-Version und jede erforderliche
-Funktionsversion an. Ein kompatibles direktes Upgrade MAY wird gemäß der
-Richtlinie Organization fortgesetzt. Ein inkompatibler Checkpoint MUST für die
-aktive Arbeit und erneute Akzeptanz vor der Fortsetzung der Ausführung. Jeder
-Artifact MUST zeichnet die produzierenden Agent Card und Funktionsversionen auf.
+Zuweisungen MUST die Agent-Card-Version und jede erforderliche
+Capability-Version fixieren. Ein kompatibles In-Place-Upgrade MAY gemäß
+Organization-Richtlinie fortgesetzt werden. Ein inkompatibles Upgrade MUST die
+aktive Arbeit checkpointen und vor der Fortsetzung der Ausführung eine erneute
+Akzeptanz einholen. Jeder Artifact MUST die erzeugende Agent-Card- und
+Capability-Version aufzeichnen.
 
 </NormativeClause>
 
@@ -97,12 +98,12 @@ Server-Challenge:
 
 <NormativeClause id="MWP-IDN-008" level={["MUST","MUST NOT","MAY"]}>
 
-Durch die Ausgabe der Epoche `n + 1` wird jede Sitzung in der Epoche `n` oder
-niedriger für diese Agent-ID ungültig. Group Authority MUST validieren Session
-Epoch bei jeder Zustandsänderung Agent Command. Menschliche und
-Organization-Dienstbefehle enthalten kein Agent, Session Epoch und MUST NOT
-erfinden eines. Eine neu gestartete Laufzeit MAY fordert ihre stabile Agent-ID
-zurück; Zwei Laufzeiten MUST NOT betreiben diese Identität gleichzeitig.
+Die Ausgabe von Epoch `n + 1` macht jede Session mit Epoch `n` oder niedriger
+für diese Agent ID ungültig. Die Group Authority MUST die Session Epoch bei
+jedem zustandsändernden Agent Command validieren. Menschliche Command und
+Command von Organization-Diensten tragen keine Agent Session Epoch und MUST NOT
+eine erfinden. Ein neu gestarteter Runtime MAY seine stabile Agent ID
+wiederverwenden; zwei Runtime MUST NOT diese Identität gleichzeitig betreiben.
 
 </NormativeClause>
 

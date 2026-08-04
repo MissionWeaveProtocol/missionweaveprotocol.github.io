@@ -43,10 +43,10 @@ messages n'autorisent jamais d'actions.
 
 <NormativeClause id="MWP-EXT-004" level={["MUST","SHOULD"]}>
 
-Les erreurs MUST sont conformes à `schemas/error.schema.json`. Une réponse
-d'erreur MUST doit être lisible par machine, MUST indique si la nouvelle
-tentative est sûre et SHOULD identifie la trame ou l'ID d'action associé sans
-exposer de données non autorisées. Les codes de base sont :
+Les erreurs MUST être conformes à `schemas/error.schema.json`. Une réponse
+d'erreur MUST être lisible par machine, MUST indiquer si la nouvelle tentative
+est sûre et SHOULD identifier la frame ou l'Action ID associé sans exposer de
+données non autorisées. Les codes de base sont :
 
 | Codes                        | Signification                                                                                                           |
 | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
@@ -82,18 +82,17 @@ exposer de données non autorisées. Les codes de base sont :
 
 <NormativeClause id="MWP-EXT-005" level={["MUST","MUST NOT","MAY"]}>
 
-Une nouvelle tentative Command inchangée MUST conserve l'ID d'action d'origine
-et le contenu signé. `AUTH_INVALID_SIGNATURE` MUST NOT doit être réessayé sans
+Une nouvelle tentative du Command inchangé MUST conserver l'Action ID d'origine
+et le contenu signé. `AUTH_INVALID_SIGNATURE` MUST NOT être réessayé sans
 modification avant que sa cause ne soit corrigée. Après correction locale de
 l'enveloppe de signature, de la clé faisant autorité ou de l'état d'admission,
-un expéditeur MAY réessaye l'ID d'action d'origine uniquement pendant que tout
-le contenu protégé reste valide. Si la fraîcheur Command a expiré, l'expéditeur
-MUST crée à la place un nouveau Command avec un nouvel ID d'action, un
-`issuedAt` actuel, un `signature.createdAt` correspondant et une nouvelle
-signature. `ACTION_ID_COLLISION` nécessite un nouveau Command avec un nouvel ID
-d'action. Une erreur de clôture obsolète nécessite l’époque faisant autorité
-actuelle et un nouveau Command avec un nouvel ID d’action et une nouvelle
-signature.
+un expéditeur MAY réessayer l'Action ID d'origine uniquement pendant que tout le
+contenu protégé reste valide. Si la fraîcheur Command a expiré, l'expéditeur
+MUST créer à la place un nouveau Command avec un nouvel Action ID, un `issuedAt`
+actuel, un `signature.createdAt` correspondant et une nouvelle signature.
+`ACTION_ID_COLLISION` nécessite un nouveau Command avec un nouvel Action ID. Une
+erreur de fencing obsolète nécessite l'Epoch faisant autorité actuel et un
+nouveau Command avec un nouvel Action ID et une nouvelle signature.
 
 </NormativeClause>
 
@@ -222,25 +221,26 @@ référencé avant d'exécuter les résultats de l'adaptateur déclarés.
 
 <NormativeClause id="MWP-EXT-013" level="MUST" exclusions={["command-freshness","signer-authorization","portable-log-proof-verification","state-machine-acceptance"]}>
 
-La transmission de `missionweaveprotocol-conformance` ou des vecteurs de schéma
-du référentiel démontre uniquement la conformité du schéma et du vecteur. Il
-s’agit d’une preuve nécessaire mais non suffisante de la pleine conformité au
+La réussite de `missionweaveprotocol-conformance` ou des vecteurs de Schema du
+dépôt démontre uniquement la conformité des Schema et des vecteurs. Il s’agit
+d’une preuve nécessaire mais non suffisante de la conformité complète au
 protocole. La réussite de `cryptography/manifest.json` démontre uniquement les
 six étapes de vérification cryptographique de la
-[Section 6.4](../signed-documents-and-trust/#mwp-sdv-015). La transmission de
-`admission/manifest.json` démontre en outre les évaluations First-Admission
-Record et de réexécution historique déclarées, mais elle ne démontre pas la
-fraîcheur et l'application du décalage d'horloge de Command, l'autorisation du
-signataire en vertu du rôle et de la politique applicables, ou un format de
-preuve Admission Log portable déployé. Une implémentation MUST prouve ces
-exigences séparément. Une implémentation de référence MUST revendique la
-conformité complète à MissionWeaveProtocol 0.1 uniquement lorsque les preuves
-positives et négatives automatisées couvrent chaque type de base Command et
-Event [ci-dessus](../commands-events-and-ordering/#core-command-kinds) et chaque
-ligne de transition dans
-[Sections 7.1](../missions-groups-and-membership/#mission-transition-table) et
-[10.2](../work-scheduling-and-recovery/#workitem-transition-table) ; sinon, MUST
-signale explicitement le sous-ensemble vérifié le plus restreint.
+[section 6.4](../signed-documents-and-trust/#mwp-sdv-015). La réussite de
+`admission/manifest.json` démontre en outre les évaluations déclarées du
+First-Admission Record et de la relecture historique, mais elle ne démontre ni
+la fraîcheur de Command et l’application de la tolérance de décalage d’horloge,
+ni l’autorisation du signataire selon le rôle et la politique applicables, ni un
+format de preuve portable pour un Admission Log déployé. Une implémentation MUST
+prouver ces exigences séparément. Une implémentation de référence MUST
+revendiquer la conformité complète à MissionWeaveProtocol 0.1 uniquement lorsque
+les preuves positives et négatives automatisées couvrent chaque type principal
+de Command et d’Event
+[ci-dessus](../commands-events-and-ordering/#core-command-kinds), ainsi que
+chaque ligne de transition des
+[sections 7.1](../missions-groups-and-membership/#mission-transition-table) et
+[10.2](../work-scheduling-and-recovery/#workitem-transition-table) ; sinon, elle
+MUST signaler explicitement le sous-ensemble vérifié plus restreint.
 
 </NormativeClause>
 

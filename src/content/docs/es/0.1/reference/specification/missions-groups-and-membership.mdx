@@ -16,9 +16,9 @@ import InformativeBlock from "../../../../../../components/InformativeBlock.astr
 
 A Mission MUST declara un objetivo acotado, una definición legible por máquina
 de hecho, fecha límite, presupuesto ejecutable, política de riesgo/aprobación y
-MissionOwner. Una raíz Mission MissionOwner MUST sea humana. La creación asigna
-exactamente una conversación de nivel Group y una conversación de nivel Group.
-Los ID Mission y Group ID MUST permanecen estables.
+MissionOwner. El MissionOwner de una Mission raíz MUST ser humano. La creación
+asigna exactamente un Group y una Conversation de nivel Group. Los ID Mission y
+Group ID MUST permanecen estables.
 
 </NormativeClause>
 
@@ -26,22 +26,22 @@ El ciclo de vida Mission es:
 
 <span id="mission-transition-table"></span>
 
-| Estado actual       | Command o causa                                                 | Siguiente estado    | Autoridad                                                       |
-| ------------------- | --------------------------------------------------------------- | ------------------- | --------------------------------------------------------------- |
-| ninguno             | `mission.create` con un arrendamiento Coordinator               | `active`            | humano MissionOwner, posiblemente a través del plano de control |
-| ninguno             | `mission.create_follow_up` vinculado a un Mission aprobado      | `active`            | el mismo humano MissionOwner                                    |
-| ninguno             | `mission.create_child` vinculado a un padre WorkItem            | `active`            | Padre Coordinator como hijo MissionOwner                        |
-| `active`            | `mission.submit_for_approval`                                   | `awaiting_approval` | actual Coordinator                                              |
-| `awaiting_approval` | `mission.request_changes`                                       | `active`            | MissionOwner                                                    |
-| `awaiting_approval` | `mission.approve`                                               | `approved`          | MissionOwner                                                    |
-| no terminal         | `mission.cancel` o propagación de cancelación principalción     | `cancelled`         | Política MissionOwner o Organization                            |
-| no terminal         | `mission.terminate` o propagación de falla secundaria declarada | `failed`            | Política Coordinator o Organization                             |
+| Estado actual       | Command o causa                                               | Siguiente estado    | Autoridad                                                       |
+| ------------------- | ------------------------------------------------------------- | ------------------- | --------------------------------------------------------------- |
+| ninguno             | `mission.create` con un arrendamiento Coordinator             | `active`            | humano MissionOwner, posiblemente a través del plano de control |
+| ninguno             | `mission.create_follow_up` vinculado a un Mission aprobado    | `active`            | el mismo humano MissionOwner                                    |
+| ninguno             | `mission.create_child` vinculado a un padre WorkItem          | `active`            | Padre Coordinator como hijo MissionOwner                        |
+| `active`            | `mission.submit_for_approval`                                 | `awaiting_approval` | actual Coordinator                                              |
+| `awaiting_approval` | `mission.request_changes`                                     | `active`            | MissionOwner                                                    |
+| `awaiting_approval` | `mission.approve`                                             | `approved`          | MissionOwner                                                    |
+| no terminal         | `mission.cancel` o propagación de cancelación del padre       | `cancelled`         | MissionOwner o política de Organization                         |
+| no terminal         | `mission.terminate` o propagación de fallo declarado del hijo | `failed`            | Coordinator o política de Organization                          |
 
 <NormativeClause id="MWP-MSN-002" level={["MUST NOT","MUST"]}>
 
-`approved`, `cancelled` y `failed` son terminales. Un Mission MUST NOT aprobado
-puede reabrirse o reescribirse. Correcciones, revocación de aprobación o
-remediación MUST crean un seguimiento vinculado Mission; La revocación sigue
+`approved`, `cancelled` y `failed` son terminales. Una Mission aprobada MUST NOT
+reabrirse ni reescribirse. Las correcciones, la revocación de aprobación o la
+remediación MUST crear una Mission de seguimiento vinculada; la revocación sigue
 siendo un nuevo Event y no borra el Approval original.
 
 </NormativeClause>
@@ -61,9 +61,9 @@ arrendamiento de Worker.
 
 <NormativeClause id="MWP-MSN-004" level="MAY">
 
-Hay exactamente una época de arrendamiento Coordinator MAY vigente. El contrato
-de arrendamiento identifica la época Agent, Coordinator, Session Epoch, la
-política de vencimiento y renovación. Solo la época actual Coordinator puede
+En cualquier momento, como máximo un Coordinator Lease Epoch MAY estar vigente.
+El arrendamiento identifica al Agent, la Coordinator Epoch, la Session Epoch, el
+vencimiento y la política de renovación. Solo la Coordinator Epoch vigente puede
 autorizar o asignar WorkItems, aceptar resultados Worker, enviar Mission o crear
 subtareas.
 
@@ -147,7 +147,7 @@ Worker Membership SHOULD llegue justo a tiempo:
 
 1. Coordinator selecciona un candidato y le otorga un Membership provisional con
    alcance;
-2. Worker recibe una oferta que vence y firma Context Package;
+2. el Worker recibe una oferta con vencimiento y un Context Package firmado;
 3. aceptar la oferta activa Membership y crea propiedad; y
 4. Membership finaliza cuando Worker no tiene elementos de trabajo ni
    obligaciones de revisión, o el Mission está archivado.

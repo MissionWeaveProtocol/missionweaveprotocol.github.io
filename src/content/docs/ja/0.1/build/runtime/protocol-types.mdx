@@ -36,7 +36,7 @@ Document 検証が適用されます ([MWP-FND-004](../../../reference/specifica
 
 ## スキーマタイプとセマンティックタイプ
 
-生成された言語タイプは、JSON スキーマの有用な投影ですが、検証に代わるものではありません。 v0.1 スキーマはドラフト 2020-12 を使用し、不明なコア プロパティを拒否し、宣言された拡張メンバーと承認されたプロファイルを通じてのみ拡張性を認めます ([MWP-EXT-010](../../../reference/specification/errors-extensions-and-security/#mwp-ext-010)])。
+生成された言語タイプは、JSON スキーマの有用な投影ですが、検証に代わるものではありません。 v0.1 スキーマはドラフト 2020-12 を使用し、不明なコア プロパティを拒否し、宣言された拡張メンバーと承認されたプロファイルを通じてのみ拡張性を認めます ([MWP-EXT-010](../../../reference/specification/errors-extensions-and-security/#mwp-ext-010))。
 
 これらのカテゴリを分けておいてください。
 
@@ -49,15 +49,16 @@ Document 検証が適用されます ([MWP-FND-004](../../../reference/specifica
 | ローカル投影     | カーソル、受信箱、送信箱、Group ごとのキュー、チェックポイント | 権威あるイベントと地元の耐久性のある作業から再構築可能 |
 
 Signed
-Document の各種類は、[MWP-SDV-001](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)] で 1 つの保護時間と予期される署名者を選択します。 First-Admission
-Record は、独立した署名されていない 9 フィールドのオブジェクトであり、それ自体のバイトを認証できません ([MWP-ADM-001](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001)])。
+Document の各種類は、[MWP-SDV-001](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)
+で 1 つの保護時間と予期される署名者を選択します。 First-Admission
+Record は、独立した署名されていない 9 フィールドのオブジェクトであり、それ自体のバイトを認証できません ([MWP-ADM-001](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001))。
 
 ## コマンドとイベント
 
-Command は、1 つの構造化された遷移に対する署名付きリクエストです。そのエンベロープは、安定したアクション ID、バージョン、アクター、種類、ペイロード、相関関係、発行時刻、および該当する Group およびエポック フィールド ([MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001))] をバインドします。したがって、有効な Command オブジェクトはまだ受け入れられた遷移ではありません。
+Command は、1 つの構造化された遷移に対する署名付きリクエストです。そのエンベロープは、安定したアクション ID、バージョン、アクター、種類、ペイロード、相関関係、発行時刻、および該当する Group およびエポック フィールド ([MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001)) をバインドします。したがって、有効な Command オブジェクトはまだ受け入れられた遷移ではありません。
 
 Event は不変の受け入れられた事実です。 Group イベントには、単調な Group シーケンスと、Group
-Authority によって割り当てられた集計リビジョンが含まれます。 2 つの Organization スコープのブートストラップ Event 種類では、Group 順序フィールド ([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005))] が省略されます。
+Authority によって割り当てられた集計リビジョンが含まれます。 2 つの Organization スコープのブートストラップ Event 種類では、Group 順序フィールド ([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)) が省略されます。
 
 ## 後の段階で必要な証拠を保存する
 
@@ -73,8 +74,14 @@ Authority によって割り当てられた集計リビジョンが含まれま�
 重複名の拒否とコンテンツ由来の正規バイトが
 [MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012).順序付けされた検証入力と完全なステージ 4
 Registry スキャンは
-[MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)] に従います。これには、[MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008)] での選択されたキーの検索前の完全な証拠検証が含まれます。部分キャッシュは信頼できる完全性を置き換えることはできません ([MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009))。アダプターは、適用可能なリビジョン、完全性、および履歴範囲を確立するか、それができないことを報告する必要があり ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)])、不明なキーはその完全性が確立された後にのみ権限を持ちます ([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011))。ロスレス保持は
-[MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016)] で標準的なステージ分類を保持しますが、保護された診断処理とワイヤセーフ障害境界は
-[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)] に従います。
+[MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)
+に従います。これには、[MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008)
+での選択されたキーの検索前の完全な証拠検証が含まれます。部分キャッシュは信頼できる完全性を置き換えることはできません ([MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009))。アダプターは、適用可能なリビジョン、完全性、および履歴範囲を確立するか、それができないことを報告する必要があり ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010))、不明なキーはその完全性が確立された後にのみ権限を持ちます ([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011))。ロスレス保持は
+[MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016)
+で標準的なステージ分類を保持しますが、保護された診断処理とワイヤセーフ障害境界は
+[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)
+に従います。
 
-[JSON スキーマ カタログ](../../../reference/schemas/)] で正確なローカル タイプを参照してください。次に、[検証、正規化、署名](../validation-canonicalization-and-signing/)] を実装します。
+[JSON スキーマ カタログ](../../../reference/schemas/)
+で正確なローカル タイプを参照してください。次に、[検証、正規化、署名](../validation-canonicalization-and-signing/)
+を実装します。

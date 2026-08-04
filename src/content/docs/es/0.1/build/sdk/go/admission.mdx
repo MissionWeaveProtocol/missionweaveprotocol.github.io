@@ -23,13 +23,13 @@ locales].
 | Público API                                  | Responsabilidad                                                                                                                                                                                                                                                                                           |
 | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `AdmissionCurrentKeyResolver.ResolveCurrent` | Devuelva evidencia Organization completa de Registry que la implementación afirma que está actualizada para esta decisión.                                                                                                                                                                                |
-| `TrustedAdmissionContext.Issue`              | Emita la identificación del registro confiable, el instante de aceptación y el servicio de aceptación solo después de una ausencia autorizada.                                                                                                                                                            |
+| `TrustedAdmissionContext.Issue`              | Emita la identificación del registro confiable, el instante de aceptación y el servicio de aceptación solo después de una constatación autoritativa de ausencia.                                                                                                                                          |
 | `AdmissionLog.Lookup`                        | Devuelve un registro autenticado encontrado o `AdmissionLookup{AuthoritativeAbsence: true}`. Error de caché, tiempo de espera, ausencia no autenticada y error de estado indeterminado cerrado bajo [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
-| `AdmissionLog.AppendOrReturnExisting`        | Agregue atómicamente bytes candidatos o devuelva el ganador autorizado concurrente a través de una identidad de servicio autenticada.                                                                                                                                                                     |
+| `AdmissionLog.AppendOrReturnExisting`        | Agregue atómicamente bytes candidatos o devuelva el registro autoritativo ganador de una carrera concurrente a través de una identidad de servicio autenticada.                                                                                                                                           |
 | `AuthenticatedAdmissionRecord`               | Vincule `RecordBytes` al servicio autenticado por el adaptador para que [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) pueda validar el registro devuelto.                                                                                          |
 | `AdmissionService.PrepareFirstAdmission`     | Cree y valide pruebas candidatas a partir de un `VerifiedSignedDocument` producido por SDK. No anexa ni implica admisión.                                                                                                                                                                                 |
-| `AdmissionService.AdmitFirst`                | Realice la verificación actual, la búsqueda autorizada, la creación de candidatos, la validación atómica de anexar o devolver existente y de registros devueltos en [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                                 |
-| `AdmissionService.VerifyHistoricalAdmission` | Vuelva a ejecutar la verificación de seis etapas con evidencia histórica Registry y solicite un registro existente sin emitir contexto ni agregar, como lo requiere [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                                 |
+| `AdmissionService.AdmitFirst`                | Realice la verificación actual, la búsqueda autoritativa, la creación de candidatos, la validación atómica de anexar o devolver existente y de registros devueltos en [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                               |
+| `AdmissionService.VerifyHistoricalAdmission` | Vuelva a ejecutar la verificación de seis etapas con evidencia histórica autoritativa del Registry y exija un registro existente sin emitir contexto ni añadirlo, como requiere [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                     |
 | `AdmittedSignedDocument`                     | Devuelva evidencia de registro verificada y analizada más una copia defensiva `RecordBytes()`.                                                                                                                                                                                                            |
 
 Un valor booleano de confianza proporcionado por la persona que llama no es un
@@ -53,11 +53,12 @@ first, err := missionweaveprotocol.NewAdmissionService().AdmitFirst(
 
 `AdmitFirst` completa las seis etapas del documento firmado antes de consultar
 el registro. Un registro encontrado se valida y se devuelve sin emitir un
-contexto confiable ni agregarlo. Después de una ausencia autorizada, el servicio
-emite un contexto confiable, llama a `PrepareFirstAdmission`, invoca a
-`AppendOrReturnExisting`, toma una instantánea del valor devuelto y valida el
-registro realmente devuelto. Un ganador simultáneo es aceptable solo cuando su
-esquema, servicio autenticado, enlace de documentos y tiempo confiable pasan
+contexto confiable ni agregarlo. Después de una constatación autoritativa de
+ausencia, el servicio emite un contexto confiable, llama a
+`PrepareFirstAdmission`, invoca a `AppendOrReturnExisting`, toma una instantánea
+del valor devuelto y valida el registro realmente devuelto. Un ganador
+simultáneo es aceptable solo cuando su esquema, servicio autenticado, enlace de
+documentos y tiempo confiable pasan
 [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
 y
 [MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010).
@@ -81,9 +82,9 @@ La reproducción histórica vuelve a ejecutar la verificación con el historial
 Registry retenido, requiere un registro encontrado y nunca llama a
 `TrustedAdmissionContext.Issue` o `AdmissionLog.AppendOrReturnExisting`. Los ID
 de registros coincidentes demuestran la recuperación del mismo registro
-autorizado; no prueban la actualización de Command, la autorización del
-firmante, la aceptación de la máquina de estado ni la verificación portátil a
-prueba de registros. Estos permanecen separados en
+autorizado; no prueban la frescura de Command, la autorización del firmante, la
+aceptación de la máquina de estado ni la verificación portátil a prueba de
+registros. Estos permanecen separados en
 [MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
 y
 [MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
@@ -99,7 +100,8 @@ el resultado de cable no oracular requerido por
 
 Los adaptadores de implementación deben devolver `NewAdmissionAdapterError` con
 un motivo admitido cuando necesitan que el servicio reasigne una falla local
-confiable. Los errores arbitrarios no son prueba de ausencia autorizada.
+confiable. Los errores arbitrarios no son prueba de una constatación
+autoritativa de ausencia.
 
 ## Ejemplo ejecutable con fijación exacta
 
@@ -107,10 +109,10 @@ confiable. Los errores arbitrarios no son prueba de ausencia autorizada.
 
 El ejemplo deriva de manera determinista una clave Ed25519, construye un
 Registry completo y un Command firmado, y proporciona adaptadores en memoria
-escritos. Un `sync.Mutex` protege el mapa autorizado compartido. `Lookup` y
+escritos. Un `sync.Mutex` protege el mapa autoritativo compartido. `Lookup` y
 `AppendOrReturnExisting` lo adquieren de forma independiente; el mutex hace que
 `AppendOrReturnExisting` sea atómico cuando busca un ganador concurrente y lo
-agrega condicionalmente. El protocolo requiere una búsqueda autorizada y un
+agrega condicionalmente. El protocolo requiere una búsqueda autoritativa y un
 comportamiento atómico de agregar o devolver lo existente, no una transacción
 que abarque ambas llamadas. La semilla fija es material de demostración y nunca
 debe usarse fuera del ejemplo.
@@ -136,7 +138,7 @@ bytes de registro coinciden y exactamente un anexo.
 
 Reemplace `currentRegistryFixture` con adaptadores Registry actuales e
 históricos autenticados, `inMemoryAdmissionLog` con un registro duradero
-autenticado que devuelve resultados de búsqueda autorizados y hace que
+autenticado que devuelve resultados de búsqueda autoritativos y hace que
 `AppendOrReturnExisting` sea atómico sobre la clave lógica, y
 `fixedTrustedAdmissionContext` con tiempo de confianza controlado por
 Organization y emisión de servicio de aceptación. Una implementación puede

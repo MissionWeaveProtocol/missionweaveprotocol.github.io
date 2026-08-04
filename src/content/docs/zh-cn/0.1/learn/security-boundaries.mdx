@@ -22,13 +22,13 @@ Record。
 
 ## 分离和排除的关注点
 
-| 关注                    | 边界                                                                                                                                                                                       |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Command 新鲜度          | 新提出的 Command 具有单独的有界 `issuedAt` 新鲜度和时钟偏差检查（[MWP-ADM-013](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)）。                        |
-| 签名人授权              | 经过验证的密钥绑定 Principal 在状态接受之前仍需要权威角色和策略授权 ([MWP-ADM-014](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014))。                     |
-| 便携式Admission Log证明 | 版本 0.1 定义了类型化适配器结果和记录验证，而不是便携式部署证明格式 ([MWP-EXT-013](../../reference/specification/errors-extensions-and-security/#mwp-ext-013))。                           |
-| 状态机接受              | 在 Organization 或 Group Authority 验证当前修订、角色、策略、纪元、预算和租约之前完成加密和准入 ([MWP-EVT-004](../../reference/specification/commands-events-and-ordering/#mwp-evt-004))。 |
-| 调用者提供的信任布尔值  | 调用者提供的布尔值不能替换经过身份验证的、键入的 Admission Log 结果或其完整性和缺失区别 ([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003))。 |
+| 关注                      | 边界                                                                                                                                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Command 新鲜度            | 新提出的 Command 具有单独的有界 `issuedAt` 新鲜度和时钟偏差检查（[MWP-ADM-013](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)）。                        |
+| 签名人授权                | 经过验证的密钥绑定 Principal 在状态接受之前仍需要权威角色和策略授权 ([MWP-ADM-014](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014))。                     |
+| 可移植 Admission Log 证明 | 版本 0.1 定义了类型化适配器结果和记录验证，但没有定义可移植的已部署证明格式（[MWP-EXT-013](../../reference/specification/errors-extensions-and-security/#mwp-ext-013)）。                  |
+| 状态机接受                | 在 Organization 或 Group Authority 验证当前修订、角色、策略、纪元、预算和租约之前完成加密和准入 ([MWP-EVT-004](../../reference/specification/commands-events-and-ordering/#mwp-evt-004))。 |
+| 调用者提供的信任布尔值    | 调用者提供的布尔值不能替换经过身份验证的、键入的 Admission Log 结果或其完整性和缺失区别 ([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003))。 |
 
 ## 分层结果模型
 

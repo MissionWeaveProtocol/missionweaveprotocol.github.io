@@ -13,7 +13,7 @@ Esta página cubre el paquete Go completo representado por el
 [exacto API inventario](../api/). El comportamiento del protocolo compartido
 permanece definido por la
 [referencia de tiempo de ejecución ](../../../runtime/architecture-and-bootstrap/)
-y las [cláusulas de referencia ](../../../../reference/specification/)] locales.
+y las [cláusulas de referencia ](../../../../reference/specification/) locales.
 Los nombres siguientes definen cómo el módulo anclado expone ese comportamiento.
 
 <SupportStatus status="implemented" /> se aplica a las API de paquetes
@@ -75,7 +75,7 @@ proporcionado por la persona que llama no es suficiente.
 
 Las funciones de marco analizan y codifican valores, pero no abren sockets, no
 autentican una sesión, persisten cursores, programan trabajo ni aplican
-transiciones autorizadas. Esas son responsabilidades de implementación o de
+transiciones autoritativas. Esas son responsabilidades de implementación o de
 tiempo de ejecución de nivel superior.
 
 `VerifyProtocolBundle`, `VerifyCryptographyBundle` y `VerifyAdmissionBundle`
@@ -110,8 +110,8 @@ Worker.
 alojado**: el módulo proporciona códecs de marco, no un servicio de puerta de
 enlace con transporte, sesión, TLS, enrutamiento o propiedad de contrapresión.
 
-<SupportStatus status="not-implemented" /> **Tiempo de ejecución de persistencia
-autorizado**: no se exporta ningún tiempo de ejecución de persistencia local
+<SupportStatus status="not-implemented" /> **Runtime de persistencia
+autoritativa**: no se exporta ningún tiempo de ejecución de persistencia local
 respaldado por una base de datos o Agent.
 
 Esas ausencias son parte del contrato de ejecución soportado. Las aplicaciones

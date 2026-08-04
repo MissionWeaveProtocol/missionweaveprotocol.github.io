@@ -15,7 +15,7 @@ por encima del verificador Signed Document de seis etapas
 El flujo independiente del idioma es la
 [página de tiempo de ejecución de confianza histórica y de primera admisión local ](../../../runtime/first-admission-and-historical-trust/),
 y los requisitos exactos son las
-[cláusulas de admisión ](../../../../reference/specification/first-admission-and-historical-trust/)]
+[cláusulas de admisión ](../../../../reference/specification/first-admission-and-historical-trust/)
 locales.
 
 ## Adaptadores públicos y resultados.
@@ -23,13 +23,13 @@ locales.
 | Público API                                        | Responsabilidad                                                                                                                                                                                                                                                       |
 | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `AdmissionCurrentKeyResolver::resolve_current`     | Devuelva evidencia completa de Organization en todo el Registry que la implementación afirma que está actualizada para esta decisión.                                                                                                                                 |
-| `TrustedAdmissionContext::issue`                   | Emita la identificación del registro, el instante de aceptación confiable y el servicio de aceptación solo después de una ausencia autorizada.                                                                                                                        |
+| `TrustedAdmissionContext::issue`                   | Emita la identificación del registro, el instante de aceptación confiable y el servicio de aceptación solo después de una constatación autoritativa de ausencia.                                                                                                      |
 | `AdmissionLog::lookup`                             | Devuelve `AdmissionLookup::Found` o `AdmissionLookup::AuthoritativeAbsence`. Fallos de pérdida de caché, tiempo de espera o ausencia no autenticada cerrados en [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
-| `AdmissionLog::append_or_return_existing`          | Agregue atómicamente bytes candidatos o devuelva el ganador autorizado concurrente a través de una identidad de servicio autenticada.                                                                                                                                 |
+| `AdmissionLog::append_or_return_existing`          | Agregue atómicamente bytes candidatos o devuelva el registro autoritativo ganador de una carrera concurrente a través de una identidad de servicio autenticada.                                                                                                       |
 | `AuthenticatedAdmissionRecord`                     | Vincule los bytes de registro devueltos a la identidad del servicio autenticada por el adaptador de registro para [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009).                                               |
 | `AdmissionService::prepare_first_admission`        | Crear y validar evidencia candidata a partir de un `VerifiedSignedDocument` producido por SDK; no anexa ni implica admisión.                                                                                                                                          |
 | `AdmissionService::admit_first`                    | Verifique la evidencia actual, busque, prepárese después de la ausencia, agregue o devuelva lo existente y valide el registro devuelto en [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                       |
-| `AdmissionService::verify_historical_admission`    | Vuelva a ejecutar la verificación con evidencia histórica Registry y solicite un registro existente sin emitir contexto ni agregarlo en [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                         |
+| `AdmissionService::verify_historical_admission`    | Vuelva a ejecutar la verificación con evidencia histórica autoritativa del Registry y exija un registro existente sin emitir contexto ni añadirlo según [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).         |
 | `PreparedFirstAdmission`, `AdmittedSignedDocument` | Preservar la verificación inmutable y registrar la evidencia; `FirstAdmissionRecord::bytes` devuelve los bytes validados.                                                                                                                                             |
 
 Un valor booleano de confianza proporcionado por la persona que llama no es un
@@ -53,8 +53,8 @@ let first = AdmissionService::new()?.admit_first(
 
 `admit_first` completa las seis etapas de verificación antes del acceso al
 registro. Un registro encontrado se valida y se devuelve sin emitir un contexto
-confiable ni agregarlo. Después de una ausencia autorizada, el servicio emite el
-contexto, prepara bytes candidatos canónicos, llama a
+confiable ni agregarlo. Después de una constatación autoritativa de ausencia, el
+servicio emite el contexto, prepara bytes candidatos canónicos, llama a
 `append_or_return_existing` y valida el registro realmente devuelto. Un ganador
 simultáneo tiene éxito solo cuando el esquema, la autenticación, el enlace de
 documentos y el tiempo de confianza satisfacen
@@ -67,9 +67,9 @@ y
 `verify_historical_admission` usa `KeyResolver`, vuelve a ejecutar las seis
 etapas, requiere `AdmissionLookup::Found` y nunca llama a
 `TrustedAdmissionContext::issue` o `AdmissionLog::append_or_return_existing`.
-Los ID de registros coincidentes recuperan el mismo registro autorizado, pero no
-prueban la actualidad de Command, la autorización del firmante, la aceptación de
-la máquina de estado ni la verificación portátil de prueba de registros según
+Los ID de registros coincidentes recuperan el mismo registro autoritativo, pero
+no prueban la actualidad de Command, la autorización del firmante, la aceptación
+de la máquina de estado ni la verificación portátil de prueba de registros según
 [MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
 y
 [MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
@@ -96,7 +96,7 @@ histórica, con exactamente un anexo.
   <code>{rustAdmissionExample}</code>
 </pre>
 
-Cópielo en una caja exacta y ejecute:
+Cópielo en un crate exacto y ejecute:
 
 ```bash
 cp /absolute/path/to/examples/sdk/rust/admission.rs examples/website_admission.rs

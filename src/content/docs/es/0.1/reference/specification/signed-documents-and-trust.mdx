@@ -303,19 +303,19 @@ JSON no válido, miembros duplicados o un valor que no puede ingresar al modelo
 de datos JCS es un `PROTOCOL_VIOLATION`. El error de esquema, sobre requerido o
 algoritmo no admitido es `SCHEMA_VALIDATION_FAILED`. El error en la etapa
 criptográfica 3, 4 o 6, en la etapa semántica `admission` o en las
-comprobaciones de actualización Command es `AUTH_INVALID_SIGNATURE`; los
-ejemplos incluyen una discrepancia en la vinculación de tiempo, una URL base64
-válida para el esquema con bits de pad no utilizados distintos de cero, una
-clave desconocida o vinculada incorrectamente, un intervalo de clave no válido,
-una clave pública no canónica o de orden no principal, una clave decodificada o
-una longitud de firma mal formada, o una discrepancia criptográfica. Una
-respuesta electrónica MUST NOT revela qué resolución de clave, admisión o
-verificación criptográfica falló. Organization MUST retiene la primera etapa
-semántica fallida y su motivo de diagnóstico específico en un registro de
-auditoría protegido y con acceso controlado de acuerdo con la política de
-retención aplicable. Los auditores autorizados podrán hacer referencia a una
-falla con alcance Group MUST desde el registro de políticas sin exponer ese
-diagnóstico a la persona que llama que no es de confianza.
+comprobaciones de frescura de Command es `AUTH_INVALID_SIGNATURE`; los ejemplos
+incluyen una discrepancia en la vinculación de tiempo, una URL base64 válida
+para el esquema con bits de pad no utilizados distintos de cero, una clave
+desconocida o vinculada incorrectamente, un intervalo de clave no válido, una
+clave pública no canónica o de orden no principal, una clave decodificada o una
+longitud de firma mal formada, o una discrepancia criptográfica. Una respuesta
+electrónica MUST NOT revela qué resolución de clave, admisión o verificación
+criptográfica falló. Organization MUST retiene la primera etapa semántica
+fallida y su motivo de diagnóstico específico en un registro de auditoría
+protegido y con acceso controlado de acuerdo con la política de retención
+aplicable. Los auditores autorizados podrán hacer referencia a una falla con
+alcance Group MUST desde el registro de políticas sin exponer ese diagnóstico a
+la persona que llama que no es de confianza.
 
 </NormativeClause>
 

@@ -19,8 +19,9 @@ couche Admission reste distincte des six étapes cryptographiques
 La clé logique est `(organizationId, signingHash)`. Le Admission Log authentifie
 son service d'acceptation, distingue un enregistrement trouvé d'une absence
 faisant autorité, préserve l'intégrité de l'ajout uniquement et expose une
-opération atomique d'ajout ou de retour existante. Les résultats typés
-échouent ; un indicateur de confiance de l'appelant ne peut pas les remplacer
+opération atomique d'ajout ou de retour existante. Les résultats typés échouent
+en mode fermé ; un indicateur de confiance de l'appelant ne peut pas les
+remplacer
 ([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).
 
 La forme exacte de l'enregistrement à neuf champs, l'interdiction d'un membre

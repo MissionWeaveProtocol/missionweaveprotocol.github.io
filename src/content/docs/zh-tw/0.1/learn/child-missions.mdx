@@ -22,7 +22,7 @@ Mission）**。子任务有自己的 Group、Coordinator、WorkItem 圖、會員
 
 ## 權限和批准
 
-父級 Coordinator 充當子級 MissionOwner 並代表父級 WorkItem 批准子級結果。 Organization 風險策略可能會增加直接的人工批准。核准的子結果變為 Evidence，父結果變為 WorkItem。
+父級 Coordinator 充當子級 MissionOwner，並代表上層 WorkItem 核准子級結果。Organization 風險政策還可要求直接的人工核准。核准的子任务結果會作為上層 WorkItem 的 Evidence 和 Artifact。
 
 父級 Coordinator 接收狀態變更、摘要、修訂估計、阻礙因素、預算或政策升級以及最終結果。它不需要每個子Message，同時保留授權按需檢查。完整的可見性邊界是[MWP-MSN-026](../../reference/specification/missions-groups-and-membership/#mwp-msn-026)。
 

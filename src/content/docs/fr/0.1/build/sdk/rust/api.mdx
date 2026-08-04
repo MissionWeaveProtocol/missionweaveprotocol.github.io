@@ -1,8 +1,8 @@
 ---
 title: Rust inventaire public API
 description: >-
-  Chaque déclaration de racine de caisse Rust prise en charge est résolue en son
-  fichier source exact et sa ligne lors de la validation SDK documentée.
+  Chaque déclaration prise en charge à la racine du crate Rust est résolue en
+  son fichier source exact et sa ligne lors de la validation SDK documentée.
 ---
 
 import SdkApiInventory from "../../../../../../../components/SdkApiInventory.astro";
@@ -13,9 +13,9 @@ Cet inventaire avec validation exacte est généré à partir de `src/lib.rs` et
 modules qu'il réexporte sélectivement vers
 `2727f8777737265d98dde4ceaca306612ef54c52`. Il contient 311 structures
 publiques, énumérations et variantes, traits, alias, fonctions, constantes,
-champs publics et méthodes publiques accessibles depuis la racine de la caisse.
-Les chemins de modules privés et les déclarations non réexportées par la racine
-de la caisse ne sont pas des contrats d'application.
+champs publics et méthodes publiques accessibles depuis la racine du crate. Les
+chemins de modules privés et les déclarations non réexportées par la racine du
+crate ne sont pas des contrats d'application.
 
 L'inventaire est la référence de dénomination et de provenance exacte de la
 source, et ne remplace pas la [sémantique d'exécution](../runtime/) ou le

@@ -1,16 +1,16 @@
 ---
-title: 首次入場和歷史信託
+title: 首次准入與歷史信任
 description: 權威查找、原子追加、回傳記錄驗證和歷史重播流程位於六階段驗證之上。
 ---
 
-# 首次入場與歷史信託
+# 首次准入與歷史信任
 
 密碼驗證證明受保護的位元組和金鑰綁定 Principal。首次入場增加了 Organization-分配可信的接受即時和權威的僅附加記錄。准入層與六個加密階段保持分離（[MWP-ADM-005](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
 
 ## Admission Log 契約
 
 邏輯鍵是 `(organizationId, signingHash)`。這 Admission
-Log 驗證其接受服務，區分找到的記錄與權威缺失，保留僅附加完整性，並公開一個原子附加或返回現有操作。輸入的結果未能關閉；呼叫者信任標誌無法取代它們（[MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)）。
+Log 對其接受服務進行身分驗證，區分找到的記錄與權威確認不存在，維持僅追加完整性，並公開原子的 append-or-return-existing 操作。不可用、不確定、未驗證、完整性失敗、衝突或提交失敗的結果必須失敗關閉；呼叫端提供的信任標誌不能取代這些型別化結果（[MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)）。
 
 精確的九場記錄形狀，禁止 `signature` 成員和非自認證邊界由
 [MWP-ADM-001](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001)。其確切的本地工件在

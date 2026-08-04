@@ -8,13 +8,13 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 # C++ 運行時參考
 
 此页面涵盖了由[确切的 API inventory](../api/)
-表示的完整 C++ 表面。共享协议行为仍然由本地[运行时参考](../../../runtime/architecture-and-bootstrap/)和[参考子句](../../../../reference/specification/)]定义。公共声明位于命名空间
+表示的完整 C++ 表面。共享协议行为仍然由本地[运行时参考](../../../runtime/architecture-and-bootstrap/)和[参考子句](../../../../reference/specification/)定义。公共声明位于命名空间
 `missionweaveprotocol` 中；下游 CMake 目标链接 `MissionWeaveProtocol::sdk`。
 
 <SupportStatus status="implemented" /> 适用于下面列出的已安装标头和进程内行为。
 
 <SupportStatus status="deployment-adapter-required" /> 適用於目前 Registry
-權限、可信任存取情境、經過驗證的日誌存取和其他部署服務。
+權威性、可信任准入情境、經過驗證的日誌存取和其他部署服務。
 
 <SupportStatus status="not-implemented" /> 表示精确固定的库没有相应的运行时。
 
@@ -81,7 +81,7 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 
 ## 明確的可用性邊界
 
-<SupportStatus status="deployment-adapter-required" /> **准入權限** —
+<SupportStatus status="deployment-adapter-required" /> **准入權威服務** —
 應用程式提供當前 Registry 證據、歷史 Registry
 證據、可信任接受上下文以及經過驗證的僅附加日誌。
 
@@ -97,4 +97,4 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 <SupportStatus status="not-implemented" /> **權威持久性運行時** —
 不匯出資料庫支援或 Agent 本地持久性運行時。
 
-這些缺勤是書面支援合約的一部分； Python 引用運行時功能不得從共享協議名稱推斷。
+這些未實作項目是書面支援合約的一部分；不得從共享協定名稱推斷 Python 參考執行階段能力。

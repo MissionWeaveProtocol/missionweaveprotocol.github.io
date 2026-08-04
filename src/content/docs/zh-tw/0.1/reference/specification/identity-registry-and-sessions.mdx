@@ -67,11 +67,14 @@ NOT 的存在揭露了另一個 Group 的身份、內容、工作項目或確切
 每個 Agent MUST 至少有一個 Organization 註冊的 Ed25519 公鑰。 v0.1
 WebSocket 握手使用新的伺服器挑戰：
 
-1. Agent 傳送 `HELLO/client_init` 及其 Agent
-   ID、金鑰 ID、隨機數和支援的協議版本；
-2. 伺服器回覆 `HELLO/server_challenge` 不可預測的質詢和選定的版本；
-3. Agent 透過 Ed25519 簽章回覆 `HELLO/client_response` 規範的挑戰記錄；和
-4. 伺服器使用短期會話令牌回覆 `HELLO/server_accept` 新發行的Session Epoch。
+1. Agent 傳送 `HELLO/client_init`，其中包含 Agent ID、key
+   ID、nonce 與支援的協定版本；
+2. 伺服器回覆
+   `HELLO/server_challenge`，其中包含不可預測的 challenge 與選定版本；
+3. Agent 回覆 `HELLO/client_response`，其中包含對規範 challenge
+   transcript 的 Ed25519 簽章；以及
+4. 伺服器回覆 `HELLO/server_accept`，其中包含短期 session
+   token 與新簽發的 Session Epoch。
 
 </NormativeClause>
 

@@ -37,10 +37,11 @@ Représentez chaque frontière avec une interface typée :
 :::
 
 La clé logique Admission Log est `(organizationId, signingHash)`. Il doit
-authentifier le service d'acceptation, distinguer les absences trouvées des
-absences faisant autorité, préserver l'intégrité des ajouts uniquement et fermer
-en cas d'échec en cas de résultats indisponibles, indéterminés, non
-authentifiés, en cas d'échec d'intégrité, de conflit ou d'échec de validation
+authentifier le service d'acceptation, distinguer un enregistrement trouvé d'une
+constatation faisant autorité de son absence, préserver l'intégrité des ajouts
+uniquement et échouer en mode fermé pour les résultats indisponibles,
+indéterminés, non authentifiés, en cas d'échec d'intégrité, de conflit ou
+d'échec de validation
 ([MWP-ADM-003](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).
 Un booléen de confiance fourni par l'appelant ne fait pas partie de ces
 résultats.

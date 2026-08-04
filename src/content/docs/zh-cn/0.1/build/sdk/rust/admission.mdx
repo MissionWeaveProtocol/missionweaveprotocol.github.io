@@ -47,7 +47,8 @@ let first = AdmissionService::new()?.admit_first(
 `append_or_return_existing`，并验证实际返回的记录。仅当架构、身份验证、文档绑定和可信时间满足
 [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
 和
-[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)] 时，并发获胜者才会成功。
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)
+时，并发获胜者才会成功。
 
 ## 历史回放和错误
 
@@ -56,7 +57,8 @@ let first = AdmissionService::new()?.admit_first(
 `AdmissionLog::append_or_return_existing`。匹配的记录 ID 恢复相同的权威记录，但不能证明 Command 的新鲜度、签名者授权、状态机接受或
 [MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
 和
-[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)] 下的便携式日志证明验证。
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)
+下的便携式日志证明验证。
 
 `AdmissionOperationError` 保留原始六阶段验证失败或
 `AdmissionError`。准入失败会公开线路代码 `AUTH_INVALID_SIGNATURE`、受保护阶段

@@ -36,11 +36,12 @@ Organization.
 
 <NormativeClause id="MWP-IDN-003" level={["MUST","MAY"]}>
 
-Las asignaciones MUST fijan la versión Agent Card y cada versión de capacidad
-requerida. Una actualización local compatible MAY continúa según la política
-Organization. Una actualización incompatible MUST activa el punto de control y
-obtiene una aceptación renovada antes de que continúe la ejecución. Cada
-Artifact MUST registra el Agent Card productor y las versiones de capacidad.
+Las asignaciones MUST fijar la versión de Agent Card y cada versión de capacidad
+requerida. Una actualización local compatible MAY continuar según la política de
+Organization. Una actualización incompatible MUST crear un punto de control del
+trabajo activo y obtener una aceptación renovada antes de continuar la
+ejecución. Cada Artifact MUST registrar las versiones de Agent Card y de
+capacidad que lo produjeron.
 
 </NormativeClause>
 
@@ -88,7 +89,7 @@ servidor:
 2. el servidor responde `HELLO/server_challenge` con un desafío impredecible y
    versión seleccionada;
 3. Agent responde a `HELLO/client_response` con una firma Ed25519 sobre el
-   transcripción de impugnación canónica; y
+   transcripción canónica del desafío; y
 4. el servidor responde `HELLO/server_accept` con un token de sesión de corta
    duración y un Session Epoch recién emitido.
 
@@ -97,11 +98,11 @@ servidor:
 <NormativeClause id="MWP-IDN-008" level={["MUST","MUST NOT","MAY"]}>
 
 La emisión de la época `n + 1` invalida todas las sesiones en la época `n` o
-inferior para ese ID Agent. Group Authority MUST valida Session Epoch en cada
-Agent Command que cambia de estado. Los comandos humanos y de servicio
-Organization no llevan un Agent Session Epoch y MUST NOT inventan uno. Un tiempo
-de ejecución reiniciado MAY recupera su ID estable Agent; dos tiempos de
-ejecución MUST NOT operan esa identidad simultáneamente.
+inferior para ese Agent ID. El Group Authority MUST validar el Session Epoch en
+cada Agent Command que cambie estado. Los Command humanos y de servicios
+Organization no llevan Agent Session Epoch y MUST NOT inventar uno. Un runtime
+reiniciado MAY recuperar su Agent ID estable; dos runtime MUST NOT operar esa
+identidad simultáneamente.
 
 </NormativeClause>
 

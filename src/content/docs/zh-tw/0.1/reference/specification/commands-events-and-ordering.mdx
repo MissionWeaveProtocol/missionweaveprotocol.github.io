@@ -13,51 +13,51 @@ import InformativeBlock from "../../../../../../components/InformativeBlock.astr
 
 <NormativeClause id="MWP-EVT-001" level={["MUST","MUST NOT"]}>
 
-一個 Command 是一個結構化狀態轉換的簽章請求。每一個 Command 信封 MUST 包含穩定的 Action
-ID、協議版本、參與者、種類、有效負載、相關 ID、發佈時間和簽名。一個 Group-範圍 Command
-MUST 包含其 Group ID。狀態改變 Agent Command MUST 另外還包含目前的 Session
-Epoch 和 Membership 時代。一個人 Command 在現有的 Group
-MUST 包含當前的 Membership 紀元和 MUST NOT 包含一個 Agent Session
-Epoch。一個 Organization-服務 Command MUST
-NOT 發明 Agent 會話或 Membership 紀元。
+Command 是要求一次結構化狀態轉換的簽章請求。每個 Command 信封 MUST 包含穩定的 Action
+ID、協定版本、actor、kind、payload、correlation
+ID、簽發時刻與簽章。Group 範圍的 Command MUST 包含其 Group ID。變更狀態的 Agent
+Command MUST 另外包含目前的 Session Epoch 與 Membership
+Epoch。既有 Group 中的人類 Command MUST 包含目前的 Membership Epoch，且 MUST
+NOT 包含 Agent Session Epoch。Organization 服務發出的 Command MUST
+NOT 編造 Agent Session Epoch 或 Membership Epoch。
 
 </NormativeClause>
 
-`mission.create` 和 `mission.create_follow_up`
-攜帶身分證 Group 正在創建但省略 Membership 和 Session Epochs 因為新的 Group
-Membership 尚不存在並且人類命令不使用 Agent 會議。控制平面可以進行身份驗證、中繼和驗證
-`mission.create`，但是簽名的 Command 演員和由此產生的根 MissionOwner 保持人性；控制平面不會成為 MissionOwner。這 Organization擁有的
+`mission.create` 與 `mission.create_follow_up` 攜帶正在建立的 Group
+ID，但省略 Membership Epoch 與 Session Epoch，因為新的 Group
+Membership 尚不存在，而且人類 Command 不使用 Agent 會話。控制平面可以驗證身分、中繼並驗證
+`mission.create`，但簽章 Command 的 actor 與產生的根 MissionOwner 仍是該人類；控制平面不會成為 MissionOwner。Organization 擁有的
 `ext.missionweaveprotocol.registry.agent_card_register` 和
 `ext.missionweaveprotocol.identity.session_open` bootstrap指令省略 Group
-ID 和所有三個角色/會話時期。
+ID 以及全部三個角色/會話 Epoch。
 
 <NormativeClause id="MWP-EVT-002" level={["MUST","SHOULD"]}>
 
-一個 Agent
-Command 其權限源自於目前 Coordinator 租 MUST 包含當前的 Coordinator 時代。這是必需的
-`mission.renew_coordinator`, `mission.submit_for_approval`,
-`mission.create_child`, `membership.grant_delegation`， 和
-`work.accept_result`，並且對於一個 Agent-發布 `mission.terminate`。服務發行
-`mission.terminate`
-而是由以下人員授權 Organization 政策並且不帶有 Coordinator 時代。一個 Command
-SHOULD 包含修改現有結構化狀態時預期的聚合修訂。一個 Command 使用一次性合作升級 MUST 還包含
-`cooperationOverrideGrantId`.
+權威性來自目前 Coordinator 租約的 Agent Command MUST 包含目前的 Coordinator
+Epoch。以下 Command 需要該欄位： `mission.renew_coordinator`,
+`mission.submit_for_approval`, `mission.create_child`,
+`membership.grant_delegation`， 和 `work.accept_result`，以及由 Agent 發出的
+`mission.terminate`。由服務發出的 `mission.terminate`
+改由 Organization 政策授權，不攜帶 Coordinator
+Epoch。修改既有結構化狀態時，Command
+SHOULD 包含預期的聚合修訂。使用一次性 cooperation escalation 的 Command
+MUST 另外包含 `cooperationOverrideGrantId`.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-EVT-003" level={["MUST","MUST NOT"]}>
 
-相同 `(actor ID, Action ID)`
-具有位元組等效的規範簽名內容 MUST 返回原始收據並 MUST
-NOT 附加第二個狀態轉換。重複使用具有不同規範內容的相同操作 ID MUST 失敗與
-`ACTION_ID_COLLISION`.
+當相同 `(actor ID, Action ID)`
+對應的規範簽章內容在位元組層面等價時，系統 MUST 傳回原始回執，且 MUST
+NOT 追加第二次狀態轉換。若以不同的規範內容重用同一 Action ID，則 MUST 以
+`ACTION_ID_COLLISION` 失敗。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-EVT-004" level="MUST">
 
-這 Group Authority
-MUST 驗證演員身份；驗證會話和 Membership 時代、模式、當前聚合修訂、角色、授權、預算、政策和租賃；並要么拒絕 Command 或附加結果 Event(s) 原子地在該範圍內 Group.
+Group Authority MUST 驗證 actor 身分，驗證 Session Epoch、Membership
+Epoch、Schema、目前的聚合修訂、角色、委派、預算、政策與租約，並且要麼拒絕 Command，要麼在該 Group 內原子追加由此產生的 Event。
 
 </NormativeClause>
 
@@ -93,19 +93,18 @@ Profile 可以標準化便利命令，例如明確拒絕報價、澄清或 Missi
 
 <NormativeClause id="MWP-EVT-005" level={["MUST","MUST NOT"]}>
 
-一個 Event 是不可改變的公認事實。一個 Group Event 信封 MUST 包含 Event
-ID， Group
-ID，嚴格遞增 Group 序列、聚合修訂、種類、參與者、原因、相關 ID、發生時間、有效負荷和 Group
-Authority 簽名。這 Organization-範圍
+Event 是不可變的已接受事實。Group Event 信封 MUST 包含 Event ID、Group
+ID、嚴格遞增的 Group sequence、聚合修訂、kind、actor、cause、correlation
+ID、發生時刻、payload 與 Group Authority 簽章。Organization 範圍的
 `ext.missionweaveprotocol.registry.agent_card_registered` 和
-`ext.missionweaveprotocol.identity.session_opened`
-事實包含共同點 Event 身分、參與者、原因、相關性、有效負載、時間、接受權限和簽名字段，但是 MUST
-NOT 包含 Group ID， Group 序列，或 Group 匯總修訂。
+`ext.missionweaveprotocol.identity.session_opened` 事實包含通用的 Event
+identity、actor、cause、correlation、payload、time、接受權威與簽章欄位，但 MUST
+NOT 包含 Group ID、Group sequence 或 Group 聚合修訂。
 
 </NormativeClause>
 
-這 Group Authority 為每個持久分配一個單調序列 Group
-Event。此序列提供確定性的顯示、復原和審核順序。即使服務指定了顯示順序，普通訊息也可以在邏輯上並發。結構化轉型依賴 Event 順序和匯總修訂。
+Group Authority 為每個持久化 Group
+Event 指派一個單調遞增的 sequence。該 sequence 提供確定性的顯示、復原與稽核順序。即使服務指派了顯示順序，普通 Message 在邏輯上仍可並行。結構化轉換依賴 Event 順序與聚合修訂。
 
 <span id="core-event-kinds"></span>
 

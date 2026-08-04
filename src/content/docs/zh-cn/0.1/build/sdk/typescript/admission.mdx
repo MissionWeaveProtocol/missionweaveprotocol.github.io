@@ -49,7 +49,8 @@ const first = await new AdmissionService().admitFirst(
 `appendOrReturnExisting`，并验证实际返回的记录。仅当其架构、经过身份验证的服务、文档绑定和可信时间通过
 [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
 和
-[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)] 时，并发获胜者才是可接受的。
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)
+时，并发获胜者才是可接受的。
 
 ## 历史回放
 
@@ -71,7 +72,8 @@ const historical = await new AdmissionService().verifyHistoricalAdmission(
 `AdmissionLog.appendOrReturnExisting`。匹配的记录ID表明恢复了相同的权威记录；它们不证明 Command 新鲜度、签名者授权、状态机接受或便携式日志证明验证。这些在
 [MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
 和
-[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)] 下保持独立。
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)
+下保持独立。
 
 ## 误差面
 

@@ -1,7 +1,7 @@
 ---
 title: Autorisierung, Budgets und Nebenwirkungen
 description:
-  Normative Autorisierung, Fähigkeit, Genehmigung, Budget und
+  Normative Autorisierungs-, Capability-, Genehmigungs-, Budget- und
   Nebenwirkungskontrollen.
 ---
 
@@ -11,70 +11,73 @@ import NormativeClause from "../../../../../../components/NormativeClause.astro"
 
 <NormativeClause id="MWP-AUT-001" level="MUST">
 
-Nach der Annahme von WorkItem und allen erforderlichen Genehmigungen stellt der
-Autorisierungsdienst ein kurzlebiges Funktionstoken mit den geringsten Rechten
-aus. Der Token MUST muss an Folgendes gebunden sein:
+Nach der Annahme des WorkItem und allen erforderlichen Genehmigungen stellt der
+Authorization Service ein kurzlebiges Capability-Token mit minimalen Rechten
+aus. Das Token MUST an Folgendes gebunden sein:
 
 - die Worker Agent ID und die aktuelle Session Epoch;
-- WorkItem ID und Besitzepoche;
-- die aktuelle Ausführungsleasing-ID;
+- WorkItem ID und Ownership Epoch;
+- die aktuelle Execution Lease ID;
 - erlaubte Tools, Ressourcen, Daten und Vorgänge;
-- Finanz-, Token-, Anruf-, Rechen-, Zeit- und Nebeneffektlimits; und
-- ein Ablauf spätestens nach dem geltenden Ausführungsvertrag.
+- Finanz-, Token-, Aufruf-, Rechen-, Zeit- und Nebenwirkungslimits; und
+- einen Ablaufzeitpunkt, der nicht nach dem Ende der geltenden Execution Lease
+  liegt.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-AUT-002" level={["MAY","MUST NOT","MUST"]}>
 
-Die Coordinator MAY fordern eine Autorisierung an, aber MUST NOT erstellt,
-kopiert oder leitet die Anmeldeinformationen eines Worker weiter. Token und
-Geheimnisse MUST NOT erscheinen in Nachrichten, Agent Karten, Kontextpaketen,
-Artefakten oder Group Ereignissen. Abgelaufene, widerrufene, nicht
-übereinstimmende oder überbudgetierte Token MUST werden abgelehnt.
+Der Coordinator MAY eine Autorisierung anfordern, MUST NOT jedoch die
+Anmeldeinformationen eines Worker erstellen, kopieren oder weiterleiten. Tokens
+und Geheimnisse MUST NOT in Messages, Agent Cards, Context Packages, Artifacts
+oder Group Events erscheinen. Abgelaufene, widerrufene, nicht passende oder das
+Budget überschreitende Tokens MUST abgelehnt werden.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-AUT-003" level={["MUST","MAY"]}>
 
-Organization Politik MUST in der Lage sein, a zu platzieren WorkItem hinein
-`awaiting_execution_approval` vor der Produktionsbereitstellung, Zahlungen,
-externen Kommunikationen, destruktiven Änderungen oder dem Zugriff auf sensible
-Daten. Der Autorisierungsdienst MUST Halten Sie das Fähigkeitstoken zurück, bis
-das unterzeichnete Genehmigungstor erfüllt ist. Arbeiten mit geringem Risiko MAY
-Fahren Sie gemäß der Richtlinie automatisch fort.
+Die Organization-Richtlinie MUST einen WorkItem vor einer
+Produktionsbereitstellung, Zahlung, externen Kommunikation, destruktiven
+Änderung oder einem Zugriff auf sensible Daten in `awaiting_execution_approval`
+versetzen können. Der Authorization Service MUST das Capability-Token
+zurückhalten, bis das signierte Approval Gate erfüllt ist. Arbeiten mit geringem
+Risiko MAY gemäß der Richtlinie automatisch fortfahren.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-AUT-004" level="MUST NOT">
 
-Mission Und WorkItem Budgets sind verbindliche Protokollkonzepte. Der
-MissionOwner Sätze Mission Grenzen, die Coordinator weist WorkItems und
-Unteraufgaben nicht mehr als diese Grenzwerte zu, und der Autorisierungsdienst
-erzwingt harte Grenzwerte. Die Erschöpfung des Budgets führt zu einer
-Unterbrechung der betroffenen Arbeiten und erfordert eine explizite Eskalation.
-Agenten MUST NOT stillschweigend eine Grenze überschreiten.
+Mission- und WorkItem-Budgets sind verbindliche Protokollkonzepte. Der
+MissionOwner setzt Mission-Grenzen, der Coordinator weist WorkItems und
+Unteraufgaben nicht mehr als diese Grenzwerte zu, und der Authorization Service
+erzwingt harte Grenzwerte. Die Erschöpfung eines Budgets pausiert die betroffene
+Arbeit und erfordert eine explizite Eskalation. Agents MUST NOT stillschweigend
+eine Grenze überschreiten.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-AUT-005" level="MUST">
 
-Die Group Authority MUST behalten ein aggregiertes sechsdimensionales Budgetbuch
-bei. Ein signierter `ext.missionweaveprotocol.core.resource_usage_record`
-Command zeichnet ein Delta ungleich Null gegenüber einem WorkItem, einer
-Eigentümerepoche und einer Ausführungsleasing-ID auf; Der entsprechende
+Die Group Authority MUST ein aggregiertes sechsdimensionales Budgetbuch
+dauerhaft speichern. Ein signierter
+`ext.missionweaveprotocol.core.resource_usage_record` Command zeichnet ein Delta
+ungleich Null gegenüber einem WorkItem, einer Ownership Epoch und einer
+Execution Lease ID auf; der entsprechende
 `ext.missionweaveprotocol.core.resource_usage_recorded` Event trägt das Delta,
-die kumulative Nutzung und das verbleibende Budget. Der Verbrauch MUST
-aktualisiert den WorkItem und seine vollständige WorkItem/Mission-Abstammung in
-einem atomaren Übergang. Ein eindimensionaler Überlauf MUST lehnt den gesamten
-Übergang als `BUDGET_EXCEEDED` ab. Capability-Token-Budgets MUST werden sowohl
-durch den Arbeitsvertrag als auch durch das maßgebliche Restbudget begrenzt.
+die kumulative Nutzung und das verbleibende Budget. Der Verbrauch MUST den
+WorkItem und seine vollständige WorkItem/Mission-Abstammung in einem atomaren
+Übergang aktualisieren. Eine Überschreitung in nur einer Dimension MUST den
+gesamten Übergang als `BUDGET_EXCEEDED` zurückweisen. Capability-Token-Budgets
+MUST sowohl durch den Work Contract als auch durch das maßgebliche Restbudget
+begrenzt werden.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-AUT-006" level="MUST">
 
-Stornierung oder Notfallbeendigung MUST widerrufen relevante Leases und
-Fähigkeitstoken, stoppen neue Zuweisungen und initiieren bei Bedarf vertraglich
-definierte Bereinigungs- oder Vergütungs-WorkItems.
+Abbruch oder Notfallbeendigung MUST relevante Leases und Capability-Tokens
+widerrufen, neue Zuweisungen stoppen und bei Bedarf vertraglich definierte
+Bereinigungs- oder Kompensations-WorkItems einleiten.
 
 </NormativeClause>

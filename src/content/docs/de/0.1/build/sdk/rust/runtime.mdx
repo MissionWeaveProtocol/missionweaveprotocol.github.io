@@ -13,7 +13,7 @@ Diese Seite deckt die gesamte Crate-Root-Oberfläche ab, die durch das
 [exakte API Inventar](../api/) dargestellt wird. Das Verhalten des gemeinsam
 genutzten Protokolls bleibt durch die lokalen
 [Laufzeitreferenz](../../../runtime/architecture-and-bootstrap/) und
-[Referenzklauseln](../../../../reference/specification/)] definiert. Die
+[Referenzklauseln](../../../../reference/specification/) definiert. Die
 folgenden Modulnamen geben die Herkunft der Implementierung an; Aufrufer
 importieren die öffentlichen Reexporte von `missionweaveprotocol`, da die Module
 selbst privat sind.
@@ -26,16 +26,16 @@ Registry-Autorität, den vertrauenswürdigen Zulassungskontext, den
 authentifizierten Protokollzugriff und andere Bereitstellungsdienste.
 
 <SupportStatus status="not-implemented" /> bedeutet, dass die genau angeheftete
-Kiste keine entsprechende Laufzeit hat.
+crate keine entsprechende Laufzeit hat.
 
-## Kiste und Ausführungsmodell
+## Crate und Ausführungsmodell
 
-Die Kiste hat die Version `0.1.0`, verwendet Edition 2024, deklariert Rust 1.85
+Das crate hat die Version `0.1.0`, verwendet Edition 2024, deklariert Rust 1.85
 als minimal unterstützte Toolchain und stellt eine Binärdatei bereit:
 `missionweaveprotocol-conformance`. `src/lib.rs` ist das einzige öffentliche
 Importstammverzeichnis; Interne Modulpfade sind keine unterstützten APIs.
 
-Durch die Installation der Kiste wird kein Dienst gestartet, kein Socket
+Durch die Installation des crate wird kein Dienst gestartet, kein Socket
 geöffnet, kein Status beibehalten und keine Autorität gewährt. Zurückgegebene
 Byte-Slices und Beweisobjekte bleiben lokale Prozesswerte, es sei denn, die
 Anwendung speichert oder überträgt sie absichtlich.
@@ -101,10 +101,10 @@ Aufrufreihenfolge und das ausführbare Paket-Consumer-Beispiel fort.
 
 ## Explizite Verfügbarkeitsgrenzen
 
-<SupportStatus status="deployment-adapter-required" /> **Zulassungsbehörde** –
-die Anwendung stellt aktuelle Registry-Beweise, historische Registry-Beweise,
-vertrauenswürdigen Akzeptanzkontext und ein authentifiziertes
-Nur-Anhänge-Protokoll bereit.
+<SupportStatus status="deployment-adapter-required" />
+**Admission-Authority-Grenze** – die Anwendung stellt aktuelle Registry-Beweise,
+historische Registry-Beweise, vertrauenswürdigen Akzeptanzkontext und ein
+authentifiziertes Nur-Anhänge-Protokoll bereit.
 
 <SupportStatus status="not-implemented" /> **Mission Orchestrierung** – es wird
 keine übergeordnete Mission Zustandsmaschine oder Orchestrierungsfassade
@@ -115,7 +115,7 @@ Warteschlange, kein Scheduler, Lease Runner oder Wiederherstellungsschleife wird
 exportiert.
 
 <SupportStatus status="not-implemented" /> **Gehosteter Gateway-Dienst** – die
-Kiste stellt einen Frame-Codec bereit, keinen Gateway-Dienst mit Transport-,
+Das crate stellt einen Frame-Codec bereit, keinen Gateway-Dienst mit Transport-,
 TLS-, Sitzungs-, Routing- oder Gegendruckbesitz.
 
 <SupportStatus status="not-implemented" /> **Autoritative Persistenzlaufzeit** –

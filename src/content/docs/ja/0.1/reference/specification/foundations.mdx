@@ -73,7 +73,7 @@ MUST の実装は、参照されている場合、次の外部仕様に従いま
 の JSON スキーマに準拠しており、すべてのプロトコル タイムスタンプ MUST は RFC
 3339 になります。 `date-time`。 MissionWeaveProtocol 0.1 では、Signed
 Document 検証プロファイルに決定論的なタイムスタンプ プロファイルが使用されます。
-[セクション 6.4](../signed-documents-and-trust/)] でカバーされる Signed
+[セクション 6.4](../signed-documents-and-trust/) でカバーされる Signed
 Document のすべてのタイムスタンプ、およびその文書の検証に使用されるすべての Registry または信頼できる受け入れタイムスタンプ、MUST は、次の追加ルールを満たします。
 
 - 暦年は `0001` から `9999`
@@ -205,8 +205,8 @@ NOT は MissionWeaveProtocol セマンティクスとして公開されます。
 <NormativeClause id="MWP-FND-016" level="MUST">
 
 4. **1 つのアクティブなランタイム。** 状態を変更する Agent Command
-   MUST は、現在の状態を保持します。Session
-   Epoch。下位エポック MUST は、WebSocket が接続されたままであっても拒否されます。
+   MUST は現在の Session
+   Epoch を保持します。より低い Epoch の Command は、WebSocket が接続されたままでも MUST 拒否されます。
 
 </NormativeClause>
 
@@ -277,8 +277,10 @@ MissionWeaveProtocol デプロイメントには少なくとも以下が含ま�
 
 <NormativeClause id="MWP-FND-023" level="MUST NOT">
 
-権限のある状態は、ミッション、メンバーシップ、作業項目、所有権とリースのエポック、重複排除の受領書、承認、および Group イベントで構成されます。 Agent ローカル カーソル、Group ごとのキュー、チェックポイント、送信ボックス、受信ボックス、およびスケジューラの状態は再構築可能なプロジェクションです。 Agent のローカル データベース MUST
-NOT が失われると、権限のある Mission 状態が変化します。
+権威ある状態は、Mission、Membership、WorkItem、Ownership Epoch と Lease
+Epoch、重複排除レシート、Approval、および Group
+Event で構成されます。Agent のローカルカーソル、Group ごとのキュー、checkpoint、outbox、inbox、および scheduler 状態は再構築可能な projection です。Agent のローカルデータベースの喪失は、権威ある Mission 状態を MUST
+NOT 変更します。
 
 </NormativeClause>
 

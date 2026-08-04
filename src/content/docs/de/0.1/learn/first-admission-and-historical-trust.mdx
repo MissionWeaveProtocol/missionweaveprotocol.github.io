@@ -19,9 +19,9 @@ kryptografischen Stufen getrennt
 
 Der logische Schlüssel ist `(organizationId, signingHash)`. Der Admission Log
 authentifiziert seinen akzeptierenden Dienst, unterscheidet einen gefundenen
-Datensatz von einer autorisierenden Abwesenheit, wahrt die
+Datensatz von einer maßgeblichen Nichtvorhandenseinsfeststellung, wahrt die
 Nur-Anhänge-Integrität und macht einen atomaren Anhänge-oder-Rückgabe-Vorgang
-verfügbar. Typisierte Ergebnisse schlagen fehl, geschlossen; ein
+verfügbar. Typisierte Ergebnisse führen zu einer geschlossenen Ablehnung; ein
 Anrufer-Vertrauensflag kann sie nicht ersetzen
 ([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).
 
@@ -74,9 +74,9 @@ ausgewählten Schlüsselintervalls getestet, das für die geschützte signierte 
 verwendet wird
 ([MWP-ADM-010](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)).
 
-Bei Ausfällen nach Abschluss der sechs Stufen bleibt die geschützte
-Diagnosestufe erhalten `admission` und Karte auf dem Draht zu
-`AUTH_INVALID_SIGNATURE`
+Ausfälle nach Abschluss der sechs Stufen werden auf der Wire-Ebene
+`AUTH_INVALID_SIGNATURE` zugeordnet; die geschützte Diagnosestufe `admission`
+bleibt erhalten
 ([MWP-ADM-012](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).
 
 ## Historische Wiederholung

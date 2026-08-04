@@ -53,9 +53,10 @@ MAY 向 Coordinator。直接將人員分配給 Worker 是一個明確的、經�
 
 <NormativeClause id="MWP-MSN-004" level="MAY">
 
-正好一個 Coordinator 租賃時代 MAY 是最新的。租約確定了 Agent,
-Coordinator 時代， Session Epoch、到期和續訂政策。僅當前 Coordinator
-epoch 可以授權或指派 WorkItems、接受 Worker 結果、提交 Mission，或建立子任务。
+任一時刻最多只 MAY 有一個目前的 Coordinator Lease
+Epoch。該租約識別 Agent、Coordinator Epoch、Session
+Epoch、到期時間與續訂政策。只有目前的 Coordinator
+Epoch 可以授權或指派 WorkItems、接受 Worker 結果、提交 Mission，或建立子任务。
 
 </NormativeClause>
 
@@ -114,12 +115,12 @@ Membership 時代。 MissionOwner 和 Coordinator 會員資格 MUST 有完整的
 
 <NormativeClause id="MWP-MSN-011" level="SHOULD">
 
-Worker Membership SHOULD 及時：
+Worker Membership SHOULD 按需即時建立：
 
-1. 的 Coordinator 選擇一名候選人並授予範圍臨時的 Membership;
-2. 的 Worker 收到即將到期的報價並已簽署 Context Package;
-   3.接受報價激活 Membership 並創建所有權；和
-3. Membership 結束時 Worker 沒有工作項或審查義務，或者的 Mission 已存檔。
+1. Coordinator 選擇候選者，並授予限定範圍的臨時 Membership；
+2. Worker 收到一份有到期時間的 offer 和一個已簽署的 Context Package；
+3. 接受 offer 會啟用 Membership 並建立 ownership；以及
+4. 當 Worker 不再承擔 WorkItem 或審查義務，或者 Mission 已封存時，Membership 結束。
 
 </NormativeClause>
 
@@ -249,14 +250,14 @@ MAY 升級為子任务，具有自己的 Group、Coordinator、WorkItem 圖、�
 
 </NormativeClause>
 
-預設情況下，子級 Coordinator 審核並提交子級結果，父級 Coordinator 充當子級 MissionOwner。當風險保單如此規定時，還需要獲得根本人的批准。核准的子結果變為 Evidence，父結果變為 WorkItem。
+預設情況下，子級 Coordinator 審核並提交子級結果，父級 Coordinator 充當子級 MissionOwner。當風險政策如此規定時，還需要根 MissionOwner 的人工核准。核准的子任务結果會作為上層 WorkItem 的 Evidence 和 Artifact。
 
 失敗的子項 Mission 不會自動使其父項失敗。它發出結構化故障 Evidence 並阻止父級 WorkItem 或使其失敗。父級 Coordinator 可以重新規劃、修改範圍、建立替換子級或取消。只有當父級完成策略聲明子級不可或缺且別無選擇時，失敗才會自動傳播。
 
 <NormativeClause id="MWP-MSN-026" level={["MUST NOT","MUST"]}>
 
-父級 Coordinator 接收子級狀態變更、進度摘要、修訂後的估計、阻礙因素、預算/政策升級和最終結果。它需要 MUST
-NOT 來攝取每個子 Message，但保留授權的按需檢查。根 MissionOwner
+父級 Coordinator 接收子級狀態變更、進度摘要、修訂後的估計、阻礙因素、預算/政策升級和最終結果。父級 Coordinator
+MUST NOT 被要求攝取每個子 Message，但仍保留經授權的隨選檢查能力。根 MissionOwner
 MUST 能夠檢查完整的 Mission 樹。
 
 </NormativeClause>

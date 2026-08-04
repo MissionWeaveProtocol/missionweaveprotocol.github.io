@@ -14,20 +14,21 @@ import InformativeBlock from "../../../../../../components/InformativeBlock.astr
 
 <NormativeClause id="MWP-EVT-001" level={["MUST","MUST NOT"]}>
 
-Command は、1 つの構造化された状態遷移に対する署名付きリクエストです。すべての Command エンベロープ MUST には、安定したアクション ID、プロトコル バージョン、アクター、種類、ペイロード、相関 ID、発行時刻、および署名が含まれています。 Group スコープの Command
-MUST には、Group ID が含まれます。状態変更 Agent Command
-MUST には、現在の Session
-Epoch および Membership エポックがさらに含まれます。既存の Group 内の人間の Command
-MUST には現在の Membership エポックが含まれ、MUST
-NOT には Agent が含まれます。 Session Epoch。 Organization サービス Command MUST
-NOT は、Agent セッションまたは Membership エポックを作成します。
+Command は、1 回の構造化状態遷移を要求する署名付きリクエストです。すべての Command エンベロープ MUST は、安定した Action
+ID、プロトコルバージョン、actor、kind、payload、correlation
+ID、発行時刻、および署名を含みます。Group スコープの Command MUST は Group
+ID を含みます。状態を変更する Agent Command MUST は、現在の Session
+Epoch と Membership Epoch も含みます。既存 Group 内の人間の Command
+MUST は現在の Membership Epoch を含み、Agent Session Epoch を MUST
+NOT 含みます。Organization サービスが発行する Command は、Agent Session
+Epoch または Membership Epoch を MUST NOT 捏造します。
 
 </NormativeClause>
 
-`mission.create` および `mission.create_follow_up`
-には、作成される Group の ID が含まれますが、新しい Group
-Membership は含まれないため、Membership およびセッション エポックは省略されます。まだ存在しており、人間のコマンドは Agent セッションを使用しません。コントロール プレーンは
-`mission.create`
+`mission.create` および `mission.create_follow_up` は作成対象の Group
+ID を含みますが、新しい Group
+Membership がまだ存在せず、人間の Command は Agent セッションを使用しないため、Membership
+Epoch と Session Epoch を省略します。コントロールプレーンは `mission.create`
 を認証、中継、検証できますが、署名された Command アクターと結果として得られるルート MissionOwner は人間のままです。コントロール プレーンは MissionOwner にはなりません。 Organization が所有する
 `ext.missionweaveprotocol.registry.agent_card_register` および
 `ext.missionweaveprotocol.identity.session_open`
@@ -36,29 +37,30 @@ ID と 3 つのロール/セッション エポックすべてを省略します
 
 <NormativeClause id="MWP-EVT-002" level={["MUST","SHOULD"]}>
 
-現在の Coordinator リース MUST から権限が派生する Agent
-Command には、現在の Coordinator エポックが含まれています。これは、`mission.renew_coordinator`、`mission.submit_for_approval`、`mission.create_child`、`membership.grant_delegation`、および
-`work.accept_result`、および Agent で発行されたものに必要です。
-`mission.terminate`。サービスによって発行された `mission.terminate`
-は、代わりに Organization ポリシーによって承認され、Coordinator エポックは含まれません。 Command
-SHOULD には、既存の構造化状態を変更するときに予期される集計リビジョンが含まれます。ワンショット連携エスカレーション MUST を使用する Command には、`cooperationOverrideGrantId`
-も含まれます。
+現在の Coordinator リースから権威を得る Agent Command
+MUST は、現在の Coordinator Epoch を含みます。これは
+`mission.renew_coordinator`、`mission.submit_for_approval`、`mission.create_child`、`membership.grant_delegation`、`work.accept_result`、および Agent が発行する
+`mission.terminate` に必要です。サービスが発行する `mission.terminate`
+は Organization ポリシーによって認可され、Coordinator
+Epoch を含みません。既存の構造化状態を変更する Command
+SHOULD は、期待する集約リビジョンを含みます。1 回限りの cooperation
+escalation を使う Command MUST は、`cooperationOverrideGrantId` も含みます。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-EVT-003" level={["MUST","MUST NOT"]}>
 
-バイト同等の正規署名コンテンツ MUST を持つ同じ `(actor ID, Action ID)`
-は元のレシートを返し、MUST
-NOT は 2 番目の状態遷移を追加します。異なる正規コンテンツ MUST で同じアクション ID を再利用すると、`ACTION_ID_COLLISION`
-で失敗します。
+同じ `(actor ID, Action ID)`
+に対する正規署名内容がバイト同等である場合、システム MUST は元のレシートを返し、2 回目の状態遷移を MUST
+NOT 追加します。同じ Action
+ID を異なる正規内容で再利用した場合、`ACTION_ID_COLLISION` で MUST 失敗します。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-EVT-004" level="MUST">
 
-Group Authority
-MUST はアクターを認証します。セッションと Membership エポック、スキーマ、現在の集計リビジョン、ロール、委任、予算、ポリシー、およびリースを検証します。そして、Command を拒否するか、結果の Event をその Group 内にアトミックに追加します。
+Group Authority MUST は actor を認証し、Session Epoch、Membership
+Epoch、Schema、現在の集約リビジョン、ロール、委任、予算、ポリシー、およびリースを検証したうえで、Command を拒否するか、結果の Event をその Group 内へアトミックに追加します。
 
 </NormativeClause>
 
@@ -87,7 +89,7 @@ policy.grant_cooperation_override
 ```
 
 参照コアはさらに、Agent
-Card の登録、セッションのアクティブ化、依存関係の挿入、実行リースの更新、権限のあるリソース使用量の記録、および Group アーカイブのための Organization が所有する
+Card の登録、セッションのアクティブ化、依存関係の挿入、実行リースの更新、権威あるリソース使用量の記録、および Group アーカイブのための Organization が所有する
 `ext.missionweaveprotocol.*` コマンドを定義します。将来の Extension
 Profile では、明示的なオファーの拒否、説明、Mission の一時停止などの便利なコマンドが標準化される可能性がありますが、これらの名前は v0.1 コア移行ではありません。
 
@@ -95,19 +97,20 @@ Profile では、明示的なオファーの拒否、説明、Mission の一時�
 
 <NormativeClause id="MWP-EVT-005" level={["MUST","MUST NOT"]}>
 
-Event は不変の受け入れられた事実です。 Group Event エンベロープ MUST には、Event
-ID、Group
-ID、厳密に増加する Group シーケンス、集約リビジョン、種類、アクター、原因が含まれます。相関 ID、発生時刻、ペイロード、および Group
-Authority 署名。 Organization スコープの
+Event は不変の受理済み事実です。Group Event エンベロープ MUST は、Event
+ID、Group ID、厳密に増加する Group
+sequence、集約リビジョン、kind、actor、cause、correlation
+ID、発生時刻、payload、および Group
+Authority の署名を含みます。Organization スコープの
 `ext.missionweaveprotocol.registry.agent_card_registered` および
 `ext.missionweaveprotocol.identity.session_opened` ファクトには、共通の Event
-ID、アクター、原因、相関、ペイロード、時間、承認権限、署名フィールドが含まれていますが、MUST
-NOT にはGroup ID、Group シーケンス、または Group 集約リビジョン。
+ID、actor、cause、correlation、payload、time、受理した authority、および署名の共通フィールドを含みますが、Group
+ID、Group sequence、または Group 集約リビジョンを MUST NOT 含みます。
 
 </NormativeClause>
 
-Group Authority は、すべての耐久性のある Group
-Event に 1 つの単調シーケンスを割り当てます。このシーケンスにより、決定的な表示、回復、および監査の順序が提供されます。通常のメッセージは、サービスが表示順序を割り当てている場合でも、論理的に同時である可能性があります。構造化された遷移は、Event の順序と集計リビジョンに依存します。
+Group Authority は、永続化する各 Group
+Event に単調増加する sequence を 1 つ割り当てます。この sequence が、決定的な表示、復旧、および監査の順序を与えます。サービスが表示順序を割り当てても、通常の Message は論理的には並行し得ます。構造化状態の遷移は、Event 順序と集約リビジョンに依存します。
 
 <span id="core-event-kinds"></span>
 
@@ -162,7 +165,8 @@ NOT はそれを部分的に適用します。アトミックファーストア�
 
 <InformativeBlock title="Pinned source continuation">
 
-次のブロックでは、後で固定されたソース セグメントが再開されます。介在するローカル ページと正確な行範囲については、[仕様ソース map](./)] を参照してください。
+次のブロックでは、後で固定されたソース セグメントが再開されます。介在するローカル ページと正確な行範囲については、[仕様ソース map](./)
+を参照してください。
 
 </InformativeBlock>
 

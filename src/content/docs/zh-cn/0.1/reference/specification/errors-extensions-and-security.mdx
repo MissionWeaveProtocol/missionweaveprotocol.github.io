@@ -34,47 +34,52 @@ Epoch、所有权纪元、租赁、预算、 Approval、Artifact 来源、Missio
 <NormativeClause id="MWP-EXT-004" level={["MUST","SHOULD"]}>
 
 错误 MUST 符合
-`schemas/error.schema.json`。错误响应 MUST 是机器可读的，MUST 说明重试是否安全，SHOULD 识别相关帧或操作 ID，而不会暴露未经授权的数据。核心代码是：
+`schemas/error.schema.json`。错误响应 MUST 可由机器读取，MUST 说明重试是否安全，并且 SHOULD 在不泄露未授权数据的前提下标识相关 frame 或 Action
+ID。核心错误码为：
 
-| 代码                         | 意义                                               |
-| ---------------------------- | -------------------------------------------------- |
-| `UNSUPPORTED_VERSION`        | 没有兼容的协议版本                                 |
-| `AUTH_REQUIRED`              | 缺少身份验证                                       |
-| `AUTH_INVALID_SIGNATURE`     | 签名文档签名、密钥有效性、准入证明或新鲜度检查失败 |
-| `AUTH_STALE_SESSION`         | Session Epoch 已被围栏                             |
-| `AUTH_STALE_COORDINATOR`     | Coordinator Epoch 已被围栏                         |
-| `AUTH_FORBIDDEN`             | 演员缺乏许可或政策资格                             |
-| `GROUP_NOT_FOUND`            | Group 不存在或故意未公开                           |
-| `MEMBERSHIP_REQUIRED`        | 没有适用的 Membership                              |
-| `MEMBERSHIP_STALE`           | Membership Epoch 已被围栏                          |
-| `SCHEMA_VALIDATION_FAILED`   | 对象不符合其架构                                   |
-| `INVALID_COMMAND`            | Command 格式良好，但语义无效                       |
-| `INVALID_STATE_TRANSITION`   | 聚合状态禁止转换                                   |
-| `REVISION_CONFLICT`          | 预期修订版不符                                     |
-| `ACTION_ID_COLLISION`        | 稳定的 Action ID 可以与不同的内容重用              |
-| `UNKNOWN_CRITICAL_EXTENSION` | 无法解释所需的扩展名                               |
-| `WORK_CONTRACT_INCOMPLETE`   | 缺少所需的工作合同信息                             |
-| `WORK_OFFER_EXPIRED`         | 优惠不再有效                                       |
-| `WORK_ALREADY_OWNED`         | 另一位候选人赢得了独家所有权                       |
-| `WORK_LEASE_EXPIRED`         | 所需的租约不再有效                                 |
-| `WORK_STALE_OWNERSHIP`       | 所有权时代被围住                                   |
-| `APPROVAL_REQUIRED`          | 政策关口尚未满足                                   |
-| `BUDGET_EXCEEDED`            | Mission 或 WorkItem 硬预算已用完                   |
-| `RATE_LIMITED`               | 已达到策略率或递归阈值                             |
-| `BACKPRESSURE`               | 接收器当前无法接受更多流量                         |
-| `CURSOR_TOO_OLD`             | 在线重播不再包含请求的位置                         |
-| `PROTOCOL_VIOLATION`         | 同伴违反框架或核心不变量                           |
-| `INTERNAL_ERROR`             | 当局未能接受移交                                   |
+| 代码                         | 意义                                                                    |
+| ---------------------------- | ----------------------------------------------------------------------- |
+| `UNSUPPORTED_VERSION`        | 没有兼容的协议版本                                                      |
+| `AUTH_REQUIRED`              | 缺少身份验证                                                            |
+| `AUTH_INVALID_SIGNATURE`     | Signed Document 签名、key 有效性、Admission proof 或 freshness 检查失败 |
+| `AUTH_STALE_SESSION`         | Session Epoch 已被 fencing                                              |
+| `AUTH_STALE_COORDINATOR`     | Coordinator Epoch 已被 fencing                                          |
+| `AUTH_FORBIDDEN`             | Actor 缺少权限或不符合策略资格                                          |
+| `GROUP_NOT_FOUND`            | Group 不存在或故意未公开                                                |
+| `MEMBERSHIP_REQUIRED`        | 没有适用的 Membership                                                   |
+| `MEMBERSHIP_STALE`           | Membership Epoch 已被围栏                                               |
+| `SCHEMA_VALIDATION_FAILED`   | 对象不符合其架构                                                        |
+| `INVALID_COMMAND`            | Command 格式良好，但语义无效                                            |
+| `INVALID_STATE_TRANSITION`   | 聚合状态禁止转换                                                        |
+| `REVISION_CONFLICT`          | 预期修订版不符                                                          |
+| `ACTION_ID_COLLISION`        | 稳定的 Action ID 被不同内容重复使用                                     |
+| `UNKNOWN_CRITICAL_EXTENSION` | 无法解释所需的扩展名                                                    |
+| `WORK_CONTRACT_INCOMPLETE`   | 缺少所需的工作合同信息                                                  |
+| `WORK_OFFER_EXPIRED`         | 优惠不再有效                                                            |
+| `WORK_ALREADY_OWNED`         | 另一位候选人赢得了独家所有权                                            |
+| `WORK_LEASE_EXPIRED`         | 所需的租约不再有效                                                      |
+| `WORK_STALE_OWNERSHIP`       | Ownership Epoch 已被 fencing                                            |
+| `APPROVAL_REQUIRED`          | 政策关口尚未满足                                                        |
+| `BUDGET_EXCEEDED`            | Mission 或 WorkItem 硬预算已用完                                        |
+| `RATE_LIMITED`               | 已达到策略率或递归阈值                                                  |
+| `BACKPRESSURE`               | 接收器当前无法接受更多流量                                              |
+| `CURSOR_TOO_OLD`             | 在线重播不再包含请求的位置                                              |
+| `PROTOCOL_VIOLATION`         | 同伴违反框架或核心不变量                                                |
+| `INTERNAL_ERROR`             | Authority 发生故障，但未接受该转换                                      |
 
 </NormativeClause>
 
 <NormativeClause id="MWP-EXT-005" level={["MUST","MUST NOT","MAY"]}>
 
-未更改的 Command 重试 MUST 保留原始 Action ID 和签名内容。
-`AUTH_INVALID_SIGNATURE` MUST
-NOT 在其原因得到纠正之前应按原样重试。对签名信封或权威密钥或准入状态进行本地更正后，发送方 MAY 仅在所有受保护内容保持有效的情况下重试原始操作 ID。如果 Command 新鲜度已过期，则发送方 MUST 会创建一个新的 Command，其中包含新的操作 ID、当前的
-`issuedAt`、匹配的 `signature.createdAt` 和新签名。 `ACTION_ID_COLLISION`
-需要具有新操作 ID 的新 Command。过时的防护错误需要当前的权威纪元和带有新操作 ID 和签名的新 Command。
+未改变的 Command 重试 MUST 保留原始 Action ID 和签名内容。
+`AUTH_INVALID_SIGNATURE` 在原因纠正之前 MUST
+NOT 以原内容重试。对签名信封、权威 key 或 Admission 状态进行本地纠正后，只要所有受保护内容仍然有效，发送方 MAY 使用原始 Action
+ID 重试。如果 Command
+freshness 已过期，发送方 MUST 改为创建新的 Command，并使用新的 Action ID、当前的
+`issuedAt`、与之匹配的 `signature.createdAt` 和新签名。`ACTION_ID_COLLISION`
+要求创建具有新 Action
+ID 的新 Command。过时的 fencing 错误要求使用当前权威 Epoch，并创建具有新 Action
+ID 与签名的新 Command。
 
 </NormativeClause>
 
@@ -180,16 +185,17 @@ JCS 和 SHA-256 过程进行计算。运行程序 MUST 在执行声明的适配�
 
 <NormativeClause id="MWP-EXT-013" level="MUST" exclusions={["command-freshness","signer-authorization","portable-log-proof-verification","state-machine-acceptance"]}>
 
-传递 `missionweaveprotocol-conformance`
-或存储库的模式向量仅演示模式和向量的一致性。这是完全协议一致性的必要但不充分的证据。通过
+通过 `missionweaveprotocol-conformance`
+或存储库的 Schema 向量仅证明 Schema 和向量的一致性。这是完全协议一致性的必要但不充分证据。通过
 `cryptography/manifest.json`
-仅演示了[第 6.4](../signed-documents-and-trust/#mwp-sdv-015)
-节中的六个加密验证阶段。通过 `admission/manifest.json`
-还展示了声明的首次入场记录和历史重放评估，但它不展示 Command 新鲜度和时钟偏差执行、适用角色和策略下的签名者授权，或可移植部署的 Admission
-Log 证明格式。实现 MUST 单独证明了这些要求。仅当自动正面和负面证据覆盖每个核心 Command 和 Event 类型
-[上文](../commands-events-and-ordering/#core-command-kinds)，以及[第 7.1 节](../missions-groups-and-membership/#mission-transition-table)和
-[第 10.2 节](../work-scheduling-and-recovery/#workitem-transition-table)中的每个转换行时，参考实现 MUST 才声称完全符合 MissionWeaveProtocol
-0.1；否则，MUST 显式报告较窄的已验证子集。
+仅证明[第 6.4 节](../signed-documents-and-trust/#mwp-sdv-015)
+中的六个密码学验证阶段。通过 `admission/manifest.json`
+还证明其声明的 First-Admission
+Record 和历史重放评估，但不证明 Command 新鲜度与时钟偏差强制、适用角色和策略下的签名者授权，也不证明可移植的已部署 Admission
+Log 证明格式。实现 MUST 单独证明这些要求。仅当自动化的正面和负面证据覆盖
+[上文](../commands-events-and-ordering/#core-command-kinds)中的每个核心 Command 和 Event 类型，以及[第 7.1 节](../missions-groups-and-membership/#mission-transition-table)
+和[第 10.2 节](../work-scheduling-and-recovery/#workitem-transition-table)中的每个转换行时，参考实现 MUST 声称完全符合 MissionWeaveProtocol
+0.1；否则，MUST 明确报告范围更窄的已验证子集。
 
 </NormativeClause>
 

@@ -43,56 +43,56 @@ que los mensajes nunca autorizan acciones.
 
 <NormativeClause id="MWP-EXT-004" level={["MUST","SHOULD"]}>
 
-Los errores MUST se ajustan a `schemas/error.schema.json`. Una respuesta de
-error MUST debe ser legible por máquina, MUST indica si el reintento es seguro y
-SHOULD identifica el marco relacionado o el ID de acción sin exponer datos no
+Los errores MUST ajustarse a `schemas/error.schema.json`. Una respuesta de error
+MUST ser legible por máquina, MUST indicar si el reintento es seguro y SHOULD
+identificar el frame relacionado o el Action ID sin exponer datos no
 autorizados. Los códigos básicos son:
 
-| Código                       | Significado                                                                                                   |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `UNSUPPORTED_VERSION`        | No hay versión de protocolo compatible                                                                        |
-| `AUTH_REQUIRED`              | Falta la autenticación                                                                                        |
-| `AUTH_INVALID_SIGNATURE`     | Firma del documento firmado, validez de la clave, prueba de admisión o verificación de actualización fallidas |
-| `AUTH_STALE_SESSION`         | Session Epoch está vallado                                                                                    |
-| `AUTH_STALE_COORDINATOR`     | Coordinator La época está vallada                                                                             |
-| `AUTH_FORBIDDEN`             | El actor carece de permiso o elegibilidad para políticas                                                      |
-| `GROUP_NOT_FOUND`            | Group está ausente o no se ha divulgado intencionalmente                                                      |
-| `MEMBERSHIP_REQUIRED`        | No aplicable Membership                                                                                       |
-| `MEMBERSHIP_STALE`           | Membership La época está vallada                                                                              |
-| `SCHEMA_VALIDATION_FAILED`   | Objeto no se ajusta a su esquema                                                                              |
-| `INVALID_COMMAND`            | Command está bien formado pero semánticamente no es válido                                                    |
-| `INVALID_STATE_TRANSITION`   | Estado agregado prohíbe la transición                                                                         |
-| `REVISION_CONFLICT`          | La revisión esperada no coincide                                                                              |
-| `ACTION_ID_COLLISION`        | El ID de acción estable se reutilizó con contenido diferente                                                  |
-| `UNKNOWN_CRITICAL_EXTENSION` | La extensión requerida no se puede interpretar                                                                |
-| `WORK_CONTRACT_INCOMPLETE`   | Falta la información requerida del contrato de trabajo                                                        |
-| `WORK_OFFER_EXPIRED`         | La oferta ya no es válida                                                                                     |
-| `WORK_ALREADY_OWNED`         | Otro candidato obtuvo la propiedad exclusiva                                                                  |
-| `WORK_LEASE_EXPIRED`         | El contrato de arrendamiento requerido ya no es válido                                                        |
-| `WORK_STALE_OWNERSHIP`       | La época de propiedad está vallada                                                                            |
-| `APPROVAL_REQUIRED`          | Puerta política no ha sido satisfecha                                                                         |
-| `BUDGET_EXCEEDED`            | Un presupuesto estricto Mission o WorkItem es agotado                                                         |
-| `RATE_LIMITED`               | Se alcanzó la tasa de política o el umbral de recursividad                                                    |
-| `BACKPRESSURE`               | El receptor actualmente no puede aceptar más tráfico                                                          |
-| `CURSOR_TOO_OLD`             | La repetición online ya no contiene la posición solicitada                                                    |
-| `PROTOCOL_VIOLATION`         | Encuadre violado por pares o una invariante central                                                           |
-| `INTERNAL_ERROR`             | Autoridad fracasó sin aceptar la transición                                                                   |
+| Código                       | Significado                                                                                                 |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `UNSUPPORTED_VERSION`        | No hay versión de protocolo compatible                                                                      |
+| `AUTH_REQUIRED`              | Falta la autenticación                                                                                      |
+| `AUTH_INVALID_SIGNATURE`     | Falló la firma del Signed Document, la validez de la key, la prueba Admission o la comprobación de frescura |
+| `AUTH_STALE_SESSION`         | Session Epoch está vallado                                                                                  |
+| `AUTH_STALE_COORDINATOR`     | Coordinator La época está vallada                                                                           |
+| `AUTH_FORBIDDEN`             | El actor carece de permiso o elegibilidad para políticas                                                    |
+| `GROUP_NOT_FOUND`            | Group está ausente o no se ha divulgado intencionalmente                                                    |
+| `MEMBERSHIP_REQUIRED`        | No aplicable Membership                                                                                     |
+| `MEMBERSHIP_STALE`           | Membership La época está vallada                                                                            |
+| `SCHEMA_VALIDATION_FAILED`   | Objeto no se ajusta a su esquema                                                                            |
+| `INVALID_COMMAND`            | Command está bien formado pero semánticamente no es válido                                                  |
+| `INVALID_STATE_TRANSITION`   | Estado agregado prohíbe la transición                                                                       |
+| `REVISION_CONFLICT`          | La revisión esperada no coincide                                                                            |
+| `ACTION_ID_COLLISION`        | El ID de acción estable se reutilizó con contenido diferente                                                |
+| `UNKNOWN_CRITICAL_EXTENSION` | La extensión requerida no se puede interpretar                                                              |
+| `WORK_CONTRACT_INCOMPLETE`   | Falta la información requerida del contrato de trabajo                                                      |
+| `WORK_OFFER_EXPIRED`         | La oferta ya no es válida                                                                                   |
+| `WORK_ALREADY_OWNED`         | Otro candidato obtuvo la propiedad exclusiva                                                                |
+| `WORK_LEASE_EXPIRED`         | El contrato de arrendamiento requerido ya no es válido                                                      |
+| `WORK_STALE_OWNERSHIP`       | La época de propiedad está vallada                                                                          |
+| `APPROVAL_REQUIRED`          | Puerta política no ha sido satisfecha                                                                       |
+| `BUDGET_EXCEEDED`            | Un presupuesto estricto Mission o WorkItem es agotado                                                       |
+| `RATE_LIMITED`               | Se alcanzó la tasa de política o el umbral de recursividad                                                  |
+| `BACKPRESSURE`               | El receptor actualmente no puede aceptar más tráfico                                                        |
+| `CURSOR_TOO_OLD`             | La repetición online ya no contiene la posición solicitada                                                  |
+| `PROTOCOL_VIOLATION`         | Encuadre violado por pares o una invariante central                                                         |
+| `INTERNAL_ERROR`             | Autoridad fracasó sin aceptar la transición                                                                 |
 
 </NormativeClause>
 
 <NormativeClause id="MWP-EXT-005" level={["MUST","MUST NOT","MAY"]}>
 
-Un reintento Command sin cambios MUST conserva el ID de acción original y el
-contenido firmado. `AUTH_INVALID_SIGNATURE` MUST NOT se debe volver a intentar
-sin cambios antes de corregir la causa. Después de la corrección local del sobre
-de firma o la clave autorizada o el estado de admisión, un remitente MAY vuelve
-a intentar el ID de acción original solo mientras todo el contenido protegido
-siga siendo válido. Si la actualización de Command ha caducado, el remitente
-MUST crea un nuevo Command con un nuevo ID de acción, un `issuedAt` actual, un
+Un reintento de Command sin cambios MUST conservar el Action ID original y el
+contenido firmado. `AUTH_INVALID_SIGNATURE` MUST NOT volver a intentarse sin
+cambios antes de corregir la causa. Después de la corrección local del sobre de
+firma, la key autoritativa o el estado Admission, un remitente MAY volver a
+intentar el Action ID original solo mientras todo el contenido protegido siga
+siendo válido. Si la frescura de Command ha caducado, el remitente MUST crear un
+nuevo Command con un nuevo Action ID, un `issuedAt` actual, un
 `signature.createdAt` coincidente y una nueva firma. `ACTION_ID_COLLISION`
-requiere un nuevo Command con un nuevo ID de acción. Un error de vallado
-obsoleto requiere la época autorizada actual y un nuevo Command con una nueva ID
-de acción y firma.
+requiere un nuevo Command con un nuevo Action ID. Un error de fencing obsoleto
+requiere el Epoch autoritativo actual y un nuevo Command con un nuevo Action ID
+y firma.
 
 </NormativeClause>
 
@@ -235,24 +235,25 @@ declarados.
 
 <NormativeClause id="MWP-EXT-013" level="MUST" exclusions={["command-freshness","signer-authorization","portable-log-proof-verification","state-machine-acceptance"]}>
 
-Pasar `missionweaveprotocol-conformance` o los vectores de esquema del
-repositorio demuestra únicamente la conformidad de esquema y vector. Es una
-prueba necesaria, pero no suficiente, de cumplimiento total del protocolo. Pasar
-`cryptography/manifest.json` demuestra solo las seis etapas de verificación
-criptográfica en la [Sección 6.4](../signed-documents-and-trust/#mwp-sdv-015).
-Pasar `admission/manifest.json` demuestra además el First-Admission Record
-declarado y las evaluaciones de repetición histórica, pero no demuestra la
-vigencia de Command ni la aplicación de la desviación horaria, la autorización
-del firmante según la función y la política aplicables, ni un formato de prueba
-Admission Log implementado portátil. Una implementación MUST demuestra esos
-requisitos por separado. Una implementación de referencia MUST afirma la
+Superar `missionweaveprotocol-conformance` o los vectores de Schema del
+repositorio demuestra únicamente la conformidad de Schema y de los vectores. Es
+una prueba necesaria, pero no suficiente, de la conformidad total con el
+protocolo. Superar `cryptography/manifest.json` demuestra solo las seis etapas
+de verificación criptográfica de la
+[Sección 6.4](../signed-documents-and-trust/#mwp-sdv-015). Superar
+`admission/manifest.json` demuestra además las evaluaciones declaradas de
+First-Admission Record y repetición histórica, pero no demuestra la frescura de
+Command ni la aplicación del desfase máximo del reloj, la autorización del
+firmante según el rol y la política aplicables, ni un formato portátil de prueba
+para un Admission Log desplegado. Una implementación MUST demostrar esos
+requisitos por separado. Una implementación de referencia MUST declarar la
 conformidad total con MissionWeaveProtocol 0.1 solo cuando la evidencia positiva
-y negativa automatizada cubre todos los tipos principales Command y Event
-[arriba de ](../commands-events-and-ordering/#core-command-kinds) y cada fila de
-transición en
+y negativa automatizada cubra todos los tipos principales de Command y Event
+[anteriores](../commands-events-and-ordering/#core-command-kinds) y cada fila de
+transición de las
 [Secciones 7.1](../missions-groups-and-membership/#mission-transition-table) y
 [10.2](../work-scheduling-and-recovery/#workitem-transition-table); de lo
-contrario, MUST informará explícitamente el subconjunto verificado más limitado.
+contrario, MUST informar explícitamente del subconjunto verificado más limitado.
 
 </NormativeClause>
 

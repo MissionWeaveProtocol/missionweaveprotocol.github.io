@@ -43,9 +43,9 @@ Regel, dass Nachrichten niemals Aktionen autorisieren.
 
 <NormativeClause id="MWP-EXT-004" level={["MUST","SHOULD"]}>
 
-Fehler MUST entsprechen `schemas/error.schema.json`. Eine Fehlerantwort MUST
-muss maschinenlesbar sein, MUST gibt an, ob ein erneuter Versuch sicher ist, und
-SHOULD identifiziert den zugehörigen Frame oder die Aktions-ID, ohne nicht
+Fehler MUST `schemas/error.schema.json` entsprechen. Eine Fehlerantwort MUST
+maschinenlesbar sein, MUST angeben, ob ein erneuter Versuch sicher ist, und
+SHOULD den zugehörigen Frame oder die Action ID identifizieren, ohne nicht
 autorisierte Daten preiszugeben. Kerncodes sind:
 
 | Code                         | Bedeutung                                                                                                              |
@@ -82,18 +82,18 @@ autorisierte Daten preiszugeben. Kerncodes sind:
 
 <NormativeClause id="MWP-EXT-005" level={["MUST","MUST NOT","MAY"]}>
 
-Eine unveränderte Command wiederholen MUST Behalten Sie die ursprüngliche
-Aktions-ID und den signierten Inhalt bei. `AUTH_INVALID_SIGNATURE` MUST NOT
+Ein unveränderter Command-Wiederholungsversuch MUST die ursprüngliche Action ID
+und den signierten Inhalt beibehalten. `AUTH_INVALID_SIGNATURE` MUST NOT
 unverändert wiederholt werden, bevor die Ursache behoben ist. Nach lokaler
-Korrektur des Signaturumschlags bzw. des maßgeblichen Schlüssels bzw.
-Zulassungsstatus ein Absender MAY Wiederholen Sie die ursprüngliche Aktions-ID
-nur, solange alle geschützten Inhalte gültig bleiben. Wenn Command Frische ist
-abgelaufen, der Absender MUST Erstellen Sie stattdessen ein neues Command mit
-einer neuen Action-ID, einer aktuellen `issuedAt`, ein Matching
-`signature.createdAt`und eine neue Signatur. `ACTION_ID_COLLISION` erfordert ein
-neues Command mit einer neuen Aktions-ID. Ein veralteter Zaunfehler erfordert
-die aktuelle maßgebliche Epoche und eine neue Command mit einer neuen Aktions-ID
-und Signatur.
+Korrektur des Signaturumschlags, des maßgeblichen Schlüssels oder des
+Admission-Status MAY ein Absender die ursprüngliche Action ID wiederholen,
+solange alle geschützten Inhalte gültig bleiben. Wenn die Command-Freshness
+abgelaufen ist, MUST der Absender stattdessen ein neues Command mit einer neuen
+Action ID, einer aktuellen `issuedAt`, einer passenden `signature.createdAt` und
+einer neuen Signatur erstellen. `ACTION_ID_COLLISION` erfordert ein neues
+Command mit einer neuen Action ID. Ein veralteter Fencing- Fehler erfordert die
+aktuelle maßgebliche Epoch sowie ein neues Command mit einer neuen Action ID und
+Signatur.
 
 </NormativeClause>
 
@@ -236,25 +236,25 @@ ausführen.
 
 <NormativeClause id="MWP-EXT-013" level="MUST" exclusions={["command-freshness","signer-authorization","portable-log-proof-verification","state-machine-acceptance"]}>
 
-Vorbeigehen `missionweaveprotocol-conformance` oder die Schemavektoren des
-Repositorys demonstrieren nur die Schema- und Vektorkonformität. Es ist ein
+Das Bestehen von `missionweaveprotocol-conformance` oder der Schema-Vektoren des
+Repositorys weist nur die Schema- und Vektorkonformität nach. Es ist ein
 notwendiger, aber nicht ausreichender Nachweis der vollständigen
-Protokollkonformität. Vorbeigehen `cryptography/manifest.json` demonstriert nur
-die sechs kryptografischen Verifizierungsstufen in
-[Abschnitt 6.4](../signed-documents-and-trust/#mwp-sdv-015). Vorbeigehen
-`admission/manifest.json` demonstriert zusätzlich das Deklarierte
-First-Admission Record und historische Wiedergabeauswertungen, aber es zeigt
-nicht Command Durchsetzung von Aktualität und Zeitversatz, Autorisierung des
-Unterzeichners gemäß der entsprechenden Rolle und Richtlinie oder eine tragbare
-Bereitstellung Admission Log Proof-Format. Eine Umsetzung MUST Diese
-Anforderungen müssen gesondert nachgewiesen werden. Eine Referenzimplementierung
-MUST Anspruch voll MissionWeaveProtocol 0,1-Konformität nur, wenn automatisierte
-positive und negative Beweise jeden Kern abdecken Command Und Event freundlich
-[oben](../commands-events-and-ordering/#core-command-kinds) und jede
-Übergangszeile in
-[Abschnitte 7.1](../missions-groups-and-membership/#mission-transition-table)
-und [10.2](../work-scheduling-and-recovery/#workitem-transition-table); sonst
-ist es MUST Melden Sie die engere verifizierte Teilmenge explizit.
+Protokollkonformität. Das Bestehen von `cryptography/manifest.json` weist nur
+die sechs kryptografischen Verifizierungsstufen aus
+[Abschnitt 6.4](../signed-documents-and-trust/#mwp-sdv-015) nach. Das Bestehen
+von `admission/manifest.json` weist zusätzlich die deklarierten First-Admission
+Record- und Historical-Replay-Evaluierungen nach, jedoch nicht die Durchsetzung
+von Command-Freshness und Zeitversatztoleranz, die Autorisierung des
+Unterzeichners gemäß der anwendbaren Rolle und Richtlinie oder ein portables
+Nachweisformat für ein bereitgestelltes Admission Log. Eine Implementierung MUST
+diese Anforderungen gesondert nachweisen. Eine Referenzimplementierung MUST die
+vollständige MissionWeaveProtocol-0.1-Konformität nur dann beanspruchen, wenn
+automatisierte positive und negative Nachweise jeden oben genannten Kern-Typ von
+[Command und Event](../commands-events-and-ordering/#core-command-kinds) sowie
+jede Übergangszeile in den
+[Abschnitten 7.1](../missions-groups-and-membership/#mission-transition-table)
+und [10.2](../work-scheduling-and-recovery/#workitem-transition-table) abdecken;
+andernfalls MUST sie die engere verifizierte Teilmenge ausdrücklich angeben.
 
 </NormativeClause>
 

@@ -11,14 +11,15 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 
 このページでは、[正確な API inventory](../api/).共有プロトコルの動作は、ローカルの
 [ランタイム参照 ](../../../runtime/architecture-and-bootstrap/) および
-[参照句 ](../../../../reference/specification/)] によって定義されたままです。以下の名前は、固定されたモジュールがその動作を公開する方法を定義します。
+[参照句 ](../../../../reference/specification/)
+によって定義されたままです。以下の名前は、固定されたモジュールがその動作を公開する方法を定義します。
 
 <SupportStatus status="implemented" />
 は、以下にリストされているエクスポートされたパッケージ API とインプロセス
 コーデックに適用されます。
 
 <SupportStatus status="deployment-adapter-required" /> は、現在の Registry
-権限、信頼されたアドミッション コンテキスト、認証されたアトミック ログ
+の権威性、信頼済みアドミッションコンテキスト、認証済みアトミックログ
 アクセス、およびデプロイメントによって提供されるその他の外部サービスに適用されます。
 
 <SupportStatus status="not-implemented" />
@@ -45,7 +46,7 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 | 署名と署名済み文書                         | `signing.go`、`signed_document_codec.go`、`signed_document_verification.go`、`ed25519_strict.go` | Ed25519 ヘルパー、9 つの署名付きドキュメント プロファイル、完全な Registry 解決策、厳格なポイント チェック、および 6 段階の検証証拠。        |
 | フレーム                                   | `frame.go`                                                                                       | サポートされている WebSocket フレーム値の解析およびエンコード操作。これはコーデックであり、ホストされたゲートウェイ サービスではありません。 |
 | 適合性とバンドル                           | `conformance.go`、`bundle.go`                                                                    | 埋め込みバンドル ID、ダイジェスト検証、マニフェストの実行、およびコマンドのサポート。                                                        |
-| 初回入場                                   | `admission.go`                                                                                   | 検証が成功した後の、型指定されたデプロイメント アダプターを使用した初回の承認と歴史的信頼。                                                  |
+| 初回アドミッション                         | `admission.go`                                                                                   | 検証成功後に型付きデプロイメントアダプターを使用する初回アドミッションと履歴信頼。                                                           |
 
 ## 検証と暗号化
 
@@ -68,7 +69,7 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 
 ## フレーム、バンドル、および適合性
 
-フレーム関数は値を解析およびエンコードしますが、ソケットを開いたり、セッションを認証したり、カーソルを永続化したり、作業をスケジュールしたり、権限のある遷移を適用したりすることはありません。これらは、展開またはより高いレベルの実行時の責任です。
+フレーム関数は値を解析およびエンコードしますが、ソケットを開いたり、セッションを認証したり、カーソルを永続化したり、作業をスケジュールしたり、権威ある遷移を適用したりすることはありません。これらは、展開またはより高いレベルの実行時の責任です。
 
 `VerifyProtocolBundle`、`VerifyCryptographyBundle`、および
 `VerifyAdmissionBundle`
@@ -76,13 +77,14 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 `RunEmbeddedConformance`
 は、埋め込まれた構造ベクトルを実行します。 SDK コミット、プロトコル PIN、スキーマ セット、暗号化バンドル、アドミッション バンドル、またはデプロイメント アダプターが変更されたときに、これらを再度実行します。それらに合格することは、パッケージ表面が行使されたことのみを証明します。
 
-## 初回入場
+## 初回アドミッション
 
 `NewAdmissionService` は、正確なスキーマのサービスを構築します。
 `PrepareFirstAdmission`、`AdmitFirst`、および `VerifyHistoricalAdmission`
 は同期 Go 呼び出しであり、アダプター エラーまたは検証エラーを返す可能性があります。
 `AdmissionCurrentKeyResolver`、`TrustedAdmissionContext`、および `AdmissionLog`
-はデプロイメント インターフェイスのままです。正確な結果、アトミック性の要件、および歴史的なパスについては、[Go アドミッション リファレンス ](../admission/)] に進んでください。
+はデプロイメント インターフェイスのままです。正確な結果、アトミック性の要件、および歴史的なパスについては、[Go アドミッション リファレンス ](../admission/)
+に進んでください。
 
 ## 明示的な可用性境界
 
@@ -98,8 +100,8 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 
 このモジュールは、トランスポート、セッション、TLS、ルーティング、またはバックプレッシャーの所有権を備えたゲートウェイサービスではなく、フレーム コーデックを提供します。
 
-<SupportStatus status="not-implemented" /> **権限のある永続性ランタイム** -
+<SupportStatus status="not-implemented" /> **権威ある永続性ランタイム** -
 データベースベースまたは Agent
 ローカルの永続性ランタイムはエクスポートされません。
 
-これらの欠席は、サポートされるランタイム契約の一部です。アプリケーションは、共有プロトコル名から Python 参照ランタイム機能を推測してはなりません。
+これらの未実装項目は、サポートされるランタイム契約の一部です。アプリケーションは、共有プロトコル名から Python リファレンスランタイムの機能を推測してはなりません。

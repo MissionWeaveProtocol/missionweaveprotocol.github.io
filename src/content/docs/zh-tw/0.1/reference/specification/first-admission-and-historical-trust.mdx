@@ -1,25 +1,26 @@
 ---
-title: 首次入場和歷史信託
-description: 權威的Admission Log合約、首次入場流程、歷史重播、失敗映射。
+title: 首次准入與歷史信任
+description: 權威 Admission Log 合約、首次准入流程、歷史重播與失敗映射。
 ---
 
 import NormativeClause from "../../../../../../components/NormativeClause.astro";
 
 <NormativeClause id="MWP-ADM-001" level={["MUST","MUST NOT"]}>
 
-一個**First-Admission Record** 是權威的附加元資料之外 Signed
-Document 驗證設定檔。它 MUST 符合 `schemas/first-admission-record.schema.json`
-並包含這九個必填欄位： `protocolVersion`, `admissionRecordId`, `organizationId`,
-`documentKind`, `signingHash`, `keyId`, `principal`, `trustedAcceptedAt`， 和
-`acceptedBy`. `trustedAcceptedAt`
-是 Organization- 即時指定的可信接受。該記錄不是一個 Signed Document, MUST
-NOT 包含一個 `signature`，不驗證自身，且 MUST NOT 僅根據其自己的位元組來接受。
+**First-Admission Record** 是 Signed Document Verification
+Profile 之外的權威追加中繼資料。它 MUST 符合
+`schemas/first-admission-record.schema.json`，並且恰好包含以下九個必填欄位：
+`protocolVersion`、`admissionRecordId`、`organizationId`、`documentKind`、
+`signingHash`、`keyId`、`principal`、`trustedAcceptedAt` 和 `acceptedBy`。
+`trustedAcceptedAt` 是由 Organization 指定的可信接受時刻。該記錄不是 Signed
+Document，MUST NOT 包含 `signature`，不能自證其真實性，也 MUST
+NOT 僅憑自身位元組被接受。
 
 </NormativeClause>
 
 字段約束為：
 
-| 領域                | 約束                                                                                                                                      |
+| 欄位                | 約束                                                                                                                                      |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `protocolVersion`   | v0.1 `protocolVersion` 常數                                                                                                               |
 | `admissionRecordId` | 絕對協議標識符                                                                                                                            |
@@ -27,125 +28,128 @@ NOT 包含一個 `signature`，不驗證自身，且 MUST NOT 僅根據其自己
 | `documentKind`      | 之一 `agent-card`, `approval`, `artifact`, `command`, `context-package`, `event`, `evidence`, `extension-profile`， 或者 `group-snapshot` |
 | `signingHash`       | `sha256:` 後面跟著 64 個小寫十六進位數字                                                                                                  |
 | `keyId`             | 絕對協議標識符                                                                                                                            |
-| `principal`         | 確切的常見演員形狀                                                                                                                        |
-| `trustedAcceptedAt` | 協定時間戳記設定檔下的RFC 3339                                                                                                            |
-| `acceptedBy`        | 常見演員形狀與 `type: service`                                                                                                            |
+| `principal`         | 精確的通用 actor 結構                                                                                                                     |
+| `trustedAcceptedAt` | 符合協定時間戳記設定的 RFC 3339                                                                                                           |
+| `acceptedBy`        | `type: service` 的通用 actor 結構                                                                                                         |
 
 <NormativeClause id="MWP-ADM-002" level="MUST">
 
-保留 `trustedAcceptedAt` MUST 的字彙拼字。與兩個受保護的 Signed
-Document 時間戳記不同，不需要使用大寫的 `Z`；它被作為一個精確的瞬間進行比較。
+`trustedAcceptedAt` 的詞法表示 MUST 原樣保留。與 Signed
+Document 中兩個受保護的時間戳記不同，它不要求使用大寫
+`Z`；比較時按精確時刻處理。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]} exclusions={["caller-provided-trust-booleans"]}>
 
-在一個 Organization 的 Admission Log 中，邏輯尋找和追加鍵為
-`(organizationId, signingHash)`。日誌 MUST 對接受服務進行身份驗證，限制對 Organization 授權服務的寫入，保留僅附加完整性，支援區分已發現和權威缺失的權威查找，並為該邏輯密鑰提供一個原子附加或返回現有操作。不可用、不確定、未經身份驗證、完整性失敗、衝突或提交失敗結果 MUST 無法關閉。呼叫者提供的信任、驗證或完整性布林值 MUST
-NOT 取代適配器的鍵入結果。
+在同一 Organization 的 Admission Log 中，邏輯查找與追加鍵是
+`(organizationId, signingHash)`。日誌 MUST 對接受服務進行身分驗證、把寫入限制在 Organization 授權的服務、維持僅追加完整性、提供能區分「已找到」與「權威確認不存在」的權威查找，並為該邏輯鍵提供單一的原子追加或傳回既有記錄操作。對於不可用、不確定、未驗證、完整性失敗、衝突或提交失敗的結果，系統 MUST 以失敗關閉。呼叫端提供的信任、驗證或完整性布林值 MUST
+NOT 取代適配器的型別化結果。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-004" level={["MUST NOT","MUST"]}>
 
-一个逻辑键最多可以存在一条权威记录。一个 `admissionRecordId` MUST
-NOT 标识不同逻辑键下的记录。重试时找到的有效兼容记录是幂等成功，并且 MUST 将返回而不进行附加。同一邏輯鍵下具有不同文件類型、鍵 ID 或 Principal 的記錄是衝突，且 MUST
-NOT 需要替換、修復或靜默協調。
+每個邏輯鍵最多只能存在一筆權威記錄。一個 `admissionRecordId` MUST
+NOT 識別屬於不同邏輯鍵的記錄。重試時找到有效且相容的記錄屬於冪等成功，該記錄 MUST 在不追加新記錄的情況下傳回。同一邏輯鍵下，如果記錄的文件類型、key
+ID 或 Principal 不同，便構成衝突；該記錄 MUST NOT 被替換、修復或靜默調和。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-005" level="MUST">
 
-准入是六个加密阶段之后的一个单独的语义层。其受保護的診斷階段為`admission`；它不是第七個加密階段，並且不會更改簽名字節、簽章雜湊、金鑰解析或簽章結果。每個准入或歷史信任路徑 MUST 首先完成所有六個階段，並保留產生的 Organization、文件類型、簽章雜湊、解析金鑰 ID、綁定 Principal 和有效金鑰有效性間隔。
+Admission 是六個密碼學階段之後的獨立語意層。其受保護診斷階段為
+`admission`；它不是第七個密碼學階段，也不改變簽名字節、簽章雜湊、key
+resolution 或簽章結果。每條准入或歷史信任路徑 MUST 先完成全部六個階段，並保留所得的 Organization、文件類型、簽章雜湊、已解析 key
+ID、綁定的 Principal 與有效 key validity interval。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-006" level="MUST">
 
-對於首次接納，提供給第 4 階段 MUST 的 Registry 證據是最新的並適用於新的接納決策
-[按照上述 ](../signed-documents-and-trust/#mwp-sdv-010)
-的要求。經過六階段驗證後，執行MUST查找`(organizationId, signingHash)`。如下所述驗證找到的記錄 MUST。只有權威缺席才允許實現獲取受信任的接受上下文，準備候選 First-Admission
-Record，並呼叫追加或返回現有。直到該操作返回的經過身份驗證的記錄（無論是新提交的還是同時存在的）本身經過驗證後，首次准入才完成。僅驗證候選位元組是不夠的。
+對於首次准入，提供給第 4 階段的 Registry 證據 MUST 是目前證據，並且適用於新的准入決定，
+[如前述要求](../signed-documents-and-trust/#mwp-sdv-010)。完成六階段驗證後，實作 MUST 查找
+`(organizationId, signingHash)`。如果找到記錄，該記錄 MUST 按下文要求驗證。只有「權威確認不存在」才允許實作取得可信接受上下文、準備候選 First-Admission
+Record，並呼叫 append-or-return-existing。該操作傳回的已驗證記錄——無論是新提交的記錄，還是並行時已存在的記錄——在其本身通過驗證之前，首次准入都不算完成。只驗證候選位元組並不充分。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]} exclusions={["state-machine-acceptance"]}>
 
-候選準備 MUST NOT 附加 Event，執行狀態轉換，或暗示准入成功。並發獲勝者返回的
+候選記錄的準備過程 MUST
+NOT 追加 Event、執行狀態轉換，或暗示准入已經成功。並行獲勝者傳回的
 `admissionRecordId` 或 `trustedAcceptedAt`
-MAY 與失敗的候選者不同，但僅當下面的每個綁定和間隔規則成功時才接受返回的記錄。
+MAY 與失敗方的候選值不同；只有下文每項綁定規則與區間規則都通過時，傳回的記錄才能被接受。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-008" level={["MUST","MUST NOT"]}>
 
-歷史重播 MUST 使用權威歷史 Registry 證據重新運行六個加密階段，其中包含受保護簽名時間所需的完整保留有效性歷史記錄。 MUST 然後需要找到的 First-Admission
-Record 並驗證它。歷史重播 MUST
-NOT 發出新的可信接受上下文、附加缺失的記錄或將文件視為新的承認。當受保護的簽章時間和
+歷史重播 MUST 使用權威的歷史 Registry 證據重新執行六個密碼學階段；該證據必須包含受保護簽章時刻所需的完整保留有效期歷史。隨後，歷史重播 MUST 要求存在 First-Admission
+Record，並驗證該記錄。歷史重播 MUST
+NOT 簽發新的可信接受上下文、追加缺失記錄，或把該文件視為新的准入。當受保護簽章時刻與
 `trustedAcceptedAt`
-都在所選金鑰的時間間隔內時，稍後的到期或撤銷本身不會使錨定的歷史簽章失效。
+都位於所選 key 的有效區間內時，之後發生的到期或撤銷本身不會使已錨定的歷史簽章失效。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-009" level={["MUST","MUST NOT"]}>
 
-記錄驗證 MUST 嚴格解析恰好一個 UTF-8
-JSON 值，應用規範模式，並要求記錄和六階段證據之間完全相等 `organizationId`,
-`documentKind`, `signingHash`, `keyId`， 和 `principal`。記錄的 `acceptedBy`
-MUST 完全等於經過驗證的服務身份 Admission
-Log 結果。另一個記錄下相同的未簽名內容 Organization、文件類型、金鑰 ID 或 Principal
-MUST
-NOT 被重用。記錄的僅附加完整性和經過身份驗證的服務身分是成功的部署斷言 Admission
-Log 適配器結果；記錄本身並不能證明任何一個屬性。
+記錄驗證 MUST 嚴格解析恰好一個 UTF-8 JSON 值，套用規範 Schema，並要求記錄中的
+`organizationId`、`documentKind`、`signingHash`、`keyId` 和 `principal`
+與六階段證據完全相等。記錄的 `acceptedBy` MUST 與 Admission
+Log 結果所驗證的服務身分完全相等。對於同一未簽名內容，屬於另一 Organization、文件類型、key
+ID 或 Principal 的記錄 MUST
+NOT 被重用。記錄的僅追加完整性和已驗證服務身分，是成功 Admission
+Log 適配器結果給出的部署斷言；記錄本身不能證明這兩項屬性。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-010" level="MUST NOT">
 
-對於受信任的接受時刻 `t`，僅當 `validFrom <= t`、`validUntil` 不存在或
-`t < validUntil`，並且 `revokedAt` 不存在或 `t < revokedAt`
-時，准入才有效。這些邊界與受保護簽署時間使用的半開區間相同，但要在
-`trustedAcceptedAt` 獨立評估，並採用所保留之最早生效的 `validUntil` 與
+對於可信接受時刻 `t`，只有滿足 `validFrom <= t`，並且 `validUntil` 不存在或
+`t < validUntil`，同時 `revokedAt` 不存在或 `t < revokedAt`
+時，准入才有效。這些條件與受保護簽章時刻使用相同的半開邊界，但要在
+`trustedAcceptedAt` 上獨立評估，並採用保留歷史中最早生效的 `validUntil` 與
 `revokedAt` 邊界。新提交的文件 MUST
-NOT 僅因簽署者把受保護時間回填至到期或撤銷之前而獲得接受。
+NOT 僅因簽署者把受保護時刻回填到到期或撤銷之前而被接受。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-011" level={["MUST NOT","MAY"]}>
 
-對於已簽署的 Event， 那 Event 文件 MUST NOT 作為自己的 First-Admission
-Record 透過尋找或追加或返回現有的及其簽名 MUST
-NOT 被視為驗證記錄或其准入錨點。後來簽名的 Event
-MAY 發布或引用單獨的記錄；它的簽名僅驗證 Event的參考。
+對於 Signed Event，該 Event 文件無論透過查找還是 append-or-return-existing，MUST
+NOT 充當自身的 First-Admission Record；其簽章也 MUST
+NOT 被視為驗證該記錄或其准入錨。之後的 Signed Event
+MAY 發布或引用一筆獨立記錄；該簽章只驗證 Event 中的引用。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-012" level="MUST">
 
-在尋找、候選準備、可信任時間間隔驗證、追加或傳回現有、傳回記錄解析、模式驗證、綁定、經過驗證的服務比較或中的六個階段完成後的每次失敗 Event 自錨定 MUST 映射到線路上
-`AUTH_INVALID_SIGNATURE`。受保護的審計診斷 MUST 保留階段 `admission`
-以及一個穩定的原因，而無需向不受信任的呼叫者透露該原因。
+完成六階段驗證後，凡在查找、候選準備、可信時間區間驗證、append-or-return-existing、傳回記錄解析、Schema 驗證、綁定、已驗證服務比較或 Event 自錨檢查中發生的失敗，在 wire 上都 MUST 映射為
+`AUTH_INVALID_SIGNATURE`。受保護的稽核診斷 MUST 保留階段 `admission`
+和穩定原因，但不得向不受信任的呼叫端洩露該原因。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-013" level="MUST" exclusions={["command-freshness","signer-authorization"]}>
 
-新推出的一款 Command
-MUST 另外滿足 Organization- 定義的、有界的新鮮度和時鐘偏差窗口
-`issuedAt`。適用角色和政策下的新鮮度檢查和簽署者授權仍然與 First-Admission
-Record 驗證。
+新提交的 Command MUST 另外滿足 Organization 為 `issuedAt`
+定義的有界 freshness 與 clock-skew 視窗。該 freshness 檢查以及適用角色和政策下的簽署者授權，仍與 First-Admission
+Record 驗證相互獨立。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-ADM-014" level="MUST" exclusions={["signer-authorization","state-machine-acceptance"]}>
 
-密碼驗證驗證 Principal 綁定到鑰匙；它不承認 Principal 協議權威。在接受狀態轉換之前，相關的 Organization 或者 Group
+密碼學驗證會認證與 key 綁定的 Principal；它不會授予該 Principal 協定權限。在接受狀態轉換之前，相關的 Organization 或 Group
 Authority
-MUST 使用受保護的簽名時間以及首次准入的可信任接受時間適用的權威策略和狀態來驗證簽署者的角色和授權。尤其，
-`acceptedBy` MUST 成為授權的 Group Authority 或者 Organization
-Event 服務，一個 Agent Card 發行人 MUST 被授權為其 Organization， 一個 Extension
-Profile 批准者和 Approval 核准人 MUST 滿足 Organization 政策，以及一個 Group
-Snapshot 創造者 MUST 是授權的檔案服務機構。此授權檢查僅在所有六個加密階段以及任何適用的首次准入或歷史信任驗證成功後才進行；失敗是
-`AUTH_FORBIDDEN`.
+MUST 使用在受保護簽章時刻適用的權威政策與狀態來驗證簽署者的角色和授權；首次准入還要考量可信接受時刻。具體而言，`acceptedBy`
+MUST 是已獲授權的 Group Authority 或 Organization Event 服務；Agent
+Card 簽發者 MUST 獲其 Organization 授權；Extension
+Profile 核准者與 Approval 核准者 MUST 滿足 Organization 政策；Group
+Snapshot 建立者 MUST 是已獲授權的封存服務。只有全部六個密碼學階段以及適用的首次准入或歷史信任驗證成功後，才執行該授權檢查；失敗碼為
+`AUTH_FORBIDDEN`。
 
 </NormativeClause>

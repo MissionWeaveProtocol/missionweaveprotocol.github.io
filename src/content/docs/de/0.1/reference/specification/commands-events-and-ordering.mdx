@@ -14,15 +14,15 @@ import InformativeBlock from "../../../../../../components/InformativeBlock.astr
 
 <NormativeClause id="MWP-EVT-001" level={["MUST","MUST NOT"]}>
 
-Ein Command ist eine signierte Anfrage für einen strukturierten
+Ein Command ist eine signierte Anfrage für genau einen strukturierten
 Zustandsübergang. Jeder Command-Umschlag MUST enthält eine stabile Aktions-ID,
 Protokollversion, Akteur, Art, Nutzlast, Korrelations-ID, Ausgabezeit und
-Signatur. Ein Group-gültiger Command MUST enthält seine Group-ID. Ein
-zustandsverändernder Agent Command MUST enthält zusätzlich die aktuelle Session
-Epoch und Membership Epoche. Ein menschlicher Command in einem vorhandenen Group
-MUST enthält die aktuelle Membership-Epoche und MUST NOT enthält einen Agent
-Session Epoch. Ein Organization-Dienst, Command, MUST NOT, Agent Sitzung oder
-Membership Epochen.
+Signatur. Ein Command mit Group-Geltungsbereich MUST seine Group-ID enthalten.
+Ein zustandsverändernder Agent Command MUST enthält zusätzlich die aktuelle
+Session Epoch und Membership Epoche. Ein menschlicher Command in einem
+vorhandenen Group MUST die aktuelle Membership Epoch enthalten und MUST NOT eine
+Agent Session Epoch enthalten. Ein Organization-Service-Command MUST NOT Agent
+Session oder Membership Epochs erfinden.
 
 </NormativeClause>
 
@@ -39,23 +39,23 @@ Group ID und alle drei Rollen-/Sitzungsepochen.
 
 <NormativeClause id="MWP-EVT-002" level={["MUST","SHOULD"]}>
 
-Ein Agent Command deren Autorität sich aus dem Strom ergibt Coordinator mieten
-MUST enthalten den Strom Coordinator Epoche. Dies ist erforderlich für
+Ein Agent Command, dessen Autorität aus dem aktuellen Coordinator-Lease stammt,
+MUST die aktuelle Coordinator Epoch enthalten. Dies ist erforderlich für
 `mission.renew_coordinator`, `mission.submit_for_approval`,
 `mission.create_child`, `membership.grant_delegation`, Und `work.accept_result`,
-und für ein Agent-ausgegeben `mission.terminate`. Ein Dienst ausgestellt
-`mission.terminate` wird stattdessen von autorisiert Organization Richtlinie und
-trägt keine Coordinator Epoche. A Command SHOULD enthalten die erwartete
-Aggregatrevision, wenn der bestehende strukturierte Zustand geändert wird. A
-Command mithilfe einer einmaligen Eskalation der Zusammenarbeit MUST auch
-enthalten `cooperationOverrideGrantId`.
+und für ein von einem Agent ausgegebenes `mission.terminate`. Ein von einem
+Dienst ausgegebenes `mission.terminate` wird stattdessen durch
+Organization-Richtlinien autorisiert und enthält keine Coordinator Epoch. Ein
+Command SHOULD beim Ändern bestehenden strukturierten Zustands die erwartete
+Aggregatrevision enthalten. Ein Command mit einer einmaligen
+Kooperationserweiterung MUST außerdem `cooperationOverrideGrantId` enthalten.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-EVT-003" level={["MUST","MUST NOT"]}>
 
 Das gleiche `(actor ID, Action ID)` mit Byte-äquivalentem kanonisch signiertem
-Inhalt MUST Senden Sie die Originalquittung zurück und MUST NOT einen zweiten
+Inhalt MUST die Originalquittung zurückgeben und MUST NOT einen zweiten
 Zustandsübergang anhängen. Wiederverwendung derselben Aktions-ID mit
 unterschiedlichem kanonischem Inhalt MUST scheitern mit `ACTION_ID_COLLISION`.
 
@@ -63,10 +63,10 @@ unterschiedlichem kanonischem Inhalt MUST scheitern mit `ACTION_ID_COLLISION`.
 
 <NormativeClause id="MWP-EVT-004" level="MUST">
 
-Die Group Authority MUST authentifizieren den Akteur; validieren Sie Sitzung und
-Membership Epochen, Schema, aktuelle Aggregatrevision, Rolle, Delegation,
-Budget, Richtlinie und Leasing; und entweder Command ablehnen oder die
-resultierenden Event(s) atomar innerhalb dieses Group anhängen.
+Die Group Authority MUST den Akteur authentifizieren, Session Epoch und
+Membership Epoch, Schema, aktuelle Aggregatrevision, Rolle, Delegation, Budget,
+Richtlinie und Lease validieren und entweder den Command ablehnen oder die
+resultierenden Event atomar innerhalb dieses Group anhängen.
 
 </NormativeClause>
 
@@ -106,23 +106,24 @@ sind keine v0.1-Kernübergänge.
 
 <NormativeClause id="MWP-EVT-005" level={["MUST","MUST NOT"]}>
 
-Ein Event ist eine unveränderlich akzeptierte Tatsache. A Group Event Umschlag
-MUST enthalten Event AUSWEIS, Group ID, streng ansteigend Group Sequenz,
-aggregierte Revision, Art, Akteur, Ursache, Korrelations-ID, Auftrittszeit,
-Nutzlast und Group Authority Unterschrift. Der Organization-skaliert
-`ext.missionweaveprotocol.registry.agent_card_registered` Und
-`ext.missionweaveprotocol.identity.session_opened` Tatsachen enthalten das
-Gemeinsame Event Identität, Akteur, Ursache, Korrelation, Nutzlast, Zeit,
-akzeptierende Autorität und Signaturfelder, aber MUST NOT enthalten Group
-AUSWEIS, Group Reihenfolge, oder Group Gesamtrevision.
+Ein Event ist eine unveränderliche, akzeptierte Tatsache. Ein
+Group-Event-Umschlag MUST Event ID, Group ID, eine streng ansteigende
+Group-Sequenz, Aggregatrevision, Art, Akteur, Ursache, Korrelations-ID,
+Auftretenszeit, Nutzlast und die Signatur der Group Authority enthalten. Die
+Organization-weiten Tatsachen
+`ext.missionweaveprotocol.registry.agent_card_registered` und
+`ext.missionweaveprotocol.identity.session_opened` enthalten die gemeinsamen
+Felder für Event-Identität, Akteur, Ursache, Korrelation, Nutzlast, Zeit,
+akzeptierende Autorität und Signatur, MUST NOT aber Group ID, Group-Sequenz oder
+Group-Aggregatrevision enthalten.
 
 </NormativeClause>
 
-Der Group Authority weist jedem dauerhaften Element eine monotone Folge zu Group
-Event. Diese Sequenz liefert eine deterministische Anzeige-, Wiederherstellungs-
+Die Group Authority weist jedem dauerhaften Group Event eine monotone Sequenz
+zu. Diese Sequenz liefert eine deterministische Anzeige-, Wiederherstellungs-
 und Prüfreihenfolge. Gewöhnliche Nachrichten können logisch gleichzeitig sein,
 auch wenn der Dienst die Anzeigereihenfolge zuweist. Strukturierte Übergänge
-basieren auf dem Event Auftrags- und Aggregatrevisionen.
+basieren auf der Event-Reihenfolge und den Aggregatrevisionen.
 
 <span id="core-event-kinds"></span>
 

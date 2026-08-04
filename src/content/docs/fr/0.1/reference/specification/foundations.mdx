@@ -16,8 +16,8 @@ Statut : Projet de norme, version `0.1.0`.
 Ce document définit la version 0.1 de MissionWeaveProtocol. Les mots clés
 **MUST**, **MUST NOT**, **REQUIRED**, **SHALL**, **SHALL NOT**, **SHOULD**,
 **SHOULD NOT**, **RECOMMENDED**, **NOT RECOMMENDED**, **MAY** et **OPTIONAL**
-dans ce document doivent être interprétés comme décrit par le BCP 14 lorsque et
-seulement quand ils apparaissent. en majuscules comme indiqué ici.
+dans ce document doivent être interprétés comme décrit par le BCP 14 lorsque, et
+uniquement lorsque, ils apparaissent en majuscules comme indiqué ici.
 
 </NormativeClause>
 
@@ -333,9 +333,9 @@ L'état faisant autorité comprend les missions, les adhésions, les éléments 
 travail, les époques de propriété et de location, les reçus de déduplication,
 les approbations et les événements Group. Les curseurs Agent-local, les files
 d'attente par Group, les points de contrôle, les boîtes d'envoi, les boîtes de
-réception et l'état du planificateur sont des projections reconstructibles.
-Perte de la base de données locale Agent MUST NOT, changement d'état faisant
-autorité Mission.
+réception et l'état du planificateur sont des projections reconstructibles. La
+perte de la base de données locale d'un Agent MUST NOT modifier l'état Mission
+faisant autorité.
 
 </NormativeClause>
 

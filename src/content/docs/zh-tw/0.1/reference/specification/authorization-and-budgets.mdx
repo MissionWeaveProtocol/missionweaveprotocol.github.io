@@ -9,52 +9,59 @@ import NormativeClause from "../../../../../../components/NormativeClause.astro"
 
 <NormativeClause id="MWP-AUT-001" level="MUST">
 
-在接受 WorkItem 並獲得所有必要的批准後，授權服務會頒發短期的最小權限功能令牌。令牌 MUST 綁定到：
+在 WorkItem 被接受且所有必要的 Approval 均已取得後，Authorization
+Service 會簽發短期、最小權限的 capability token。該 token MUST 綁定到：
 
 - Worker Agent ID 和目前 Session Epoch；
-- WorkItem ID和所有權紀元；
-- 目前執行租約 ID；
+- WorkItem ID 與 Ownership Epoch；
+- 目前 Execution Lease ID；
 - 允許的工具、資源、資料和操作；
-- 財務、代幣、調用、計算、時間和副作用限制；和
-- 到期時間不晚於適用的執行租約。
+- 財務、token、呼叫、運算、時間與副作用限制；以及
+- 不晚於適用 Execution Lease 的到期時刻。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-AUT-002" level={["MAY","MUST NOT","MUST"]}>
 
 Coordinator MAY 請求授權，但 MUST
-NOT 製造、複製或轉送 Worker 的憑證。令牌和秘密 MUST
-NOT 出現在訊息、Agent 卡、上下文包、工件或 Group 事件中。過期、撤銷、不匹配或超出預算的代幣 MUST 將被拒絕。
+NOT 製造、複製或轉送 Worker 的憑證。Token 與 secret MUST
+NOT 出現在 Message、Agent Card、Context Package、Artifact 或 Group
+Event 中。過期、已撤銷、不相符或超出預算的 token MUST 被拒絕。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-AUT-003" level={["MUST","MAY"]}>
 
-Organization 策略 MUST 能够在生产部署、支付、外部通信、破坏性更改或敏感数据访问之前将 WorkItem 放入
-`awaiting_execution_approval`。授權服務 MUST 保留功能令牌，直到滿足簽署的批准門。低風險工作 MAY 會根據保單自動進行。
+Organization 政策 MUST 能夠在生產部署、付款、外部通訊、破壞性變更或存取敏感資料之前，將 WorkItem 置為
+`awaiting_execution_approval`。在簽署的 Approval gate 滿足之前，Authorization
+Service MUST 暫不簽發 capability token。低風險工作 MAY 依政策自動繼續。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-AUT-004" level="MUST NOT">
 
-Mission 和 WorkItem 預算是強制協定概念。 MissionOwner 设置 Mission 限制，Coordinator 向工作项和子任务分配不超过这些限制，并且授权服务强制执行硬限制。預算耗盡會暫停受影響的工作並需要明確升級；代理 MUST
-NOT 默默地超出了限制。
+Mission 與 WorkItem
+budget 是強制性的協定概念。MissionOwner 設定 Mission 上限；Coordinator 分配給 WorkItem 與子任务的預算不得超過這些上限；Authorization
+Service 強制執行硬上限。預算耗盡會暫停受影響的工作，並要求明確升級；Agent MUST
+NOT 靜默超過任何上限。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-AUT-005" level="MUST">
 
-這 Group Authority MUST 保留六維預算總帳。一個簽名的
+Group Authority MUST 持久化一份聚合的六維 budget ledger。一個已簽署的
 `ext.missionweaveprotocol.core.resource_usage_record`
-Command 記錄相對於 1 的非零增量 WorkItem、所有權紀元和執行租賃 ID；相應的
-`ext.missionweaveprotocol.core.resource_usage_recorded`
-Event 包含增量、累積使用量和剩餘預算。消耗 MUST 更新 WorkItem 及其完整的 WorkItem/Mission 一個原子躍遷中的祖先。一維溢出 MUST 拒絕整個轉變
-`BUDGET_EXCEEDED`。能力代幣預算 MUST 受工作合約和權威剩餘預算的限制。
+Command 針對一個 WorkItem、Ownership Epoch 與 Execution Lease
+ID 記錄非零增量；相應的 `ext.missionweaveprotocol.core.resource_usage_recorded`
+Event 包含該增量、累計用量與剩餘預算。消耗 MUST 在一次原子轉換中更新該 WorkItem 及其完整的 WorkItem/Mission 祖先鏈。任一維度溢出時，整個轉換 MUST 以
+`BUDGET_EXCEEDED` 拒絕。Capability-token budget MUST 同時受 Work
+Contract 與權威剩餘預算的上限約束。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-AUT-006" level="MUST">
 
-取消或緊急終止 MUST 撤銷相關租約和功能令牌，停止新的分配，並在需要時啟動合約定義的清理或補償工作項目。
+取消或緊急終止 MUST 撤銷相關 lease 與 capability
+token，停止新的分配，並在需要時啟動合約定義的清理或補償 WorkItem。
 
 </NormativeClause>

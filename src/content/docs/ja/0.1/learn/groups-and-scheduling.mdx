@@ -7,7 +7,7 @@ description:
 
 # グループとスケジュール設定
 
-Worker は、コンテキストをマージせずに、多くの Mission グループに属することができます。 Group ごとに個別の Event 受信箱、カーソル、およびワーク キューを維持し、これらのローカル プロジェクションは、受け入れられたイベントから再構築可能のままです ([MWP-WRK-008](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008)])。
+Worker は、コンテキストをマージせずに、多くの Mission グループに属することができます。 Group ごとに個別の Event 受信箱、カーソル、およびワーク キューを維持し、これらのローカル プロジェクションは、受け入れられたイベントから再構築可能のままです ([MWP-WRK-008](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008))。
 
 ```text
 Group A Events → Group A queue ┐
@@ -17,20 +17,21 @@ Group C Events → Group C queue ┘
 
 ## 誰が優先順位をコントロールするか
 
-Coordinator は、Mission に対して要求された緊急度、期限、ビジネスへの影響を提供します。 Worker スケジューラは、Group 間の順序付けを最終的に制御します。 1 つの Coordinator は、その Mission を無関係なグループよりも先に強制することはできません ([MWP-WRK-009](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-009)])。
+Coordinator は、Mission に対して要求された緊急度、期限、ビジネスへの影響を提供します。 Worker スケジューラは、Group 間の順序付けを最終的に制御します。 1 つの Coordinator は、その Mission を無関係なグループよりも先に強制することはできません ([MWP-WRK-009](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-009))。
 
-スケジューラは重み付けされた公平性と飢餓防止を適用します。効果的な順序では、Organization 優先度クラス、期限、キューのエージング、Group ごとのクォータ、リスク ゲート、および利用可能なリソースが考慮されます。純粋な無制限の最高優先順位優先スケジューリングは、[MWP-WRK-010](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-010)] によって除外されます。
+スケジューラは重み付けされた公平性と飢餓防止を適用します。効果的な順序では、Organization 優先度クラス、期限、キューのエージング、Group ごとのクォータ、リスク ゲート、および利用可能なリソースが考慮されます。純粋な無制限の最高優先順位優先スケジューリングは、[MWP-WRK-010](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-010)
+によって除外されます。
 
 ## 隔離とスケジュールの開示
 
-各アクティブ スロットは、Mission コンテキスト、資格情報、チェックポイント、ツール バジェット、および副作用キーを他のすべてのスロットから分離します ([MWP-WRK-011](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-011)])。
+各アクティブ スロットは、Mission コンテキスト、資格情報、チェックポイント、ツール バジェット、および副作用キーを他のすべてのスロットから分離します ([MWP-WRK-011](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-011))。
 
-Worker は、別の Group の ID、コンテンツ、割り当て、または正確なグローバル キューの位置 ([MWP-WRK-012](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-012)]) を公開することなく、推定開始時間枠と完了時間枠、信頼度、容量ステータス、および計算時間を公開できます。
+Worker は、別の Group の ID、コンテンツ、割り当て、または正確なグローバル キューの位置 ([MWP-WRK-012](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-012)) を公開することなく、推定開始時間枠と完了時間枠、信頼度、容量ステータス、および計算時間を公開できます。
 
 ## 所有権、リース、および安全な先取り
 
 受け入れにより、所有権エポックと開始期限が始まります。アクティブな実行では、Agent、Session
-Epoch、WorkItem、所有権エポック、安定したリース ID、および有効期限 ([MWP-WRK-013](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013))] にバインドされた実行リースを使用します。
+Epoch、WorkItem、所有権エポック、安定したリース ID、および有効期限 ([MWP-WRK-013](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013)) にバインドされた実行リースを使用します。
 
 優先順位を変更すると、キューに入れられた作業の順序がすぐに変更されます。アクティブな作業は、スロットを解放する前に、安全なべき等チェックポイントに到達します。
 
@@ -40,11 +41,12 @@ Epoch、WorkItem、所有権エポック、安定したリース ID、および�
 4. 実行スロットが解放されます。そして
 5. WorkItem は Group キューに戻ります。
 
-このシーケンスは、[MWP-WRK-015](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-015)] の標準的な協調プリエンプション モデルです。
+このシーケンスは、[MWP-WRK-015](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-015)
+の標準的な協調プリエンプション モデルです。
 
 ## リプレイによる回復
 
 Event の配信は少なくとも 1 回です。再起動された Worker は、Group ごとのカーソルとキューをスナップショットと順序付きリプレイから復元し、Event
-ID によって重複を排除し、シーケンス ギャップを越えて永続的なカーソルを進めません。 ([MWP-WRK-029](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029))。確認応答は、権限のある Group 履歴 ([MWP-WRK-030](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030))] を削除せずに、連続する最も高い永続的な位置を報告します。
+ID によって重複を排除し、シーケンス ギャップを越えて永続的なカーソルを進めません。 ([MWP-WRK-029](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029))。確認応答は、権威ある Group 履歴 ([MWP-WRK-030](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)) を削除せずに、連続する最も高い永続的な位置を報告します。
 
 MissionWeaveProtocol は、グループ全体にわたる 1 つのグローバルな順序ではなく、各 Group 内の順序を定義します。

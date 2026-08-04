@@ -16,9 +16,9 @@ import InformativeBlock from "../../../../../../components/InformativeBlock.astr
 
 Un Mission MUST déclare un objectif limité, une définition lisible par machine
 de la fin, du délai, du budget exécutoire, de la politique de risque/approbation
-et MissionOwner. Une racine Mission MissionOwner MUST soit humaine. La création
-alloue exactement une conversation de niveau Group et une conversation de niveau
-Group. Les ID Mission et les ID Group MUST restent stables.
+et le MissionOwner. Le MissionOwner d'une Mission racine MUST être humain. La
+création alloue exactement un Group et une Conversation au niveau du Group. Les
+Mission ID et Group ID MUST rester stables.
 
 </NormativeClause>
 
@@ -29,20 +29,20 @@ Le cycle de vie Mission est :
 | État actuel         | Command ou cause                                                  | État suivant        | Autorité                                                    |
 | ------------------- | ----------------------------------------------------------------- | ------------------- | ----------------------------------------------------------- |
 | aucun               | `mission.create` avec un bail Coordinator                         | `active`            | humain MissionOwner, éventuellement via le plan de contrôle |
-| aucun               | `mission.create_follow_up` lié à un Mission                       | `active`            | le même humain MissionOwner                                 |
+| aucun               | `mission.create_follow_up` lié à une Mission approuvée            | `active`            | le même MissionOwner humain                                 |
 | aucun               | `mission.create_child` lié à un parent WorkItem                   | `active`            | Parent Coordinator en tant qu'enfant MissionOwner           |
 | `active`            | `mission.submit_for_approval`                                     | `awaiting_approval` | actuel Coordinator                                          |
 | `awaiting_approval` | `mission.request_changes`                                         | `active`            | MissionOwner                                                |
 | `awaiting_approval` | `mission.approve`                                                 | `approved`          | MissionOwner                                                |
-| non terminal        | `mission.cancel` ou propaga d'annulation parenttion               | `cancelled`         | Stratégie MissionOwner ou Organization                      |
-| non terminal        | `mission.terminate` ou propagation de défaillance enfant déclarée | `failed`            | Stratégie Coordinator ou Organization                       |
+| non terminal        | `mission.cancel` ou propagation de l’annulation du parent         | `cancelled`         | MissionOwner ou politique de Organization                   |
+| non terminal        | `mission.terminate` ou propagation de l’échec déclaré de l’enfant | `failed`            | Coordinator ou politique de Organization                    |
 
 <NormativeClause id="MWP-MSN-002" level={["MUST NOT","MUST"]}>
 
-`approved`, `cancelled` et `failed` sont des terminaux. Un Mission MUST NOT
-approuvé doit être rouvert ou réécrit. Corrections, révocation d'approbation ou
-remédiation MUST créent un suivi lié Mission ; la révocation reste un nouveau
-Event et n'efface pas le Approval d'origine.
+`approved`, `cancelled` et `failed` sont des états terminaux. Une Mission
+approuvée MUST NOT être rouverte ni réécrite. Les corrections, révocations
+d'approbation ou remédiation MUST créer une Mission de suivi liée ; la
+révocation reste un nouvel Event et n’efface pas le Approval d’origine.
 
 </NormativeClause>
 
@@ -61,11 +61,11 @@ d'autorisation, de budget et de location de Worker.
 
 <NormativeClause id="MWP-MSN-004" level="MAY">
 
-Exactement une époque de bail Coordinator MAY est en cours. Le bail identifie
-l'époque Agent, Coordinator, Session Epoch, l'expiration et la politique de
-renouvellement. Seule l'époque Coordinator actuelle peut autoriser ou attribuer
-des éléments de travail, accepter les résultats Worker, soumettre le Mission ou
-créer des sous-tâches.
+À tout moment, au plus une Coordinator Lease Epoch MAY être actuelle. Le bail
+identifie l'Agent, la Coordinator Epoch, la Session Epoch, l'expiration et la
+politique de renouvellement. Seule la Coordinator Epoch actuelle peut autoriser
+ou attribuer des éléments de travail, accepter les résultats Worker, soumettre
+le Mission ou créer des sous-tâches.
 
 </NormativeClause>
 
@@ -148,7 +148,8 @@ Worker Membership SHOULD être juste à temps :
 
 1. le Coordinator sélectionne un candidat et accorde un Membership provisoire
    limité ;
-2. le Worker reçoit une offre expirant et signée Context Package ;
+2. le Worker reçoit une offre assortie d’une expiration et un Context Package
+   signé ;
 3. l'acceptation de l'offre active Membership et crée la propriété ; et
 4. Membership se termine lorsque le Worker n'a aucun élément de travail ou
    obligation de révision, ou le Mission est archivé.
@@ -341,8 +342,9 @@ alternative.
 
 Le parent Coordinator reçoit les modifications du statut de l'enfant, les
 résumés de progression, les estimations révisées, les bloqueurs, les escalades
-de budget/politique et les résultats finaux. Il MUST NOT doit ingérer chaque
-enfant Message, mais conserve une inspection autorisée à la demande. La racine
-MissionOwner MUST pourra inspecter l'arborescence complète Mission.
+de budget/politique et les résultats finaux. Le Coordinator parent MUST NOT être
+tenu d'ingérer chaque Message enfant, mais conserve une inspection autorisée à
+la demande. Le MissionOwner racine MUST pouvoir inspecter l'arborescence Mission
+complète.
 
 </NormativeClause>

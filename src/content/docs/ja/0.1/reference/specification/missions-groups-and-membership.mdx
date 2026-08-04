@@ -16,7 +16,7 @@ import InformativeBlock from "../../../../../../components/InformativeBlock.astr
 
 Mission
 MUST は、制限された目標、完了、期限、強制可能な予算、リスク/承認ポリシー、および MissionOwner の機械可読な定義を宣言します。ルート Mission の MissionOwner
-MUST は人間です。作成では、Group レベルの会話と Group レベルの会話が 1 つずつ割り当てられます。 Mission
+MUST は人間です。作成時に、ちょうど 1 つの Group と 1 つの Group レベルの Conversation を割り当てます。Mission
 ID と Group ID MUST は安定したままです。
 
 </NormativeClause>
@@ -25,16 +25,16 @@ Mission ライフサイクルは次のとおりです。
 
 <span id="mission-transition-table"></span>
 
-| 現在の状態          | Command または原因                                                              | 次の状態              | 権限                                                   |
-| ------------------- | ------------------------------------------------------------------------------- | --------------------- | ------------------------------------------------------ |
-| なし                | `mission.create` と Coordinator リース                                          | `active`              | 人間の MissionOwner、おそらくコントロール プレーン経由 |
-| なし                | `mission.create_follow_up` は承認された Mission にリンクされています。 `active` | 同じ人間 MissionOwner |
-| なし                | `mission.create_child` は親 WorkItem にリンクされる                             | `active`              | 親 Coordinator をサブタスクの MissionOwner とする      |
-| `active`            | `mission.submit_for_approval`                                                   | `awaiting_approval`   | 現在の Coordinator                                     |
-| `awaiting_approval` | `mission.request_changes`                                                       | `active`              | MissionOwner                                           |
-| `awaiting_approval` | `mission.approve`                                                               | `approved`            | MissionOwner                                           |
-| 非終端              | `mission.cancel` または親キャンセルのプロパガション                             | `cancelled`           | MissionOwner または Organization ポリシー              |
-| 非終端              | `mission.terminate` または宣言された子障害の伝播                                | `failed`              | Coordinator または Organization ポリシー               |
+| 現在の状態          | Command または原因                                             | 次の状態            | 権限                                                   |
+| ------------------- | -------------------------------------------------------------- | ------------------- | ------------------------------------------------------ |
+| なし                | `mission.create` と Coordinator リース                         | `active`            | 人間の MissionOwner、おそらくコントロール プレーン経由 |
+| なし                | `mission.create_follow_up` は承認済みの Mission にリンクされる | `active`            | 同じ人間の MissionOwner                                |
+| なし                | `mission.create_child` は親 WorkItem にリンクされる            | `active`            | 親 Coordinator をサブタスクの MissionOwner とする      |
+| `active`            | `mission.submit_for_approval`                                  | `awaiting_approval` | 現在の Coordinator                                     |
+| `awaiting_approval` | `mission.request_changes`                                      | `active`            | MissionOwner                                           |
+| `awaiting_approval` | `mission.approve`                                              | `approved`          | MissionOwner                                           |
+| 非終端              | `mission.cancel` または親キャンセルのプロパガション            | `cancelled`         | MissionOwner または Organization ポリシー              |
+| 非終端              | `mission.terminate` または宣言された子障害の伝播               | `failed`            | Coordinator または Organization ポリシー               |
 
 <NormativeClause id="MWP-MSN-002" level={["MUST NOT","MUST"]}>
 
@@ -57,8 +57,10 @@ MAY は、Coordinator に対してディレクティブを発行します。 Wor
 
 <NormativeClause id="MWP-MSN-004" level="MAY">
 
-正確に 1 つの Coordinator リース エポック MAY が最新になります。リースは、Agent、Coordinator エポック、Session
-Epoch、有効期限、および更新ポリシーを識別します。現在の Coordinator エポックのみが、WorkItem の承認または割り当て、Worker の結果の受け入れ、Mission の送信、またはサブタスクの作成を行うことができます。
+任意の時点で、現在の Coordinator リース Epoch は最大 1 つだけ MAY 存在します。リースは Agent、Coordinator
+Epoch、Session
+Epoch、有効期限、および更新ポリシーを識別します。現在の Coordinator
+Epoch だけが、WorkItem の認可または割り当て、Worker の結果の受け入れ、Mission の提出、またはサブタスクの作成を行えます。
 
 </NormativeClause>
 
@@ -82,7 +84,7 @@ NOT は自身の出力の唯一のレビューアとなります。
 
 <NormativeClause id="MWP-MSN-007" level={["MUST","MAY","MUST NOT"]}>
 
-権限のある Mission の進行状況 MUST は、WorkItem 依存関係グラフ、受け入れられた Evidence、クリティカル パス、ブロッカー、期限、承認状態から導出されます。 Coordinator
+権威ある Mission の進行状況 MUST は、WorkItem 依存関係グラフ、受け入れられた Evidence、クリティカル パス、ブロッカー、期限、承認状態から導出されます。 Coordinator
 MAY は物語の概要、リスク、予測を公開しますが、MUST
 NOT は派生状態を根拠のないパーセンテージに置き換えます。
 
@@ -123,7 +125,7 @@ Membership エポックの作成ではなく、Organization ポリシーによ�
 Worker Membership SHOULD 間に合うように:
 
 1. Coordinator は候補を選択し、限定された暫定的な Membership を付与します。
-2. Worker は期限切れのオファーと署名された Context Package を受け取ります。
+2. Worker は有効期限付きのオファーと署名済みの Context Package を受け取ります。
 3. オファーを受け入れると、Membership がアクティブになり、所有権が作成されます。そして
 4. Membership は、Worker に WorkItem やレビュー義務がない場合に終了します。または、Mission はアーカイブされます。
 
@@ -221,7 +223,7 @@ ID、許可された機能 ID と最小バージョン、通貨と 6 つすべ�
 <NormativeClause id="MWP-MSN-022" level={["MUST","MUST NOT"]}>
 
 使用するたびに、アクター MUST が被付与者となり、アクティブな `work_delegate`
-Membership を保持します。そのエポックは、付与者の被付与者 Membership エポックと同じです。 Grant の Mission、Group、Coordinator エポック、発行者、および有効期間 MUST は依然として現在の権限のある状態と一致します。置き換えられた Coordinator、変更または終了した Membership、期限切れの付与、ターゲットの欠落、または失敗、キャンセル、または検証されたターゲットは、それ以降の使用を直ちに無効にします。助成金は譲渡できません。有効な助成金を持たない労働者はサブワークを提案できますが、MUST
+Membership を保持します。そのエポックは、付与者の被付与者 Membership エポックと同じです。 Grant の Mission、Group、Coordinator エポック、発行者、および有効期間 MUST は依然として現在の権威ある状態と一致します。置き換えられた Coordinator、変更または終了した Membership、期限切れの付与、ターゲットの欠落、または失敗、キャンセル、または検証されたターゲットは、それ以降の使用を直ちに無効にします。助成金は譲渡できません。有効な助成金を持たない労働者はサブワークを提案できますが、MUST
 NOT は別の Worker に対して実行可能な義務を作成します。
 
 </NormativeClause>
@@ -256,14 +258,13 @@ policy.親 WorkItem そして子供 Mission MUST 相互にリンクします。
 
 </NormativeClause>
 
-デフォルトでは、サブタスクの Coordinator が結果をレビューして送信し、親 Coordinator がサブタスクの MissionOwner として機能します。リスク ポリシーでそのように定められている場合は、ルートの人間による承認も必要です。承認されたサブタスクの結果は、親 WorkItem の Evidence になります。
+デフォルトでは、サブタスクの Coordinator が結果をレビューして提出し、親 Coordinator がサブタスクの MissionOwner として機能します。リスクポリシーで定める場合は、ルート MissionOwner による人間の承認も必要です。承認されたサブタスクの結果は、親 WorkItem の Evidence と Artifact になります。
 
 失敗したサブタスクによって、その親が自動的に失敗することはありません。構造化された障害 Evidence が生成され、宣言されたポリシーに従って親 WorkItem が blocked または failed になります。親 Coordinator は、再計画、スコープの修正、代替サブタスクの作成、またはキャンセルを行うことができます。親の完了ポリシーが、代替手段のない必須のサブタスクであると宣言した場合にのみ、失敗が自動的に伝播します。
 
 <NormativeClause id="MWP-MSN-026" level={["MUST NOT","MUST"]}>
 
-親 Coordinator は、子のステータス変更、進捗状況の概要、修正された見積もり、ブロッカー、予算/ポリシーのエスカレーション、および最終結果を受け取ります。すべての子 Message を取り込むには MUST
-NOT が必要ですが、承認されたオンデマンド検査は保持されます。ルート MissionOwner
-MUST は、完全な Mission ツリーを検査できます。
+親 Coordinator は、子の状態変更、進捗概要、修正済み見積もり、ブロッカー、予算/ポリシーのエスカレーション、および最終結果を受け取ります。すべての子 Message の取り込みを親 Coordinator の必須要件としてはなりません（MUST
+NOT）が、親 Coordinator は認可されたオンデマンド検査機能を保持します。ルート MissionOwner は、完全な Mission ツリーを検査できなければなりません（MUST）。
 
 </NormativeClause>

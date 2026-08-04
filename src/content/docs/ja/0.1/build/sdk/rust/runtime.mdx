@@ -8,16 +8,18 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 
 # Rust ランタイムリファレンス
 
-このページでは、[正確な API 在庫](../api/)] で表される完全なクレート ルート サーフェスをカバーします。共有プロトコルの動作は、ローカルの
+このページでは、[正確な API 在庫](../api/)
+で表される完全なクレート ルート サーフェスをカバーします。共有プロトコルの動作は、ローカルの
 [ランタイム参照 ](../../../runtime/architecture-and-bootstrap/) および
-[参照句 ](../../../../reference/specification/)] によって定義されたままです。以下のモジュール名は実装の由来を示しています。モジュール自体はプライベートであるため、呼び出し元は
+[参照句 ](../../../../reference/specification/)
+によって定義されたままです。以下のモジュール名は実装の由来を示しています。モジュール自体はプライベートであるため、呼び出し元は
 `missionweaveprotocol` からパブリックな再エクスポートをインポートします。
 
 <SupportStatus status="implemented" /> は、以下にリストされているクレートルート
 API とプロセス内動作に適用されます。
 
 <SupportStatus status="deployment-adapter-required" /> は、現在の Registry
-権限、信頼されたアドミッション コンテキスト、認証されたログ
+の権威性、信頼済みアドミッションコンテキスト、認証済みログ
 アクセス、およびその他のデプロイメント サービスに適用されます。
 
 <SupportStatus status="not-implemented" />
@@ -45,7 +47,7 @@ API とプロセス内動作に適用されます。
 | フレーム                        | `frame.rs`                                                  | `FrameCodec` デコード、エンコード、およびドキュメントの検証。これはコーデックであり、ホストされたゲートウェイ サービスではありません。 |
 | 構造適合性                      | `conformance.rs`、`bin/missionweaveprotocol-conformance.rs` | 埋め込みスキーマベクターの実行、レポートの概要、CLI の終了ステータス、およびオプションの詳細エラー。                                   |
 | 埋め込みバンドル                | `bundle.rs`                                                 | 正確な PIN アクセス、アーティファクト ルックアップ、プロトコル、暗号化、およびアドミッション バンドルのダイジェスト検証。              |
-| 初回入場                        | `admission.rs`                                              | Signed Document 検証が成功した後の最初の入場と歴史的信頼。                                                                             |
+| 初回アドミッション              | `admission.rs`                                              | Signed Document 検証が成功した後の初回アドミッションと履歴信頼。                                                                       |
 
 ## 検証、署名、および Registry の証拠
 
@@ -70,7 +72,7 @@ API とプロセス内動作に適用されます。
 ## フレーム、バンドル、および適合性
 
 `FrameCodec::decode`、`encode`、および `validate_document`
-はフレーム値を検証します。これらは、トランスポート、セッション認証、カーソル永続性、バックプレッシャー、ルーティング、または権限のある状態遷移を所有しません。
+はフレーム値を検証します。これらは、トランスポート、セッション認証、カーソル永続性、バックプレッシャー、ルーティング、または権威ある状態遷移を所有しません。
 
 `ProtocolBundle::verify`
 は、22 個のスキーマと 59 個のファイルの構造バンドルをチェックします。
@@ -80,16 +82,17 @@ API とプロセス内動作に適用されます。
 は、19 個のアーティファクト、5 個のケース、および 30 個の宣言された評価をチェックします。これら 2 つの呼び出しにより、ピン、カウント、ダイジェストが検証されます。すべての暗号化やアドミッション評価を実行するわけではありません。適合バイナリと
 `ConformanceRunner::run` は構造ベクトルのみを実行します。
 
-## 初回入場
+## 初回アドミッション
 
 `AdmissionService::new`、`prepare_first_admission`、`admit_first`、および
-`verify_historical_admission` は、正確な入場フローを公開します。
-[Rust アドミッション リファレンス ](../admission/)] に進み、アダプターの結果、呼び出し順序、および実行可能なパッケージ コンシューマーの例を確認します。
+`verify_historical_admission` は、正確なアドミッションフローを公開します。
+[Rust アドミッション リファレンス ](../admission/)
+に進み、アダプターの結果、呼び出し順序、および実行可能なパッケージ コンシューマーの例を確認します。
 
 ## 明示的な可用性境界
 
-<SupportStatus status="deployment-adapter-required" /> **承認権限** -
-アプリケーションは、現在の Registry 証拠、過去の Registry
+<SupportStatus status="deployment-adapter-required" /> **Admission authority
+の境界** - アプリケーションは、現在の Registry 証拠、過去の Registry
 証拠、信頼できる受け入れコンテキスト、および認証された追加専用ログを提供します。
 
 <SupportStatus status="not-implemented" /> **Mission オーケストレーション** -
@@ -104,8 +107,8 @@ API とプロセス内動作に適用されます。
 
 クレートは、トランスポート、TLS、セッション、ルーティング、またはバックプレッシャーの所有権を備えたゲートウェイサービスではなく、フレーム コーデックを提供します。
 
-<SupportStatus status="not-implemented" /> **権限のある永続性ランタイム** -
+<SupportStatus status="not-implemented" /> **権威ある永続性ランタイム** -
 データベースベースまたは Agent
 ローカルの永続性ランタイムはエクスポートされません。
 
-これらの不在は、文書化されたサポート契約の一部です。 Python 参照ランタイム機能は、共有プロトコル名から推測してはなりません。
+これらの未実装項目は、文書化されたサポート契約の一部です。共有プロトコル名から Python リファレンスランタイムの機能を推測してはなりません。

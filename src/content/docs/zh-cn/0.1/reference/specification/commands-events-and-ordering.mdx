@@ -13,49 +13,50 @@ import InformativeBlock from "../../../../../../components/InformativeBlock.astr
 
 <NormativeClause id="MWP-EVT-001" level={["MUST","MUST NOT"]}>
 
-Command 是针对一个结构化状态转换的签名请求。每个 Command 信封 MUST 包含稳定的操作 ID、协议版本、参与者、种类、有效负载、相关 ID、发布时间和签名。 Group 范围的 Command
-MUST 包含其 Group ID。状态更改 Agent Command MUST 还包含当前 Session
-Epoch 和 Membership Epoch。现有 Group MUST 中的人类 Command 包含当前 Membership
-Epoch，MUST NOT 包含 Agent Session Epoch。 Organization 服务 Command MUST
-NOT 发明 Agent 会话或 Membership 纪元。
+Command 是请求一次结构化状态转换的签名请求。每个 Command 信封 MUST 包含稳定的 Action
+ID、协议版本、actor、kind、payload、correlation
+ID、签发时刻和签名。Group 范围的 Command MUST 包含其 Group ID。改变状态的 Agent
+Command MUST 另外包含当前 Session Epoch 与 Membership
+Epoch。现有 Group 中的人类 Command MUST 包含当前 Membership Epoch，并且 MUST
+NOT 包含 Agent Session Epoch。Organization 服务发出的 Command MUST
+NOT 编造 Agent Session Epoch 或 Membership Epoch。
 
 </NormativeClause>
 
-`mission.create` 和 `mission.create_follow_up`
-携带正在创建的 Group 的 ID，但省略 Membership 和会话纪元，因为新的 Group
-Membership 不会尚不存在，并且人类命令不使用 Agent 会话。控制平面可以验证、中继和验证
-`mission.create`，但签名的 Command 参与者和生成的根 MissionOwner 仍然是人类；控制平面不会变成MissionOwner。 Organization 拥有的
+`mission.create` 和 `mission.create_follow_up` 携带正在创建的 Group
+ID，但省略 Membership Epoch 与 Session Epoch，因为新的 Group
+Membership 尚不存在，而且人类 Command 不使用 Agent 会话。控制平面可以认证、中继并验证
+`mission.create`，但签名 Command 的 actor 与产生的根 MissionOwner 仍是该人类；控制平面不会成为 MissionOwner。Organization 拥有的
 `ext.missionweaveprotocol.registry.agent_card_register` 和
 `ext.missionweaveprotocol.identity.session_open` 引导命令省略 Group
-ID 和所有三个角色/会话时期。
+ID 以及全部三个角色/会话 Epoch。
 
 <NormativeClause id="MWP-EVT-002" level={["MUST","SHOULD"]}>
 
-Agent Command 其权限源自当前 Coordinator 租约 MUST 包含当前 Coordinator
-Epoch。对于
+权威性来自当前 Coordinator 租约的 Agent Command MUST 包含当前 Coordinator
+Epoch。以下 Command 需要该字段：
 `mission.renew_coordinator`、`mission.submit_for_approval`、`mission.create_child`、`membership.grant_delegation`
-和 `work.accept_result`
-以及 Agent 发行的产品，这是必需的`mission.terminate`。服务颁发的
-`mission.terminate` 由 Organization 策略授权，并且不携带 Coordinator
-Epoch。 Command
-SHOULD 包含修改现有结构化状态时的预期聚合修订。使用一次性合作升级的 Command
+和 `work.accept_result`，以及由 Agent 发出的 `mission.terminate`。由服务发出的
+`mission.terminate` 改由 Organization 策略授权，不携带 Coordinator
+Epoch。修改现有结构化状态时，Command
+SHOULD 包含预期的聚合修订。使用一次性 cooperation escalation 的 Command
 MUST 还包含 `cooperationOverrideGrantId`。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-EVT-003" level={["MUST","MUST NOT"]}>
 
-具有字节等效规范签名内容 MUST 的相同 `(actor ID, Action ID)`
-返回原始收据，并且 MUST
-NOT 附加第二个状态转换。重复使用具有不同规范内容 MUST 的相同操作 ID 失败，并显示
-`ACTION_ID_COLLISION`。
+当相同 `(actor ID, Action ID)`
+对应的规范签名内容在字节层面等价时，系统 MUST 返回原始回执，并且 MUST
+NOT 追加第二次状态转换。若以不同的规范内容复用同一 Action ID，则 MUST 以
+`ACTION_ID_COLLISION` 失败。
 
 </NormativeClause>
 
 <NormativeClause id="MWP-EVT-004" level="MUST">
 
-Group Authority MUST 验证参与者；验证会话和 Membership
-Epoch、模式、当前聚合修订、角色、委托、预算、策略和租赁；并拒绝 Command 或以原子方式将生成的 Event 添加到该 Group 中。
+Group Authority MUST 认证 actor，验证 Session Epoch、Membership
+Epoch、Schema、当前聚合修订、角色、委托、预算、策略和租约，并且要么拒绝 Command，要么在该 Group 内原子追加由此产生的 Event。
 
 </NormativeClause>
 
@@ -92,17 +93,18 @@ Profile 可能会标准化便利命令，例如显式报价拒绝、澄清或 Mi
 
 <NormativeClause id="MWP-EVT-005" level={["MUST","MUST NOT"]}>
 
-Event 是一个不可变的公认事实。一个 Group Event 信封 MUST 包含 Event ID、Group
-ID，严格增加 Group 序列、聚合修订、种类、参与者、原因、相关性ID、发生时间、负载和 Group 权限签名。 Organization 范围的
+Event 是不可变的已接受事实。Group Event 信封 MUST 包含 Event ID、Group
+ID、严格递增的 Group sequence、聚合修订、kind、actor、cause、correlation
+ID、发生时刻、payload 和 Group Authority 签名。Organization 范围的
 `ext.missionweaveprotocol.registry.agent_card_registered` 和
-`ext.missionweaveprotocol.identity.session_opened`
-事实包含常见的 Event 身份、参与者、原因、相关性、有效负载、时间、接受权限和签名字段，但 MUST
-NOT 包含Group ID、Group 序列或 Group 聚合修订版。
+`ext.missionweaveprotocol.identity.session_opened` 事实包含通用的 Event
+identity、actor、cause、correlation、payload、time、接受权威和签名字段，但 MUST
+NOT 包含 Group ID、Group sequence 或 Group 聚合修订。
 
 </NormativeClause>
 
-Group Authority 向每个持久 Group
-Event 分配一个单调序列。该序列提供确定性的显示、恢复和审核顺序。即使服务指定了显示顺序，普通消息也可以在逻辑上并发。结构化转换依赖于 Event 订单和聚合修订。
+Group Authority 为每个持久化 Group
+Event 分配一个单调递增的 sequence。该 sequence 提供确定性的显示、恢复和审计顺序。即使服务分配了显示顺序，普通 Message 在逻辑上仍可并发。结构化转换依赖 Event 顺序与聚合修订。
 
 <span id="core-event-kinds"></span>
 

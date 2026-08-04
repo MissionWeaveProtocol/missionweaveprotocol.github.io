@@ -23,13 +23,13 @@ locales.
 | Público API                                  | Responsabilidad                                                                                                                                                                                                                                                                                               |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `AdmissionCurrentKeyResolver.resolveCurrent` | Devuelve sincrónicamente evidencia Organization completa de Registry que la implementación afirma que está vigente para esta decisión.                                                                                                                                                                        |
-| `TrustedAdmissionContext.issue`              | Emitir de forma sincrónica o asincrónica la identificación del registro confiable, el instante de aceptación y la aceptación del servicio solo después de una ausencia autorizada.                                                                                                                            |
+| `TrustedAdmissionContext.issue`              | Emitir de forma síncrona o asíncrona la identificación del registro confiable, el instante de aceptación y el servicio de aceptación solo después de una constatación autoritativa de ausencia.                                                                                                               |
 | `AdmissionLog.lookup`                        | Devuelve asincrónicamente `{ status: "found", record }` o `{ status: "authoritative-absence" }`. Error de caché, tiempo de espera, ausencia no autenticada y error de estado indeterminado cerrado bajo [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
-| `AdmissionLog.appendOrReturnExisting`        | Agregue atómicamente bytes candidatos o devuelva el ganador autorizado concurrente a través de una identidad de servicio autenticada.                                                                                                                                                                         |
+| `AdmissionLog.appendOrReturnExisting`        | Agregue atómicamente bytes candidatos o devuelva el registro autoritativo ganador de una carrera concurrente a través de una identidad de servicio autenticada.                                                                                                                                               |
 | `AuthenticatedAdmissionRecord`               | Vincule `recordBytes` al servicio autenticado por el adaptador para que [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) pueda validar el registro devuelto.                                                                                              |
 | `AdmissionService.prepareFirstAdmission`     | Cree y valide pruebas candidatas a partir de un `VerifiedSignedDocument` producido por SDK. No anexa ni implica admisión.                                                                                                                                                                                     |
-| `AdmissionService.admitFirst`                | Realice la verificación actual, la búsqueda autorizada, la creación de candidatos, la validación atómica de anexar o devolver existente y de registros devueltos en [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                                     |
-| `AdmissionService.verifyHistoricalAdmission` | Vuelva a ejecutar la verificación de seis etapas con evidencia histórica Registry y solicite un registro existente sin emitir contexto ni agregar, como lo requiere [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                                     |
+| `AdmissionService.admitFirst`                | Realice la verificación actual, la búsqueda autoritativa, la creación de candidatos, la validación atómica de anexar o devolver existente y de registros devueltos en [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                                   |
+| `AdmissionService.verifyHistoricalAdmission` | Vuelva a ejecutar la verificación de seis etapas con evidencia histórica autoritativa del Registry y exija un registro existente sin emitir contexto ni añadirlo, como requiere [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                         |
 | `AdmittedSignedDocument`                     | Devuelve pruebas `verified` y `record` inmutables más una copia defensiva `recordBytes`.                                                                                                                                                                                                                      |
 
 El valor de ausencia autorizado exacto es `{ status: "authoritative-absence" }`.
@@ -54,11 +54,11 @@ const first = await new AdmissionService().admitFirst(
 
 `admitFirst` completa las seis etapas del documento firmado antes de consultar
 el registro. Un registro encontrado se valida y se devuelve sin emitir un
-contexto confiable ni agregarlo. Después de una ausencia autorizada, el servicio
-emite un contexto confiable, prepara bytes candidatos canónicos, llama a
-`appendOrReturnExisting` y valida el registro realmente devuelto. Un ganador
-simultáneo es aceptable solo cuando su esquema, servicio autenticado, enlace de
-documentos y tiempo de confianza pasan
+contexto confiable ni agregarlo. Después de una constatación autoritativa de
+ausencia, el servicio emite un contexto confiable, prepara bytes candidatos
+canónicos, llama a `appendOrReturnExisting` y valida el registro realmente
+devuelto. Un ganador simultáneo es aceptable solo cuando su esquema, servicio
+autenticado, enlace de documentos y tiempo de confianza pasan
 [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
 y
 [MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010).
@@ -82,9 +82,9 @@ La repetición histórica vuelve a ejecutar la verificación con el historial
 Registry retenido, requiere `status: "found"` y nunca llama a
 `TrustedAdmissionContext.issue` o `AdmissionLog.appendOrReturnExisting`. Los ID
 de registros coincidentes demuestran la recuperación del mismo registro
-autorizado; no prueban la actualización de Command, la autorización del
-firmante, la aceptación de la máquina de estados ni la verificación portátil a
-prueba de registros. Estos permanecen separados bajo
+autorizado; no prueban la frescura de Command, la autorización del firmante, la
+aceptación de la máquina de estados ni la verificación portátil a prueba de
+registros. Estos permanecen separados bajo
 [MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
 y
 [MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).

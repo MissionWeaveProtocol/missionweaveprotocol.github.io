@@ -15,7 +15,8 @@ Document 验证配置文件对规范受保护内容进行身份验证。配置�
 v0.1 签名输入省略了完整的顶级签名信封。验证者通过
 [MWP-SDV-002](../../reference/specification/signed-documents-and-trust/#mwp-sdv-002)
 中的受保护时间和 Ed25519 要求绑定信封，使用
-[MWP-SDV-001](../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)] 选择预期签名者，并遵循完整的分阶段规范化和签名字节规则[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)。
+[MWP-SDV-001](../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)
+选择预期签名者，并遵循完整的分阶段规范化和签名字节规则[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)。
 
 签名哈希是第 5 阶段生成的确切 RFC 8785
 JCS 字节的小写 SHA-256 标识。它独立于准入状态来标识受保护内容 ([MWP-SDV-017](../../reference/specification/signed-documents-and-trust/#mwp-sdv-017))。
@@ -46,6 +47,6 @@ RFC 8785 规范化和签名哈希生成；和6.严格Ed25519签名验证。
 
 确切的本地模式工件在 [JSON 模式目录](../../reference/schemas/)
 中建立索引，完整的六阶段证据包在
-[密码学一致性](../../reference/conformance/cryptography/)] 下发布。
+[密码学一致性](../../reference/conformance/cryptography/) 下发布。
 
-继续[首次接纳和历史信任](../first-admission-and-historical-trust/)]作为密码学之上的权威接受层。
+继续[首次接纳和历史信任](../first-admission-and-historical-trust/)作为密码学之上的权威接受层。

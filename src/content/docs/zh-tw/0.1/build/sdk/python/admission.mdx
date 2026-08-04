@@ -44,7 +44,7 @@ admitted = AdmissionService().admit_first(
 `admit_first` 在呼叫日誌之前進行驗證。當查找返回
 `AdmissionLookupStatus.AUTHORITATIVE_ABSENCE` 時，它會呼叫
 `prepare_first_admission`，呼叫
-`append_or_return_existing`，然後驗證實際傳回的記錄。只有當其位元組、經過驗證的服務、文件綁定和可信時間全部驗證時（[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)、[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)]），並發獲勝者才是可接受的。
+`append_or_return_existing`，然後驗證實際傳回的記錄。只有當其位元組、經過驗證的服務、文件綁定和可信時間全部驗證時（[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)、[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)），並發獲勝者才是可接受的。
 
 ## 歷史重播調用
 
@@ -66,7 +66,8 @@ historical = AdmissionService().verify_historical_admission(
 `AdmissionLog.append_or_return_existing`。範例中匹配的記錄 ID 表示重播恢復了第一筆權威記錄；它們本身並不能證明 Command 新鮮度、簽署者授權、狀態機接受或便攜式日誌證明驗證。 Command 在
 [MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
 和
-[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)] 下，新鮮度和簽署者授權仍然是單獨的要求。
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)
+下，新鮮度和簽署者授權仍然是單獨的要求。
 
 ## 可運行的精確固定範例
 

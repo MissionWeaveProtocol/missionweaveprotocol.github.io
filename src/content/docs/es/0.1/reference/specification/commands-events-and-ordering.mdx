@@ -14,14 +14,15 @@ import InformativeBlock from "../../../../../../components/InformativeBlock.astr
 
 <NormativeClause id="MWP-EVT-001" level={["MUST","MUST NOT"]}>
 
-Un Command es una solicitud firmada para una transición de estado estructurado.
-Cada sobre Command MUST contiene un ID de acción estable, versión de protocolo,
-actor, tipo, carga útil, ID de correlación, hora de emisión y firma. Un Group
-con alcance Command MUST contiene su ID Group. Un Agent Command MUST que cambia
-de estado contiene además la época actual Session Epoch y Membership. Un Command
-humano en un Group MUST existente contiene la época Membership actual y MUST NOT
-contiene un Agent Session Epoch. Un servicio Organization Command MUST NOT
-inventa una sesión Agent o épocas Membership.
+Un Command es una solicitud firmada para una única transición de estado
+estructurada. Cada sobre Command MUST contener un Action ID estable, la versión
+del protocolo, el actor, el tipo, la carga útil, el ID de correlación, la hora
+de emisión y la firma. Un Command con alcance Group MUST contener su Group ID.
+Un Agent Command que cambia estado MUST contener además los Session Epoch y
+Membership Epoch actuales. Un Command humano dentro de un Group existente MUST
+contener el Membership Epoch actual y MUST NOT contener un Agent Session Epoch.
+Un Command emitido por un servicio de Organization MUST NOT inventar Agent
+Session Epoch ni Membership Epoch.
 
 </NormativeClause>
 
@@ -38,34 +39,34 @@ arranque Organization, propiedad de
 
 <NormativeClause id="MWP-EVT-002" level={["MUST","SHOULD"]}>
 
-Un Agent Command cuya autoridad se deriva del arrendamiento actual Coordinator
-MUST contiene la época Coordinator actual. Esto es necesario para
+Un Agent Command cuya autoridad deriva del arrendamiento Coordinator vigente
+MUST contener el Coordinator Epoch vigente. Este campo es obligatorio para
 `mission.renew_coordinator`, `mission.submit_for_approval`,
 `mission.create_child`, `membership.grant_delegation` y `work.accept_result`, y
-para un Agent emitido por `mission.terminate`. En cambio, un `mission.terminate`
-emitido por un servicio está autorizado por la política Organization y no lleva
-una época Coordinator. Un Command SHOULD contiene la revisión agregada esperada
-al modificar el estado estructurado existente. Un Command que utiliza una
-escalada de cooperación de un solo uso MUST también contiene
-`cooperationOverrideGrantId`.
+para un `mission.terminate` emitido por un Agent. En cambio, un
+`mission.terminate` emitido por un servicio está autorizado por la política
+Organization y no lleva un Coordinator Epoch. Un Command SHOULD contener la
+revisión agregada esperada al modificar el estado estructurado existente. Un
+Command que utiliza una escalada de cooperación de un solo uso MUST contener
+también `cooperationOverrideGrantId`.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-EVT-003" level={["MUST","MUST NOT"]}>
 
 El mismo `(actor ID, Action ID)` con contenido canónico firmado equivalente a
-bytes MUST devuelve el recibo original y MUST NOT agrega una segunda transición
+bytes MUST devolver el recibo original y MUST NOT agregar una segunda transición
 de estado. La reutilización del mismo ID de acción con contenido canónico
-diferente MUST falla con `ACTION_ID_COLLISION`.
+diferente MUST fallar con `ACTION_ID_COLLISION`.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-EVT-004" level="MUST">
 
-El Group Authority MUST autentica al actor; validar sesión y épocas Membership,
-esquema, revisión agregada actual, función, delegación, presupuesto, política y
-arrendamiento; y rechace el Command o agregue los Event(s) resultantes
-atómicamente dentro de ese Group.
+El Group Authority MUST autenticar al actor; validar Session Epoch y Membership
+Epoch, Schema, la revisión agregada actual, el rol, la delegación, el
+presupuesto, la política y el arrendamiento; y rechazar el Command o agregar
+atómicamente los Event resultantes dentro de ese Group.
 
 </NormativeClause>
 
@@ -106,21 +107,21 @@ versión 0.1.
 
 <NormativeClause id="MWP-EVT-005" level={["MUST","MUST NOT"]}>
 
-Un Event es un hecho aceptado inmutable. Un sobre Group Event MUST contiene
+Un Event es un hecho aceptado e inmutable. Un sobre Group Event MUST contener
 Event ID, Group ID, secuencia Group estrictamente creciente, revisión agregada,
 tipo, actor, causa, ID de correlación, hora de ocurrencia, carga útil y firma
-Group Authority. Los hechos Organization con alcance
+del Group Authority. Los hechos con alcance Organization
 `ext.missionweaveprotocol.registry.agent_card_registered` y
 `ext.missionweaveprotocol.identity.session_opened` contienen los campos comunes
 Event de identidad, actor, causa, correlación, carga útil, hora, autoridad de
-aceptación y firma, pero MUST NOT contienen Group ID, secuencia Group o revisión
+aceptación y firma, pero MUST NOT contener Group ID, secuencia Group o revisión
 agregada Group.
 
 </NormativeClause>
 
 El Group Authority asigna una secuencia monótona a cada Group Event duradero.
 Esta secuencia proporciona un orden determinista de visualización, recuperación
-y auditoría. Los Mensajes Ordinarios pueden ser lógicamente concurrentes aunque
+y auditoría. Los Message ordinarios pueden ser lógicamente concurrentes aunque
 el servicio asigne un orden de visualización. Las transiciones estructuradas se
 basan en el orden Event y en las revisiones agregadas.
 

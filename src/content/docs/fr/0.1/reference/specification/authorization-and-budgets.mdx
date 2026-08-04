@@ -11,13 +11,13 @@ import NormativeClause from "../../../../../../components/NormativeClause.astro"
 
 <NormativeClause id="MWP-AUT-001" level="MUST">
 
-Après l'acceptation de WorkItem et toutes les approbations requises, le service
+Après l'acceptation du WorkItem et de toutes les Approval requises, le service
 d'autorisation émet un jeton de capacité de moindre privilège de courte durée.
-Le jeton MUST sera lié à :
+Le jeton MUST être lié à :
 
 - l'ID Worker Agent et le Session Epoch actuel ;
-- WorkItem ID et époque de propriété ;
-- l'identifiant actuel du bail d'exécution ;
+- WorkItem ID et Ownership Epoch ;
+- l'Execution Lease ID actuel ;
 - les outils, ressources, données et opérations autorisés ;
 - limites financières, de jetons, d'appels, de calcul, de temps et d'effets
   secondaires ; et
@@ -27,11 +27,11 @@ Le jeton MUST sera lié à :
 
 <NormativeClause id="MWP-AUT-002" level={["MAY","MUST NOT","MUST"]}>
 
-Le Coordinator MAY demande une autorisation mais MUST NOT fabrique, copie ou
-transmet les informations d'identification d'un Worker. Les jetons et secrets
-MUST NOT apparaissent dans les messages, les cartes Agent, les packages de
-contexte, les artefacts ou les événements Group. Les jetons expirés, révoqués,
-incompatibles ou en dépassement de budget MUST seront rejetés.
+Le Coordinator MAY demander une autorisation, mais MUST NOT fabriquer, copier ou
+transmettre les identifiants d'un Worker. Les jetons et secrets MUST NOT
+apparaître dans les Message, Agent Card, Context Package, Artifact ou Group
+Event. Les jetons expirés, révoqués, incompatibles ou en dépassement de budget
+MUST être rejetés.
 
 </NormativeClause>
 
@@ -40,9 +40,9 @@ incompatibles ou en dépassement de budget MUST seront rejetés.
 La stratégie Organization MUST puisse placer un WorkItem dans
 `awaiting_execution_approval` avant le déploiement en production, les paiements,
 les communications externes, les modifications destructrices ou l'accès aux
-données sensibles. Le service d'autorisation MUST retient le jeton de capacité
+données sensibles. Le service d'autorisation MUST retenir le jeton de capacité
 jusqu'à ce que la porte d'approbation signée soit satisfaite. Les travaux à
-faible risque MAY se déroulent automatiquement conformément à la stratégie.
+faible risque MAY se dérouler automatiquement conformément à la stratégie.
 
 </NormativeClause>
 
@@ -52,31 +52,31 @@ Les budgets Mission et WorkItem sont des concepts de protocole obligatoires. Le
 MissionOwner définit les limites Mission, le Coordinator n'alloue pas plus que
 ces limites aux WorkItems et aux sous-tâches, et le service d'autorisation
 applique des limites strictes. L’épuisement du budget suspend les travaux et
-nécessite une escalade explicite ; Les agents MUST NOT dépassent silencieusement
+nécessite une escalade explicite ; les Agent MUST NOT dépasser silencieusement
 une limite.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-AUT-005" level="MUST">
 
-Le Group Authority MUST conserve un grand livre budgétaire global à six
+Le Group Authority MUST conserver un grand livre budgétaire agrégé à six
 dimensions. Un `ext.missionweaveprotocol.core.resource_usage_record` Command
 signé enregistre un delta différent de zéro par rapport à un WorkItem, une
 époque de propriété et un ID de bail d'exécution ; le
 `ext.missionweaveprotocol.core.resource_usage_recorded` Event correspondant
 contient le delta, l'utilisation cumulée et le budget restant. La consommation
-MUST met à jour l'ascendance WorkItem et son ascendance complète
-WorkItem/Mission en une seule transition atomique. Un débordement
-unidimensionnel MUST rejette l'intégralité de la transition sous le nom
-`BUDGET_EXCEEDED`. Les budgets de jetons de capacité MUST doivent être plafonnés
-à la fois par le contrat de travail et par le budget restant faisant autorité.
+MUST mettre à jour le WorkItem et son ascendance complète WorkItem/Mission en
+une seule transition atomique. Un débordement unidimensionnel MUST rejeter
+l'intégralité de la transition sous le nom `BUDGET_EXCEEDED`. Les budgets de
+jetons de capacité MUST être plafonnés à la fois par le contrat de travail et
+par le budget restant faisant autorité.
 
 </NormativeClause>
 
 <NormativeClause id="MWP-AUT-006" level="MUST">
 
-L'annulation ou la résiliation d'urgence MUST révoque les baux et les jetons de
-capacité concernés, arrête les nouvelles affectations et lance le nettoyage ou
+L'annulation ou la résiliation d'urgence MUST révoquer les baux et les jetons de
+capacité concernés, arrêter les nouvelles affectations et lancer le nettoyage ou
 la compensation défini par le contrat pour les éléments de travail si
 nécessaire.
 

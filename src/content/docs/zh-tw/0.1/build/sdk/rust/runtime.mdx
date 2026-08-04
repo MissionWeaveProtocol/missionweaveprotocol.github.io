@@ -15,7 +15,7 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 和進程內行為。
 
 <SupportStatus status="deployment-adapter-required" /> 適用於目前 Registry
-權限、受信任的准入上下文、經過身份驗證的日誌存取和其他部署服務。
+權威性、可信任准入情境、經過身分驗證的日誌存取和其他部署服務。
 
 <SupportStatus status="not-implemented" />
 意味著精確固定的板條箱沒有對應的運作時間。
@@ -79,7 +79,7 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 
 ## 明確的可用性邊界
 
-<SupportStatus status="deployment-adapter-required" /> **准入權限** —
+<SupportStatus status="deployment-adapter-required" /> **准入權威服務** —
 應用程式提供當前 Registry 證據、歷史 Registry
 證據、可信任接受上下文以及經過驗證的僅附加日誌。
 
@@ -89,10 +89,10 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 <SupportStatus status="not-implemented" /> **Worker 排程器** — 不匯出 Worker
 佇列、排程器、租用執行程式或復原循環。
 
-<SupportStatus status="not-implemented" /> **託管網關服務** —
-板條箱提供幀編解碼器，而不是具有傳輸、TLS、會話、路由或反壓所有權的網關服務。
+<SupportStatus status="not-implemented" /> **託管網關服務** — Rust crate
+提供訊框編解碼器，而不是擁有傳輸、TLS、會話、路由或背壓職責的閘道服務。
 
 <SupportStatus status="not-implemented" /> **權威持久性運行時** —
 不導出資料庫支援的或 Agent 本地持久性運行時。
 
-這些缺勤是書面支援合約的一部分； Python 不得從共享協議名稱推斷引用運行時功能。
+這些未實作項目是書面支援合約的一部分；不得從共享協定名稱推斷 Python 參考執行階段能力。

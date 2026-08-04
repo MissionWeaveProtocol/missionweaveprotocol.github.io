@@ -12,10 +12,10 @@ import NormativeClause from "../../../../../../components/NormativeClause.astro"
 
 <NormativeClause id="MWP-FND-001" level={["MUST","MUST NOT","REQUIRED","SHALL","SHALL NOT","SHOULD","SHOULD NOT","RECOMMENDED","NOT RECOMMENDED","MAY","OPTIONAL"]}>
 
-本文档定义了 MissionWeaveProtocol 的 0.1 版本。关键字**MUST**、**MUST
-NOT**、**REQUIRED**、**SHALL**、**SHALL NOT**、**SHOULD**、本文档中的 **SHOULD
-NOT**、**RECOMMENDED**、**NOT RECOMMENDED**、**MAY** 和 **OPTIONAL**
-当且仅当它们出现时，才按照 BCP 14 的描述进行解释全部大写字母，如下所示。
+本文档定义 MissionWeaveProtocol 0.1。本文档中的关键字 **MUST**、**MUST
+NOT**、**REQUIRED**、**SHALL**、**SHALL NOT**、**SHOULD**、**SHOULD NOT**、
+**RECOMMENDED**、**NOT RECOMMENDED**、**MAY** 和
+**OPTIONAL**，当且仅当它们以上述全部大写形式出现时，按照 BCP 14 解释。
 
 </NormativeClause>
 
@@ -266,8 +266,10 @@ MissionWeaveProtocol 部署至少包含：
 
 <NormativeClause id="MWP-FND-023" level="MUST NOT">
 
-权威状态由任务、成员资格、工作项、所有权和租赁时期、重复数据删除收据、批准和 Group 事件组成。 Agent-本地游标、每个 Group 队列、检查点、发件箱、收件箱和调度程序状态是可重建的投影。 Agent 的本地数据库 MUST
-NOT 丢失会更改权威 Mission 状态。
+权威状态由 Mission、Membership、WorkItem、Ownership Epoch 与 Lease
+Epoch、去重回执、Approval 和 Group
+Event 构成。Agent 本地游标、每 Group 队列、checkpoint、outbox、inbox 和 scheduler 状态都是可重建的投影。Agent 本地数据库的丢失 MUST
+NOT 改变权威 Mission 状态。
 
 </NormativeClause>
 

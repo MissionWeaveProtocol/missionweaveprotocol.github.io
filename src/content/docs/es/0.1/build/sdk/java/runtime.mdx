@@ -13,7 +13,7 @@ Esta página cubre la superficie Java completa representada por el
 [inventario API exacto](../api/). El comportamiento del protocolo compartido
 permanece definido por la
 [referencia de tiempo de ejecución ](../../../runtime/architecture-and-bootstrap/)
-y las [cláusulas de referencia ](../../../../reference/specification/)] locales.
+y las [cláusulas de referencia ](../../../../reference/specification/) locales.
 Los tipos de aplicaciones públicas se encuentran bajo
 `org.missionweaveprotocol.sdk`; el punto de entrada de conformidad está en
 `org.missionweaveprotocol.sdk.cli`.
@@ -80,7 +80,7 @@ clave Registry y Principal resueltas.
 
 `FrameCodec.decode` y `encode` validan los valores de los fotogramas, pero no
 poseen transporte, TLS, autenticación de sesión, persistencia del cursor,
-enrutamiento, contrapresión ni transiciones de estado autorizadas.
+enrutamiento, contrapresión ni transiciones de estado autoritativas.
 
 `ProtocolBundle.verifyPackaged`, `verifyPackagedCryptographyBundle` y
 `verifyPackagedAdmissionBundle` validan los pines, recuentos, rutas, longitudes
@@ -118,8 +118,8 @@ Worker.
 alojada**: el artefacto proporciona `FrameCodec`, no un servicio de puerta de
 enlace con propiedad de transporte, TLS, sesión, enrutamiento o contrapresión.
 
-<SupportStatus status="not-implemented" /> **Tiempo de ejecución de persistencia
-autorizado**: no se exporta ningún tiempo de ejecución de persistencia local
+<SupportStatus status="not-implemented" /> **Runtime de persistencia
+autoritativa**: no se exporta ningún tiempo de ejecución de persistencia local
 respaldado por una base de datos o Agent.
 
 Estas ausencias son parte del contrato de soporte documentado; Las capacidades

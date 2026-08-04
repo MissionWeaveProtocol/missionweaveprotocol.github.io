@@ -8,14 +8,14 @@ import SupportStatus from "../../../../../../../components/SupportStatus.astro";
 # Java 運行時參考
 
 此頁面涵蓋了由[確切的 API inventory](../api/)
-表示的完整 Java 表面。共享協定行為仍由本地[運行時參考](../../../runtime/architecture-and-bootstrap/)和[參考子句](../../../../reference/specification/)]定義。公共應用程式類型位於
+表示的完整 Java 表面。共享協定行為仍由本地[運行時參考](../../../runtime/architecture-and-bootstrap/)和[參考子句](../../../../reference/specification/)定義。公共應用程式類型位於
 `org.missionweaveprotocol.sdk` 下；一致性入口點位於
 `org.missionweaveprotocol.sdk.cli` 下。
 
 <SupportStatus status="implemented" /> 適用於下列所列的公共類別和進程內行為。
 
 <SupportStatus status="deployment-adapter-required" /> 適用於目前 Registry
-權限、可信任存取情境、經過驗證的日誌存取和其他部署服務。
+權威性、可信任准入情境、經過驗證的日誌存取和其他部署服務。
 
 <SupportStatus status="not-implemented" />
 表示精確固定的工件沒有對應的執行時間。
@@ -42,7 +42,7 @@ Maven 工件是
 | 框架                  | `FrameCodec.java`                                                                         | 通用的嚴格解碼與規範編碼 WebSocket 幀值。這是編解碼器，而不是託管網關服務。 |
 | 結構一致性            | `ConformanceRunner.java`, `cli/ConformanceCli.java`                                       | 打包或明確根模式向量執行和進程退出狀態。                                    |
 | 嵌入式捆綁包          | `ProtocolBundle.java`                                                                     | 協定、密碼學和准入工件集的源根和打包驗證。                                  |
-| 首次入場              | `AdmissionService.java` 和錄取記錄/介面                                                   | 首次入場和歷史信託以上成功 Signed Document 確認。                           |
+| 首次准入              | `AdmissionService.java` 與准入記錄/介面                                                   | Signed Document 驗證成功後的首次准入與歷史信任。                            |
 
 ## 驗證、簽名和 Registry 證據
 
@@ -81,7 +81,7 @@ Maven 工件是
 
 ## 明確的可用性邊界
 
-<SupportStatus status="deployment-adapter-required" /> **准入權限** —
+<SupportStatus status="deployment-adapter-required" /> **准入權威服務** —
 應用程式提供當前 Registry 證據、歷史 Registry
 證據、可信任接受上下文以及經過驗證的僅附加日誌。
 
@@ -97,4 +97,4 @@ Maven 工件是
 <SupportStatus status="not-implemented" /> **權威持久性運行時** —
 不導出資料庫支援的或 Agent 本地持久性運行時。
 
-這些缺勤是書面支援合約的一部分； Python 不得從共享協議名稱推斷引用運行時功能。
+這些未實作項目是書面支援合約的一部分；不得從共享協定名稱推斷 Python 參考執行階段能力。

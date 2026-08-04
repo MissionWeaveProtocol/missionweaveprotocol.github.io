@@ -23,13 +23,13 @@ locales].
 | Público API                                    | Responsabilidad                                                                                                                                                                                                                                                                                                              |
 | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `AdmissionCurrentKeyResolver.resolve_current`  | Devuelva evidencia Organization completa de Registry que la implementación afirma que está actualizada para una nueva decisión de primera admisión.                                                                                                                                                                          |
-| `TrustedAdmissionContext.issue`                | Emita la identificación del registro confiable, el instante de aceptación confiable y el servicio de aceptación solo después de una ausencia autorizada.                                                                                                                                                                     |
+| `TrustedAdmissionContext.issue`                | Emita la identificación del registro confiable, el instante de aceptación confiable y el servicio de aceptación solo después de una constatación autoritativa de ausencia.                                                                                                                                                   |
 | `AdmissionLog.lookup`                          | Devuelve `AdmissionLookupStatus.FOUND` con bytes autenticados o `AdmissionLookupStatus.AUTHORITATIVE_ABSENCE`. Error de transporte, error de caché, estado indeterminado y error de ausencia no autenticada cerrado en [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
-| `AdmissionLog.append_or_return_existing`       | Agregue atómicamente bytes candidatos o devuelva el ganador autorizado concurrente.                                                                                                                                                                                                                                          |
+| `AdmissionLog.append_or_return_existing`       | Agregue atómicamente bytes candidatos o devuelva el registro autoritativo ganador de una carrera concurrente.                                                                                                                                                                                                                |
 | `AuthenticatedAdmissionRecord`                 | Vincule los bytes de registro devueltos a la identidad del servicio de aceptación autenticada por el adaptador para la validación [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009).                                                                                      |
 | `AdmissionService.prepare_first_admission`     | Cree y valide bytes candidatos a partir de un documento ya verificado y un contexto confiable. No anexa ni implica admisión.                                                                                                                                                                                                 |
-| `AdmissionService.admit_first`                 | Implemente el flujo de evidencia actual, ausencia autorizada, anexo atómico y registro devuelto en [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                                                                                                                     |
-| `AdmissionService.verify_historical_admission` | Vuelva a ejecutar la verificación con evidencia histórica Registry y solicite un registro encontrado sin emitir contexto ni agregar, como lo requiere [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                                                                  |
+| `AdmissionService.admit_first`                 | Implemente el flujo de evidencia actual, constatación autoritativa de ausencia, adición atómica y registro devuelto de [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                                                                                                 |
+| `AdmissionService.verify_historical_admission` | Vuelva a ejecutar la verificación con evidencia histórica autoritativa del Registry y exija un registro encontrado sin emitir contexto ni añadirlo, como requiere [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                                                      |
 
 El resultado del adaptador es evidencia escrita. Un valor booleano de confianza
 proporcionado por la persona que llama no es un resultado de búsqueda autorizado
@@ -80,8 +80,8 @@ o `AdmissionLog.append_or_return_existing`. Los ID de registros coincidentes en
 el ejemplo demuestran que la reproducción recuperó el primer registro
 autorizado; por sí solos no prueban la actualidad de Command, la autorización
 del firmante, la aceptación de la máquina de estados ni la verificación portátil
-a prueba de registros. La actualización de Command y la autorización del
-firmante siguen siendo requisitos separados según
+a prueba de registros. La frescura de Command y la autorización del firmante
+siguen siendo requisitos separados según
 [MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
 y
 [MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
@@ -100,7 +100,7 @@ debe usarse fuera del ejemplo.
   <code>{admissionExample}</code>
 </pre>
 
-Ejecútelo desde una caja exacta después de instalar todos los extras SDK:
+Ejecútelo desde un checkout exacto después de instalar todos los extras SDK:
 
 ```bash
 uv sync --all-extras
