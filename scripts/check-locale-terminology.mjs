@@ -12,8 +12,14 @@ const failures = [];
 const normalizeWhitespace = (value) => value.replace(/\s+/gu, " ").trim();
 const contentExtensions = new Set([".md", ".mdx"]);
 
+function withoutLiteralCode(contents) {
+  return contents
+    .replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/gu, " ")
+    .replace(/`[^`\n]*`/gu, " ");
+}
+
 function withoutAllowedDefinitions(contents, firstForms) {
-  let result = normalizeWhitespace(contents);
+  let result = normalizeWhitespace(withoutLiteralCode(contents));
   for (const form of firstForms) {
     result = result.replaceAll(form, "");
   }
