@@ -10,6 +10,8 @@ description: 复杂工作项的递归分解，不会丢失父范围、预算、E
 足够复杂的 WorkItem 可以成为 **子任务（Child
 Mission）**。子任务有自己的 Group、Coordinator、WorkItem 图、成员资格、预算、截止日期和审批政策。父级 WorkItem 和子任务保留彼此的稳定链接 ([MWP-MSN-024](../../reference/specification/missions-groups-and-membership/#mwp-msn-024))。
 
+子任务是拥有独立生命周期的 Mission。子任务不是 WorkItem，也不是 WorkItem 的另一种显示名称。
+
 ```text
 根 Mission 及其 Group
 └── 父级 WorkItem 进入 blocked 状态

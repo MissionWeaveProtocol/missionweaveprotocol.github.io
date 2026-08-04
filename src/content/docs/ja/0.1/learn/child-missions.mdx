@@ -12,6 +12,8 @@ description:
 十分に複雑な WorkItem は **サブタスク（Child Mission）**
 になる可能性があります。サブタスクには、独自の Group、Coordinator、WorkItem グラフ、メンバーシップ、予算、期限、および承認ポリシーがあります。親 WorkItem とサブタスクは、相互に安定したリンクを保持します ([MWP-MSN-024](../../reference/specification/missions-groups-and-membership/#mwp-msn-024))。
 
+サブタスクは独自のライフサイクルを持つ Mission です。サブタスクは WorkItem ではありません。また、WorkItem の別の表示名でもありません。
+
 ```text
 ルート Mission と Group
 └── 親 WorkItem が blocked になる
