@@ -1,0 +1,202 @@
+---
+import cppInventory from "../../public/artifacts/0.1/sdks/cpp-api.json";
+import goInventory from "../../public/artifacts/0.1/sdks/go-api.json";
+import javaInventory from "../../public/artifacts/0.1/sdks/java-api.json";
+import pythonInventory from "../../public/artifacts/0.1/sdks/python-api.json";
+import rustInventory from "../../public/artifacts/0.1/sdks/rust-api.json";
+import typescriptInventory from "../../public/artifacts/0.1/sdks/typescript-api.json";
+
+type SdkId = "python" | "typescript" | "go" | "rust" | "java" | "cpp";
+
+interface Props {
+  sdk: SdkId;
+  sourceFiles?: string[];
+  kinds?: string[];
+}
+
+const inventories = {
+  python: pythonInventory,
+  typescript: typescriptInventory,
+  go: goInventory,
+  rust: rustInventory,
+  java: javaInventory,
+  cpp: cppInventory,
+} as const;
+const { sdk, sourceFiles, kinds } = Astro.props as Props;
+const inventory = inventories[sdk];
+if (!inventory) throw new Error(`Unknown SDK API inventory: ${String(sdk)}`);
+
+if (sourceFiles) {
+  for (const sourceFile of sourceFiles) {
+    if (!inventory.sourceFiles.includes(sourceFile as never)) {
+      throw new Error(`${sdk} API inventory does not contain ${sourceFile}`);
+    }
+  }
+}
+
+const entries = inventory.entries.filter(
+  (entry) =>
+    (!sourceFiles || sourceFiles.includes(entry.sourceFile)) &&
+    (!kinds || kinds.includes(entry.kind)),
+);
+if (entries.length === 0) {
+  throw new Error(`${sdk} API inventory filter produced no public entries`);
+}
+
+const grouped = inventory.sourceFiles
+  .filter((sourceFile) => !sourceFiles || sourceFiles.includes(sourceFile))
+  .map((sourceFile) => ({
+    sourceFile,
+    entries: entries.filter((entry) => entry.sourceFile === sourceFile),
+  }))
+  .filter((group) => group.entries.length > 0);
+
+function sourceUrl(sourceFile: string, line?: number) {
+  const encodedPath = sourceFile
+    .split("/")
+    .map((segment) => encodeURIComponent(segment))
+    .join("/");
+  return `${inventory.repository}/blob/${inventory.commit}/${encodedPath}${line ? `#L${line}` : ""}`;
+}
+
+const artifactUrl = `${import.meta.env.BASE_URL}artifacts/0.1/sdks/${sdk}-api.json`;
+---
+
+<section
+  class="sdk-api-inventory"
+  data-sdk={sdk}
+  data-entry-count={entries.length}
+>
+  <header class="inventory-header">
+    <div>
+      <p class="eyebrow">Exact-commit public API inventory</p>
+      <p>
+        <strong>{inventory.name}</strong> · <code>{inventory.package}</code> · {
+          entries.length
+        } public entries
+      </p>
+    </div>
+    <a href={artifactUrl}>Download local JSON inventory</a>
+  </header>
+  <p class="commit">
+    Source commit: <a
+      href={`${inventory.repository}/commit/${inventory.commit}`}
+    >
+      <code>{inventory.commit}</code>
+    </a>
+  </p>
+
+  <div class="inventory-groups">
+    {
+      grouped.map((group) => (
+        <details open={grouped.length <= 3 || undefined}>
+          <summary>
+            <code>{group.sourceFile}</code>
+            <span>{group.entries.length} entries</span>
+          </summary>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Kind</th>
+                  <th scope="col">Public symbol</th>
+                  <th scope="col">Exact source</th>
+                </tr>
+              </thead>
+              <tbody>
+                {group.entries.map((entry) => (
+                  <tr>
+                    <td>{entry.kind}</td>
+                    <th scope="row">
+                      <code>{entry.qualifiedName}</code>
+                    </th>
+                    <td>
+                      <a href={sourceUrl(entry.sourceFile, entry.line)}>
+                        <code>
+                          {entry.sourceFile}#L{entry.line}
+                        </code>
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </details>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .sdk-api-inventory {
+    display: grid;
+    gap: 1rem;
+    margin-block: 1.5rem;
+  }
+
+  .inventory-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    padding: 1rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.65rem;
+    background: color-mix(in srgb, var(--sl-color-gray-6) 28%, transparent);
+  }
+
+  .inventory-header p,
+  .commit {
+    margin: 0;
+  }
+
+  .eyebrow {
+    color: var(--sl-color-gray-2);
+    font-size: 0.75rem;
+    font-weight: 750;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .inventory-groups {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  details {
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.65rem;
+  }
+
+  summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem 1rem;
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  summary span {
+    color: var(--sl-color-gray-2);
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+    border-block-start: 1px solid var(--sl-color-gray-5);
+  }
+
+  table {
+    min-width: 58rem;
+    margin: 0;
+  }
+
+  code {
+    overflow-wrap: anywhere;
+  }
+</style>

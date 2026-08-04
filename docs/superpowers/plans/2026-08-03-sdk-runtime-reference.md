@@ -184,24 +184,24 @@ git commit -m "feat(docs): add exact SDK API inventories"
 - Create: `src/components/SdkInstall.astro`
 - Create: `src/components/SupportStatus.astro`
 
-- [ ] **Step 1: Add matrix rendering from structured data**
+- [x] **Step 1: Add matrix rendering from structured data**
 
 The matrix must show implemented, not implemented, exact commit, package,
 toolchain, structural vectors, cryptography bundle, and Admission bundle. No
 capability may be embedded in the component source.
 
-- [ ] **Step 2: Add local API inventory rendering**
+- [x] **Step 2: Add local API inventory rendering**
 
 `SdkApiInventory.astro` reads the local JSON file and renders source path,
 public symbol, and exact commit. Source links may point to exact GitHub code for
 provenance, but explanations remain local.
 
-- [ ] **Step 3: Add explicit support labels**
+- [x] **Step 3: Add explicit support labels**
 
 Use only `Implemented`, `Not implemented`, and `Deployment adapter required`. Do
 not use ambiguous partial-support or future-tense labels.
 
-- [ ] **Step 4: Build and commit components**
+- [x] **Step 4: Build and commit components**
 
 ```bash
 npm run typecheck

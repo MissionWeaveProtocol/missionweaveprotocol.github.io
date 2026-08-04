@@ -1,0 +1,254 @@
+---
+import matrix from "../data/normative/0.1/sdk-runtime-matrix.json";
+import release from "../data/normative/0.1/release-source.json";
+import SupportStatus from "./SupportStatus.astro";
+
+type SdkId = "python" | "typescript" | "go" | "rust" | "java" | "cpp";
+type Status = "implemented" | "not-implemented" | "deployment-adapter-required";
+
+interface Props {
+  sdk?: SdkId;
+}
+
+interface CapabilityRow {
+  capability: string;
+  label: string;
+  status: Status;
+  reason?: string;
+  sourceFiles: string[];
+}
+
+const { sdk: selectedSdk } = Astro.props as Props;
+const selected = selectedSdk
+  ? matrix.sdks.filter((sdk) => sdk.id === selectedSdk)
+  : matrix.sdks;
+if (selectedSdk && selected.length !== 1) {
+  throw new Error(`Unknown SDK runtime matrix entry: ${selectedSdk}`);
+}
+
+function sourceUrl(repository: string, commit: string, sourceFile: string) {
+  const encodedPath = sourceFile
+    .split("/")
+    .map((segment) => encodeURIComponent(segment))
+    .join("/");
+  return `${repository}/blob/${commit}/${encodedPath}`;
+}
+
+function capabilityRows(sdk: (typeof matrix.sdks)[number]): CapabilityRow[] {
+  return [
+    ...sdk.implemented.map((capability) => ({
+      ...capability,
+      status: "implemented" as const,
+    })),
+    ...sdk.deploymentAdapters.map((capability) => ({
+      ...capability,
+      status: "deployment-adapter-required" as const,
+    })),
+    ...sdk.notImplemented.map((capability) => ({
+      ...capability,
+      status: "not-implemented" as const,
+      sourceFiles: [],
+    })),
+  ];
+}
+
+const evidenceBundles = [
+  {
+    label: "Structural vectors",
+    count: `${release.structural.total} total (${release.structural.valid} valid / ${release.structural.invalid} invalid)`,
+    digest: "Bound by the exact protocol bundle digest",
+  },
+  {
+    label: "Cryptography bundle",
+    count: `${release.cryptography.evaluations} evaluations (${release.cryptography.complete} complete / ${release.cryptography.rejected} rejected)`,
+    digest: release.cryptography.digest,
+  },
+  {
+    label: "Admission bundle",
+    count: `${release.admission.evaluations} evaluations (${release.admission.complete} complete / ${release.admission.rejected} rejected)`,
+    digest: release.admission.digest,
+  },
+];
+---
+
+<div class="sdk-runtime-matrix" data-sdk-count={selected.length}>
+  <div class="table-scroll evidence-bundles">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Normative evidence</th>
+          <th scope="col">Coverage</th>
+          <th scope="col">Digest binding</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          evidenceBundles.map((bundle) => (
+            <tr>
+              <th scope="row">{bundle.label}</th>
+              <td>{bundle.count}</td>
+              <td>
+                <code>{bundle.digest}</code>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+
+  {
+    selected.map((sdk) => (
+      <section class="sdk-runtime" aria-labelledby={`sdk-runtime-${sdk.id}`}>
+        <h2 id={`sdk-runtime-${sdk.id}`}>{sdk.name}</h2>
+        <dl class="sdk-facts">
+          <div>
+            <dt>Package</dt>
+            <dd>
+              <code>{sdk.package}</code>
+            </dd>
+          </div>
+          <div>
+            <dt>Required toolchain</dt>
+            <dd>{sdk.toolchain.join(" · ")}</dd>
+          </div>
+          <div>
+            <dt>Exact SDK commit</dt>
+            <dd>
+              <a href={`${sdk.repository}/commit/${sdk.commit}`}>
+                <code>{sdk.commit}</code>
+              </a>
+            </dd>
+          </div>
+          <div>
+            <dt>Admission operations</dt>
+            <dd>
+              <code>{sdk.admissionOperations.prepare}</code>
+              {" · "}
+              <code>{sdk.admissionOperations.firstAdmission}</code>
+              {" · "}
+              <code>{sdk.admissionOperations.historicalReplay}</code>
+            </dd>
+          </div>
+        </dl>
+
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Runtime capability</th>
+                <th scope="col">Status</th>
+                <th scope="col">Evidence or boundary</th>
+              </tr>
+            </thead>
+            <tbody>
+              {capabilityRows(sdk).map((capability) => (
+                <tr data-capability={capability.capability}>
+                  <th scope="row">{capability.label}</th>
+                  <td>
+                    <SupportStatus status={capability.status} />
+                  </td>
+                  <td>
+                    {capability.sourceFiles.length > 0 ? (
+                      <ul class="source-list">
+                        {capability.sourceFiles.map((sourceFile) => (
+                          <li>
+                            <a
+                              href={sourceUrl(
+                                sdk.repository,
+                                sdk.commit,
+                                sourceFile,
+                              )}
+                            >
+                              <code>{sourceFile}</code>
+                            </a>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      capability.reason
+                    )}
+                    {capability.sourceFiles.length > 0 && capability.reason && (
+                      <p class="boundary">{capability.reason}</p>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    ))
+  }
+</div>
+
+<style>
+  .sdk-runtime-matrix,
+  .sdk-runtime {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .sdk-runtime {
+    margin-block: 1.5rem 2.5rem;
+  }
+
+  .sdk-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 0.75rem;
+    margin: 0;
+  }
+
+  .sdk-facts > div {
+    min-width: 0;
+    padding: 0.8rem;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 0.6rem;
+    background: color-mix(in srgb, var(--sl-color-gray-6) 24%, transparent);
+  }
+
+  dt {
+    color: var(--sl-color-gray-2);
+    font-size: 0.75rem;
+    font-weight: 750;
+    letter-spacing: 0.035em;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 0.35rem 0 0;
+    overflow-wrap: anywhere;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 58rem;
+  }
+
+  .evidence-bundles table {
+    min-width: 46rem;
+  }
+
+  .source-list {
+    margin: 0;
+    padding-inline-start: 1.2rem;
+  }
+
+  .source-list li + li {
+    margin-block-start: 0.25rem;
+  }
+
+  .boundary {
+    margin: 0.55rem 0 0;
+    color: var(--sl-color-gray-2);
+    font-size: 0.9rem;
+  }
+
+  code {
+    overflow-wrap: anywhere;
+  }
+</style>
