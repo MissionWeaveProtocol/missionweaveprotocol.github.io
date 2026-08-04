@@ -150,7 +150,6 @@ for (const [name, source] of Object.entries(repositories)) {
 
   if (destinationKind === "missing") {
     const cloneArguments = ["clone", "--no-checkout"];
-    if (!mirrorRoot) cloneArguments.push("--filter=blob:none");
     cloneArguments.push(cloneSource, destination);
     git(cloneArguments, { cwd: resolvedSourcesRoot, stdio: "inherit" });
     newlyCloned = true;
