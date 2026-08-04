@@ -1,0 +1,101 @@
+---
+title: Java 首次入场和历史信任
+description: 输入 Java 适配器、确切的调用顺序、信任边界和可运行的准入示例。
+---
+
+import javaAdmissionExample from "../../../../../../../../examples/sdk/java/AdmissionExample.java?raw";
+
+# Java 首次入场和历史信任
+
+Java `AdmissionService` 将首次准入和历史信任置于六阶段 Signed
+Document 验证器 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)) 之上。与语言无关的流程是本地[首次准入和历史信任运行时页面](../../../runtime/first-admission-and-historical-trust/)，确切的要求是本地[准入条款](../../../../reference/specification/first-admission-and-historical-trust/)。
+
+## 公共适配器和结果
+
+| 公开 API                                           | 责任                                                                                                                                                                                                                             |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.resolveCurrent`       | 返回完整的 Organization 范围的 Registry 证据，表明部署断言对于此决策是最新的。                                                                                                                                                   |
+| `TrustedAdmissionContext.issue`                    | 下发记录ID，即时可信受理，权威不在场后才接受服务。                                                                                                                                                                               |
+| `AdmissionLog.lookup`                              | 返回 `AdmissionLookup.Found` 或 `AdmissionLookup.AuthoritativeAbsence`。缓存未命中、超时或未经身份验证的缺失在 [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003) 下关闭失败。 |
+| `AdmissionLog.appendOrReturnExisting`              | 以原子方式追加候选字节或通过经过身份验证的服务身份返回并发权威获胜者。                                                                                                                                                           |
+| `AuthenticatedAdmissionRecord`                     | 将返回的记录字节绑定到由 [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) 的适配器验证的服务。                                                                               |
+| `AdmissionService.prepareFirstAdmission`           | 从 SDK 生成的 `VerifiedSignedDocument` 创建并验证候选证据；它不附加或暗示承认。                                                                                                                                                  |
+| `AdmissionService.admitFirst`                      | 验证当前证据、查找、缺席后准备、追加或返回现有证据，并验证 [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006) 下返回的记录。                                                   |
+| `AdmissionService.verifyHistoricalAdmission`       | 使用历史 Registry 证据重新运行验证，并需要现有记录，而不发布上下文或在 [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) 下附加。                                             |
+| `PreparedFirstAdmission`、`AdmittedSignedDocument` | 保留不可变的验证和记录证据并返回防御性记录字节副本。                                                                                                                                                                             |
+
+调用者提供的信任布尔值不是准入查找结果，并且绝不能选择成功路径。
+
+## 首次入场电话顺序
+
+:::note[Informative example]
+
+```java
+AdmittedSignedDocument first =
+    new AdmissionService()
+        .admitFirst(
+            SignedDocumentKind.COMMAND,
+            document,
+            currentRegistry,
+            admissionLog,
+            trustedContext);
+```
+
+:::
+
+`admitFirst`
+在日志访问之前完成所有六个验证阶段。找到的记录经过验证并返回，无需发出可信上下文或附加。权威缺席后，服务发布上下文，准备规范候选字节，调用
+`appendOrReturnExisting`，并验证实际返回的记录。仅当架构、身份验证、文档绑定和可信时间满足
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+和
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)] 时，并发获胜者才会成功。
+
+## 历史回放和错误
+
+`verifyHistoricalAdmission` 使用 `KeyResolver`，重新运行所有六个阶段，需要
+`AdmissionLookup.Found`，并且从不调用 `TrustedAdmissionContext.issue` 或
+`AdmissionLog.appendOrReturnExisting`。匹配的记录 ID 恢复相同的权威记录，但不能证明 Command 的新鲜度、签名者授权、状态机接受或
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+和
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)] 下的便携式日志证明验证。
+
+六级故障仍然是`SignedDocumentVerificationException`。根据
+[MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)
+的要求，准入阶段故障为 `AdmissionException`，线路代码为
+`AUTH_INVALID_SIGNATURE`、阶段 `admission` 和类型化的
+`AdmissionReason`。部署适配器抛出
+`AdmissionAdapterException`；一般性的成功或可用性并不是经过验证的证据。
+
+## 可运行的精确固定示例
+
+:::note[Informative example]
+
+该示例从打包在确切的 JAR 中的资源中读取已签名的 Command 和 Registry，然后提供类型化的内存中授权适配器。它不读取存储库文件。它为首次准入和历史重放断言相同的记录 ID、签名哈希值和记录字节，并且只有一个附加。
+
+<pre>
+  <code>{javaAdmissionExample}</code>
+</pre>
+
+将其复制到精确的结账中并运行：
+
+```bash
+cp /absolute/path/to/examples/sdk/java/AdmissionExample.java \
+  examples/src/main/java/org/missionweaveprotocol/examples/AdmissionExample.java
+./mvnw -B -ntp verify
+./mvnw -q -Dexec.mainClass=org.missionweaveprotocol.examples.AdmissionExample \
+  -Dexec.classpathScope=test exec:java
+```
+
+预期输出包含 `first admission` 和 `historical replay` 的相同记录 ID。
+
+:::
+
+:::note[Implementation note]
+
+将 `CurrentRegistry` 替换为经过身份验证的当前和历史 Registry 适配器，将
+`InMemoryAdmissionLog`
+替换为经过身份验证的持久日志，其追加或返回现有操作是原子的，并将
+`FixedTrustedContext`
+替换为 Organization 控制的可信时间和接受服务发行。保留防御性副本，并且永远不要将这些权限边界折叠为调用者提供的信任布尔值。
+
+:::

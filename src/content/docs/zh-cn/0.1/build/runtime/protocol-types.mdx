@@ -1,0 +1,83 @@
+---
+title: 协议类型
+description:
+  如何将
+  JSON、标量配置文件、生成的语言类型、持久对象、命令、事件和语义状态组合在一起。
+---
+
+# 协议类型
+
+将协议对象视为不仅仅是反序列化的类。合格的运行时保留四个不同的层：
+
+```text
+received UTF-8 bytes
+→ lossless parsed JSON value
+→ schema-valid protocol object
+→ semantically accepted authoritative state or local projection
+```
+
+跳过一层会导致规范化、验证顺序或权限错误。
+
+## 标量配置文件
+
+所有协议对象都是 JSON，持久对象符合本地规范模式，协议时间戳使用 RFC
+3339 以及适用 Signed
+Document 验证的附加确定性规则 ([MWP-FND-004](../../../reference/specification/foundations/#mwp-fnd-004))。
+
+- 将时间戳拼写与解析的时刻分开保存。不要重写在散列或验证之前（[MWP-FND-005](../../../reference/specification/foundations/#mwp-fnd-005)）。
+- 规范地解码base64url，无需填充，使用小写 `sha256:<64 hex digits>`
+  哈希，并将序列、修订、时期和预算保持在非负安全 JSON 整数范围内 ([MWP-FND-007](../../../reference/specification/foundations/#mwp-fnd-007))。
+- 验证标识符作为完整的绝对 RFC 3986
+  URI 并比较它们保留字节而不发明接收方标准化（[MWP-FND-008](../../../reference/specification/foundations/#mwp-fnd-008)）。
+- 启用每个架构 `format` 关键字作为断言，包括 `uri` 和 `date-time`
+  （[MWP-FND-009](../../../reference/specification/foundations/#mwp-fnd-009)）。
+
+## 模式类型和语义类型
+
+生成的语言类型是 JSON 模式的有用投影，但它们不会取代验证。 v0.1 架构使用草案 2020-12，拒绝未知的核心属性，并且仅通过声明的扩展成员和批准的配置文件才允许扩展性 ([MWP-EXT-010](../../../reference/specification/errors-extensions-and-security/#mwp-ext-010))。
+
+将这些类别分开：
+
+| 类别            | 示例                                                | 接受边界                                  |
+| --------------- | --------------------------------------------------- | ----------------------------------------- |
+| 标量            | 标识符、时间戳、哈希值、base64url、安全整数         | 词汇和值配置文件验证                      |
+| 耐用文件        | Mission、WorkItem、Artifact、Evidence、Agent Card   | 严格的 JSON 加上完整的规范架构            |
+| Signed Document | Command、Event、Approval、Agent Card、Artifact 清单 | 架构加六阶段验证                          |
+| 权威国家        | 汇总修订，Membership，所有权，租赁，预算分类账      | 当前 Organization 或 Group Authority 转换 |
+| 局部投影        | 光标、收件箱、发件箱、每个 Group 队列、检查点       | 可根据权威事件和本地持久工作进行重建      |
+
+每种 Signed Document 类型在
+[MWP-SDV-001](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)
+下选择一个受保护时间和预期签名者。 First-Admission
+Record 是一个单独的无符号九字段对象，无法验证其自己的字节 ([MWP-ADM-001](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001))。
+
+## 命令和事件
+
+Command 是一个结构化转换的签名请求。它的信封绑定了稳定的 Action
+ID、版本、参与者、种类、有效负载、相关性、发布时间以及适用的 Group 和纪元字段 ([MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001))。因此，有效的 Command 对象尚未被接受的转换。
+
+Event 是一个不可变的公认事实。 Group 事件包含单调 Group 序列和由 Group
+Authority 分配的聚合修订版；两种 Organization 范围的引导程序 Event 类型省略 Group 订单字段 ([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005))。
+
+## 保留后期所需的证据
+
+解码器必须保留足够的信息来：
+
+- 在模式验证之前拒绝重复的解码成员名称；
+- 逐字节比较受保护的时间戳文本；
+- 应用 RFC 8785 二进制 64 和 Unicode 数据模型；
+- 生成签名字节时，完全省略顶级 `signature` 成员；
+- 区分缺失数据和不可用或不确定的权威数据证据；和
+- 报告第一个失败的语义阶段，而不暴露受保护的详细信息电线。
+
+重复名称拒绝和内容派生的规范字节遵循
+[MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012)。有序验证输入和完整的第 4 阶段 Registry 扫描遵循
+[MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)，包括
+[MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008)
+下的选定密钥查找之前的完整证据验证。部分缓存无法取代权威完整性（[MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009)）；适配器必须建立适用的修订版、完整性和历史覆盖范围，或者报告它不能 ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010))，并且只有在建立完整性后，未知密钥才是权威的 ([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011))。无损保留保留
+[MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016)
+下的规范阶段分类，而受保护的诊断处理和线路安全故障边界遵循
+[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)]。
+
+在 [JSON 架构目录](../../../reference/schemas/)
+中浏览确切的本地类型。然后实现[验证、规范化和签名](../validation-canonicalization-and-signing/)。

@@ -1,0 +1,51 @@
+---
+title: 签署文件和信任
+description:
+  受保护的内容、Registry 证据、关键历史记录、规范化和 Ed25519
+  验证如何产生六阶段结果。
+---
+
+# 签署文件和信任
+
+Signed Document 是持久协议对象，其签名根据 Signed
+Document 验证配置文件对规范受保护内容进行身份验证。配置文件为每种文档类型选择受保护的时间和预期的签名者。
+
+## 信封绑定回受保护的内容
+
+v0.1 签名输入省略了完整的顶级签名信封。验证者通过
+[MWP-SDV-002](../../reference/specification/signed-documents-and-trust/#mwp-sdv-002)
+中的受保护时间和 Ed25519 要求绑定信封，使用
+[MWP-SDV-001](../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)] 选择预期签名者，并遵循完整的分阶段规范化和签名字节规则[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)。
+
+签名哈希是第 5 阶段生成的确切 RFC 8785
+JCS 字节的小写 SHA-256 标识。它独立于准入状态来标识受保护内容 ([MWP-SDV-017](../../reference/specification/signed-documents-and-trust/#mwp-sdv-017))。
+
+## Registry 证据比一个选定的密钥更宽
+
+第 4 阶段使用一个连贯的、权威的 Organization 范围的 Registry 修订版。证据建立了不可变的键绑定、Organization 范围内的不可重用和无别名不变量，以及配置文件所需的保留有效性历史记录 ([MWP-SDV-008](../../reference/specification/signed-documents-and-trust/#mwp-sdv-008))。
+
+仅键过滤缓存是不够的，因为它包含所请求的键。关键解决接缝建立证据范围、修订适用性、完整性和历史覆盖范围，或报告它不能 ([MWP-SDV-010](../../reference/specification/signed-documents-and-trust/#mwp-sdv-010))。
+
+受保护的签名时间根据所选密钥的半开有效性间隔进行测试。 Registry 时间按瞬间进行比较，保留的历史记录可以使较早的签名即使在后来到期或撤销后也可验证（[MWP-SDV-014](../../reference/specification/signed-documents-and-trust/#mwp-sdv-014)）。
+
+## 六阶段验证
+
+验证遵循
+[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)
+中的有序阶段：
+
+1.严格UTF-8 JSON解析和重复成员拒绝；2.完成规范的JSON
+Schema验证；3. 签名信封和保护时间验证；4. 完成Registry证据、密钥解析、绑定和有效性检查；5.
+RFC 8785 规范化和签名哈希生成；和6.严格Ed25519签名验证。
+
+验证者在第一个失败阶段停止。在所有六个阶段成功之前，它不会授权参与者、附加 Event 或执行状态转换。
+
+## 成功的结果意味着什么
+
+完成的结果保留 Organization、文档类型、签名哈希、解析密钥 ID、绑定 Principal、受保护的签名时间和有效密钥间隔。它对受保护的内容和绑定到密钥的 Principal 进行身份验证。它本身并不承认该文档、证明当前协议授权或接受状态转换。
+
+确切的本地模式工件在 [JSON 模式目录](../../reference/schemas/)
+中建立索引，完整的六阶段证据包在
+[密码学一致性](../../reference/conformance/cryptography/)] 下发布。
+
+继续[首次接纳和历史信任](../first-admission-and-historical-trust/)]作为密码学之上的权威接受层。

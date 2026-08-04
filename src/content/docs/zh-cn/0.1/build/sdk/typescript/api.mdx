@@ -1,0 +1,17 @@
+---
+title: TypeScript 公共 API 库存
+description:
+  每个受支持的 TypeScript 包根声明都解析为其确切的源文件和记录的 SDK
+  提交中的行。
+---
+
+import SdkApiInventory from "../../../../../../../components/SdkApiInventory.astro";
+
+# TypeScript 公共 API 库存
+
+此精确提交清单是根据 `6d53ebfcf8350ae81d89fd818611b07f7373685c`
+处的真实包根导出声明生成的。明星出口包括他们的公开声明；选择性导出仅包括指定的根表面。普通进口和仅供内部使用的申报不包括在内。
+
+库存是命名和确切的源出处参考，不能替代本地[运行时语义](../runtime/)或[准入调用流程](../admission/)。该包仅导出`.`和`./package.json`；此处列出的源模块不是独立支持的包子路径。
+
+<SdkApiInventory sdk="typescript" />

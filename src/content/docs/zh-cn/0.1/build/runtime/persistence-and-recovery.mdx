@@ -1,0 +1,91 @@
+---
+title: 坚持与恢复
+description: 权威状态、可重建预测、收据、乐观并发、重放、游标、快照和外部副作用恢复。
+---
+
+# 持久性和恢复
+
+持久性被权威所分割。任务、成员资格、工作项目、所有权和租赁时期、重复数据删除收据、批准和 Group 事件具有权威性。 Agent-本地游标、队列、检查点、收件箱、发件箱和调度程序状态是可重建的投影；失去它们不能改变 Mission 真相 ([MWP-FND-023](../../../reference/specification/foundations/#mwp-fnd-023))。
+
+## 权威承兑交易
+
+对于一个 Group 转换，权威机构必须使已接受的状态更改、Event 附加、聚合修订、屏蔽更新、预算或批准效果以及幂等性收据作为一个原子结果可见。 Event 是不可变的接受事实，携带其 Group 序列和聚合修订版 ([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005))。
+
+相同的 `(actor ID, Action ID)`
+和字节等效规范内容返回原始收据，而不是附加另一个转换；同一操作 ID 下的不同内容失败，并显示
+`ACTION_ID_COLLISION`
+([MWP-EVT-003](../../../reference/specification/commands-events-and-ordering/#mwp-evt-003))。
+
+结构化更新使用乐观并发。修订不匹配会拒绝整个 Command，而首次所有权、租约续订、Membership 更改和 Approval 始终使用比较和设置接受 ([MWP-EVT-007](../../../reference/specification/commands-events-and-ordering/#mwp-evt-007))。
+
+## 投影交易
+
+Event 传递至少一次，因此每个消费者通过 Event
+ID 进行重复数据删除，并按顺序处理每个 Group。它可能会缓冲稍后的事件，但无法将其持久光标前进超过间隙（[MWP-WRK-029](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)）。这是至少一次不变量的运行时形式 ([MWP-FND-018](../../../reference/specification/foundations/#mwp-fnd-018))。每个 Worker 为每个 Group 保留一个独特的持久 Event 收件箱、光标和工作队列，所有这些都可以从接受的 Group 事件（[MWP-WRK-008](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008)）中重建。
+
+`ACK`
+报告最高的连续持久游标。它可能允许传递清理，但永远不会删除权威的 Group 历史记录；重新连接重播可能包含断开连接周围的重复内容 ([MWP-WRK-030](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030))。
+
+## 快照和长间隙
+
+当在线重放不再包含请求的游标时，服务器将返回 `CURSOR_TOO_OLD`
+以及签名的快照引用。仅在验证快照的架构、哈希、签名、Organization 和 Group 绑定和序列后进行恢复。然后严格在快照序列之后恢复重播。本地[传递、重放和确认部分](../../../reference/specification/work-scheduling-and-recovery/#16-delivery-replay-and-acknowledgement)
+定义了此恢复路径。
+
+活动组保留完整的 Event 历史记录。存档生成签名的最终快照，根据 Organization 策略保留加密的审核日志，并通过可审核的逻辑删除记录合法删除或安全编辑，而不是重写先前的 ID 或序列 ([MWP-MSN-009](../../../reference/specification/missions-groups-and-membership/#mwp-msn-009))。
+
+## 检查点、租约和重启
+
+排队所有权和主动执行受到隔离。执行租约绑定了 Agent、Session
+Epoch、WorkItem、所有权 Epoch、稳定租约 ID 和时间边界；每个检查点、区块、发布、提交和报告的失败都会引用当前的租约 ID
+([MWP-WRK-013](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013))。
+
+检查点、阻止和提交释放租约。会话替换、重新分配、取消、失败撤销；在新租约下恢复执行之前，替换会话将受影响的工作返回到
+`queued`
+([MWP-WRK-014](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-014))。
+
+阻塞的工作检查点，发出其所需的分辨率，释放其插槽，并在分辨率后返回其就绪队列（[MWP-WRK-017](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-017)）。自动重试保留在工作合同尝试、回退、成本和截止日期预算内，并使用稳定的外部尝试密钥 ([MWP-WRK-018](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-018))。
+
+如果 Worker 错过了开始截止日期或租约续订，新所有者可以从更高所有权 Epoch 下的最新检查点恢复；最新结果仍然不具有权威性 Evidence
+([MWP-WRK-019](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-019))。
+
+## 有界中断恢复
+
+在 Group 服务不可用期间，Worker 在其有限宽限期内只能继续已活动的可逆计算。如果没有当前的租约和令牌，它无法开始新的工作或执行新的高风险、不可逆或外部可见的操作，并且它会在提交或进一步的副作用之前进行协调（[MWP-WRK-020](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-020)）。
+
+缓冲命令保留关键的有界离线执行绑定，然后重新设置当前会话字段的基准并在重新连接时重新签名（[MWP-WRK-021](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-021)）。对账及其资源费用是一项权威交易；预算溢出会拒绝费用和进度，而没有部分状态 ([MWP-WRK-022](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-022))。
+
+当重试需要更改新鲜度或当前防护时，请遵循
+[MWP-EXT-005](../../../reference/specification/errors-extensions-and-security/#mwp-ext-005)
+中的新操作 ID 和签名规则。
+
+## 外部副作用
+
+网络传递无法提供一次性的外部效果。工具操作使用从 Mission ID、WorkItem
+ID、所有权 Epoch 和逻辑操作 ID
+([MWP-WRK-031](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-031)) 派生的稳定幂等密钥。
+
+:::note[Implementation note]
+
+安全的本地应用周期是：
+
+```text
+begin local transaction
+→ reject or ignore duplicate Event ID
+→ verify next contiguous Group sequence
+→ update Group projection and per-Group queue
+→ persist any checkpoint or outbox intent
+→ advance durable Cursor
+→ commit
+```
+
+对于外部副作用，请在发送前坚持意图，保留外部收据，并在重试前协调不确定的结果。
+
+对权威服务状态和 Agent 本地投影使用单独的存储抽象，即使两者均由一种数据库产品支持。使事务边界在 API 中可见：`accept transition`、`apply Event`、`advance Cursor`
+和 `record side-effect receipt` 不应隐藏在不相关的对象保存内。
+
+发件箱对于权威提交后的传输发布非常有用，而收件箱或processed-Event 表对于本地重复数据删除非常有用。保留、快照节奏、分区、压缩和数据库选择都是操作决策；他们无法消除仅附加和重播义务。
+
+:::
+
+继续使用 [传输和成帧](../transport-and-framing/)，将持久重播连接到有线协议。

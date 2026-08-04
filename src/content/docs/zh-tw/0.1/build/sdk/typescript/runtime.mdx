@@ -1,0 +1,92 @@
+---
+title: TypeScript 運行時參考
+description: 精確固定的 TypeScript SDK 的完整公共包根表面和運行時邊界。
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# TypeScript 運行時參考
+
+此頁面涵蓋了由[確切的 API inventory](../api/)
+表示的完整 TypeScript 表面。共享協定行為仍由本地[運行時參考](../../../runtime/architecture-and-bootstrap/)和[參考子句](../../../../reference/specification/)]定義。下面的名稱定義了固定包如何公開該行為。
+
+<SupportStatus status="implemented" /> 適用於下列所列的包根 API
+和進程內編解碼器。
+
+<SupportStatus status="deployment-adapter-required" /> 適用於目前 Registry
+權限、可信任存取情境、經過驗證的原子日誌存取以及部署提供的其他外部服務。
+
+<SupportStatus status="not-implemented" />
+表示精確固定的包沒有對應的公共運行時。
+
+## 導入和執行模型
+
+從 `@missionweaveprotocol/sdk`
+匯入公共名稱。該套件發布 ESM 和 CommonJS 入口點，並且需要 Node.js
+20 或更高版本。它不公開支援的子路徑，例如`@missionweaveprotocol/sdk/admission`；下面的來源模組名稱是單一包根 API 的來源分組。
+
+SDK 使用節點加密和打包檔案系統資產來實現架構、一致性、加密和存取捆綁。固定包不要求瀏覽器或 Deno 運行時支援。
+
+## 完整的原始碼圖
+
+| 運行時關注           | 公共源碼模組                                    | 固定提交的合約                                                                                                       |
+| -------------------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 包標識和 JSON 類型   | `src/index.ts`、`src/json-types.ts`             | 公共編解碼器接受的包元資料、協定常數和 JSON 域類型。                                                                 |
+| 嚴格的 JSON 和時間值 | `src/strict-json.ts`、`src/rfc3339.ts`          | 包根嚴格解析導出加上公共 `Rfc3339Instant` 類型。內部 RFC 3339 解析器和僅驗證嚴格 JSON 幫助程式不是包根導出。         |
+| 架構目錄             | `src/schema-catalog.ts`                         | 2020 年 12 月草案 打包協議集上的架構發現、驗證和結構化驗證失敗。                                                     |
+| 典範 JSON            | `src/canonical-json.ts`                         | RFC 8785 用於簽名和摘要輸入的規範化和位元組生成。                                                                    |
+| 簽署文件             | `src/signed-document-codec.ts`, `src/crypto.ts` | Ed25519 簽名助手，九個簽名文檔配置文件，完整 Organization-寬的 Registry 決議，以及六階段驗證結果。                   |
+| 框架                 | `src/frame-codec.ts`                            | 支援嚴格的解析和編碼操作 WebSocket 框架對象。這是編解碼器，而不是託管網關服務。                                      |
+| 一致性與捆綁         | `src/conformance.ts`, `src/package-root.ts`     | 打包根發現、結構清單執行以及 `missionweaveprotocol-conformance` 命令。加密和准入資產已打包，但沒有公共驗證運行程序。 |
+| 首次入場             | `src/admission.ts`                              | 成功的六階段驗證後，鍵入首次准入和歷史信任流程分層。                                                                 |
+
+## 驗證和密碼學
+
+`parseStrictJson` 和 `parseStrictJsonObject`
+拒絕無效的 UTF-8、BOM、重複的物件成員、不支援的數位輸入以及記錄的 JSON 管道以外的其他語法。
+`SchemaCatalog` 驗證確切的打包架構集。 `canonicalJsonBytes` 建立 RFC
+8785 位元組；成功的模式驗證本身並不能取代規範化或簽章驗證。
+
+`SignedDocumentCodec.sign`選擇明確配置文件，驗證受保護時間，規範化無符號投影，透過`SigningKey`獲得嚴格的64位元組Ed25519簽名，附加信封並驗證最終文件。
+`verify`
+消耗原始 UTF-8 位元組並依序執行解析、架構、簽章信封、金鑰解析、規範化和簽章階段。傳回的
+`VerifiedSignedDocument`
+公開了不可變的證據、防禦性位元組副本、簽章和完整雜湊、受保護的時間和解析的金鑰。
+
+關鍵解析需要完整的 Organization 範圍的 Registry 證據。選定的金鑰、快取條目或呼叫者提供的信任標誌不是完整的 Registry 快照。
+
+## 框架、捆綁包和一致性
+
+`FrameCodec`
+解析和編碼支援的訊框值，但不開啟套接字、驗證會話、保留遊標、安排工作或應用權威轉換。部署必須提供這些更高層級的運行時職責。
+
+`packageRoot` 透過尋找其 `PROTOCOL_PIN.json`
+來定位打包的工件樹；找到該檔案並不會驗證其內容或任何工件摘要。 `runConformance`
+僅透過打包的架構目錄執行結構一致性清單和向量。
+`missionweaveprotocol-conformance` 指令呼叫相同的結構運行器。
+
+固定包包含用於準確發布來源的密碼學和准入資產，但它不會公開用於驗證密碼學或准入包摘要或執行這些評估清單的公共 API。應用程式不得將
+`packageRoot` 或成功的結構一致性報告視為這兩個捆綁包已驗證的證據。
+
+## 首次入場
+
+`AdmissionService`
+在同步簽章文件驗證器之上公開非同步準備、首次進入和歷史重播。目前 Registry解析度是同步的；可信任上下文發布可以是同步的或非同步的； Admission
+Log 尋找和追加是異步的。繼續使用
+[TypeScript 准入參考 ](../admission/)，以了解確切的適配器結果和呼叫順序。
+
+## 明確的可用性邊界
+
+<SupportStatus status="not-implemented" /> **Mission 編排** — 不匯出進階 Mission
+狀態機或編排外觀。
+
+<SupportStatus status="not-implemented" /> **Worker 排程器** — 不匯出 Worker
+佇列、調度程式、租用執行程式或復原循環。
+
+<SupportStatus status="not-implemented" /> **託管閘道服務** — 此軟體包提供
+`FrameCodec`，而非具有傳輸、會話、TLS、路由或反壓所有權的託管閘道服務。
+
+<SupportStatus status="not-implemented" /> **權威持久性運行時** —
+不導出資料庫支援的或 Agent 本地持久性運行時。
+
+這些缺席是受支援的運行時合約的一部分。應用程式不得從共享協定名稱推斷 Python 引用運行時功能。

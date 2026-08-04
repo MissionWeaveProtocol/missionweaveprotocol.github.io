@@ -1,0 +1,27 @@
+---
+title: 結構一致性
+description: 所有預期有效且預期無效 MissionWeaveProtocol 0.1 結構向量。
+---
+
+import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
+import StructuralVectorCatalog from "../../../../../../components/StructuralVectorCatalog.astro";
+import release from "../../../../../../data/normative/0.1/release-source.json";
+
+# 結構一致性
+
+結構清單包含 **{release.structural.total}** 情況：
+**{release.structural.valid}** 預期有效和 **{release.structural.invalid}**
+預期無效。每個條目標識一個模式工件、一個實例工件以及預期的有效性結果。
+
+- <ArtifactLink path="protocol/conformance/manifest.json">
+    結構清單
+  </ArtifactLink>
+- <ArtifactLink path="protocol/conformance/README.md">
+    本地清單語義
+  </ArtifactLink>
+
+實作根據確切的本機模式和實例位元組運行完整的清單。匹配結果僅表示結構模式的一致性。它不演示狀態機、排序、授權、租賃、預算、重播、加密或存取行為。
+
+下表是可瀏覽的本機預期有效和預期無效向量目錄。
+
+<StructuralVectorCatalog />

@@ -1,0 +1,99 @@
+---
+title: Java 运行时参考
+description: 精确固定的 Java SDK 的完整公共包表面和运行时边界。
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Java 运行时参考
+
+此页面涵盖了由[确切的 API inventory](../api/)
+表示的完整 Java 表面。共享协议行为仍然由本地[运行时参考](../../../runtime/architecture-and-bootstrap/)和[参考子句](../../../../reference/specification/)]定义。公共应用程序类型位于
+`org.missionweaveprotocol.sdk` 下；一致性入口点位于
+`org.missionweaveprotocol.sdk.cli` 下。
+
+<SupportStatus status="implemented" /> 适用于下面列出的公共类和进程内行为。
+
+<SupportStatus status="deployment-adapter-required" /> 适用于当前 Registry
+权限、可信准入上下文、经过身份验证的日志访问和其他部署服务。
+
+<SupportStatus status="not-implemented" /> 表示精确固定的工件没有相应的运行时。
+
+## Artifact 及执行模型
+
+Maven 工件是
+`org.missionweaveprotocol:missionweaveprotocol-sdk:0.1.0-SNAPSHOT`，为 Java
+21 编译并使用 Maven 3.9 构建。它声明自动模块名称 `org.missionweaveprotocol.sdk`
+并将确切的协议、密码学和准入资源打包在 JAR 内。
+
+安装工件不会启动任何服务，不会打开套接字，不会创建持久存储，也不会授予任何权限。检查了
+`IOException`、验证异常和准入异常仍然是 Java 调用边界的一部分。
+
+## 完整的源码图
+
+| 运行时关注            | 公开实施源码                                                                              | 固定提交的合同                                                              |
+| --------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| 版本和元数据          | `MissionWeaveProtocol.java`、`ProtocolBundle.java`                                        | 协议标识、线路版本、命名空间以及确切的协议和包来源。                        |
+| 严格 JSON             | `StrictJson.java`                                                                         | UTF-8 解析重复成员、BOM、格式错误的输入和尾随数据拒绝。                     |
+| 架构和确切时间        | `SchemaCatalog.java`、`ExactInstant.java`                                                 | 离线草案 2020-12 验证、断言格式、打包架构访问以及精确的 RFC 3339 比较。     |
+| 规范 JSON 和 Ed25519  | `CanonicalJson.java`、`Ed25519.java`、`Base64Url.java`                                    | RFC 8785 字节和哈希加上严格的 Ed25519 帮助程序。                            |
+| 签署的文件和 Registry | `SignedDocumentCodec.java`、`AgentRegistryKeyResolution.java`、`KeyRegistrySnapshot.java` | 九种文档，签名，完整的Registry验证，六阶段验证，证据不可变。                |
+| 框架                  | `FrameCodec.java`                                                                         | 通用 WebSocket 帧值的严格解码和规范编码。这是编解码器，而不是托管网关服务。 |
+| 结构一致性            | `ConformanceRunner.java`、`cli/ConformanceCli.java`                                       | 打包或显式根模式向量执行和进程退出状态。                                    |
+| 嵌入式捆绑包          | `ProtocolBundle.java`                                                                     | 协议、密码学和准入工件集的源根和打包验证。                                  |
+| 首次入场              | `AdmissionService.java` 和准入记录/接口                                                   | 首次入场和历史信任高于成功的 Signed Document 验证。                         |
+
+## 验证、签名和 Registry 证据
+
+`StrictJson.parse` 只接受一个 UTF-8 JSON 值。 `SchemaCatalog.packaged`
+加载 22 个精确模式，而 `validate` 检查选定的 2020-12 草案合同。
+`CanonicalJson.canonicalize`、`canonicalString`、`sha256Hex` 和 `canonicalHash`
+实现 RFC 8785 和摘要表面。
+
+`SigningKey` 是应用程序拥有的签名缝。 `SignedDocumentCodec.sign` 和 `verify`
+选择九个 `SignedDocumentKind`
+值之一并运行解析、架构、签名信封、密钥解析、规范化和签名阶段。
+`KeyResolver.resolve` 必须返回 `KeyRegistrySnapshot.organizationWide`
+证据，以获取具有完整保留历史记录的一个连贯的适用 Organization 修订版。选定的密钥、部分投影、缓存命中或调用者提供的信任标志是不够的。
+
+`VerifiedSignedDocument`
+公开接收、签名和规范字节的防御副本以及哈希值、受保护时间、签名材料以及已解析的 Registry 密钥和 Principal。
+
+## 框架、捆绑包和一致性
+
+`FrameCodec.decode` 和 `encode`
+验证帧值，但不拥有传输、TLS、会话身份验证、光标持久性、路由、背压或权威状态转换。
+
+`ProtocolBundle.verifyPackaged`、`verifyPackagedCryptographyBundle` 和
+`verifyPackagedAdmissionBundle`
+验证 JAR 的确切引脚、计数、路径、字节长度和摘要。相应的 `Path`
+重载验证源或发布包根。这些方法并不执行所有密码学或准入评估。
+
+`ConformanceRunner.runPackaged` 和 `ConformanceCli` 仅执行结构模式向量。提供
+`--root PATH` 选择显式协议或发布包而不是打包资源。
+
+## 首次入场
+
+`AdmissionService` 公开 `prepareFirstAdmission`、`admitFirst` 和
+`verifyHistoricalAdmission`。继续使用
+[Java 准入参考](../admission/)，了解确切的适配器结果、调用顺序和可运行包示例。
+
+## 明确的可用性边界
+
+<SupportStatus status="deployment-adapter-required" /> **准入权限** —
+应用程序提供当前 Registry 证据、历史 Registry
+证据、可信接受上下文以及经过身份验证的仅附加日志。
+
+<SupportStatus status="not-implemented" /> **Mission 编排** — 不导出高级 Mission
+状态机或编排外观。
+
+<SupportStatus status="not-implemented" /> **Worker 调度程序** — 不导出 Worker
+队列、调度程序、租用运行程序或恢复循环。
+
+<SupportStatus status="not-implemented" /> **托管网关服务** — 该工件提供
+`FrameCodec`，而不是具有传输、TLS、会话、路由或反压所有权的网关服务。
+
+<SupportStatus status="not-implemented" /> **权威持久性运行时** —
+不导出数据库支持的或 Agent 本地持久性运行时。
+
+这些缺勤是书面支持合同的一部分； Python 不得从共享协议名称推断引用运行时功能。

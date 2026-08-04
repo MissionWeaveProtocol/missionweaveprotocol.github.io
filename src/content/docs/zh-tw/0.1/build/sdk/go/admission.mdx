@@ -1,0 +1,121 @@
+---
+title: 優先入場和歷史信託
+description:
+  類型化的 Go 適配器、精確的呼叫順序、信任邊界、原子日誌要求和可運行的准入範例。
+---
+
+import goAdmissionExample from "../../../../../../../../examples/sdk/go/admission/main.go?raw";
+
+# Go First 入场和历史信托
+
+Go `AdmissionService` 在六階段 Signed
+Document 驗證器（[MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)）之上分層首次存取和歷史信任。與語言無關的流程是本地[首次接納和歷史信任運行時頁面](../../../runtime/first-admission-and-historical-trust/)，確切的要求是本地[首次接納和歷史信任子句](../../../../reference/specification/first-admission-and-historical-trust/)。
+
+## 公共適配器和結果
+
+| 公開 API                                     | 責任                                                                                                                                                                                                                                           |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.ResolveCurrent` | 返回完整的 Organization 範圍的 Registry 證據，表明部署斷言對於此決策是最新的。                                                                                                                                                                 |
+| `TrustedAdmissionContext.Issue`              | 核發可信任記錄ID，即時受理，權威缺席後才接受服務。                                                                                                                                                                                             |
+| `AdmissionLog.Lookup`                        | 傳回找到的經過驗證的記錄或 `AdmissionLookup{AuthoritativeAbsence: true}`。快取未命中、逾時、未經身份驗證的缺席和不確定狀態在 [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003) 下關閉失敗。 |
+| `AdmissionLog.AppendOrReturnExisting`        | 以原子方式追加候選位元組或透過經過驗證的服務身分返回並發權威獲勝者。                                                                                                                                                                           |
+| `AuthenticatedAdmissionRecord`               | 將 `RecordBytes` 綁定到適配器驗證的服務，以便 [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) 可以驗證傳回的記錄。                                                                        |
+| `AdmissionService.PrepareFirstAdmission`     | 從 SDK 產生的 `VerifiedSignedDocument` 建立並驗證候選證據。它並不附加或暗示承認。                                                                                                                                                              |
+| `AdmissionService.AdmitFirst`                | 在 [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006) 下執行當前驗證、權威查找、候選創建、原子附加或返回現有以及返回記錄驗證。                                                               |
+| `AdmissionService.VerifyHistoricalAdmission` | 根據 [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) 的要求，使用歷史 Registry 證據重新運行六階段驗證，並需要現有記錄而不發布上下文或附加。                                               |
+| `AdmittedSignedDocument`                     | 傳回經過驗證和解析的記錄證據以及防禦性 `RecordBytes()` 副本。                                                                                                                                                                                  |
+
+呼叫者提供的信任布林值不是准入查找結果，絕不能選擇成功路徑。
+
+## 首次入場電話順序
+
+:::note[Informative example]
+
+```go
+first, err := missionweaveprotocol.NewAdmissionService().AdmitFirst(
+    missionweaveprotocol.SignedDocumentCommand,
+    documentBytes,
+    currentRegistry,
+    admissionLog,
+    trustedContext,
+)
+```
+
+:::
+
+`AdmitFirst`
+在查閱日誌之前完成所有六個簽章文件階段。找到的記錄經過驗證並返回，無需發出可信上下文或附加。權威缺席後，服務發出可信任上下文，呼叫`PrepareFirstAdmission`，呼叫`AppendOrReturnExisting`，對回傳值進行快照，並驗證實際傳回的記錄。只有當其架構、經過驗證的服務、文件綁定和可信任時間通過
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+和
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)] 時，並發獲勝者才是可接受的。
+
+## 歷史回放
+
+:::note[Informative example]
+
+```go
+historical, err := missionweaveprotocol.NewAdmissionService().VerifyHistoricalAdmission(
+    missionweaveprotocol.SignedDocumentCommand,
+    documentBytes,
+    historicalRegistry,
+    admissionLog,
+)
+```
+
+:::
+
+歷史重播使用保留的 Registry 歷史記錄重新運行驗證，需要找到的記錄，並且從不呼叫
+`TrustedAdmissionContext.Issue` 或
+`AdmissionLog.AppendOrReturnExisting`。匹配的記錄ID表明恢復了相同的權威記錄；它們不證明 Command 新鮮度、簽署者授權、狀態機接受或便攜式日誌證明驗證。這些在
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+和
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)] 下保持獨立。
+
+## 誤差面
+
+`AdmissionError.WireCode()` 回傳 `AUTH_INVALID_SIGNATURE`，而
+`ProtectedDiagnostic().Stage()` 回傳
+`admission`。穩定的受保護原因可區分缺失、衝突、畸形、未經驗證、不可用、不確定和自錨證據，同時保留
+[MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)
+所需的非神諭線結果。
+
+當部署適配器需要服務重新映射可信任本地故障時，應傳回 `NewAdmissionAdapterError`
+並提供支援的原因。任意錯誤並不能證明權威缺失。
+
+## 可運行的精確固定範例
+
+:::note[Informative example]
+
+此範例確定性地派生一個 Ed25519 密鑰，建構完整的 Registry 和簽署的 Command，並提供類型化的記憶體適配器。一個`sync.Mutex`保護共享的權威地圖。
+`Lookup`和`AppendOrReturnExisting`獨立取得；當互斥體檢查並發獲勝者並有條件追加時，它使
+`AppendOrReturnExisting`
+成為原子。該協議需要權威查找和原子追加或返回現有行為，而不是跨越兩個調用的一個事務。固定種子是演示材料，絕不能在範例之外使用。
+
+<pre>
+  <code>{goAdmissionExample}</code>
+</pre>
+
+從精確的 SDK 結帳運行它：
+
+```bash
+go test ./...
+go run /absolute/path/to/examples/sdk/go/admission/main.go
+```
+
+預期輸出包含 `first admission` 和 `historical replay`
+的相同記錄 ID。該程式還斷言匹配的簽章雜湊值和記錄位元組以及精確的一個附加。
+
+:::
+
+:::note[Implementation note]
+
+代替 `currentRegistryFixture` 具有經過驗證的當前和歷史 Registry 適配器，
+`inMemoryAdmissionLog` 具有經過驗證的持久日誌，可返回權威的查找結果並使得
+`AppendOrReturnExisting` 邏輯鍵上的原子性，以及 `fixedTrustedAdmissionContext`
+和 Organization-控制可信任時間和接受服務的發布。部署可以使用更廣泛的事務，但協定不需要一個事務跨越
+`Lookup` 和 `AppendOrReturnExisting`。
+
+代替 `deterministicSigningKey`
+使用部署擁有的金鑰服務。保留防禦性位元組副本，並且不要將權限邊界折疊為呼叫者提供的信任布林值。
+
+:::

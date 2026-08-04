@@ -1,0 +1,43 @@
+---
+title: 密碼學一致性
+description: 完整的本地 Signed Document 驗證設定檔證據包。
+---
+
+import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
+import BundleArtifactCatalog from "../../../../../../components/BundleArtifactCatalog.astro";
+import release from "../../../../../../data/normative/0.1/release-source.json";
+
+# 密碼學一致性
+
+設定檔 <code>{release.cryptography.profile}</code> 綁定
+**{release.cryptography.artifacts} 工件**、**{release.cryptography.casesgraphy.artifacts} 工件**、**{release.cryptography.casesgraphy.artifacts} 工件**、**{release。確切地說
+**{release.cryptography.complete}** 評估已完成並且
+**{release.cryptography.rejected}\*\* 被拒絕。其 RFC 8785 綁定摘要是
+
+<code>{release.cryptography.digest}</code>。
+
+- <ArtifactLink path="protocol/cryptography/manifest.json">
+    密碼學清單
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/manifest.schema.json">
+    清單架構
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/README.md">
+    本地捆綁語義
+  </ArtifactLink>
+
+## 六個語意階段
+
+每個簽名文檔評估都使用以下有序分類：
+
+1.嚴格UTF-8 JSON解析；2.規範JSON
+Schema驗證；3. 簽名信封及保護時間驗證；4. 簽章金鑰解析和有效性驗證；5. RFC
+8785規範化和簽章哈希生成；和6. Ed25519 簽章驗證。
+
+相應的規範規則發佈在[簽名文檔和trust](../../specification/signed-documents-and-trust/)頁面中。
+`complete` 表示該評估的所有六個階段均已完成。
+
+透過此捆綁包並不能證明 First-Admission
+Record 驗證、歷史信任驗證、Command 新鮮度或時鐘偏差強制執行，或適用角色和策略下的簽署者授權。
+
+<BundleArtifactCatalog bundle="cryptography" />

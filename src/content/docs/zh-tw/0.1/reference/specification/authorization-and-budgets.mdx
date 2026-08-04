@@ -1,0 +1,60 @@
+---
+title: 授權、預算和副作用
+description: 規範授權、能力、審批、預算和副作用控制。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 12. 授權、預算與副作用
+
+<NormativeClause id="MWP-AUT-001" level="MUST">
+
+在接受 WorkItem 並獲得所有必要的批准後，授權服務會頒發短期的最小權限功能令牌。令牌 MUST 綁定到：
+
+- Worker Agent ID 和目前 Session Epoch；
+- WorkItem ID和所有權紀元；
+- 目前執行租約 ID；
+- 允許的工具、資源、資料和操作；
+- 財務、代幣、調用、計算、時間和副作用限制；和
+- 到期時間不晚於適用的執行租約。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-002" level={["MAY","MUST NOT","MUST"]}>
+
+Coordinator MAY 請求授權，但 MUST
+NOT 製造、複製或轉送 Worker 的憑證。令牌和秘密 MUST
+NOT 出現在訊息、Agent 卡、上下文包、工件或 Group 事件中。過期、撤銷、不匹配或超出預算的代幣 MUST 將被拒絕。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-003" level={["MUST","MAY"]}>
+
+Organization 策略 MUST 能够在生产部署、支付、外部通信、破坏性更改或敏感数据访问之前将 WorkItem 放入
+`awaiting_execution_approval`。授權服務 MUST 保留功能令牌，直到滿足簽署的批准門。低風險工作 MAY 會根據保單自動進行。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-004" level="MUST NOT">
+
+Mission 和 WorkItem 預算是強制協定概念。 MissionOwner 设置 Mission 限制，Coordinator 向工作项和子任务分配不超过这些限制，并且授权服务强制执行硬限制。預算耗盡會暫停受影響的工作並需要明確升級；代理 MUST
+NOT 默默地超出了限制。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-005" level="MUST">
+
+這 Group Authority MUST 保留六維預算總帳。一個簽名的
+`ext.missionweaveprotocol.core.resource_usage_record`
+Command 記錄相對於 1 的非零增量 WorkItem、所有權紀元和執行租賃 ID；相應的
+`ext.missionweaveprotocol.core.resource_usage_recorded`
+Event 包含增量、累積使用量和剩餘預算。消耗 MUST 更新 WorkItem 及其完整的 WorkItem/Mission 一個原子躍遷中的祖先。一維溢出 MUST 拒絕整個轉變
+`BUDGET_EXCEEDED`。能力代幣預算 MUST 受工作合約和權威剩餘預算的限制。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-006" level="MUST">
+
+取消或緊急終止 MUST 撤銷相關租約和功能令牌，停止新的分配，並在需要時啟動合約定義的清理或補償工作項目。
+
+</NormativeClause>

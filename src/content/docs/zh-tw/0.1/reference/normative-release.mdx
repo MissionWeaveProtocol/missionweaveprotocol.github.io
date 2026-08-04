@@ -1,0 +1,30 @@
+---
+title: 規範發布標識
+description: 為 MissionWeaveProtocol 0.1 提交輸入並產生身分欄位。
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import NormativeReleaseFacts from "../../../../../components/NormativeReleaseFacts.astro";
+
+# 規範發布標識
+
+MissionWeaveProtocol
+0.1 作為一個網站、協議工件包和六個確切的 SDK 引腳發布。提交的
+`release-source.json`
+記錄每個非自引用輸入：協定和 SDK 提交、發布計數、設定檔身分、摘要、區域設定和內建樹摘要演算法。
+
+大眾
+
+<ArtifactLink path="normative-release.json">
+  <code>normative-release.json</code>
+</ArtifactLink>
+在生產建置期間生成。它複製每個提交的發布來源欄位並添加：
+
+- `websiteCommit`，確切的網站 Git 提交；
+- `buildIdentity`，GitHub 運行/嘗試對或本地提交身份；和
+- `contentDigests`，為每個語言環境建立的 HTML 樹的一個摘要。
+
+產生的清單未提交，因為已提交的文件無法真實包含包含其自身的提交的 Git 標識。發布驗證會重建產生的字段，並將每個提交的字段與
+`release-source.json` 進行比較。
+
+<NormativeReleaseFacts />

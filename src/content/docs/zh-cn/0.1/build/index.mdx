@@ -1,0 +1,84 @@
+---
+title: 构建 MissionWeaveProtocol 0.1 运行时
+description: 解析、信任、准入、持久性、传输、诊断、一致性和升级的规范共享实现路径。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+# 构建 MissionWeaveProtocol 0.1 运行时
+
+:::caution[Draft Standard 0.1]
+
+此版本化构建路径是规范网站出版物的一部分。它将本地参考条款组织成实施顺序，而不重新定义它们。当摘要和链接子句不同时，链接子句是控制要求。
+
+:::
+
+本地规范使用的 BCP 14 要求语言在
+[MWP-FND-001](../reference/specification/foundations/#mwp-fnd-001).共享路径描述了每种语言实现都必须保留的语义。 SDK 特定页面可以添加安装命令、语言类型和公共 API 语法，但不得削弱或取代这些规则。
+
+:::note[Implementation note]
+
+## 推荐的实施顺序
+
+1. 引导精确的发布、信任边界、验证器、存储和运行时身份。
+2. 保留协议JSON、标识符、时间戳、哈希值和信封类型没有宿主语言规范化。
+3. 实施严格的解析、Schema验证、规范化、签名、Registry支持的密钥解析和六阶段验证管道。
+4. 密码验证之上的第一层准入和历史信任。
+5. 将权威状态与可重建投影分开，然后实施重放、幂等性、防护和副作用恢复。
+6. 通过规范的 WebSocket 帧对组进行身份验证和复用。
+7. 暴露稳定的线路错误，同时保留受保护的诊断和有用的信息操作信号。
+8. 验证确切的发布工件，报告经过验证的一致性子集，以及升级时无需默默更改线路语义。
+
+本命令为实施指南。链接的参考条款定义了要求及其接受范围。
+
+:::
+
+## 共享运行时参考
+
+<CardGrid>
+  <LinkCard
+    title="Architecture and bootstrap"
+    description="Trust boundaries, runtime responsibilities, release loading, identity, recovery, and startup order."
+    href="./runtime/architecture-and-bootstrap/"
+  />
+  <LinkCard
+    title="Protocol types"
+    description="Wire JSON, scalar profiles, durable objects, envelopes, generated types, and semantic state."
+    href="./runtime/protocol-types/"
+  />
+  <LinkCard
+    title="Validation, canonicalization, and signing"
+    description="Strict parsing, Schema assertions, JCS, Ed25519, Registry evidence, and signing hashes."
+    href="./runtime/validation-canonicalization-and-signing/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed Admission Log outcomes, atomic first admission, record validation, and historical replay."
+    href="./runtime/first-admission-and-historical-trust/"
+  />
+  <LinkCard
+    title="Persistence and recovery"
+    description="Authoritative state, local projections, receipts, replay, Cursors, snapshots, and side effects."
+    href="./runtime/persistence-and-recovery/"
+  />
+  <LinkCard
+    title="Transport and framing"
+    description="HELLO authentication, Session Epoch fencing, subscriptions, multiplexing, ACK, PING, and backpressure."
+    href="./runtime/transport-and-framing/"
+  />
+  <LinkCard
+    title="Errors and observability"
+    description="Wire-safe errors, retry decisions, protected diagnostics, audit records, metrics, and tracing boundaries."
+    href="./runtime/errors-and-observability/"
+  />
+  <LinkCard
+    title="Conformance and upgrades"
+    description="Exact artifacts, structural and trust bundles, claim boundaries, extensions, and version transitions."
+    href="./runtime/conformance-and-upgrades/"
+  />
+</CardGrid>
+
+## 在代码之前发布
+
+从本地[规范版本identity](../reference/normative-release/)，而不是未固定的存储库分支或SDK
+README开始。发布页面绑定协议工件、所有六个 SDK 提交、配置文件、摘要、区域设置以及本文档使用的确切内置站点身份。

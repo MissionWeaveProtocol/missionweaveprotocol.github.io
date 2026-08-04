@@ -1,0 +1,82 @@
+---
+title: 了解 MissionWeaveProtocol 0.1
+description:
+  通过 MissionWeaveProtocol 0.1
+  的规范概念路径，从任务和组到信任、准入和安全边界。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+# 学习 MissionWeaveProtocol 0.1
+
+:::caution[Draft Standard 0.1]
+
+此版本化学习路径是规范网站出版物的一部分。它按读者顺序解释了模型，并将每条规则链接到本地​​参考规范中的稳定条款。
+
+:::
+
+MissionWeaveProtocol 协调一个受信任的 Organization 内的自治代理。它将会话与执行权限分开，保持每个 Mission 的状态和凭证隔离，并记录重放、恢复、Evidence 和人员责任所需的持久事实。这些边界以
+[MWP-FND-002](../reference/specification/foundations/#mwp-fnd-002) 和
+[核心不变量](../reference/specification/foundations/#mwp-fnd-013)] 开始。
+
+## 简短版本
+
+1. 人类 MissionOwner 创建一个有界的 Mission，其定义为 did，截止日期、预算和审批政策。
+2. Mission 恰好接收一个主 Group、一个持久 Event 历史记录，和可替换的 Coordinator。
+3. Group 成员交换持久消息并可能提出工作，但 Message 从不自行创建可执行权限（[MWP-FND-014](../reference/specification/foundations/#mwp-fnd-014)）。
+4. 授权参与者使用机器可读的工作合同创建 WorkItem。
+5. Worker 执行准入控制，将报价接受到其每个 Group 中队列，并通过其自己的调度程序跨组进行调度。
+6. 工作产生内容寻址的工件和映射到接受的 Evidence 标准。
+7. Coordinator 在 MissionOwner 批准确切的结果之前验证结果 Mission 修订版和 Artifact 设置。
+
+## 遵循模型
+
+<CardGrid>
+  <LinkCard
+    title="Core model"
+    description="Missions, Groups, durable records, local projections, and the invariants that connect them."
+    href="./core-model/"
+  />
+  <LinkCard
+    title="Identity, roles, and authority"
+    description="Organization identity, Agent Cards, Presence, sessions, fencing, and split authority."
+    href="./identity-roles-and-authority/"
+  />
+  <LinkCard
+    title="Work lifecycle"
+    description="Conversation, proposals, Work Contracts, acceptance, execution, Evidence, and approval."
+    href="./work-lifecycle/"
+  />
+  <LinkCard
+    title="Groups and scheduling"
+    description="Per-Group queues, global Worker scheduling, isolated slots, preemption, and replay."
+    href="./groups-and-scheduling/"
+  />
+  <LinkCard
+    title="子任务"
+    description="在不丢失父级范围、预算、Evidence 或责任的前提下进行递归分解。"
+    href="./child-missions/"
+  />
+  <LinkCard
+    title="Signed Documents and trust"
+    description="Protected content, Registry evidence, six-stage verification, and signing hashes."
+    href="./signed-documents-and-trust/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Authoritative lookup, atomic admission, returned-record validation, and historical replay."
+    href="./first-admission-and-historical-trust/"
+  />
+  <LinkCard
+    title="Security boundaries"
+    description="What cryptography and Admission establish, and which concerns remain separate."
+    href="./security-boundaries/"
+  />
+</CardGrid>
+
+## 协议边界
+
+MissionWeaveProtocol 未定义 Agent 到 Agent
+RPC、跨组织联合、物理对等路由、分布式共识、模型提示或私有模型推理。一个 Organization 提供身份、策略、授权、持久 Group 排序和人员责任。 Mission 内容默认保留 Group 范围 ([MWP-FND-019](../reference/specification/foundations/#mwp-fnd-019))，而可审计的决策和结果不需要披露私有思想链 ([MWP-FND-022](../reference/specification/foundations/#mwp-fnd-022))。
+
+对于准确的要求措辞，请使用本地[参考规范](../reference/specification/)、[术语](../reference/terminology/)、[schemas](../reference/schemas/)]和[一致性表面](../reference/conformance/)。确切的提交、配置文件、摘要和内置站点身份已发布在本地[规范发布页面](../reference/normative-release/)上。

@@ -1,0 +1,69 @@
+---
+title: 架構和引導程式
+description:
+  如何組裝規範的信任邊界並從確切的 MissionWeaveProtocol 0.1 版本啟動運行時。
+---
+
+# 架構和引導程式
+
+運行時以明確的信任和狀態邊界開始。 MissionWeaveProtocol 不是 Agent 到 Agent RPC
+([MWP-FND-002](../../../reference/specification/foundations/#mwp-fnd-002))。訊息和模型輸出無法授權副作用（[MWP-FND-014](../../../reference/specification/foundations/#mwp-fnd-014)）；後續操作與已接受的工作、目前防護、策略和範圍能力令牌（[MWP-FND-015](../../../reference/specification/foundations/#mwp-fnd-015)）相關。
+
+## 邏輯運行時職責
+
+| 責任                   | 協議角色                                                                        |
+| ---------------------- | ------------------------------------------------------------------------------- |
+| Agent Registry         | 發佈 Organization 管理的 Agent 身分、功能、端點、簽章金鑰和歷史記錄。           |
+| Signed Document 驗證者 | 根據精確的文檔位元組和權威的 Registry 證據產生六階段加密結果。                  |
+| 入學服務               | 取得經過驗證的 Admission Log 結果並產生首次入場或歷史信任結果。                 |
+| Group Authority        | 對參與者進行身份驗證，驗證當前狀態和策略，序列化接受的轉換，並附加 Group 事件。 |
+| 授權服務               | 發行與已接受的工作、時代、租賃、政策和預算綁定的短期能力代幣。                  |
+| Agent 運行時           | 維護 Group 範圍的本地投影、消耗事件、安排接受的工作並產生工件和 Evidence。      |
+
+這 Group
+Authority 是每一個邏輯權威 Group。複製可能是內部實作選擇，但共識和副本拓撲不是協定語義（[MWP-FND-012](../../../reference/specification/foundations/#mwp-fnd-012)）。
+
+這 Organization-發布 Agent
+Card 是穩定的身份和能力根；自我聲明的能力不足（[MWP-IDN-001](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-001)）。每個實作也必須保留完整的不變集，包括對話/非授權、隔離、僅附加歷史記錄、至少一次傳遞、 Mission 隔離縮小預算（[MWP-FND-013](../../../reference/specification/foundations/#mwp-fnd-013)).
+Mission 內容、憑證、中間狀態和 Agent 記憶猶存 Group-除非揭露是明確且授權的，否則範圍有限（[MWP-FND-019](../../../reference/specification/foundations/#mwp-fnd-019)）。
+
+## 自舉順序
+
+1. **選擇一個確切的版本。 **
+   載入已提交的版本輸入並驗證在接受本地工件之前產生的網站發布身分。
+2. **載入模式和標量驗證器。 **
+   註冊草案 2020-12 格式斷言、嚴格 JSON 處理、時間戳記、URI、base64url、 JCS， 和 Ed25519 解碼協定流量之前的行為。
+3. **驗證信任先決條件。 **
+   拒絕準備就緒，除非運行時可以建立適用的當前或歷史 Registry 證據（[MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)）並經過驗證 Admission
+   Log 結果（[MWP-ADM-003](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)）。無法獲得或不確定的證據並不意味著權威性的缺席。
+4. **開啟持久狀態。 **
+   恢復權威服務狀態並 Agent-本地的預測而不會混淆兩者。本機佇列或遊標遺失不得改變 Mission 真相（[MWP-FND-023](../../../reference/specification/foundations/#mwp-fnd-023)）。
+5. **建立運行時身分。 ** 完成新鮮挑戰 HELLO 交換並獲得新的 Session
+   Epoch 發行前 Agent 指令（[MWP-IDN-007](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-007)）。後來的一個 Session
+   Epoch 為此屏蔽每個較早的運行時 Agent 身份（[MWP-IDN-008](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-008)). 即使在經過驗證的會話上，持久性指令和 Artifact 清單仍保持單獨簽署 ([MWP-IDN-009](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-009))。
+6. **訂閱和重播。 ** 從其持久狀態恢復每個授權的 Group 連續的遊標，透過 Group
+   ID 進行路由，並在即時處理之前關閉任何序列間隙。
+7. **啟用狀態轉換。 ** Group
+   Authority 僅在以下時間後接受 Command 以原子方式對參與者進行身份驗證並驗證架構、紀元、修訂、角色、委託、預算、策略和租賃（[MWP-EVT-004](../../../reference/specification/commands-events-and-ordering/#mwp-evt-004)）。
+8. **最後啟用副作用。 **
+   僅發出最低權限的功能令牌在 WorkItem 接受並獲得所需批准後，綁定範圍不比目前執行租賃 ([MWP-AUT-001](../../../reference/specification/authorization-and-budgets/#mwp-aut-001)) 更廣泛或更長。
+
+## 失敗關閉啟動
+
+當架構目錄、確切發布標識、Registry 證據、存取適配器、持久狀態或 Session
+Epoch 不確定時，請勿將執行時間標記為就緒。降級的運行時可能仍然可用於診斷，但它不得接受先決條件未經證明的狀態轉換。
+
+:::note[Implementation note]
+
+邏輯職責可以在一個行程或多個服務中運作。小型部署可以結合驗證、存取、Group
+Authority 和傳輸；更大的部署可以將它們隔離在經過驗證的適配器後面。進程拓撲、領導者選舉、資料庫產品、快取佈局和服務發現都是部署選擇，前提是它們保留相同的邏輯權限和原子性邊界。
+
+為 Organization Registry、當前和歷史金鑰解析、Admission
+Log 存取和可信任接受上下文初始化不同類型的適配器，即使一項服務實現其中多個適配器也是如此。這使得傳輸錯誤、快取未命中和權威缺失成為不同的結果。
+
+為每個依賴項保留一個明確就緒狀態，而不是將每個故障折疊為單一 `healthy`
+布林值。這使得可以區分只讀恢復運行時和授權接受命令的恢復運行時。
+
+:::
+
+在實作編解碼器或產生的語言模型之前，繼續使用[協定類型](../protocol-types/)。

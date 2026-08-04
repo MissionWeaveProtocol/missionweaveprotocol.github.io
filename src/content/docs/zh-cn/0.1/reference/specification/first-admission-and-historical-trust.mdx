@@ -1,0 +1,148 @@
+---
+title: 首次入场和历史信托
+description: 权威的Admission Log合约、首次入场流程、历史回放、失败映射。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+<NormativeClause id="MWP-ADM-001" level={["MUST","MUST NOT"]}>
+
+**First-Admission Record**
+是签名文档验证配置文件之外的权威附加元数据。它 MUST 符合
+`schemas/first-admission-record.schema.json`
+并包含这九个必填字段：`protocolVersion`、`admissionRecordId`、`organizationId`、`documentKind`、
+`signingHash`、`keyId`、`principal`、`trustedAcceptedAt` 和 `acceptedBy`。
+`trustedAcceptedAt` 是 Organization 分配的可信接受时刻。该记录不是 Signed
+Document，MUST NOT 包含 `signature`，不验证自身，而 MUST
+NOT 仅根据其自身字节被接受。
+
+</NormativeClause>
+
+字段约束为：
+
+| 领域                | 约束                                                                                                                                   |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `protocolVersion`   | v0.1 `protocolVersion` 常量                                                                                                            |
+| `admissionRecordId` | 绝对协议标识符                                                                                                                         |
+| `organizationId`    | 绝对协议标识符                                                                                                                         |
+| `documentKind`      | `agent-card`、`approval`、`artifact`、`command`、`context-package`、`event` 之一， `evidence`、`extension-profile` 或 `group-snapshot` |
+| `signingHash`       | `sha256:` 后跟 64 个小写十六进制数字                                                                                                   |
+| `keyId`             | 绝对协议标识符                                                                                                                         |
+| `principal`         | 确切的常见演员形状                                                                                                                     |
+| `trustedAcceptedAt` | 协议时间戳配置文件下的RFC 3339                                                                                                         |
+| `acceptedBy`        | 常见演员形状与 `type: service`                                                                                                         |
+
+<NormativeClause id="MWP-ADM-002" level="MUST">
+
+保留 `trustedAcceptedAt` MUST 的词汇拼写。与两个受保护的 Signed
+Document 时间戳不同，不需要使用大写的 `Z`；它被作为一个精确的瞬间进行比较。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]}>
+
+在一个 Organization 的 Admission Log 中，逻辑查找和追加键为
+`(organizationId, signingHash)`。日志 MUST 对接受服务进行身份验证，限制对 Organization 授权服务的写入，保留仅附加完整性，支持区分已发现和权威缺失的权威查找，并为该逻辑密钥提供一个原子附加或返回现有操作。不可用、不确定、未经身份验证、完整性失败、冲突或提交失败结果 MUST 无法关闭。调用者提供的信任、身份验证或完整性布尔值 MUST
+NOT 替换适配器的键入结果。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-004" level={["MUST NOT","MUST"]}>
+
+一个逻辑键最多可以存在一条权威记录。一个 `admissionRecordId` MUST
+NOT 标识不同逻辑键下的记录。重试时找到的有效兼容记录是幂等成功，并且 MUST 会在不附加的情况下返回。同一逻辑键下具有不同文档类型、键 ID 或 Principal 的记录是冲突，并且 MUST
+NOT 需要替换、修复或静默协调。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-005" level="MUST">
+
+准入是六个加密阶段之后的一个单独的语义层。其受保护的诊断阶段为`admission`；它不是第七个加密阶段，并且不会更改签名字节、签名哈希、密钥解析或签名结果。每个准入或历史信任路径 MUST 首先完成所有六个阶段，并保留生成的 Organization、文档类型、签名哈希、解析密钥 ID、绑定 Principal 和有效密钥有效性间隔。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-006" level="MUST">
+
+对于首次接纳，提供给第 4 阶段 MUST 的 Registry 证据是最新的并适用于新的接纳决策
+[按照上述 ](../signed-documents-and-trust/#mwp-sdv-010)
+的要求。经过六阶段验证后，执行MUST查找`(organizationId, signingHash)`。如下所述验证找到的记录 MUST。只有权威缺席才允许实现获取可信接受上下文，准备候选 First-Admission
+Record，并调用追加或返回现有。直到该操作返回的经过身份验证的记录（无论是新提交的还是同时存在的）本身经过验证后，首次准入才完成。仅验证候选字节是不够的。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]}>
+
+候选准备 MUST NOT 附加 Event，执行状态转换，或暗示准入成功。并发获胜者返回的
+`admissionRecordId` 或 `trustedAcceptedAt`
+MAY 与失败的候选者不同，但仅当下面的每个绑定和间隔规则成功时才接受返回的记录。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-008" level={["MUST","MUST NOT"]}>
+
+历史重播 MUST 使用权威历史 Registry 证据重新运行六个加密阶段，其中包含受保护签名时间所需的完整保留有效性历史记录。 MUST 然后需要找到的 First-Admission
+Record 并验证它。历史重放 MUST
+NOT 发出新的可信接受上下文、附加缺失的记录或将文档视为新的准入。当受保护的签名时间和
+`trustedAcceptedAt`
+都在所选密钥的时间间隔内时，稍后的到期或撤销本身不会使锚定的历史签名失效。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-009" level={["MUST","MUST NOT"]}>
+
+记录验证 MUST 严格解析一个 UTF-8 JSON 值，应用规范 Schema，并要求记录与
+`organizationId`、`documentKind` 的六阶段证据完全相等， `signingHash`、`keyId`
+和 `principal`。该记录的 `acceptedBy` MUST 与 Admission
+Log 结果验证的服务身份完全相同。重复使用另一个 Organization、文档类型、密钥 ID 或 Principal
+MUST
+NOT 下相同未签名内容的记录。该记录的仅附加完整性和经过身份验证的服务身份是成功的 Admission
+Log 适配器结果的部署断言；记录本身并不能证明任何一个属性。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-010" level="MUST NOT">
+
+对于可信接受即时`t`，仅当“validFrom <= t`, `validUntil`is absent or`t <
+validUntil`, and `revokedAt`is absent or`t <
+revokedAt`. These are the same half-open boundaries used for the protected signed time, evaluated independently at `trustedAcceptedAt`, using the earliest effective retained `validUntil`and`revokedAt`
+boundaries. A newly presented document MUST NOT be accepted solely because its
+signer backdated the protected time to precede expiry or revocation.
+
+</NormativeClause>”时接纳才有效
+
+<NormativeClause id="MWP-ADM-011" level={["MUST NOT","MAY"]}>
+
+对于已签名的 Event，该 Event 文档 MUST
+NOT 通过查找或追加或返回现有方式充当其自己的 First-Admission
+Record，并且其签名 MUST NOT 被视为验证记录或其入场锚点。后来签署的 Event
+MAY 发布或引用单独的记录；它的签名仅验证 Event 的引用。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-012" level="MUST">
+
+查找、候选准备、可信时间间隔验证、追加或返回现有、返回记录解析、架构验证、绑定、经过身份验证的服务比较或 Event 自锚定 MUST 等六个阶段完成后的每次失败都会在线上映射到
+`AUTH_INVALID_SIGNATURE`。受保护的审核诊断 MUST 保留阶段 `admission`
+和稳定的原因，而不会向不受信任的调用者透露该原因。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-013" level="MUST">
+
+新提出的 Command MUST 还满足 `issuedAt`
+定义的 Organization 有界新鲜度和时钟偏差窗口。适用角色和策略下的新鲜度检查和签名者授权仍然与 First-Admission
+Record 验证分开。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-014" level="MUST">
+
+密码验证验证与密钥绑定的Principal；它不授予 Principal 协议权限。在接受状态转换之前，相关 Organization 或 Group
+Authority
+MUST 使用受保护的签名时间以及首次准入的可信接受时间适用的权威策略和状态来验证签名者的角色和授权。特别地，`acceptedBy`
+MUST 是授权的 Group Authority 或 Organization Event 服务，Agent
+Card 发行者 MUST 被授权为其服务。 Organization、Extension
+Profile 审批者和 Approval 审批者 MUST 满足 Organization 政策，以及 Group
+Snapshot 创建者MUST 是授权的归档服务。此授权检查仅在所有六个加密阶段以及任何适用的首次准入或历史信任验证成功后才进行；失败是`AUTH_FORBIDDEN`。
+
+</NormativeClause>

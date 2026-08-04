@@ -1,0 +1,65 @@
+---
+title: 官方 SDK 運行時參考
+description:
+  六個官方 MissionWeaveProtocol SDK 的精確提交安裝、運行時、准入、支援和公共 API
+  參考。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkRuntimeMatrix from "../../../../../../components/SdkRuntimeMatrix.astro";
+
+# 官方 SDK 執行時間參考
+
+:::caution[Draft Standard 0.1]
+
+這些版本化的 SDK 頁面是規範網站出版物的一部分。它們在每個確切的 SDK 提交時定義受支援的公共運行時表面。準確的來源連結可確定來源；儲存庫 README 或
+`docs/` 頁面不提供缺少的要求。
+
+:::
+
+共享的[運行時參考](../runtime/architecture-and-bootstrap/)定義了與語言無關的順序和信任邊界。每個 SDK 樹都添加其真實的包標識、工具鏈、公共名稱、適配器、可運行範例和明確可用性邊界，而無需製造跨語言奇偶校驗。
+
+## 精確的釋放矩陣
+
+<SdkRuntimeMatrix />
+
+`Implemented` 表示固定源包含記錄的公共表面。 `Deployment adapter required`
+表示 SDK 提供執行時間合約，但部署必須提供外部權限、持久性或網路基礎架構。
+`Not implemented` 表示固定的 SDK 沒有對應的公共運行時表面。
+
+## 運行時參考
+
+<CardGrid>
+  <LinkCard
+    title="Python reference runtime"
+    description="Install the exact package, assemble the full runtime, run First Admission and Historical Trust, and inspect every public API entry."
+    href="./python/"
+  />
+  <LinkCard
+    title="TypeScript SDK"
+    description="Install the exact package-root runtime, run First Admission and Historical Trust, and inspect every supported export."
+    href="./typescript/"
+  />
+  <LinkCard
+    title="Go SDK"
+    description="Install the exact module, run typed First Admission and Historical Trust, and inspect every exported API entry."
+    href="./go/"
+  />
+  <LinkCard
+    title="Rust SDK"
+    description="Install the exact crate, run typed First Admission and Historical Trust, and inspect every crate-root API entry."
+    href="./rust/"
+  />
+  <LinkCard
+    title="Java SDK"
+    description="Install the exact Maven artifact, run typed First Admission and Historical Trust, and inspect every public Java API entry."
+    href="./java/"
+  />
+  <LinkCard
+    title="C++ SDK"
+    description="Install the exact CMake package, run typed First Admission and Historical Trust, and inspect every installed-header API entry."
+    href="./cpp/"
+  />
+</CardGrid>
+
+上面的每棵樹都是同一規範版本的一部分。發布仍然需要每個精確固定的本機範例和網站發布檢查，以滿足其記錄的驗證邊界。

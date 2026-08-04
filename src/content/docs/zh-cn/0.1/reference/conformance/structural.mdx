@@ -1,0 +1,27 @@
+---
+title: 结构一致性
+description: 所有预期有效和预期无效 MissionWeaveProtocol 0.1 结构向量。
+---
+
+import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
+import StructuralVectorCatalog from "../../../../../../components/StructuralVectorCatalog.astro";
+import release from "../../../../../../data/normative/0.1/release-source.json";
+
+# 结构一致性
+
+结构清单包含 **{release.structural.total}** 情况：
+**{release.structural.valid}** 预期有效和 **{release.structural.invalid}**
+预期无效。每个条目标识一个模式工件、一个实例工件以及预期的有效性结果。
+
+- <ArtifactLink path="protocol/conformance/manifest.json">
+    结构清单
+  </ArtifactLink>
+- <ArtifactLink path="protocol/conformance/README.md">
+    本地清单语义
+  </ArtifactLink>
+
+实现根据确切的本地模式和实例字节运行完整的清单。匹配结果仅表明结构模式的一致性。它不演示状态机、排序、授权、租赁、预算、重播、加密或准入行为。
+
+下表是可浏览的本地预期有效和预期无效向量目录。
+
+<StructuralVectorCatalog />

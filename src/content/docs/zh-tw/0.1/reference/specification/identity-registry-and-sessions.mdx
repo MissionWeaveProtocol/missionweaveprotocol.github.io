@@ -1,0 +1,94 @@
+---
+title: 身份、Registry 和會話
+description: 規範性 Agent Card、存在記錄、身份驗證和 Session Epoch 要求。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 6. 身分、Agent Registry 和會話
+
+### 6.1 Agent 卡
+
+<NormativeClause id="MWP-IDN-001" level={["MUST","MUST NOT"]}>
+
+Organization MUST 頒發、驗證、版本化並簽署每個 Agent Card。 Agent MUST
+NOT 僅僅因為它自我聲明了一種功能而受到信任。 Agent Card MUST 分開：
+
+- 穩定的身份、所有權、端點、公鑰和支援的協議版本；
+- 版本化的 Organization 控制的功能，具有聲明的輸入/輸出模式、約束和驗證 Evidence；和
+- 支援的最大並發數。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-002" level="MUST NOT">
+
+能力不是授權。 Agent Card MUST
+NOT 包含可重複使用憑證或授予對工具或業務資料的存取權限。授權資格和當前政策仍由 Organization 決定。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-003" level={["MUST","MAY"]}>
+
+分配 MUST 腳位 Agent
+Card 版本和每個所需的功能版本。相容的就地升級 MAY 在 Organization 策略下持續。不相容的升級 MUST 檢查點活動工作並在繼續執行之前獲得重新接受。每個 Artifact
+MUST 記錄生產 Agent Card 和能力版本。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-004" level={["SHOULD","MAY","SHOULD NOT"]}>
+
+Registry
+SHOULD 與 Agent 卡分開維護特定功能的上下文效能記錄。記錄 MAY 包括完成、失敗、重新分配、手動變更請求、截止日期、預算和租賃到期結果。實施 SHOULD
+NOT 將效能降低到不透明的全域信譽評分。
+
+</NormativeClause>
+
+### 6.2 存在記錄
+
+<NormativeClause id="MWP-IDN-005" level={["MUST","MAY","MUST NOT"]}>
+
+存在是短暫的，MUST 與穩定的 Agent
+Card 是分開的。存在記錄 MAY 報告在線狀態、目前可用的執行槽、功能可用性、估計響應延遲和上次心跳。陳舊的存在記錄 MUST
+NOT 被視為轉讓接受或租約續約。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-006" level={["MAY","MUST NOT"]}>
+
+存在更新 MAY 在經過驗證的 `PING` 幀中攜帶，並且不需要單獨的持久簽名。 MUST
+NOT 的存在揭露了另一個 Group 的身份、內容、工作項目或確切的佇列位置。
+
+</NormativeClause>
+
+### 6.3 驗證和 Session Epoch 防護
+
+<NormativeClause id="MWP-IDN-007" level="MUST">
+
+每個 Agent MUST 至少有一個 Organization 註冊的 Ed25519 公鑰。 v0.1
+WebSocket 握手使用新的伺服器挑戰：
+
+1. Agent 傳送 `HELLO/client_init` 及其 Agent
+   ID、金鑰 ID、隨機數和支援的協議版本；
+2. 伺服器回覆 `HELLO/server_challenge` 不可預測的質詢和選定的版本；
+3. Agent 透過 Ed25519 簽章回覆 `HELLO/client_response` 規範的挑戰記錄；和
+4. 伺服器使用短期會話令牌回覆 `HELLO/server_accept` 新發行的Session Epoch。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-008" level={["MUST","MUST NOT","MAY"]}>
+
+發出紀元 `n + 1` 會使該 Agent ID 紀元 `n` 或更低的每個會話無效。 Group Authority
+MUST 在每個狀態變更的 Agent Command 上驗證 Session
+Epoch。人類和 Organization 服務指令不攜帶 Agent Session Epoch 和 MUST
+NOT 發明一個。重新啟動的運行時 MAY 回收其穩定的 Agent ID；兩個運行時 MUST
+NOT 同時操作該身分。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-009" level={["MUST","NOT RECOMMENDED","MAY"]}>
+
+持久指令和 Artifact 清單 MUST 單獨簽署。心跳和存在記錄依賴經過身份驗證的會話。長期共享 API 密鑰是 NOT
+RECOMMENDED。實作 MAY 新增 mTLS 或工作負載驗證，前提是它保留 Agent
+ID 和防護語意。
+
+</NormativeClause>

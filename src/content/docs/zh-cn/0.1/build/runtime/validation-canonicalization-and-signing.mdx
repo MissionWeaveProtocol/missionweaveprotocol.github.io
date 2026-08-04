@@ -1,0 +1,86 @@
+---
+title: 验证、规范化和签名
+description:
+  每个运行时共享的规范严格的 JSON、架构、JCS、Registry、签名和六阶段验证管道。
+---
+
+# 验证、规范化和签名
+
+Signed
+Document 处理是一个有序的语义管道。内部功能边界可能不同，但验收和诊断分类必须保留规范的阶段顺序。
+
+在六个阶段中，强制执行通用 JSON 和时间戳配置文件 ([MWP-FND-004](../../../reference/specification/foundations/#mwp-fnd-004))，保留时间戳词汇文本 ([MWP-FND-005](../../../reference/specification/foundations/#mwp-fnd-005))，需要规范的 base64url、哈希值和安全整数（[MWP-FND-007](../../../reference/specification/foundations/#mwp-fnd-007)），并启用每个规范模式格式断言（[MWP-FND-009](../../../reference/specification/foundations/#mwp-fnd-009)）。相同的规范线路规则适用于所有内容派生的哈希值和签名 ([MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012))。
+
+## 六阶段验证
+
+控制序列为[MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)：
+
+1.严格解析恰好一个UTF-8
+JSON值；拒绝字节顺序标记，尾随数据、无效的 UTF-8 以及重复的解码成员名称；2. 根据规范架构验证完整文档；3. 验证签名信封、保护时间、预期签名者规则，以及严格的Ed25519签名编码；4. 验证完整的 Organization 范围的 Registry 证据，解析密钥并 Principal，并根据保留的密钥历史记录测试受保护的签名时间；5. 完全省略顶级
+`signature` 成员并生成 RFC 8785
+JCS 字节；6. 验证这些确切字节上的纯 Ed25519 签名。
+
+验证者在第一个失败阶段停止，并且不会在所有六个阶段完成之前授权参与者、附加 Event 或执行状态转换。
+
+## 无损 JSON 和 JCS
+
+JCS 输入仅限于 RFC
+8785 和 I-JSON 数据模型。数字是用所需的最短往返形式序列化的有限 IEEE
+754 二进制 64 值；在发出规范字节之前，该域之外的未配对的 Unicode 代理和值会失败 ([MWP-FND-006](../../../reference/specification/foundations/#mwp-fnd-006))。
+
+不要将传入线路 JSON 规范化来代替解析或架构验证。规范化是第 5 阶段，在控制阶段分类的所有早期语义检查之后对接收到的值进行操作。
+
+## 严格Ed25519接受
+
+提供商导入成功不是接受规则。验证者：
+
+- 规范地解码 `Renc`，需要素数阶子组成员资格，接受仅
+  `0 <= S < L`，并且不会减少超出范围的标量 ([MWP-SDV-003](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-003))；
+- 强制执行不可变的密钥 ID 到 Principal、算法和公钥绑定 Organization范围的无重用和无别名不变量（[MWP-SDV-004](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-004)）；
+- 严格将 32 字节公钥解码为规范的、非身份的，素数阶 Edwards25519 点 ([MWP-SDV-005](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-005))；和
+- 检查精确的 stage-5 字节上的 pure-Ed25519 验证方程（[MWP-SDV-006](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-006)）。
+
+Registry 保留足以证明绑定唯一性和不存在声明的索引和历史记录 ([MWP-SDV-007](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-007))。
+
+## 保护时间和预期签名者
+
+每个 Signed
+Document 架构映射到一个受保护的签名时间字段和一个预期签名者。确切的签名者在
+[MWP-SDV-001](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)
+下选择。受保护时间和 `signature.createdAt` 使用大写
+`Z`，必须逐字节相同，并且在比较之前无法修复或标准化 ([MWP-SDV-002](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-002))。
+
+## Registry支持的密钥解析
+
+第 4 阶段比选定键查找更宽：
+
+- 证据的范围恰好是一个 Organization 和一个相干的权威Registry修订；
+- Organization范围内不可重用所需的每个绑定和保留的历史记录项，在选择之前验证无别名和完整性声明（[MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008)）；
+- 部署适配器建立修订的适用性、完整性和历史报道或报告不能（[MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)）；和
+- 根据半开 `validFrom`、`validUntil` 检查受保护时间，以及 `revokedAt`
+  边界为瞬时 ([MWP-SDV-014](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-014))。
+
+不可用的证据、不完整的覆盖范围、权威的未知密钥、无效的不相关绑定和无效的选定密钥都在第 4 阶段失败关闭。Evidence 可能来自完整快照或权威索引和查询，但部分缓存不能代替 Organization 范围的证明（[MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009)）。仅在建立完整性后，未知密钥才具有权威性 ([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011))。
+
+有效性历史记录是仅附加的或显式版本化的；保留其最早有效的 `validUntil` 和
+`revokedAt`
+边界以供历史验证（[MWP-SDV-012](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-012)）。所选密钥的绑定 Principal 必须等于确切的预期签名者 ([MWP-SDV-013](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-013))。
+
+## 签名和签名哈希值
+
+签名者构造的受保护值与验证者将重建的保护值相同：
+
+1.构造所有非签名字段，包括受保护的签名时间字段文档类型所要求的。2. 选择受保护的时间和期望的签名密钥，保留大写的
+`Z` 时间戳拼写也将变为 `signature.createdAt`。3. 从完整对象中生成 RFC 8785
+JCS 签名字节顶级 `signature`
+成员缺席。4. 在这些确切的字节上计算签名哈希和纯 Ed25519 签名，将签名编码为规范的未填充的 base64url。5. 附上完整的签名信封，其中包含
+`Ed25519`、所选密钥 ID、字节相同的保护时间和编码的签名值。6. 根据其完整的规范架构验证最终的 Signed
+Document 和发布前相同的六阶段验证器。
+
+签名哈希独立于准入状态，并具有
+[MWP-SDV-017](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-017)
+定义的确切形式。阶段编号是语义分类，而不是所需的功能边界，如
+[MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016)
+所阐明的那样。
+
+在将准入分层到六阶段结果之上之前，针对本地[密码学一致性捆绑包](../../../reference/conformance/cryptography/)]运行每个实现。

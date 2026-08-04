@@ -1,0 +1,67 @@
+---
+title: Java SDK
+description: 安裝並導航 MissionWeaveProtocol 0.1 的完整固定 Java 運行時參考。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Java SDK
+
+`org.missionweaveprotocol:missionweaveprotocol-sdk`
+是官方 Java 工件。此參考描述了精確提交
+`3b2798c21d906c81887c54fe80e5bca8a19ddac7`、版本 `0.1.0-SNAPSHOT`、Java
+21 和 Maven
+3.9。該工件是從確切的來源引腳安裝的；不同的提交或本地安裝的快照是不同的實現輸入。
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="java"
+  command={`git clone https://github.com/MissionWeaveProtocol/java-sdk.git missionweaveprotocol-java-sdk
+cd missionweaveprotocol-java-sdk
+git checkout --detach 3b2798c21d906c81887c54fe80e5bca8a19ddac7
+./mvnw -B -ntp verify
+./mvnw -B -ntp install`}
+  verifyCommand={`./mvnw -q -Dexec.mainClass=org.missionweaveprotocol.sdk.cli.ConformanceCli -Dexec.args='' exec:java`}
+>
+  <p slot="notes">
+    Maven 包裝器提供 Maven 3.9.x，但仍需要 Java 21
+    運行時。下游建置必須將已安裝的工件固定到上面的確切提交的來源； SNAPSHOT
+    版本字串本身並不能識別來源位元組。
+  </p>
+</SdkInstall>
+
+:::
+
+CLI 主類別是
+`org.missionweaveprotocol.sdk.cli.ConformanceCli`。其支援的呼叫是`missionweaveprotocol-conformance [--root PATH]`；它沒有定義
+`--help` 或 `--json`。在沒有根的情況下，它運行打包的結構模式向量。
+
+## 使用此參考
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every public class concern, package boundary, bundle verifier, CLI entry point, and explicit non-implementation."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, trusted-context, and Admission Log interfaces with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="Every public Java declaration resolved to its exact source line."
+    href="./api/"
+  />
+</CardGrid>
+
+## 支援記錄的提交
+
+<SdkRuntimeMatrix sdk="java" />
+
+JAR 提供進程內協定行為，而不是部署權限。應用程式仍然提供經過身份驗證的當前和歷史 Registry 證據、可信任准入上下文和權威 Admission
+Log。

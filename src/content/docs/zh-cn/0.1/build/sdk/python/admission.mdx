@@ -1,0 +1,111 @@
+---
+title: Python 首次入场和历史信任
+description: 输入 Python 适配器、确切的调用顺序、信任边界和可运行的准入示例。
+---
+
+import admissionExample from "../../../../../../../../examples/sdk/python/admission.py?raw";
+
+# Python 首次入场和历史信任
+
+Python `AdmissionService` 在六阶段 Signed
+Document 验证器 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)) 之上对首次准入和历史信任进行身份验证。控制与语言无关的流程是本地[首次接纳和历史信任运行时页面](../../../runtime/first-admission-and-historical-trust/)，确切的要求是本地[首次接纳和历史信任子句](../../../../reference/specification/first-admission-and-historical-trust/)。
+
+## 公共类型
+
+| 公开 API                                       | 责任                                                                                                                                                                                                                                                                              |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.resolve_current`  | 返回完整的 Organization 范围的 Registry 证据，表明部署断言对于新的首次接纳决策是最新的。                                                                                                                                                                                          |
+| `TrustedAdmissionContext.issue`                | 颁发可信记录ID，可信接受即时，只有在权威缺席后才接受服务。                                                                                                                                                                                                                        |
+| `AdmissionLog.lookup`                          | 返回带有经过验证的字节的 `AdmissionLookupStatus.FOUND` 或 `AdmissionLookupStatus.AUTHORITATIVE_ABSENCE`。传输失败、缓存未命中、不确定状态和未经身份验证的缺席失败在 [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003) 下关闭。 |
+| `AdmissionLog.append_or_return_existing`       | 原子地附加候选字节或返回并发权威获胜者。                                                                                                                                                                                                                                          |
+| `AuthenticatedAdmissionRecord`                 | 将返回的记录字节绑定到由适配器验证的接受服务身份，以进行 [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) 验证。                                                                                                              |
+| `AdmissionService.prepare_first_admission`     | 从已验证的文档和可信上下文中创建并验证候选字节。它并不附加或暗示承认。                                                                                                                                                                                                            |
+| `AdmissionService.admit_first`                 | 在 [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006) 中实现当前证据、权威缺席、原子追加和返回记录流程。                                                                                                                        |
+| `AdmissionService.verify_historical_admission` | 根据 [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) 的要求，使用历史 Registry 证据重新运行验证，并要求找到不发布上下文或附加的记录。                                                                                        |
+
+适配器结果是键入的证据。调用者提供的信任布尔值不是权威的查找结果，并且绝不能选择成功路径。
+
+## 首次录取电话
+
+:::note[Informative example]
+
+```python
+admitted = AdmissionService().admit_first(
+    SignedDocumentKind.COMMAND,
+    document_bytes,
+    current_registry,
+    admission_log,
+    trusted_context,
+)
+```
+
+:::
+
+`admit_first` 在调用日志之前进行验证。当查找返回
+`AdmissionLookupStatus.AUTHORITATIVE_ABSENCE` 时，它会调用
+`prepare_first_admission`，调用
+`append_or_return_existing`，然后验证实际返回的记录。仅当其字节、经过身份验证的服务、文档绑定和可信时间全部验证时（[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)、[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)]），并发获胜者才是可接受的。
+
+## 历史重播调用
+
+:::note[Informative example]
+
+```python
+historical = AdmissionService().verify_historical_admission(
+    SignedDocumentKind.COMMAND,
+    document_bytes,
+    historical_registry,
+    admission_log,
+)
+```
+
+:::
+
+历史重放使用保留的 Registry 历史记录，需要找到的准入记录，并且从不调用
+`TrustedAdmissionContext.issue` 或
+`AdmissionLog.append_or_return_existing`。示例中匹配的记录 ID 表明重放恢复了第一条权威记录；它们本身并不证明 Command 新鲜度、签名者授权、状态机接受或便携式日志证明验证。 Command 新鲜度和签名者授权在
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+和
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)] 下仍然是单独的要求。
+
+## 可运行的精确固定示例
+
+:::note[Informative example]
+
+该示例仅使用公共 SDK API 和声明的 `cryptography`
+运行时依赖项。它确定性地创建一个 Ed25519 密钥、一个完整的 Organization 范围的 Registry、一个签名的 Command 和类型化的内存适配器。固定的私有种子是演示材料，绝不能在示例之外使用。
+
+<pre>
+  <code>{admissionExample}</code>
+</pre>
+
+安装所有 SDK 附加功能后，从精确的结账中运行它：
+
+```bash
+uv sync --all-extras
+uv run python /absolute/path/to/examples/sdk/python/admission.py
+```
+
+预期输出包含 `first admission` 和 `historical replay` 的相同 First-Admission
+Record ID。该程序还断言匹配的签名哈希值和记录字节，并且日志仅附加一次。
+
+:::
+
+:::note[Implementation note]
+
+替换部署中的示例适配器：
+
+- `CurrentRegistryFixture` 具有经过身份验证的当前 Registry 解析器；
+- `InMemoryAdmissionLog` 具有经过身份验证的、仅附加的、原子准入日志；和
+- `FixedTrustedAdmissionContext`
+  具有 Organization 控制的可信时间和接受服务发行者。
+
+将 `DeterministicSigningKey`
+替换为部署拥有的签名服务或密钥适配器。切勿在生产代码中嵌入私人签名种子。
+
+不要将这些边界折叠成一个可用性或信任标志。
+
+:::
+
+加密后准入拒绝仍然受保护阶段 `admission` 和线路代码 `AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012))。

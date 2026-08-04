@@ -1,0 +1,230 @@
+---
+title: 簽署文件和信任驗證
+description:
+  Signed Document 驗證檔案、Registry 證據合約、語意階段和受保護的診斷。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../../components/InformativeBlock.astro";
+
+### 6.4 Signed Document 驗證設定檔
+
+**Signed Document** 是持久協議對象，其架構需要頂層 `signature`。 v0.1 **Signed
+Document 驗證設定檔**
+將每個此類模式綁定到一個受保護的簽章時間欄位和一個預期簽章者：
+
+| Signed Document   | 受保護的簽名時間 | 預期簽署人                                                             |
+| ----------------- | ---------------- | ---------------------------------------------------------------------- |
+| Agent Card        | `issuedAt`       | Organization 服務 Principal 授權發行 Agent 卡片適用於 `organizationId` |
+| Approval          | `occurredAt`     | `approver`                                                             |
+| Artifact 清單     | `createdAt`      | Agent 確定為 `producer.agentId`                                        |
+| Command           | `issuedAt`       | `actor`                                                                |
+| Context Package   | `generatedAt`    | `generatedBy`                                                          |
+| Event             | `occurredAt`     | `acceptedBy`                                                           |
+| Evidence          | `createdAt`      | `generatedBy`                                                          |
+| Extension Profile | `approvedAt`     | `approvedBy`                                                           |
+| Group Snapshot    | `createdAt`      | `createdBy`                                                            |
+
+<NormativeClause id="MWP-SDV-001" level="MUST">
+
+對於每一行，除了 Agent
+Card，預期的簽名者是準確的 Principal 由列出的字段標識。對於一個 Agent
+Card，簽署金鑰記錄 MUST 確定一個 Organization 服務 Principal;其授權發行 Agent 卡片適用於
+`organizationId` 密碼驗證後進行檢查。
+
+</NormativeClause>
+
+除非 Extension
+Profile 指定附加簽名，v0.1 簽名涵蓋 JCS 完整物件及其頂層的規範形式 `signature`
+成員省略。僅省略該頂級成員；名為的嵌套成員 `signature`
+保持受到保護。這 Command 因此簽名至少涵蓋其操作 ID、參與者、適用的會話、 Membership， 和 Coordinator 紀元， Group 存在時的 ID、種類、有效負載、相關 ID、受保護的簽章時間和擴充。一個 Event 簽名由接受機構簽署並涵蓋其 Event
+ID， Group 存在時的順序、原因、參與者、有效負載和受保護的簽名時間。
+
+<NormativeClause id="MWP-SDV-002" level={["MUST","MUST NOT"]}>
+
+由於 v0.1 簽名輸入中省略了整個頂級簽名信封，因此驗證者 MUST 將信封綁定回受保護的內容。這
+`signature.algorithm` MUST 是 `Ed25519`。受保護的簽名時間和
+`signature.createdAt` MUST 兩者都是 RFC 3339 使用大寫的 UTC 值 `Z`
+後綴和 MUST 逐位元組相同。驗證者 MUST
+NOT 在比較或驗證之前修復、標準化或替換任一值 Signed Document.
+
+</NormativeClause>
+
+MissionWeaveProtocol 0.1 使用純 Ed25519 由 RFC
+8032 定義，而非 Ed25519ctx 或 Ed25519ph。讓
+`L = 2^252 + 27742317777372353535851937790883648493` 是 的質數階 Ed25519 基點
+`B`，並讓 `I` 是 Edwards25519 身份點。
+
+<NormativeClause id="MWP-SDV-003" level={["MUST","MUST NOT"]}>
+
+解碼64位元組後 Ed25519 簽名為 `Renc || Senc`, 驗證者 MUST 規範解碼 `Renc`
+作為 Edwards25519 點並要求 `[L]R` 以達到身分平等。身份點允許用於
+`R`。驗證者 MUST 將 `Senc` 解釋為無符號小端整數，要求 `0 <= S < L`，並且 MUST
+NOT 將超出範圍的值模 `L` 約簡。非規範、離曲線、非單位元小階或混合階的 `R`
+編碼，以及超出範圍的 `S` 值 MUST 在第 3 階段失敗。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-004" level={["MUST NOT","MUST"]}>
+
+鑰匙 ID MUST NOT 被重用。這 Agent Registry
+MUST 為每個提供簽名金鑰綁定 Principal 可能是預期簽名者的類型；僅有的 Agent 校長要求 Agent 牌。將一個密鑰 ID 精確地綁定到一個 Principal、一種演算法和一個公鑰是不可變的。一內 Organization，相同的公鑰 MUST
+NOT 註冊在另一個名下 Principal 或金鑰 ID，且相同 Principal、演算法和公鑰元組 MUST
+NOT 有一個密鑰 ID 別名。重複聲明相同的綁定 Agent
+Card 或者 Registry 版本是相同的邏輯綁定，而不是重複使用或別名。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-005" level={["MUST","MUST NOT"]}>
+
+在接受 Ed25519 綁定之前，Registry MUST 嚴格將 32 位元組公鑰解碼為 RFC
+8032 定義的壓縮 Edwards25519 點編碼。編碼 MUST 是規範的， MUST 解碼為曲線上的點，MUST
+NOT 為身份點，MUST 位於素數階子群中：對於子階群中：對於子階群中：對於子階群中：對於子階群中：對於子階群中：對於子階群中：對於子階`L`、`[L]A`
+MUST 等於身分。長度檢查、小階黑名單或成功導入通用加密後端是不夠的。在應用不可變綁定和 Organization 範圍的唯一性檢查之前，非規範編碼、負零編碼、小階點和混合階點 MUST 將被拒絕。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-006" level="MUST">
+
+第 3 阶段签名编码检查和第 4 阶段公钥检查成功后，第 6 阶段 MUST 需要纯 Ed25519 方程
+`[S]B = R + [k]A`，其中 `k` 是 `Renc || Aenc || M`
+上的SHA-512，解釋的小端和簡化模 `L`，`M` 是第 5 階段產生的精確簽名字節序列。由于
+`A` 和 `R` 都位于素数阶子组中，因此提供程序评估等效的 RFC
+8032 余因子方程具有相同的验收结果。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-007" level="MUST">
+
+Registry
+MUST 在接受任何绑定之前在 Organization 中强制执行这些不变量，并且 MUST 保留足够的索引和历史记录来建立密钥 ID 唯一性以及不存在公钥或元组别名。當 Registry 無法為解析的綁定建立這些不變量時，關鍵解析 MUST 無法關閉。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-008" level="MUST">
+
+對於一個 Signed
+Document 驗證，將 Registry 第四階段使用的證據 MUST 範圍精確到一個 Organization 和 MUST 代表一個一致的權威 Registry 適用於核查決定的修訂。它 MUST 足以建立不可變的綁定且 Organization-所有簽章金鑰綁定的廣泛唯一性不變量以及此設定檔所需的完整保留的有效性歷史記錄。實施情況 MUST 使用前驗證證據
+`signature.keyId`
+選擇一個 Registry 記錄;無效的無關綁定或歷史記錄 MUST 導致第4階段失敗。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-009" level={["MAY","MUST NOT"]}>
+
+實現 MAY 從完整的 Registry 快照或從證明相同 Organization 範圍的不存在、唯一性和歷史聲明的權威索引和歷史查詢建立這些屬性。除非實作可以從權威狀態建立相同的聲明，否則接受鍵過濾的投影、部分快取、不完整的頁面集或其他未指定的覆蓋範圍 MUST
+NOT。請求的金鑰 ID 僅是路由上下文，且 MUST
+NOT 被視為省略 Organization 範圍檢查所需證據的權限。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-010" level={["MUST","MUST NOT"]}>
+
+密鑰解析適配器是 v0.1 中的可信任部署接縫。當它向驗證者提供 Registry 證據時，它 MUST 建立所需的 Organization 範圍、適用的權威修訂、證據完整性和歷史覆蓋範圍，或者報告它不能。被取代的 Registry 狀態 MUST
+NOT 將作為新驗證或首次接納決策的當前證據提供。 Organization
+MUST 定義適配器如何建立修訂版本或適用性。 MissionWeaveProtocol
+0.1 未標準化修訂識別碼、可移植 Agent
+Registry 快照線工件、傳輸、新鮮度機製或加密完整性證明。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-011" level={["MUST","MAY"]}>
+
+只有在適用的權威修訂版達到所需的完整性後，才能得出權威的未知密鑰結論 MUST。無法建立完整性、不可用的 Registry 證據以及權威性缺失的密鑰都會失敗第 4 階段。實現 MAY 保留針對這些條件的獨特的受保護診斷，但它們 MUST 在網路上仍然無法區分，如下所示。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-012" level={["MUST","MAY","MUST NOT"]}>
+
+金鑰有效性狀態是歷史狀態，不是不可變身分綁定的一部分。這 Registry MUST 保留原件
+`validFrom` 以及每一次的改變 `validUntil` 或者 `revokedAt`
+透過僅附加或明確版本化的有效性狀態記錄。第一個註冊的 `validFrom`
+是不可變的。一個 `validUntil` 或者 `revokedAt`
+邊界 MAY 提前添加或移動，但是 MUST
+NOT 稍後清除或移動。它的有效值是最早的非缺席值 Registry 歷史。延長有效期限需要新密鑰 ID 下的新密鑰材料。這 Registry
+MUST NOT 重寫或丟棄歷史驗證可能依賴的早期狀態記錄。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-013" level="MUST">
+
+表中的簽署者規則和 `signature.keyId` 一起選擇 Registry 記錄。它的界限 Principal
+MUST 等於確切的 Principal 由文檔命名或是 Organization 服務 Principal 對於一個 Agent
+Card。解析另一個金鑰下的相同金鑰 ID Principal 或不同的密鑰材料 MUST 失敗。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-014" level="MUST">
+
+對於受保護的簽署時間 `t`，僅當 `validFrom <= t`、`validUntil` 不存在或
+`t < validUntil`，並且 `revokedAt` 不存在或 `t < revokedAt` 時，金鑰才有效。
+`revokedAt` 等於或早於 `t`
+的金鑰 MUST 被拒絕。Registry 有效期時間戳 MUST 符合 MissionWeaveProtocol 時間戳設定檔，並按時間點而非詞法比較；兩個受保護文件時間戳的位元組相等規則不適用於 Registry 區間欄位。持久簽章驗證 MUST 在受保護的簽署時間評估此區間。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-015" level={["MUST","MUST NOT"]}>
+
+驗證 MUST 在第一個失敗階段停止，MUST
+NOT 執行授權、附加 Event 或在每個階段成功之前執行轉換：
+
+1. 嚴格解析恰好一個 UTF-8
+   JSON 值並拒絕無效 UTF-8, 一個位元組順序標記、尾隨資料和重複的解碼物件成員名稱；2.驗證完整 Signed
+   Document 違反其規範模式，包括所需的簽名信封和支援的演算法；
+2. 應用此驗證設定文件，包括受保護的時間 UTC-`Z` 形式驗證，準確 `createdAt`
+   無需轉換的平等、預期簽署者規則選擇、規範的未填充的 base64url 解碼
+   `signature.value`，並且嚴格 `Renc` 和 `Senc` 64位元組的驗證 Ed25519 簽名;
+3. obtain complete Organization-範圍 Registry evidence, validate every
+   binding需要建立不可變的簽章金鑰綁定， Organization- 廣泛的無重用和無別名不變量，以及完整保留的有效性歷史記錄，然後選擇預期簽名者下的固定密鑰並驗證其受保護時間間隔，包括規範的未填充的base64url解碼和對其32字節的嚴格點驗證 Ed25519 公鑰；
+4. 完全省略頂級 `signature` 成員，拒絕 RFC 8785 和 I-JSON 資料模型以外的值
+   [第 2](../foundations/#mwp-fnd-006)
+   節，並根據接收到的值產生 JCS 簽名字節，而無需超出所需的 RFC
+   8785 二進位 64 序列化的時間戳或數字轉換；
+5. 驗證這些位元組上的 Ed25519 簽章。
+
+</NormativeClause>
+
+架構聲明的文件時間戳記的基本時間戳記設定檔失敗是第 2 階段失敗。附加受保護時間 UTC-`Z`
+或位元組相等規則的失敗屬於第 3 階段。格式錯誤的 Registry 有效性時間戳記屬於第 4 階段失敗。
+
+<NormativeClause id="MWP-SDV-016" level={["MAY","MUST","SHOULD"]}>
+
+這些數字定義了規範的語意階段和錯誤分類，而不是必需的內部功能邊界。一個實現 MAY 在解析時檢測後期條件，但是 MUST 保留足夠的無損結構來評估所有早期的語義階段和 MUST 在其規範階段將狀況分類。特別是，語法上有效的 JSON 有限 bin64 域之外的數字或包含未配對代理項的解碼字串是 stage-5
+JCS 資料模型失敗，而不是第一階段 JSON 語法錯誤。斷言一個故障階段的一致性向量 SHOULD 隔離該故障，以便每個實作都可以報告預期的診斷，而不會與另一個故意無效的欄位產生歧義。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-017" level="MUST NOT">
+
+**簽名哈希**是
+`sha256:<lowercase hex SHA-256 of the exact stage-5 JCS signing bytes>`。上述六个阶段构成了密码验证和 MUST
+NOT 需要入學狀態。因此，在接受方單獨的首次存取或歷史信任驗證之前，可能存在經過加密驗證的結果。 Organization.
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+下一個區塊恢復稍後固定的來源段。詳見【規格源碼圖](./) 對於中間的本機頁面和確切的行範圍。
+
+</InformativeBlock>
+
+<NormativeClause id="MWP-SDV-018" level={["MUST NOT","MUST"]}>
+
+無效的 JSON、重複的成員或無法輸入的數值 JCS 資料模型是一個
+`PROTOCOL_VIOLATION`。模式、所需信封或不支援的演算法失敗是
+`SCHEMA_VALIDATION_FAILED`。語意階段的加密階段 3、4 或 6 失敗
+`admission`，或在 Command-新鮮度檢查是
+`AUTH_INVALID_SIGNATURE`;範例包含時間綁定不匹配、具有非零未使用填充位的架構有效的 base64url、未知或錯誤綁定金鑰、無效金鑰間隔、非規範或非素數順序公鑰、格式錯誤的解碼金鑰或簽章長度或加密不符。有線回應 MUST
+NOT reveal which key-resolution, admission, or cryptographic check
+failed.這 Organization
+MUST 根據適用的保留策略，將第一個失敗的語意階段及其特定診斷原因保留在受保護的、存取控制的審核記錄中。一個 Group- 範圍內的故障 MUST 授權審計員可以從策略日誌中進行參考，而不會將該診斷資訊暴露給不受信任的呼叫者。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-019" level="MUST NOT">
+
+未來的協議修訂版可能會透過僅省略 `signature.value` 而不是完整的頂級 `signature`
+成員來保護簽章元資料。這改變了規範的簽名字節，並且是一個破壞性的線簽名修訂。它 MUST
+NOT 作為 v0.1 行為被引入、生成或默默接受。
+
+</NormativeClause>

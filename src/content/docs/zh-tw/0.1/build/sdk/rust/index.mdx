@@ -1,0 +1,66 @@
+---
+title: Rust SDK
+description: 安裝並導航 MissionWeaveProtocol 0.1 的完整固定 Rust 運行時參考。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Rust SDK
+
+`missionweaveprotocol` 是官方 Rust 箱子。此參考描述了確切的提交
+`2727f8777737265d98dde4ceaca306612ef54c52`、板條箱版本 `0.1.0`、Rust
+1.85 或更高版本以及版本 2024。記錄的 pin 未在 crates.io 上發布；不同的 Git 修訂版或包存檔是不同的實現輸入。
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="rust"
+  command={`git clone https://github.com/MissionWeaveProtocol/rust-sdk.git missionweaveprotocol-rust-sdk
+cd missionweaveprotocol-rust-sdk
+git checkout --detach 2727f8777737265d98dde4ceaca306612ef54c52
+cargo test --locked --all-features
+cargo package --locked`}
+  verifyCommand={`cargo run --locked --quiet --bin missionweaveprotocol-conformance
+cargo install --locked --path . --bin missionweaveprotocol-conformance
+missionweaveprotocol-conformance --verbose`}
+>
+  <p slot="notes">
+    應用程式將庫與 Cargo Git 依賴項綁定，其 <code>rev</code>{" "}
+    是上面的確切提交。只有當其出處解析為相同位元組且其嵌入式協定包通過記錄的驗證呼叫時，供應或打包的副本才是可接受的。
+  </p>
+</SdkInstall>
+
+:::
+
+`missionweaveprotocol-conformance` 二進位檔案接受可選的
+`--verbose`。它運行嵌入的結構模式向量；它不建立 Registry 貨幣、Admission
+Log 持久性、網路安全性或生產就緒性。
+
+## 使用此參考
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every crate-root re-export, codec, bundle verifier, CLI boundary, and explicit non-implementation."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, trusted-context, and Admission Log traits with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="Every public crate-root declaration resolved to its exact source line."
+    href="./api/"
+  />
+</CardGrid>
+
+## 支援記錄的提交
+
+<SdkRuntimeMatrix sdk="rust" />
+
+該套件提供進程內協定行為，而不是部署權限。應用程式仍然提供經過驗證的當前和歷史 Registry 證據、可信任准入上下文以及權威的僅附加 Admission
+Log。

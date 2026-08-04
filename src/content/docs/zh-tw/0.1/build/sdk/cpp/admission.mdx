@@ -1,0 +1,107 @@
+---
+title: C++ 首次入場與歷史信任
+description: 輸入 C++ 適配器、確切的呼叫順序、信任邊界和可運行的准入範例。
+---
+
+import cppAdmissionExample from "../../../../../../../../examples/sdk/cpp/admission.cpp?raw";
+import cppAdmissionCmake from "../../../../../../../../examples/sdk/cpp/CMakeLists.txt?raw";
+
+# C++ 首次入場與歷史信任
+
+C++ `AdmissionService` 將首次存取和歷史信任置於六階段 Signed
+Document 驗證器 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)) 之上。與語言無關的流程是本地[首次入場和歷史信任運行時頁面](../../../runtime/first-admission-and-historical-trust/)，確切的要求是本地[入場條款](../../../../reference/specification/first-admission-and-historical-trust/)。
+
+## 公共適配器和結果
+
+| 公開 API                                           | 責任                                                                                                                                                                                                                                |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver::resolve_current`     | 返回完整的 Organization 範圍的 Registry 證據，表明部署斷言對於此決策是最新的。                                                                                                                                                      |
+| `TrustedAdmissionContext::issue`                   | 下發記錄ID，即時可信受理，權威不在場後才接受服務。                                                                                                                                                                                  |
+| `AdmissionLog::lookup`                             | 返回 `AdmissionLookup::found` 或 `AdmissionLookup::authoritative_absence`。快取未命中、逾時或未經身份驗證的缺失在 [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003) 下關閉失敗。 |
+| `AdmissionLog::append_or_return_existing`          | 以原子方式追加候選位元組或透過經過驗證的服務身分返回並發權威獲勝者。                                                                                                                                                                |
+| `AuthenticatedAdmissionRecord`                     | 将返回的记录字节绑定到由 [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) 的适配器验证的服务身份。                                                                              |
+| `AdmissionService::prepare_first_admission`        | 从 SDK 生成的 `VerifiedSignedDocument` 创建并验证候选证据；它不附加或暗示承认。                                                                                                                                                     |
+| `AdmissionService::admit_first`                    | 驗證目前證據、尋找、缺席後準備、追加或回傳現有證據，並驗證 [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006) 下回傳的記錄。                                                      |
+| `AdmissionService::verify_historical_admission`    | 使用歷史 Registry 證據重新運行驗證，並需要現有記錄，而不發布上下文或在 [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) 下附加。                                                |
+| `PreparedFirstAdmission`、`AdmittedSignedDocument` | 保留不可變的驗證和記錄證據； `record_bytes` 傳回已驗證記錄位元組的視圖。                                                                                                                                                            |
+
+呼叫者提供的信任布林值不是准入查找結果，絕不能選擇成功路徑。
+
+## 首次入場電話順序
+
+:::note[Informative example]
+
+```cpp
+const auto first = AdmissionService{}.admit_first(
+    SignedDocumentKind::command,
+    document,
+    current_registry,
+    admission_log,
+    trusted_context);
+```
+
+:::
+
+`admit_first`
+在日誌訪問之前完成所有六個驗證階段。找到的記錄經過驗證並返回，無需發出可信上下文或附加。權威缺席後，服務發佈上下文，準備規範的候選字節，調用
+`append_or_return_existing`，並驗證實際傳回的記錄。只有當架構、驗證、文件綁定和可信任時間滿足
+[MWP-ADM-009]
+時，並發獲勝者才會成功](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) 和[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)。
+
+## 歷史回放與錯誤
+
+`verify_historical_admission` 用途
+`KeyResolver`，重新運行所有六個階段，需要找到的記錄，並且從不調用
+`TrustedAdmissionContext::issue` 或者
+`AdmissionLog::append_or_return_existing`。匹配的記錄ID恢復相同的權威記錄但不證明 Command
+[MWP-ADM-013 下的新鮮度、簽署者授權、狀態機接受或便攜式日誌證明驗證](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+和[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
+
+六級故障依然存在 `SignedDocumentVerificationError`。准入階段故障有
+`AdmissionError` 有線碼 `AUTH_INVALID_SIGNATURE`， 階段
+`admission`，以及一個鍵入的
+`AdmissionReason`，依照[MWP-ADM-012的要求](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)。部署適配器拋出
+`AdmissionAdapterError`;一般性的成功或可用性並不是經過驗證的證據。
+
+## 可運行的精確固定範例
+
+:::note[Informative example]
+
+此範例讀取簽名的 Command 和 Registry 從 SDK已驗證嵌入
+`ProtocolBundle`，然後提供類型化的記憶體中權限適配器。它不會讀取存儲庫文件。它為首次准入和歷史重播斷言相同的記錄 ID、簽名雜湊值和記錄位元組，並且只有一個附加。
+
+<pre>
+  <code>{cpp錄取範例}</code>
+</pre>
+
+複製 `admission.cpp` 以及以下內容 `CMakeLists.txt`
+到一個空的消費者目錄。建立配方定義了可執行檔本身並添加了精確固定的 SDK
+checkout 作為依賴項；它不依賴消費者尚未聲明的目標。
+
+<pre>
+  <code>{cppAdmissionCmake}</code>
+</pre>
+
+從該消費者目錄中，運行：
+
+```bash
+cmake -S . -B build \
+  -DMISSIONWEAVEPROTOCOL_SDK_ROOT=/absolute/path/to/exact/cpp-sdk \
+  -DOPENSSL_ROOT_DIR=/absolute/path/to/openssl-3
+cmake --build build --target missionweaveprotocol_website_admission --parallel 2
+./build/missionweaveprotocol_website_admission
+```
+
+預期輸出包含相同的記錄 ID `first admission` 和 `historical replay`.
+
+:::
+
+:::note[Implementation note]
+
+代替 `CurrentRegistry` 具有經過驗證的當前和歷史 Registry 適配器，
+`InMemoryAdmissionLog`
+具有經過身份驗證的持久性日誌，其追加或返回現有操作是原子的，並且
+`FixedTrustedContext`
+和 Organization-控制可信任時間和接受服務的發布。保留位元組生命週期，並且永遠不要將這些權限邊界折疊成一個呼叫者提供的信任布林值。
+
+:::

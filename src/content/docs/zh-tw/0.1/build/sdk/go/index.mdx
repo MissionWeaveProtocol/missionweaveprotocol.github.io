@@ -1,0 +1,61 @@
+---
+title: 前往SDK
+description: 安裝並導航 MissionWeaveProtocol 0.1 的完整固定 Go 運行時參考。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# 去SDK
+
+`github.com/missionweaveprotocol/go-sdk`是Go官方實作模組。該參考描述了確切的提交
+`80c39852e8a2053ac761b8d53d62483264f803f1` 和 Go
+1.24。不同的提交或模組建置是不同的記錄實現輸入。
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="go"
+  command={`go get github.com/missionweaveprotocol/go-sdk@80c39852e8a2053ac761b8d53d62483264f803f1`}
+  verifyCommand={`go list -m -f '{{.Path}} {{.Version}}' github.com/missionweaveprotocol/go-sdk
+go run github.com/missionweaveprotocol/go-sdk/cmd/missionweaveprotocol-conformance@80c39852e8a2053ac761b8d53d62483264f803f1 -h`}
+>
+  <p slot="notes">
+    Go
+    解析對模組版本的提交，同時保留記錄的來源識別。只有當代理商或供應商的位元組和來源與確切的提交相對應並且其打包的協議包通過相同的摘要檢查時，代理或供應的副本才是可接受的。
+  </p>
+</SdkInstall>
+
+:::
+
+`missionweaveprotocol-conformance`
+指令運行支援的打包架構和向量曲面。它不建立部署權限、Admission
+Log 持久性、網路安全性或生產準備。
+
+## 使用此參考
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every exported package concern, Go execution boundary, conformance entry point, and explicit non-implementation."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, trusted-context, and Admission Log interfaces with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="Every exported Go declaration resolved to its exact source line."
+    href="./api/"
+  />
+</CardGrid>
+
+## 支援記錄的提交
+
+<SdkRuntimeMatrix sdk="go" />
+
+此矩陣將包實現與部署擁有的權限區分開來。導入模組不提供目前的 Registry 服務、經過驗證的原子 Admission
+Log、託管網關或持久運行時持久性。

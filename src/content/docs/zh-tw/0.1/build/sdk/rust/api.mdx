@@ -1,0 +1,18 @@
+---
+title: Rust 公共 API 庫存
+description:
+  每個受支援的 Rust crate-root 聲明都解析為其確切的來源檔案和記錄的 SDK
+  提交中的行。
+---
+
+import SdkApiInventory from "../../../../../../../components/SdkApiInventory.astro";
+
+# Rust 公開 API 庫存
+
+此精确提交清单是从 `src/lib.rs` 及其在
+`2727f8777737265d98dde4ceaca306612ef54c52`
+选择性地重新导出的模块生成的。它包含 311 个公共结构、枚举和变体、特征、别名、函数、常量、公共字段以及可从 crate 根访问的公共方法。包根未重新导出的私有模块路径和声明不是应用程序合约。
+
+庫存是命名和確切的來源出處參考，不能取代本地[運行時語義](../runtime/)或[准入呼叫流程](../admission/)。
+
+<SdkApiInventory sdk="rust" />

@@ -1,0 +1,230 @@
+---
+title: 签署文件和信任验证
+description:
+  Signed Document 验证配置文件、Registry 证据合约、语义阶段和受保护的诊断。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../../components/InformativeBlock.astro";
+
+### 6.4 Signed Document 验证配置文件
+
+**Signed Document** 是持久协议对象，其架构需要顶级 `signature`。 v0.1 **Signed
+Document 验证配置文件**
+将每个此类模式绑定到一个受保护的签名时间字段和一个预期签名者：
+
+| Signed Document   | 受保护的签名时间 | 预期签署人                                                        |
+| ----------------- | ---------------- | ----------------------------------------------------------------- |
+| Agent Card        | `issuedAt`       | Organization 服务 Principal 授权为 `organizationId` 发行 Agent 卡 |
+| Approval          | `occurredAt`     | `approver`                                                        |
+| Artifact 清单     | `createdAt`      | Agent 由 `producer.agentId` 识别                                  |
+| Command           | `issuedAt`       | `actor`                                                           |
+| Context Package   | `generatedAt`    | `generatedBy`                                                     |
+| Event             | `occurredAt`     | `acceptedBy`                                                      |
+| Evidence          | `createdAt`      | `generatedBy`                                                     |
+| Extension Profile | `approvedAt`     | `approvedBy`                                                      |
+| Group Snapshot    | `createdAt`      | `createdBy`                                                       |
+
+<NormativeClause id="MWP-SDV-001" level="MUST">
+
+对于除 Agent
+Card 之外的每一行，预期签名者是由列出的字段标识的确切 Principal。对于 Agent
+Card，签名密钥记录 MUST 标识 Organization 服务 Principal；密码验证后，检查其为
+`organizationId` 发行 Agent 卡的授权。
+
+</NormativeClause>
+
+除非 Extension
+Profile 指定附加签名，否则 v0.1 签名将覆盖完整对象的 JCS 规范形式，并省略其顶级
+`signature` 成员。仅省略该顶级成员；名为 `signature`
+的嵌套成员仍受保护。因此，Command 签名至少涵盖其操作 ID、参与者、适用的会话、Membership 和 Coordinator
+Epoch、Group
+ID（如果存在）、种类、有效负载、相关 ID、受保护的签名时间和扩展。 Event 签名由接受机构进行，涵盖其 Event
+ID、Group 序列（如果存在）、原因、参与者、有效负载和受保护的签名时间。
+
+<NormativeClause id="MWP-SDV-002" level={["MUST","MUST NOT"]}>
+
+由于 v0.1 签名输入中省略了整个顶级签名信封，因此验证程序 MUST 将信封绑定回受保护的内容。
+`signature.algorithm` MUST 为 `Ed25519`。受保护的签名时间和
+`signature.createdAt` MUST 均为使用大写 `Z` 后缀的 RFC 3339
+UTC 值，并且 MUST 逐字节相同。验证者 MUST
+NOT 在比较或验证签名文档之前修复、标准化或替换任一值。
+
+</NormativeClause>
+
+MissionWeaveProtocol 0.1 使用 RFC
+8032 定义的纯 Ed25519，而不是 Ed25519ctx 或 Ed25519ph。令
+`L = 2^252 + 27742317777372353535851937790883648493` 为 Ed25519 基点 `B`
+的素数阶，并令 `I` 为 Edwards25519 身份点。
+
+<NormativeClause id="MWP-SDV-003" level={["MUST","MUST NOT"]}>
+
+将 64 字节 Ed25519 签名解码为 `Renc || Senc` 后，验证者 MUST 将 `Renc`
+规范地解码为 Edwards25519 点，并要求 `[L]R` 等于身份。 `R`
+允许使用身份点。验证者 MUST 将 `Senc` 解释为无符号小端整数，需要
+`0 <= S < L`，并且 MUST NOT 将超出范围的值模 `L`
+约简。非规范、离曲线、非单位元小阶或混合阶的 `R` 编码，以及超出范围的 `S`
+值 MUST 在第 3 阶段失败。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-004" level={["MUST NOT","MUST"]}>
+
+密钥 ID MUST NOT 可以重复使用。 Agent Registry
+MUST 为可以作为预期签名者的每个 Principal 类型提供签名密钥绑定；仅 Agent 委托人需要 Agent 卡。一个密钥 ID 与一个 Principal、一种算法和一个公钥的绑定是不可变的。在一个 Organization 内，相同的公钥 MUST
+NOT 注册在另一个 Principal 或密钥 ID 下，并且相同的 Principal、算法和公钥元组 MUST
+NOT 具有密钥 ID 别名。跨 Agent
+Card 或 Registry 版本重复声明相同的绑定是相同的逻辑绑定，而不是重用或别名。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-005" level={["MUST","MUST NOT"]}>
+
+在接受 Ed25519 绑定之前，Registry MUST 严格将 32 字节公钥解码为 RFC
+8032 定义的压缩 Edwards25519 点编码。编码 MUST 是规范的， MUST 解码为曲线上的点，MUST
+NOT 为身份点，MUST 位于素数阶子群中：对于子群阶 `L`、`[L]A`
+MUST 等于身份。长度检查、小阶黑名单或成功导入通用加密后端是不够的。在应用不可变绑定和 Organization 范围的唯一性检查之前，非规范编码、负零编码、小阶点和混合阶点 MUST 将被拒绝。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-006" level="MUST">
+
+第 3 阶段签名编码检查和第 4 阶段公钥检查成功后，第 6 阶段 MUST 需要纯 Ed25519 方程
+`[S]B = R + [k]A`，其中 `k` 是 `Renc || Aenc || M`
+上的 SHA-512，解释的小端和简化模 `L` 和 `M`
+是第 5 阶段生成的精确签名字节序列。由于 `A` 和 `R`
+都在素数阶子组中，因此提供程序评估等效的 RFC 8032 余因子方程具有相同的验收结果。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-007" level="MUST">
+
+Registry
+MUST 在接受任何绑定之前在 Organization 中强制执行这些不变量，并且 MUST 保留足够的索引和历史记录来建立密钥 ID 唯一性以及不存在公钥或元组别名。当 Registry 无法为解析的绑定建立这些不变量时，关键解析 MUST 无法关闭。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-008" level="MUST">
+
+对于一项 Signed
+Document 验证，第 4 阶段使用的 Registry 证据 MUST 的范围恰好为一个 Organization 和 MUST 代表一个一致的权威Registry 修订版适用于验证决策。 MUST 足以为所有签名密钥绑定建立不可变绑定和 Organization 范围内的唯一性不变量以及此配置文件所需的完整保留有效性历史记录。实现 MUST 在使用
+`signature.keyId`
+选择 Registry 记录之前验证证据；无效的不相关绑定或历史记录 MUST 导致第 4 阶段失败。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-009" level={["MAY","MUST NOT"]}>
+
+实现 MAY 从完整的 Registry 快照或从证明相同 Organization 范围的不存在、唯一性和历史声明的权威索引和历史查询建立这些属性。除非实现可以从权威状态建立相同的声明，否则接受键过滤的投影、部分缓存、不完整的页面集或其他未指定的覆盖范围 MUST
+NOT。请求的密钥 ID 仅是路由上下文，并且 MUST
+NOT 被视为省略 Organization 范围检查所需证据的权限。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-010" level={["MUST","MUST NOT"]}>
+
+密钥解析适配器是 v0.1 中的可信部署接缝。当它向验证者提供 Registry 证据时，它 MUST 建立所需的 Organization 范围、适用的权威修订、证据完整性和历史覆盖范围，或者报告它不能。被取代的 Registry 状态 MUST
+NOT 将作为新验证或首次接纳决策的当前证据提供。 Organization
+MUST 定义适配器如何建立修订版本或适用性。 MissionWeaveProtocol
+0.1 未标准化修订标识符、可移植 Agent
+Registry 快照线路工件、传输、新鲜度机制或加密完整性证明。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-011" level={["MUST","MAY"]}>
+
+只有在适用的权威修订版达到所需的完整性后，才能得出权威的未知密钥结论 MUST。无法建立完整性、不可用的 Registry 证据以及权威性缺失的密钥都会失败第 4 阶段。实现 MAY 保留了针对这些条件的独特的受保护诊断，但它们 MUST 在线路上仍然无法区分，如下所示。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-012" level={["MUST","MAY","MUST NOT"]}>
+
+密钥有效性状态是历史状态，不是不可变身份绑定的一部分。 Registry
+MUST 通过仅附加或显式版本化的有效性状态记录保留原始 `validFrom` 以及对
+`validUntil` 或 `revokedAt` 的每次更改。第一个注册的 `validFrom`
+是不可变的。较早添加或移动 `validUntil` 或 `revokedAt`
+边界 MAY，但稍后清除或移动 MUST
+NOT。其有效值为Registry历史中最早的非缺失值。延长有效期需要新密钥 ID 下的新密钥材料。 Registry
+MUST NOT 重写或丢弃历史验证可能依赖的早期状态记录。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-013" level="MUST">
+
+签名者规则从表和 `signature.keyId` 一起选择 Registry 记录。其绑定的 Principal
+MUST 等于文档指定的确切 Principal 或者是 Agent
+Card 的 Organization 服务 Principal。将另一个 Principal 下的相同密钥 ID 解析为不同的密钥材料 MUST 失败。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-014" level="MUST">
+
+对于受保护的签名时间 `t`，仅当 `validFrom <= t`、`validUntil` 不存在或
+`t < validUntil`，并且 `revokedAt` 不存在或 `t < revokedAt` 时，密钥才有效。
+`revokedAt` 等于或早于 `t`
+的密钥 MUST 被拒绝。Registry 有效期时间戳 MUST 符合 MissionWeaveProtocol 时间戳配置文件，并按时间点而非词法进行比较；两个受保护文档时间戳的字节相等规则不适用于 Registry 区间字段。持久签名验证 MUST 在受保护的签名时间评估该区间。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-015" level={["MUST","MUST NOT"]}>
+
+验证 MUST 在第一个失败阶段停止，MUST
+NOT 执行授权、附加 Event 或在每个阶段成功之前执行转换：
+
+1. 严格解析一个 UTF-8
+   JSON 值并拒绝无效的 UTF-8，字节顺序标记、尾随数据和重复的解码对象成员名称；
+2. 根据其规范模式验证完整的 Signed Document，包括所需的签名信封和支持的算法；
+3. 应用此验证配置文件，包括受保护时间 UTC-`Z` 表格验证、无需转换的精确
+   `createdAt` 相等、预期签名者规则选择、`signature.value`
+   的规范未填充 base64url 解码以及 64 字节的严格 `Renc` 和 `Senc`
+   验证Ed25519签名；4.获取完整的Organization范围的Registry证据，验证每个绑定需要建立不可变的签名密钥绑定、Organization范围的无重用和无别名不变量以及完整保留的有效性历史记录，然后选择预期签名者下的固定密钥并验证其受保护时间间隔，包括规范的未填充的base64url解码和其32字节Ed25519公钥的严格点验证；
+4. 完全省略顶级 `signature` 成员，拒绝 RFC 之外的值
+   [第 2](../foundations/#mwp-fnd-006)
+   节中定义的 8785 和 I-JSON 数据模型，并从接收到的值生成 JCS 签名字节，而无需超出所需的 RFC
+   8785 二进制 64 序列化的时间戳或数字转换；和
+5. 验证这些字节上的 Ed25519 签名。
+
+</NormativeClause>
+
+架构声明的文档时间戳的基本时间戳配置文件失败是第 2 阶段失败。附加受保护时间 UTC-`Z`
+或字节相等规则的失败属于第 3 阶段。格式错误的 Registry 有效性时间戳属于第 4 阶段失败。
+
+<NormativeClause id="MWP-SDV-016" level={["MAY","MUST","SHOULD"]}>
+
+这些数字定义了规范的语义阶段和错误分类，而不是必需的内部功能边界。实现 MAY 在解析时检测后期条件，但 MUST 保留足够的无损结构来评估所有早期语义阶段，而 MUST 在规范阶段对条件进行分类。特别是，有限 bin64 域之外的语法上有效的 JSON 数字或包含不成对代理项的解码字符串是第 5 阶段 JCS 数据模型故障，而不是第 1 阶段 JSON 语法故障。断言一个故障阶段 SHOULD 的一致性向量会隔离该故障，以便每个实现都可以报告预期的诊断，而不会与另一个故意无效的字段产生歧义。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-017" level="MUST NOT">
+
+**签名哈希**是
+`sha256:<lowercase hex SHA-256 of the exact stage-5 JCS signing bytes>`。以上六个阶段构成密码验证，MUST
+NOT需要准入状态。因此，在接受 Organization 进行单独的首次准入或历史信任验证之前，可能存在经过密码验证的结果。
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+下一个块恢复稍后固定的源段。有关介入的本地页面和确切的行范围，请参阅[规范源映射](./)。
+
+</InformativeBlock>
+
+<NormativeClause id="MWP-SDV-018" level={["MUST NOT","MUST"]}>
+
+无效的 JSON、重复的成员或无法输入 JCS 数据模型的值是
+`PROTOCOL_VIOLATION`。架构、所需信封或不支持的算法失败为
+`SCHEMA_VALIDATION_FAILED`。加密阶段 3、4 或 6、语义阶段 `admission`
+或 Command 中的失败 - 新鲜度检查为
+`AUTH_INVALID_SIGNATURE`；示例包括时间绑定不匹配、具有非零未使用填充位的架构有效的 base64url、未知或错误绑定密钥、无效密钥间隔、非规范或非素数顺序公钥、格式错误的解码密钥或签名长度或加密不匹配。电报响应 MUST
+NOT 显示哪个密钥解析、准入或加密检查失败。 Organization
+MUST 根据适用的保留策略将第一个失败语义阶段及其特定诊断原因保留在受保护的、访问控制的审核记录中。 Group 范围内的故障 MUST 可由授权审核员从策略日志中引用，而不会将该诊断信息暴露给不受信任的调用者。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-019" level="MUST NOT">
+
+未来的协议修订版可能会通过仅省略 `signature.value` 而不是完整的顶级 `signature`
+成员来保护签名元数据。这改变了规范的签名字节，并且是一个破坏性的线签名修订。它 MUST
+NOT 作为 v0.1 行为被引入、生成或默默接受。
+
+</NormativeClause>

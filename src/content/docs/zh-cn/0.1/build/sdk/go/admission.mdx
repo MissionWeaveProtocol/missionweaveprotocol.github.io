@@ -1,0 +1,122 @@
+---
+title: 优先入场和历史信托
+description:
+  类型化的 Go 适配器、精确的调用顺序、信任边界、原子日志要求和可运行的准入示例。
+---
+
+import goAdmissionExample from "../../../../../../../../examples/sdk/go/admission/main.go?raw";
+
+# Go First 入场和历史信托
+
+Go `AdmissionService` 在六阶段 Signed
+Document 验证器（[MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)）之上分层首次准入和历史信任。与语言无关的流程是本地[首次接纳和历史信任运行时页面](../../../runtime/first-admission-and-historical-trust/)，确切的要求是本地[首次接纳和历史信任子句](../../../../reference/specification/first-admission-and-historical-trust/)。
+
+## 公共适配器和结果
+
+| 公开 API                                     | 责任                                                                                                                                                                                                                                               |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.ResolveCurrent` | 返回完整的 Organization 范围的 Registry 证据，表明部署断言对于此决策是最新的。                                                                                                                                                                     |
+| `TrustedAdmissionContext.Issue`              | 颁发可信记录ID，即时受理，权威缺席后才接受服务。                                                                                                                                                                                                   |
+| `AdmissionLog.Lookup`                        | 返回找到的经过身份验证的记录或 `AdmissionLookup{AuthoritativeAbsence: true}`。缓存未命中、超时、未经身份验证的缺席和不确定状态在 [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003) 下关闭失败。 |
+| `AdmissionLog.AppendOrReturnExisting`        | 以原子方式追加候选字节或通过经过身份验证的服务身份返回并发权威获胜者。                                                                                                                                                                             |
+| `AuthenticatedAdmissionRecord`               | 将 `RecordBytes` 绑定到适配器验证的服务，以便 [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) 可以验证返回的记录。                                                                            |
+| `AdmissionService.PrepareFirstAdmission`     | 从 SDK 生成的 `VerifiedSignedDocument` 创建并验证候选证据。它并不附加或暗示承认。                                                                                                                                                                  |
+| `AdmissionService.AdmitFirst`                | 在 [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006) 下执行当前验证、权威查找、候选创建、原子附加或返回现有以及返回记录验证。                                                                   |
+| `AdmissionService.VerifyHistoricalAdmission` | 根据 [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) 的要求，使用历史 Registry 证据重新运行六阶段验证，并需要现有记录而不发布上下文或附加。                                                   |
+| `AdmittedSignedDocument`                     | 返回经过验证和解析的记录证据以及防御性 `RecordBytes()` 副本。                                                                                                                                                                                      |
+
+调用者提供的信任布尔值不是准入查找结果，并且绝不能选择成功路径。
+
+## 首次入场电话顺序
+
+:::note[Informative example]
+
+```go
+first, err := missionweaveprotocol.NewAdmissionService().AdmitFirst(
+    missionweaveprotocol.SignedDocumentCommand,
+    documentBytes,
+    currentRegistry,
+    admissionLog,
+    trustedContext,
+)
+```
+
+:::
+
+`AdmitFirst`
+在查阅日志之前完成所有六个签名文档阶段。找到的记录经过验证并返回，无需发出可信上下文或附加。权威缺席后，服务发出可信上下文，调用`PrepareFirstAdmission`，调用`AppendOrReturnExisting`，对返回值进行快照，并验证实际返回的记录。仅当其架构、经过身份验证的服务、文档绑定和可信时间通过
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+和
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)] 时，并发获胜者才是可接受的。
+
+## 历史回放
+
+:::note[Informative example]
+
+```go
+historical, err := missionweaveprotocol.NewAdmissionService().VerifyHistoricalAdmission(
+    missionweaveprotocol.SignedDocumentCommand,
+    documentBytes,
+    historicalRegistry,
+    admissionLog,
+)
+```
+
+:::
+
+历史重放使用保留的 Registry 历史记录重新运行验证，需要找到的记录，并且从不调用
+`TrustedAdmissionContext.Issue` 或
+`AdmissionLog.AppendOrReturnExisting`。匹配的记录ID表明恢复了相同的权威记录；它们不证明 Command 新鲜度、签名者授权、状态机接受或便携式日志证明验证。这些在
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+和
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)] 下保持独立。
+
+## 误差面
+
+`AdmissionError.WireCode()` 返回 `AUTH_INVALID_SIGNATURE`，而
+`ProtectedDiagnostic().Stage()` 返回
+`admission`。稳定的受保护原因可区分缺失、冲突、畸形、未经验证、不可用、不确定和自锚证据，同时保留
+[MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)
+所需的非神谕线结果。
+
+当部署适配器需要服务重新映射可信本地故障时，应返回 `NewAdmissionAdapterError`
+并提供支持的原因。任意错误并不能证明权威缺失。
+
+## 可运行的精确固定示例
+
+:::note[Informative example]
+
+该示例确定性地派生一个 Ed25519 密钥，构造完整的 Registry 和签名的 Command，并提供类型化的内存适配器。一个`sync.Mutex`保护共享的权威地图。
+`Lookup`和`AppendOrReturnExisting`独立获取；当互斥体检查并发获胜者并有条件追加时，它使
+`AppendOrReturnExisting`
+成为原子。该协议需要权威查找和原子追加或返回现有行为，而不是跨越两个调用的一个事务。固定种子是演示材料，绝不能在示例之外使用。
+
+<pre>
+  <code>{goAdmissionExample}</code>
+</pre>
+
+从精确的 SDK 结帐运行它：
+
+```bash
+go test ./...
+go run /absolute/path/to/examples/sdk/go/admission/main.go
+```
+
+预期输出包含 `first admission` 和 `historical replay`
+的相同记录 ID。该程序还断言匹配的签名哈希值和记录字节以及精确的一个附加。
+
+:::
+
+:::note[Implementation note]
+
+将 `currentRegistryFixture` 替换为经过身份验证的当前和历史 Registry 适配器，将
+`inMemoryAdmissionLog` 替换为经过身份验证的持久日志，该日志返回权威查找结果并使
+`AppendOrReturnExisting` 在逻辑密钥上具有原子性，并将
+`fixedTrustedAdmissionContext`
+替换为Organization-控制可信时间和接受服务发布。部署可以使用更广泛的事务，但协议不需要一个事务跨越
+`Lookup` 和 `AppendOrReturnExisting`。
+
+将 `deterministicSigningKey`
+替换为部署拥有的密钥服务。保留防御性字节副本，并且不要将权限边界折叠为调用者提供的信任布尔值。
+
+:::

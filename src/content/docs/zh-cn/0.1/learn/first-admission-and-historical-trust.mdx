@@ -1,0 +1,67 @@
+---
+title: 首次入场和历史信托
+description: 权威查找、原子追加、返回记录验证和历史重播流程位于六阶段验证之上。
+---
+
+# 首次入场和历史信托
+
+加密验证证明受保护的字节和密钥绑定的 Principal。首次准入添加了 Organization 分配的可信接受瞬间和权威的仅附加记录。准入层仍然独立于六个加密阶段 ([MWP-ADM-005](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005))。
+
+## Admission Log 合约
+
+逻辑键是`(organizationId, signingHash)`。 Admission
+Log 验证其接受服务，将找到的记录与权威缺失区分开来，保留仅附加完整性，并公开一个原子附加或返回现有操作。输入的结果未能关闭；调用者信任标志无法替代它们（[MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)）。
+
+确切的九字段记录形状、对 `signature` 成员的禁止以及非自验证边界由
+[MWP-ADM-001](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001)
+定义。其确切的本地工件在 [JSON 架构目录](../../reference/schemas/)
+中建立索引，完整的首次准入和重放证据包发布在
+[准入一致性](../../reference/conformance/admission/)]下。
+
+## 首次入场流程
+
+读者可见的序列正是：
+
+```text
+six-stage cryptographic verification
+→ authoritative Admission Log lookup
+→ found record validation OR authoritative absence
+→ trusted context and candidate preparation
+→ atomic append-or-return-existing
+→ returned record validation
+→ admitted result
+```
+
+分支点很重要。找到的记录直接进入记录验证。只有权威缺席才能保证可信的背景和候选人的准备。原子追加可以返回本地候选记录或并发提交的记录，并且返回的记录在成功之前总是经过验证。单独的候选字节永远不会建立准入。此编排由
+[MWP-ADM-006](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006)
+定义。
+
+候选准备也不会附加 Event 或暗示状态转换 ([MWP-ADM-007](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-007))。
+
+## 返回记录验证
+
+返回的 First-Admission Record 被解析为一个严格的 UTF-8
+JSON 值，根据本地架构进行验证，并与 Organization、文档类型、签名哈希、密钥 ID 和 Principal 的六阶段结果进行比较。其
+`acceptedBy`
+身份与适配器结果验证的服务匹配 ([MWP-ADM-009](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009))。
+
+可信接受时刻根据用于受保护签名时间的相同选定密钥间隔进行独立测试 ([MWP-ADM-010](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010))。
+
+六阶段完成后的故障保留受保护的诊断阶段 `admission` 并在线映射到
+`AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012))。
+
+## 历史回放
+
+历史重播遵循一条较窄的路径：
+
+```text
+six-stage cryptographic verification
+→ required found record
+→ record validation
+→ no trusted context or append
+```
+
+这六个阶段使用权威历史 Registry 证据，其中包含受保护签名时间所需的保留有效性历史记录。重播需要现有记录，对其进行验证，并且永远不会创建新的准入或发出可信候选上下文（[MWP-ADM-008](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)）。
+
+准入与 Command 新鲜度和签名者授权保持独立；下一页使这些界限变得明确。

@@ -1,0 +1,72 @@
+---
+title: 错误和可观察性
+description: 线路安全错误、重试决策、受保护的验证诊断、访问控制的审核记录、指标和跟踪边界。
+---
+
+# 错误和可观察性
+
+线路错误是稳定的协议结果，而不是内部异常的转储。错误符合本地错误架构，说明重试是否安全，并且可以识别相关帧或操作 ID，而不会暴露未经授权的数据（[MWP-EXT-004](../../../reference/specification/errors-extensions-and-security/#mwp-ext-004)）。
+
+## 在正确的层进行分类
+
+| 层                                                  | 公共成果                                    |
+| --------------------------------------------------- | ------------------------------------------- | -------------------- |
+|                                                     | 无效的 JSON、重复的成员或不可能的 JCS 值    | `PROTOCOL_VIOLATION` |
+| 完整架构或所需信封失败                              | `SCHEMA_VALIDATION_FAILED`                  |
+| 加密阶段 3、4 或 6 失败                             | `AUTH_INVALID_SIGNATURE`                    |
+| 准入或Command-新鲜度失败                            | `AUTH_INVALID_SIGNATURE`                    |
+| 缺少许可或政策资格                                  | `AUTH_FORBIDDEN`                            |
+| 过时会话、Membership、Coordinator、所有权或租赁状态 | 相应的稳定的fencing代码                     |
+| 当前聚合修订不匹配                                  | `REVISION_CONFLICT`                         |
+| 接受压力极限                                        | `BACKPRESSURE` 或 `RATE_LIMITED` 带重试指导 |
+
+加密和准入失败故意在线路上崩溃。 Organization 仅在受保护、访问控制的审核记录中保留第一个失败语义阶段和特定原因 ([MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018))。阶段编号是语义分类，而不是所需的内部函数边界 ([MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016))。准入路径中六阶段完成后的每次失败都使用受保护阶段
+`admission` 和相同的公共 `AUTH_INVALID_SIGNATURE`
+代码 ([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012))。
+
+## 重试决策
+
+重试行为取决于稳定的代码以及受保护的内容是否仍然有效：
+
+- 未更改的已接受 Command 重试保留原始操作 ID 和签名内容；
+- `AUTH_INVALID_SIGNATURE` 不会按原样重试，直到其原因确定为止已更正；
+- 过期的 Command 新鲜度需要新的 Command、操作 ID、受保护时间、和签名；
+- `ACTION_ID_COLLISION` 始终需要新的 Action ID 和签名内容；和
+- 陈旧的围栏错误需要当前的权威纪元加上新的 Command 和签名。
+
+完整的规则是[MWP-EXT-005](../../../reference/specification/errors-extensions-and-security/#mwp-ext-005))。没有权威响应的传输超时是不确定的：在决定是否发送新的转换之前通过稳定身份进行查询或重放。
+
+## 受保护的审计记录
+
+Organization 根据
+[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)
+的要求，在受保护的、访问控制的审核记录中保留第一个失败的语义阶段及其具体原因。
+
+请勿将秘密、功能令牌、私钥材料、原始凭证、未经授权的 Group 存在或受保护的信任失败区别放入线路响应中。令牌和凭证也不包含在消息、Agent 卡、上下文包、工件和事件中 ([MWP-AUT-002](../../../reference/specification/authorization-and-budgets/#mwp-aut-002))。
+
+审计证据涵盖决策、输入、阻碍因素和结果，无需私人思维链、隐藏提示或原始内存 ([MWP-FND-022](../../../reference/specification/foundations/#mwp-fnd-022))。
+
+## 修订敏感的失败
+
+不要将备用签名字节行为视为兼容性恢复路径。保护签名信封不同部分的修订会更改有线签名字节，并且无法生成或静默接受为 v0.1
+([MWP-SDV-019](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-019))。
+
+:::note[Implementation note]
+
+使用单独的公共错误和受保护诊断类型，以便序列化代码不会意外暴露内部原因。日志和跟踪应该引用稳定的 ID 和哈希值，而不是嵌入完整的协议文档。
+
+对于授权审核员来说，有用的结构化字段包括：
+
+- 第一个失败的语义阶段、稳定的内部原因和源适配器；
+- 确切的版本、架构、配置文件和实施版本；
+- 授权 Organization、Group、参与者、操作 ID、相关 ID 和签名哈希引用；
+- 相关Registry修订版或Admission Log结果身份；和
+- 权威状态是否改变。
+
+命令已经携带稳定的操作和相关身份（[MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001)），并且接受的事件保留不可变的原因、参与者、相关性、序列和修订上下文（[MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)）。优先选择这些引用而不是不相关的跟踪身份。
+
+有用的指标包括公共代码接受和拒绝的命令、受限遥测中的第一个失败的受保护阶段、Group 的重播延迟、游标间隙计数、重复 Event 计数、租赁和预算拒绝计数、反压持续时间、准入适配器结果和端到端转换延迟。在附加 Organization、Group、参与者、操作、密钥或签名哈希标识符之前定义有界基数。
+
+:::
+
+在声明对版本的支持之前，先完成[一致性和升级](../conformance-and-upgrades/)]。

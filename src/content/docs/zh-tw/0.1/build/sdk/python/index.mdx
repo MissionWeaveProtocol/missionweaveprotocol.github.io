@@ -1,0 +1,69 @@
+---
+title: Python SDK
+description:
+  在其確切的 MissionWeaveProtocol 0.1 提交處安裝並導航完整的 Python 3.12
+  參考運行時。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Python SDK
+
+`missionweaveprotocol` 套件是 Python 參考運行時。本頁面介紹提交
+`9403cf1310914670506c56cbab363fdaa465d3cc`、軟體套件版本 `0.1.0` 和 Python
+3.12 或更高版本。不同的提交或包建置是不同的記錄實現輸入，即使其版本字串未更改。
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="python"
+  command={`uv add "missionweaveprotocol @ git+https://github.com/MissionWeaveProtocol/python-sdk.git@9403cf1310914670506c56cbab363fdaa465d3cc"`}
+  verifyCommand={`uv run python -c "import missionweaveprotocol as mwp; print(mwp.__version__)"
+uv run missionweaveprotocol-conformance --help`}
+>
+  <p slot="notes">
+    確切的 VCS
+    要求從記錄的提交建置包。部署可能會安裝一個輪子，其建置來源與該提交綁定，並且其捆綁的工件通過相同的摘要檢查。
+  </p>
+</SdkInstall>
+
+:::
+
+該包在記錄的提交中聲明了這些控制台命令：
+
+| Command                            | 公共目的                           |
+| ---------------------------------- | ---------------------------------- |
+| `missionweaveprotocol-server`      | 啟動設定的Group閘道服務。          |
+| `missionweaveprotocol-demo`        | 運行確定性參考運行時演示。         |
+| `missionweaveprotocol-conformance` | 執行實現中立的結構模式和向量清單。 |
+
+啟動命令不會建立部署權限。伺服器仍然需要部署擁有的 Registry 材料、持久性、會話憑證、網路綁定和生產 TLS 配置。
+
+## 使用此參考
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every public module, runtime responsibility, persistence boundary, transport surface, and conformance entry point."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, Admission Log, and trusted-context adapters with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="All public classes, protocols, functions, methods, constants, and types resolved to exact source lines."
+    href="./api/"
+  />
+</CardGrid>
+
+## 支援記錄的提交
+
+<SdkRuntimeMatrix sdk="python" />
+
+Python
+SDK 實現由矩陣表示的完整參考運行時。資料庫服務、網路服務、憑證和存取權限是部署依賴項，不保證透過安裝包建立。

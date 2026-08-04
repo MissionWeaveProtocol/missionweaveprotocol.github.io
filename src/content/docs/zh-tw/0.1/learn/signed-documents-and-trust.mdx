@@ -1,0 +1,51 @@
+---
+title: 簽署文件和信任
+description:
+  受保護的內容、Registry 證據、關鍵歷史記錄、規範化和 Ed25519
+  驗證如何產生六階段結果。
+---
+
+# 簽署文件和信任
+
+Signed Document 是持久性協定對象，其簽章依據 Signed
+Document 驗證設定檔對規範受保護內容進行驗證。設定檔為每種文件類型選擇受保護的時間和預期的簽署者。
+
+## 信封綁定回受保護的內容
+
+v0.1 簽名輸入省略了完整的頂級簽名信封。驗證者透過
+[MWP-SDV-002](../../reference/specification/signed-documents-and-trust/#mwp-sdv-002)
+中的受保護時間和 Ed25519 要求綁定信封，使用
+[MWP-SDV-001](../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)]選擇預期簽署者，並遵循完整的分階段規範化和簽名字節規則[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)。
+
+簽章雜湊是第 5 階段產生的確切 RFC 8785
+JCS 位元組的小寫 SHA-256 標識。它獨立於准入狀態來標識受保護內容 ([MWP-SDV-017](../../reference/specification/signed-documents-and-trust/#mwp-sdv-017))。
+
+## Registry 證據比一個選定的密鑰更寬
+
+階段 4 使用一個連貫的、權威的 Organization 範圍的 Registry 修訂版。證據建立了不可變的鍵綁定、Organization 範圍內的不可重用和無別名不變量，以及配置文件所需的保留有效性歷史記錄 ([MWP-SDV-008](../../reference/specification/signed-documents-and-trust/#mwp-sdv-008))。
+
+僅鍵過濾快取是不夠的，因為它包含所請求的鍵。關鍵解決接縫建立證據範圍、修訂適用性、完整性和歷史覆蓋範圍，或報告它不能 ([MWP-SDV-010](../../reference/specification/signed-documents-and-trust/#mwp-sdv-010))。
+
+受保護的簽章時間會根據所選金鑰的半開有效性間隔進行測試。 Registry 時間按瞬間進行比較，保留的歷史記錄可以使較早的簽名即使在後來到期或撤銷後也可驗證（[MWP-SDV-014](../../reference/specification/signed-documents-and-trust/#mwp-sdv-014)）。
+
+## 六階段驗證
+
+驗證遵循
+[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)
+中的有序階段：
+
+1.嚴格UTF-8 JSON解析及重複成員拒絕；2.完成規範的JSON
+Schema驗證；3. 簽名信封及保護時間驗證；4. 完成Registry證據、金鑰解析、綁定和有效性檢查；5.
+RFC 8785 規範化和簽章哈希生成；和6.嚴格Ed25519簽章驗證。
+
+驗證者在第一個失敗階段停止。在所有六個階段成功之前，它不會授權參與者、附加 Event 或執行狀態轉換。
+
+## 成功的結果意味著什麼
+
+完成的結果保留 Organization、文件類型、簽章雜湊、解析金鑰 ID、綁定 Principal、受保護的簽章時間和有效金鑰間隔。它對受保護的內容和綁定到金鑰的 Principal 進行身份驗證。它本身並不承認該文檔、證明當前協議授權或接受狀態轉換。
+
+確切的本地模式工件在 [JSON 模式目錄](../../reference/schemas/)
+中建立索引，完整的六階段證據包在
+[密碼學一致性](../../reference/conformance/cryptography/)] 下發布。
+
+繼續[首次入場和歷史信任](../first-admission-and-historical-trust/)]作為密碼學之上的權威接受層。

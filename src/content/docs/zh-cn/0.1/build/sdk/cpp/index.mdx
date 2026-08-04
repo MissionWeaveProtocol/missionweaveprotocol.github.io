@@ -1,0 +1,72 @@
+---
+title: C++ SDK
+description: 安装并导航 MissionWeaveProtocol 0.1 的完整固定 C++ 运行时参考。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# C++ SDK
+
+`MissionWeaveProtocol::sdk` 是官方 C++
+SDK 的已安装 CMake 目标。此参考描述了确切的提交
+`481b0ce3a65c1f2265935318b54481ece5032fdf`、版本 `0.1.0`、C++20、CMake
+3.24 或更高版本、OpenSSL 3 和 jsoncons
+1.8.1。不同的源修订版或安装的前缀是不同的实现输入。
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="cpp"
+  command={`git clone https://github.com/MissionWeaveProtocol/cpp-sdk.git missionweaveprotocol-cpp-sdk
+cd missionweaveprotocol-cpp-sdk
+git checkout --detach 481b0ce3a65c1f2265935318b54481ece5032fdf
+cmake -S . -B build -DMISSIONWEAVEPROTOCOL_BUILD_TESTS=ON -DMISSIONWEAVEPROTOCOL_BUILD_EXAMPLES=ON
+cmake --build build --parallel 2
+ctest --test-dir build --output-on-failure
+cmake --install build --prefix /absolute/install/prefix`}
+  verifyCommand={`/absolute/install/prefix/bin/missionweaveprotocol-conformance`}
+>
+  <p slot="notes">
+    当 CMake 会发现非 OpenSSL 或 3.0 之前的实现时，请使用{" "}
+    <code>OPENSSL_ROOT_DIR</code> 进行配置。该构建首先搜索 jsoncons
+    1.8.1，然后下载带有固定 SHA-256 的确切 v1.8.1 存档。下游 CMake 项目配置{" "}
+    <code>find_package(missionweaveprotocol CONFIG)</code>
+    ，当包不存在时，自己的构建失败，并链接{" "}
+    <code>MissionWeaveProtocol::sdk</code>。
+  </p>
+</SdkInstall>
+
+:::
+
+安装的 `missionweaveprotocol-conformance`
+可执行文件运行嵌入式结构架构向量。它不接受任何记录的选项，并且不建立 Registry 货币、Admission
+Log 持久性、网络安全性或生产准备情况。
+
+## 使用此参考
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every installed header concern, codec, bundle verifier, executable boundary, and explicit non-implementation."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, trusted-context, and Admission Log interfaces with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="Every installed-header declaration resolved to its exact source line."
+    href="./api/"
+  />
+</CardGrid>
+
+## 支持记录的提交
+
+<SdkRuntimeMatrix sdk="cpp" />
+
+该库提供进程内协议行为，而不是部署权限。应用程序仍然提供经过身份验证的当前和历史 Registry 证据、可信准入上下文和权威 Admission
+Log。

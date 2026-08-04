@@ -1,0 +1,71 @@
+---
+title: 身份、角色和权限
+description:
+  MissionWeaveProtocol 如何分离稳定身份、状态、会话、协调、调度、授权和批准。
+---
+
+# 身份、角色和权限
+
+MissionWeaveProtocol
+0.1 在一个受信任的 Organization 内运行。 Organization 管理 Agent 身份、策略、授权、持久 Group 排序和人员责任。
+
+## 权限被刻意分割
+
+| 关注                            | 权威                             |
+| ------------------------------- | -------------------------------- |
+| 稳定的身份和经过验证的能力      | Organization 控制 Agent Registry |
+| Mission 方向和最终批准          | MissionOwner                     |
+| 规划、分配、整合和提交          | 当前 Coordinator 纪元            |
+| 跨Group执行顺序                 | Worker 拥有的调度程序            |
+| 转换验证和每个 Group Event 订单 | Group Authority                  |
+| 工具、数据、资源和副作用权限    | 授权服务和Organization政策       |
+
+Group
+Authority 是每个 Group 的一个逻辑权限。实现可以在内部复制它，但副本拓扑不是协议语义的一部分。 Coordinator 和 Worker 角色定义由
+[MWP-FND-010](../../reference/specification/foundations/#mwp-fnd-010) 和
+[MWP-FND-011](../../reference/specification/foundations/#mwp-fnd-011)] 锚定。
+
+## 身份不是存在
+
+**Agent Card**
+是稳定的、版本化的、Organization 签名的身份。它在 Organization 的签名 ([MWP-IDN-001](../../reference/specification/identity-registry-and-sessions/#mwp-idn-001)) 下绑定公钥、端点、支持的协议版本、验证的功能和最大并发性。
+
+**存在记录**是短暂的。它可能会报告可用性、开放执行槽、功能可用性、估计响应延迟和心跳时间，但不会续订租约或接受分配 ([MWP-IDN-005](../../reference/specification/identity-registry-and-sessions/#mwp-idn-005))。
+
+能力也不同于授权。能力说明 Agent 经验证可以做什么；它不会在 Agent Card
+([MWP-IDN-002](../../reference/specification/identity-registry-and-sessions/#mwp-idn-002)) 中放置可重用凭证或业务数据访问权限。
+
+## 会话和击剑
+
+WebSocket 握手验证 Organization 注册密钥和新质询，然后发出短期会话令牌和新的 Session
+Epoch。握手序列由
+[MWP-IDN-007](../../reference/specification/identity-registry-and-sessions/#mwp-idn-007)
+定义。发布较晚的纪元会隔离该 Agent 身份的旧运行时 ([MWP-IDN-008](../../reference/specification/identity-registry-and-sessions/#mwp-idn-008))。
+
+额外的纪元进一步缩小了权限：
+
+- Membership Epoch 隔离 Group Membership 的旧版本；
+- Coordinator Epoch 隔离了替换的 Coordinator 及其补助金；
+- 所有权时代隔离了专有作品的前所有者；和
+- 执行租约 ID 隔离过期或撤销的执行期。
+
+## 从上下文到允许的副作用
+
+```text
+Message or Work Proposal
+        ↓ explicit authorization
+WorkItem and Work Contract
+        ↓ Worker acceptance
+Ownership Epoch
+        ↓ current session, policy, budget, and approval checks
+Execution Lease and scoped capability token
+        ↓
+Permitted operation
+```
+
+授权服务仅在相关接受、批准、政策、所有权、租赁和预算检查后才会颁发短期的、最低权限的令牌。其绑定字段由
+[MWP-AUT-001](../../reference/specification/authorization-and-budgets/#mwp-aut-001)
+定义。凭证不会通过消息、Agent 卡、上下文包、工件或事件进行传输；请参阅
+[MWP-AUT-002](../../reference/specification/authorization-and-budgets/#mwp-aut-002)。
+
+执行 Approval 允许有限风险操作。最终 Approval 是一个单独签署的决定，接受完整的 Mission 修订版和确切的 Artifact 集。

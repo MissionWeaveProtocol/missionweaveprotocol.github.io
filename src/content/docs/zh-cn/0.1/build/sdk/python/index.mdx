@@ -1,0 +1,69 @@
+---
+title: Python SDK
+description:
+  在其确切的 MissionWeaveProtocol 0.1 提交处安装并导航完整的 Python 3.12
+  参考运行时。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Python SDK
+
+`missionweaveprotocol` 包是 Python 参考运行时。本页面介绍提交
+`9403cf1310914670506c56cbab363fdaa465d3cc`、软件包版本 `0.1.0` 和 Python
+3.12 或更高版本。不同的提交或包构建是不同的记录实现输入，即使其版本字符串未更改。
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="python"
+  command={`uv add "missionweaveprotocol @ git+https://github.com/MissionWeaveProtocol/python-sdk.git@9403cf1310914670506c56cbab363fdaa465d3cc"`}
+  verifyCommand={`uv run python -c "import missionweaveprotocol as mwp; print(mwp.__version__)"
+uv run missionweaveprotocol-conformance --help`}
+>
+  <p slot="notes">
+    确切的 VCS
+    要求从记录的提交构建包。部署可能会安装一个轮子，其构建来源与该提交绑定，并且其捆绑的工件通过相同的摘要检查。
+  </p>
+</SdkInstall>
+
+:::
+
+该包在记录的提交中声明了这些控制台命令：
+
+| Command                            | 公共目的                           |
+| ---------------------------------- | ---------------------------------- |
+| `missionweaveprotocol-server`      | 启动配置的Group网关服务。          |
+| `missionweaveprotocol-demo`        | 运行确定性参考运行时演示。         |
+| `missionweaveprotocol-conformance` | 运行实现中立的结构模式和向量清单。 |
+
+启动命令不会创建部署权限。服务器仍然需要部署拥有的 Registry 材料、持久性、会话凭证、网络绑定和生产 TLS 配置。
+
+## 使用此参考
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every public module, runtime responsibility, persistence boundary, transport surface, and conformance entry point."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, Admission Log, and trusted-context adapters with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="All public classes, protocols, functions, methods, constants, and types resolved to exact source lines."
+    href="./api/"
+  />
+</CardGrid>
+
+## 支持记录的提交
+
+<SdkRuntimeMatrix sdk="python" />
+
+Python
+SDK 实现由矩阵表示的完整参考运行时。数据库服务、网络服务、证书和准入权限是部署依赖项，不保证通过安装包创建。

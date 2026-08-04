@@ -1,0 +1,82 @@
+---
+title: 協定類型
+description:
+  如何將
+  JSON、標量設定檔、產生的語言類型、持久性物件、指令、事件和語意狀態組合在一起。
+---
+
+# 協定類型
+
+將協議物件視為不僅僅是反序列化的類別。合格的運行時保留四個不同的層：
+
+```text
+received UTF-8 bytes
+→ lossless parsed JSON value
+→ schema-valid protocol object
+→ semantically accepted authoritative state or local projection
+```
+
+跳過一層會導致規範化、驗證順序或權限錯誤。
+
+## 標量設定檔
+
+所有協定對像都是 JSON，持久性物件符合本地規範Schema，協定時間戳記使用 RFC
+3339 具有附加的確定性規則，其中 Signed
+Document 驗證適用（[MWP-FND-004](../../../reference/specification/foundations/#mwp-fnd-004)）。
+
+- 將時間戳拼字與解析的時刻分開儲存。不要重寫在散列或驗證之前（[MWP-FND-005](../../../reference/specification/foundations/#mwp-fnd-005)）。
+- 規範地解碼base64url，無需填充，使用小寫 `sha256:<64 hex digits>`
+  哈希，並將序列、修訂、紀元和預算保持在非負安全範圍內 JSON 整數範圍（[MWP-FND-007](../../../reference/specification/foundations/#mwp-fnd-007)）。
+- 驗證識別碼作為完整的絕對 RFC 3986
+  URI 並比較它們保留位元組而不發明接收者標準化（[MWP-FND-008](../../../reference/specification/foundations/#mwp-fnd-008)）。
+- 启用每个架构 `format` 關鍵字作為斷言，包括 `uri` 和 `date-time`
+  ([MWP-FND-009](../../../reference/specification/foundations/#mwp-fnd-009)）。
+
+## 模式類型和語意類型
+
+生成的语言类型是 JSON 模式的有用投影，但它们不会取代验证。 v0.1 架構使用草案 2020-12，拒絕未知的核心屬性，並且僅透過聲明的擴展成員和批准的配置文件才允許擴展性 ([MWP-EXT-010](../../../reference/specification/errors-extensions-and-security/#mwp-ext-010))。
+
+將這些類別分開：
+
+| 類別            | 範例                                                | 接受邊界                                      |
+| --------------- | --------------------------------------------------- | --------------------------------------------- |
+| 標量            | 標識符、時間戳記、雜湊值、base64url、安全性整數     | 詞彙和值設定檔驗證                            |
+| 耐用文件        | Mission, WorkItem, Artifact, Evidence, Agent Card   | 嚴格的 JSON 加上完整的规范架构                |
+| Signed Document | Command, Event, Approval, Agent Card, Artifact 清單 | 架構加六階段驗證                              |
+| 权威国家        | 汇总修订， Membership、所有權、租賃、預算分類帳     | 當前的 Organization 或者 Group Authority 過渡 |
+| 局部投影        | 遊標、收件匣、寄件匣、每Group 隊列，檢查站          | 可根據權威事件和本地持久性工作進行重建        |
+
+每個 Signed Document 種類在
+[MWP-SDV-001 下選擇一個受保護時間和預期簽署者](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)。這 First-Admission
+Record 是一個單獨的無符號九字段對象，無法驗證其自己的位元組（[MWP-ADM-001](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001)).
+
+## 命令和事件
+
+一個 Command 是一份針對結構化過渡的已簽署請求。它的信封綁定了穩定的Action
+ID、版本、參與者、類型、負載、相關性、發佈時間和適用的 Group 和紀元字段（[MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001)）。有效的 Command 因此 object 還不是一個可接受的轉換。
+
+一個 Event 是不可改變的公認事實。 Group 事件包含單調性 Group 序列和聚合修訂分配 Group
+Authority;兩個 Organization-範圍引導程式 Event 種類省略 Group 訂單欄位（[MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)）。
+
+## 保留後期所需的證據
+
+解碼器必須保留足夠的資訊來：
+
+- 在模式驗證之前拒絕重複的解碼成員名稱；
+- 逐字節比較受保護的時間戳文字；
+- 應用 RFC 8785 binary64 和 Unicode 資料模型；
+- 完全省略頂層 `signature` 產生簽名字節時的成員；
+- 區分缺失數據和不可用或不確定的權威數據證據；和
+- 報告第一個失敗的語義階段，而不暴露受保護的詳細信息電線。
+
+重複名稱拒絕和內容派生的規範位元組遵循
+[MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012)。有序驗證輸入和完整的第 4 階段 Registry 掃描遵循
+[MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)，包括
+[MWP-SDV-008](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-008)
+下的選定密鑰。部分缓存无法取代权威完整性（[MWP-SDV-009](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-009)）；适配器必须建立适用的修订版、完整性和历史覆盖范围，或者报告它不能 ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010))，并且只有在建立完整性后，未知密钥才是权威的([MWP-SDV-011](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-011))。無損保留保留
+[MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016)
+下的規範階段分類，而受保護的診斷處理和線路安全故障邊界遵循
+[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)]。
+
+在 [JSON 架構目錄](../../../reference/schemas/)
+中瀏覽確切的本機類型。然後實現[驗證、規範化和簽章](../validation-canonicalization-and-signing/)。

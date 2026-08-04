@@ -1,0 +1,76 @@
+---
+title: 运输和装框
+description:
+  规范的 HELLO 身份验证、Session Epoch 防护、WebSocket 文本帧、Group
+  订阅、多路复用、ACK、PING 和反压模型。
+---
+
+# 传输和框架
+
+MissionWeaveProtocol 0.1 通过 TLS
+1.3 将运行时绑定到经过身份验证的 WebSocket。运输物资装箱和交付；它不会取代单独的 Signed
+Document 验证、Group 授权、持久重播或屏蔽。
+[MWP-FND-003](../../../reference/specification/foundations/#mwp-fnd-003)
+枚举了所需的 TLS、WebSocket、JSON、JCS、架构和加密规范。
+
+## HELLO 身份验证
+
+四消息 HELLO 交换使用新的服务器质询和 Organization 注册的 Ed25519 密钥。它协商协议版本并返回一个短期会话令牌以及新颁发的 Session
+Epoch
+([MWP-IDN-007](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-007))。
+
+发行纪元 `n + 1` 会在每个运行时在纪元 `n` 或更低处进行隔离。每个状态更改的 Agent
+Command 都会根据当前纪元进行检查，并且两个运行时无法同时操作一个稳定的 Agent 身份 ([MWP-IDN-008](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-008))。
+
+## WebSocket 消息边界
+
+服务器提供`wss`；一个经过身份验证的连接可以复用一个 Agent 使用的所有组。每条 WebSocket 消息恰好包含一个符合本地
+`websocket-frame` 架构的 UTF-8
+JSON 文本框架。二进制帧不能携带协议对象或 Artifact 内容 ([MWP-EVT-008](../../../reference/specification/commands-events-and-ordering/#mwp-evt-008))。
+
+核心框架类型有：
+
+| 框架        | 目的                         |
+| ----------- | ---------------------------- |
+| `HELLO`     | 质询认证、版本协商和会话发布 |
+| `SUBSCRIBE` | 授权Group选择和重播位置      |
+| `COMMAND`   | 一份已签署的结构化过渡请求   |
+| `EVENT`     | 一个不可改变的公认事实       |
+| `ACK`       | 一个或多个持久的连续光标     |
+| `PING`      | 活跃度和可选存在             |
+| `ERROR`     | 机器可读的拒绝或运输指南     |
+
+## 排序前订阅并路由
+
+认证后， `SUBSCRIBE` 携带 Group
+ID，每Group 重播位置和可选的注意力过滤器。服务器独立执行 Membership 并且没有透露是否未经授权 Group 存在（[MWP-EVT-009](../../../reference/specification/commands-events-and-ordering/#mwp-evt-009)）。
+
+不同组的活动可能会交叉进行。每个接收器路由 Event 经过 Group 应用序列、游标、重复数据删除或队列逻辑之前的 ID；仅每Group 定义顺序（[MWP-EVT-010](../../../reference/specification/commands-events-and-ordering/#mwp-evt-010)）。
+
+## 活力、进步和压力
+
+`ACK` 报告持久进展。 `PING`
+证明活跃性并可能携带存在记录；对等方回应其随机数。服务器使用有界缓冲区和per-Group 背压，暂停过载 Group 和
+`BACKPRESSURE`
+指导而不是尽可能断开不相关的组（[MWP-EVT-011](../../../reference/specification/commands-events-and-ordering/#mwp-evt-011)）。
+
+存在可以通过身份验证进行旅行 `PING` 没有个人持久签名，但不能暴露另一个 Group
+([MWP-IDN-006](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-006)）。一个吵闹的 Group 不能让别人挨饿；网关提供每Group 尽可能使用流量控制和独立订阅游标（[MWP-MSN-014](../../../reference/specification/missions-groups-and-membership/#mwp-msn-014)).
+
+ACK 不允许删除权威 Event 历史记录，PING 或状态更新也不是指派接受或租约续订。接收器对事件进行重复数据删除，并且永远不会将光标推进序列间隙（[MWP-WRK-029](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)）。 ACK 和重新连接重播使用最高的连续持久游标，并可能在断开连接时重新传送事件 ([MWP-WRK-030](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030))。
+
+## 线路边界编码
+
+电汇 JSON 可能以任何成员顺序到达，但在架构验证之前会拒绝重复的成员名称。每个签名、内容派生标识符和哈希都使用确切的 RFC
+8785
+JCS 值模型和字节 ([MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012))。大型内容作为内容寻址的 Artifact 引用而不是二进制或部分流协议帧进行传输。
+
+:::note[Implementation note]
+
+在一个连接后面维护独立的每个 Group 接收缓冲区和重播状态。使用有界退避重新连接，但保留每个 Group 的最后一个持久游标，并期望在断开边界周围出现重复事件。
+
+应用连接范围限制作为最终安全阀，并将每个 Group 限制作为正常隔离机制。缓冲区大小、心跳周期、重新连接抖动和套接字库选择是部署调整，而不是线路常量。
+
+:::
+
+继续[错误和可观察性](../errors-and-observability/)，了解线路拒绝和受保护的诊断。

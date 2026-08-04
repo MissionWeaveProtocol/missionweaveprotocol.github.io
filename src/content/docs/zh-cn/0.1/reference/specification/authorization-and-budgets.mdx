@@ -1,0 +1,60 @@
+---
+title: 授权、预算和副作用
+description: 规范授权、能力、审批​​、预算和副作用控制。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 12. 授权、预算和副作用
+
+<NormativeClause id="MWP-AUT-001" level="MUST">
+
+在接受 WorkItem 并获得所有必需的批准后，授权服务会颁发短期的最小权限功能令牌。令牌 MUST 绑定到：
+
+- Worker Agent ID 和当前 Session Epoch；
+- WorkItem ID和所有权纪元；
+- 当前执行租约 ID；
+- 允许的工具、资源、数据和操作；
+- 财务、代币、调用、计算、时间和副作用限制；和
+- 到期时间不晚于适用的执行租约。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-002" level={["MAY","MUST NOT","MUST"]}>
+
+Coordinator MAY 请求授权，但 MUST
+NOT 制造、复制或转发 Worker 的凭证。令牌和秘密 MUST
+NOT 出现在消息、Agent 卡、上下文包、工件或 Group 事件中。过期、撤销、不匹配或超出预算的代币 MUST 将被拒绝。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-003" level={["MUST","MAY"]}>
+
+Organization 策略 MUST 能够在生产部署、支付、外部通信、破坏性更改或敏感数据访问之前将 WorkItem 放入
+`awaiting_execution_approval`。授权服务 MUST 保留功能令牌，直到满足签名的批准门。低风险工作 MAY 根据政策自动进行。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-004" level="MUST NOT">
+
+Mission 和 WorkItem 预算是强制协议概念。 MissionOwner 设置 Mission 限制，Coordinator 向工作项和子任务分配不超过这些限制，并且授权服务强制执行硬限制。预算耗尽会暂停受影响的工作并需要明确升级；代理 MUST
+NOT 默默地超出了限制。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-005" level="MUST">
+
+Group Authority MUST 保留聚合的六维预算分类帐。已签名的
+`ext.missionweaveprotocol.core.resource_usage_record`
+Command 记录了针对 WorkItem、所有权纪元和执行租约 ID 的非零增量；相应的
+`ext.missionweaveprotocol.core.resource_usage_recorded`
+Event 携带增量、累积使用量和剩余预算。消耗 MUST 在一次原子转换中更新 WorkItem 及其完整的 WorkItem/Mission 祖先。一维溢出 MUST 将整个转换拒绝为
+`BUDGET_EXCEEDED`。能力代币预算 MUST 受工作合同和权威剩余预算的限制。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-006" level="MUST">
+
+取消或紧急终止 MUST 撤销相关租约和能力令牌，停止新的分配，并在需要时启动合同定义的清理或补偿工作项。
+
+</NormativeClause>

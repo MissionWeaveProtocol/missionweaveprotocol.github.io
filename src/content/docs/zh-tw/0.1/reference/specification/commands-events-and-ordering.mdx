@@ -1,0 +1,222 @@
+---
+title: 命令、事件和排序
+description:
+  Command 和 Event 信封、並發性、Group 順序、WebSocket 傳輸和規格線路編碼。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../../components/InformativeBlock.astro";
+
+## 15. 指令、事件與並發
+
+### 15.1 指令
+
+<NormativeClause id="MWP-EVT-001" level={["MUST","MUST NOT"]}>
+
+一個 Command 是一個結構化狀態轉換的簽章請求。每一個 Command 信封 MUST 包含穩定的 Action
+ID、協議版本、參與者、種類、有效負載、相關 ID、發佈時間和簽名。一個 Group-範圍 Command
+MUST 包含其 Group ID。狀態改變 Agent Command MUST 另外還包含目前的 Session
+Epoch 和 Membership 時代。一個人 Command 在現有的 Group
+MUST 包含當前的 Membership 紀元和 MUST NOT 包含一個 Agent Session
+Epoch。一個 Organization-服務 Command MUST
+NOT 發明 Agent 會話或 Membership 紀元。
+
+</NormativeClause>
+
+`mission.create` 和 `mission.create_follow_up`
+攜帶身分證 Group 正在創建但省略 Membership 和 Session Epochs 因為新的 Group
+Membership 尚不存在並且人類命令不使用 Agent 會議。控制平面可以進行身份驗證、中繼和驗證
+`mission.create`，但是簽名的 Command 演員和由此產生的根 MissionOwner 保持人性；控制平面不會成為 MissionOwner。這 Organization擁有的
+`ext.missionweaveprotocol.registry.agent_card_register` 和
+`ext.missionweaveprotocol.identity.session_open` bootstrap指令省略 Group
+ID 和所有三個角色/會話時期。
+
+<NormativeClause id="MWP-EVT-002" level={["MUST","SHOULD"]}>
+
+一個 Agent
+Command 其權限源自於目前 Coordinator 租 MUST 包含當前的 Coordinator 時代。這是必需的
+`mission.renew_coordinator`, `mission.submit_for_approval`,
+`mission.create_child`, `membership.grant_delegation`， 和
+`work.accept_result`，並且對於一個 Agent-發布 `mission.terminate`。服務發行
+`mission.terminate`
+而是由以下人員授權 Organization 政策並且不帶有 Coordinator 時代。一個 Command
+SHOULD 包含修改現有結構化狀態時預期的聚合修訂。一個 Command 使用一次性合作升級 MUST 還包含
+`cooperationOverrideGrantId`.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EVT-003" level={["MUST","MUST NOT"]}>
+
+相同 `(actor ID, Action ID)`
+具有位元組等效的規範簽名內容 MUST 返回原始收據並 MUST
+NOT 附加第二個狀態轉換。重複使用具有不同規範內容的相同操作 ID MUST 失敗與
+`ACTION_ID_COLLISION`.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EVT-004" level="MUST">
+
+這 Group Authority
+MUST 驗證演員身份；驗證會話和 Membership 時代、模式、當前聚合修訂、角色、授權、預算、政策和租賃；並要么拒絕 Command 或附加結果 Event(s) 原子地在該範圍內 Group.
+
+</NormativeClause>
+
+<span id="core-command-kinds"></span>
+
+核 Command 種類有：
+
+```text
+mission.create                 mission.assign_coordinator
+mission.renew_coordinator      mission.submit_for_approval
+mission.approve                mission.request_changes
+mission.cancel                 mission.terminate
+mission.create_child           mission.create_follow_up
+membership.change             membership.end
+membership.grant_delegation
+message.post                   message.correct
+message.retract                message.redact
+work.propose                   work.authorize
+work.offer                     work.accept_offer
+work.start                     work.checkpoint
+work.block                     work.unblock
+work.submit                    work.accept_result
+work.fail                      work.cancel
+artifact.publish               approval.grant_execution
+policy.grant_cooperation_override
+```
+
+參考核心也定義了 Organization擁有的 `ext.missionweaveprotocol.*` 命令用於 Agent
+Card 註冊、會話啟動、依賴項插入、執行租約續約、權威資源使用記錄，以及 Group 檔案。未來 Extension
+Profile 可以標準化便利命令，例如明確拒絕報價、澄清或 Mission 暫停，但這些名稱不是 v0.1 核心過渡。
+
+### 15.2 事件和 Group 命令
+
+<NormativeClause id="MWP-EVT-005" level={["MUST","MUST NOT"]}>
+
+一個 Event 是不可改變的公認事實。一個 Group Event 信封 MUST 包含 Event
+ID， Group
+ID，嚴格遞增 Group 序列、聚合修訂、種類、參與者、原因、相關 ID、發生時間、有效負荷和 Group
+Authority 簽名。這 Organization-範圍
+`ext.missionweaveprotocol.registry.agent_card_registered` 和
+`ext.missionweaveprotocol.identity.session_opened`
+事實包含共同點 Event 身分、參與者、原因、相關性、有效負載、時間、接受權限和簽名字段，但是 MUST
+NOT 包含 Group ID， Group 序列，或 Group 匯總修訂。
+
+</NormativeClause>
+
+這 Group Authority 為每個持久分配一個單調序列 Group
+Event。此序列提供確定性的顯示、復原和審核順序。即使服務指定了顯示順序，普通訊息也可以在邏輯上並發。結構化轉型依賴 Event 順序和匯總修訂。
+
+<span id="core-event-kinds"></span>
+
+核 Event types 是與核心指令對應的過去式事實，包括：
+
+```text
+mission.created                 mission.coordinator.assigned
+mission.coordinator.renewed     mission.submitted_for_approval
+mission.approved                mission.changes_requested
+mission.cancelled               mission.terminated
+mission.child.created           mission.follow_up.created
+membership.changed              membership.ended
+membership.delegation.granted
+message.posted                  message.corrected
+message.retracted               message.redacted
+work.proposed                   work.authorized
+work.offer.created              work.offer.accepted
+work.contract.revised           work.started
+work.progressed                 work.checkpointed
+work.blocked                    work.unblocked
+work.submitted                  work.result.accepted
+work.failed                     work.cancelled
+artifact.published              approval.execution.granted
+policy.cooperation_override.granted
+group.snapshot.created          group.archived
+```
+
+`work.contract.revised` 和 `work.progressed`
+是核心 WorkItem 參考文獻所發出的事實 Organization-擁有的依賴項插入和執行租賃更新命令。 Agent
+Card 和會話激活事實保留其 `ext.missionweaveprotocol.*` Event 種。
+`group.snapshot.created` 和 `group.archived`
+是由原子發射的核心檔案事實 Organization擁有的
+`ext.missionweaveprotocol.core.group_archive`
+Command 在其簽名快照和策略日誌連結驗證之後。
+
+<NormativeClause id="MWP-EVT-006" level="MAY">
+
+自動事件 MAY 是由一個接受的 Command， 事先的 Event、計時器或策略決策。來自不同組別的事件沒有明確的順序。
+
+</NormativeClause>
+
+### 15.3 樂觀並發
+
+<NormativeClause id="MWP-EVT-007" level={["SHOULD","MUST","MUST NOT"]}>
+
+結構化聚合命令 SHOULD 提供 `expectedRevision`。如果它不等於目前修訂版，則 Group
+Authority MUST 拒絕 Command 和 `REVISION_CONFLICT` 和 MUST
+NOT 部分應用它。原子先接受所有權，續租， Membership 改變，並且 Approval 即使特權內部參與者省略了連線字段，也始終需要比較和設定處理。
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+下一個區塊恢復稍後固定的來源段。詳見【規格源碼圖](./) 對於中間的本機頁面和確切的行範圍。
+
+</InformativeBlock>
+
+## 17. WebSocket 綁定
+
+### 17.1 連接
+
+<NormativeClause id="MWP-EVT-008" level={["MUST","MUST NOT"]}>
+
+MissionWeaveProtocol 0.1台伺服器 MUST 提供 WebSocket 通過 TLS
+1.3（`wss`）。單一經過身份驗證的連線複用一個使用的所有群組 Agent。每個 WebSocket 訊息 MUST 恰好包含一個 UTF-8
+JSON 文字框架符合
+`schemas/websocket-frame.schema.json`。二進位 WebSocket 訊息 MUST
+NOT 攜帶 MissionWeaveProtocol 物體或 Artifact v0.1 中的內容。
+
+</NormativeClause>
+
+核心框架類型有 `HELLO`, `SUBSCRIBE`, `COMMAND`, `EVENT`, `ACK`, `PING`， 和
+`ERROR`。部分的 Message 流幀沒有定義。
+
+### 17.2 訂閱
+
+<NormativeClause id="MWP-EVT-009" level={["MUST","MUST NOT"]}>
+
+認證後，客戶端發送 `SUBSCRIBE` 和 Group
+ID，每Group 重播位置和可選的注意力過濾器。過濾器改變的是即時交付，而不是授權或持久歷史記錄。伺服器 MUST 獨立執行 Membership 對於每一個 Group 和 MUST
+NOT 揭示是否未經授權 Group 存在。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EVT-010" level={["MAY","MUST"]}>
+
+一個連接 MAY 交錯來自多個群組的事件。僅在每個內保證順序 Group。一個接收器 MUST 路線經過 Group 應用序列邏輯之前的 ID。
+
+</NormativeClause>
+
+### 17.3 流量控制與活躍度
+
+<NormativeClause id="MWP-EVT-011" level={["MAY","MUST","SHOULD"]}>
+
+`ACK` 提供持久的進步。 `PING`
+提供活力和 MAY 攜帶在場記錄；對等方在回復中回顯其隨機數
+`PING`。伺服器 MUST 應用有界緩衝和每Group 背壓。當達到限制時，他們 SHOULD 暫停一下 Group 並發出
+`BACKPRESSURE` 重試指導而不是斷開不相關的群組。
+
+</NormativeClause>
+
+### 17.4 規範編碼
+
+<NormativeClause id="MWP-EVT-012" level="MUST">
+
+金屬絲 JSON 不需要按規範成員順序到達，但每個哈希、從內容派生的標識符或簽名 MUST 使用 RFC
+8785
+JCS 位元組.重複的物件成員名稱 MUST 在模式驗證之前被拒絕。數字和字串 MUST 滿足有限二進位64和I-JSON
+[第 2 節的規則](../foundations/#mwp-fnd-006);符合要求的實施 MUST 產生相同的 JCS 相同的位元組數 JSON 價值。
+
+</NormativeClause>
+
+大量內容發佈為 Artifact 並透過 URI 和內容哈希引用。 v0.1 模式拒絕未知的核心屬性。未知非關鍵 Extension
+Profile 資料儲存和轉發不變。未知的關鍵擴充原因 `UNKNOWN_CRITICAL_EXTENSION`.

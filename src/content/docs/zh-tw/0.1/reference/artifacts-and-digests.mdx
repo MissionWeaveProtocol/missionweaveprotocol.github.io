@@ -1,0 +1,42 @@
+---
+title: 文物和摘要
+description: MissionWeaveProtocol 0.1 網站如何綁定本地規範位元組並釋放身分。
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import artifacts from "../../../../../data/normative/0.1/artifacts.json";
+
+# 工件和摘要
+
+本地協定包包含**{artifacts.bundle.files}精確檔案**以及樹摘要<code>{artifacts.bundle.digest}</code>。協定引腳 SHA-256 是
+
+<code>{artifacts.protocolPin.sha256}</code> 和固定協定套件 SHA-256為
+<code>{artifacts.protocolPin.bundleSha256}</code>。
+
+| 表面       |                                                              文件或工件 | 摘要                                         |
+| ---------- | ----------------------------------------------------------------------: | -------------------------------------------- |
+| 架構       |                                               {artifacts.schemas.files} | <code>{artifacts.schemas.digest}</code>      |
+| 結構一致性 | {artifacts.structural.files} 檔案 / {artifacts.structural.vectors} 向量 | <code>{artifacts.structural.digest}</code>   |
+| 密碼學     |                                      {artifacts.cryptography.artifacts} | <code>{artifacts.cryptography.digest}</code> |
+| 入場       |                                         {artifacts.admission.artifacts} | <code>{artifacts.admission.digest}</code>    |
+
+## 摘要語義
+
+各個清單條目將確切的檔案位元組與小寫的 SHA-256 綁定。加密和存取頂級
+`artifactDigest` 值完全刪除該成員，使用 RFC 8785
+JCS 序列化剩餘清單，並對規範位元組進行雜湊處理。他們聲明的工件條目可傳遞地綁定每個命名檔案。
+
+網站捆綁樹摘要還按排序路徑順序綁定每個規範相對路徑、NUL 分隔符號、確切的檔案位元組和尾隨 NUL 分隔符號。這可以防止兩個不同的工件佈局僅僅因為它們的串聯位元組匹配而共享同一標識。
+
+## 本機發佈工件
+
+- <ArtifactLink path="protocol/spec/PROTOCOL.md">固定協議來源</ArtifactLink>
+- <ArtifactLink path="protocol/CONTEXT.md">固定規範術語表</ArtifactLink>
+- <ArtifactLink path="protocol/conformance/manifest.json">
+    結構清單
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/manifest.json">
+    密碼學清單
+  </ArtifactLink>
+- <ArtifactLink path="protocol/admission/manifest.json">入學清單</ArtifactLink>
+- <ArtifactLink path="normative-release.json">產生的網站發布清單</ArtifactLink>

@@ -1,0 +1,80 @@
+---
+title: Python 运行时参考
+description: 精确固定的 Python 参考实现的完整公共模块和运行时表面。
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Python 运行时参考
+
+此页面涵盖完整的第一方 Python 由[精确表示的表面 API 存货](../api/)。共享协议行为仍然由本地[运行时参考](../../../runtime/architecture-and-bootstrap/)
+和[参考条款](../../../../reference/specification/)。下面的名称定义了如何固定 Python 实现暴露了这种行为。
+
+<SupportStatus status="implemented" />
+适用于下面列出的包模块和进程内运行时合约。
+
+<SupportStatus status="deployment-adapter-required" />
+当成功操作依赖于外部数据库、经过身份验证的机构、网络绑定、证书、密钥或部署提供的持久服务时适用。
+
+## 导入模型
+
+`missionweaveprotocol.__init__`
+为签署的文件、准入、捆绑验证、预算、租赁和授权提供精心策划的顶级导出。更广泛的参考运行时是公共子模块 API： 进口
+`Core` 从 `missionweaveprotocol.core`, `AgentRuntime` 从
+`missionweaveprotocol.agent`, `Scheduler` 从
+`missionweaveprotocol.scheduler`，以及记录在模块中的其他名称 API 存货。不要假设每个公共子模块类型都是从包根目录重新导出的。
+
+## 完整的模块图
+
+| 运行时关注         | 公共模块                                                                                                                                                                         | 固定提交的合同                                                                                                                                              |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 协议和语义模型     | `missionweaveprotocol.models`、`missionweaveprotocol.documents`、`missionweaveprotocol.artifacts`、`missionweaveprotocol.context`                                                | 类型化协议对象、文档帮助程序、Artifact 和 Evidence 处理以及 Group 范围的上下文结构。模式有效的数据仍然需要本地规范定义的语义检查。                          |
+| 权威状态转换       | `missionweaveprotocol.core`、`missionweaveprotocol.control`、`missionweaveprotocol.auth`、`missionweaveprotocol.ingress`                                                         | `Core` 查询、重放、执行路径；接受操作控制、会话和签名助手以及经过验证的入口边界。仅对话或模型输出永远不会授权状态转换。                                     |
+| Agent 执行         | `missionweaveprotocol.agent`、`missionweaveprotocol.execution`、`missionweaveprotocol.offline`                                                                                   | 一个活动的 Agent 运行时会话、Group 上下文安装、准备执行、检查点感知工作执行和离线协调帮助程序。会话、Membership、Coordinator 和所有权纪元仍然是隔离输入。   |
+| 调度和恢复         | `missionweaveprotocol.scheduler`、`missionweaveprotocol.replay`                                                                                                                  | 工作准入、调度、抢占、过渡应用、快照、确定性重建、Event 投影、连续重播和 Agent 本地协调。                                                                   |
+| 坚持               | `missionweaveprotocol.store`、`missionweaveprotocol.local_store`                                                                                                                 | `InMemoryStore`、SQL 支持的权威存储以及 `SQLiteAgentStore` 用于本地游标、上下文、检查点、调度程序状态、事件和挂起操作。 权威状态和 Agent 本地投影保持独立。 |
+| 政策和有限权力     | `missionweaveprotocol.policy`、`missionweaveprotocol.lease`、`missionweaveprotocol.budget`、`missionweaveprotocol.delegation`                                                    | Membership 和能力令牌服务、策略保护、执行租赁转换、可重建预算分类账和授权缩小检查。这些 API 不会取代部署必须控制的权威策略或关键服务。                      |
+| 解析、规范化和签名 | `missionweaveprotocol.schema_formats`、`missionweaveprotocol.canonical`、`missionweaveprotocol.crypto`、`missionweaveprotocol.signed_documents`、`missionweaveprotocol.registry` | 协议标量格式、严格验证助手、RFC 8785 规范化、Ed25519 原语、六阶段 Signed Document 签名和验证，以及完整的 Organization 范围 Registry 支持的密钥解析。        |
+| 首次入场           | `missionweaveprotocol.admission`                                                                                                                                                 | 键入当前 Registry、Admission Log 以及经过六阶段验证后分层的可信上下文适配器。首次承认和历史重播有不同的证据路径。                                           |
+| 框架和网关         | `missionweaveprotocol.wire`、`missionweaveprotocol.gateway`                                                                                                                      | HELLO/CHALLENGE/AUTH/WELCOME 握手模型、Command/Event/ACK/PING 帧、解析和编码、订阅游标、会话激活、Group 路由以及与 Core 的网关集成。                        |
+| 捆绑包、检查和命令 | `missionweaveprotocol.bundle`、`missionweaveprotocol.conformance`、`missionweaveprotocol.cli`、`missionweaveprotocol.poc`                                                        | 打包的协议包发现和摘要验证、模式和向量执行、三个控制台入口点以及确定性概念验证报告。                                                                        |
+
+## 核心、商店和交易边界
+
+`Core` 是权威的状态机外观。其公共 `query`、`replay` 和 `perform` 操作由
+`AuthoritativeStore`
+支持。商店合约暴露了交易、检查和生命周期边界；内存中、SQLite、通用 SQL 和 PostgreSQL 实现不会改变协议的原子性、修订、幂等性或防护要求。
+
+`SQLiteAgentStore`
+是 Agent-本地。它存储重播位置、Group 上下文、检查点、调度程序状态、已见事件和挂起的出站操作，以便 Agent 可以恢复。这些投影是可重建的，不能成为 Mission 或 Group 真相的权威。继续使用[持久性和恢复](../../../runtime/persistence-and-recovery/)进行规范分离。
+
+外部数据库是部署依赖项。 `PostgreSQLStore`
+需要配置数据库服务和驱动程序；连接可用性或本地缓存命中并不能证明已提交权威转换。
+
+## Agent，调度程序和重放
+
+`AgentRuntime.start_session` 建立单个活动本地会话并返回
+`AgentRuntimeSession`。该会话接受 Group 范围的上下文和凭证、准备执行并公开
+`Scheduler`。调度程序承认工作，应用转换，调度或抢占，并从快照重建。
+`AgentReplay` 和 `EventProjector`
+从有序事件恢复本地投影并拒绝间隙或不一致的投影状态。
+
+执行租赁、策略、预算和委托 API 是单独的检查。在产生副作用之前，计划的项目仍然需要当前的防护、已接受的工作、适用的政策、剩余预算和有效的最低权限授权。
+
+## 验证、信任和框架
+
+在受保护的处理之前，请验证严格的 JSON 和固定的草案 2020-12 架构，保留协议标量字节，规范化签名投影，验证 Ed25519 材料，并从完整的 Registry 证据中解析所选密钥。确切的六阶段顺序在[验证、规范化和签名](../../../runtime/validation-canonicalization-and-signing/)中指定。
+
+`missionweaveprotocol.wire` 拥有类型化框架模型以及
+`parse_frame`、`parse_received_frame` 和 `encode_frame`。 `GroupGateway`
+将这些帧绑定到会话激活、订阅、游标、重播和核心操作。生产网络部署必须提供安全绑定、身份验证输入、TLS
+1.3 证书和密钥、背压限制和操作隔离。 Python 包提供网关运行时；它不提供部署网络权限。
+
+## 一致性和升级
+
+`SchemaCatalog` 和 `run_manifest` 执行支持的本地验证表面。
+`verify_cryptography_bundle` 和 `verify_admission_bundle`
+将打包的工件绑定到记录的引脚和摘要。 `missionweaveprotocol-conformance`
+向操作员公开结构清单运行程序。在检查打包的密码学和准入工件身份时，分别调用两个捆绑验证函数。
+
+每当 SDK 提交、协议 pin、架构集、加密包、准入包或部署适配器发生更改时，请再次运行一致性。传递一个子集仅证明该子集；它不建立数据库持久性、网络安全性、硬件容量或生产准备情况。
