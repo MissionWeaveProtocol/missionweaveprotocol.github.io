@@ -155,11 +155,20 @@ function headingDepthSequence(body) {
   );
 }
 
-function importSequence(body) {
+function importSequence(body, documentPath) {
   return body
     .split("\n")
     .filter((line) => /^\s*import\s/u.test(line))
-    .map((line) => line.trim().replace(/\s+/gu, " "));
+    .map((line) => line.trim().replace(/\s+/gu, " "))
+    .map((line) => {
+      const source = /\bfrom\s+(["'])(?<specifier>[^"']+)\1/u.exec(line)?.groups
+        ?.specifier;
+      if (source === undefined || !source.startsWith(".")) return line;
+      const resolved = path.posix.normalize(
+        path.posix.join(path.posix.dirname(documentPath), source),
+      );
+      return line.replace(source, `<resolved:${resolved}>`);
+    });
 }
 
 function informativeSequence(body) {
@@ -269,7 +278,7 @@ for (const relativePath of englishFiles) {
     clauses: clauseSequence(english.body),
     codeBlocks: codeBlockCount(english.body),
     headings: headingDepthSequence(english.body),
-    imports: importSequence(english.body),
+    imports: importSequence(english.body, `0.1/${relativePath}`),
     informative: informativeSequence(english.body),
     keywords: normativeKeywordSequence(english.body, policy.normativeKeywords),
     links: localLinkSequence(english.body),
@@ -305,7 +314,7 @@ for (const relativePath of englishFiles) {
       clauses: clauseSequence(localized.body),
       codeBlocks: codeBlockCount(localized.body),
       headings: headingDepthSequence(localized.body),
-      imports: importSequence(localized.body),
+      imports: importSequence(localized.body, localizedRelativePath),
       informative: informativeSequence(localized.body),
       keywords: normativeKeywordSequence(
         localized.body,

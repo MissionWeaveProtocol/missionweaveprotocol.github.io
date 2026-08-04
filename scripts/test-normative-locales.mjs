@@ -24,6 +24,7 @@ function document(title, sentence, options = {}) {
   const level = options.level ?? "MUST";
   const heading = options.heading ?? "## Details";
   const link = options.link ?? "../other/";
+  const importPrefix = options.importPrefix ?? "../../../../";
   const code = options.code === false ? "" : "\n```text\nwire-value\n```\n";
   return `---
 title: "${title}"
@@ -33,8 +34,8 @@ normativeStatus: normative
 clausePrefix: MWP-TST
 ---
 
-import NormativeClause from "../../../../components/NormativeClause.astro";
-import InformativeBlock from "../../../../components/InformativeBlock.astro";
+import NormativeClause from "${importPrefix}components/NormativeClause.astro";
+import InformativeBlock from "${importPrefix}components/InformativeBlock.astro";
 
 # Fixture
 
@@ -52,6 +53,13 @@ Localized supporting text.
 
 </InformativeBlock>
 ${code}`;
+}
+
+function localizedDocument(locale, sentence, options = {}) {
+  return document(locale, sentence, {
+    ...options,
+    importPrefix: "../../../../../",
+  });
 }
 
 async function createFixture() {
@@ -110,7 +118,7 @@ async function createFixture() {
     await mkdir(directory, { recursive: true });
     await writeFile(
       path.join(directory, "page.mdx"),
-      document(locale, localizedSentences[locale]),
+      localizedDocument(locale, localizedSentences[locale]),
     );
   }
   return root;
@@ -155,7 +163,7 @@ await expectFailure(
   (root) =>
     writeFile(
       path.join(root, "src/content/docs/de/0.1/reference/page.mdx"),
-      document("de", localizedSentences.de, { level: "SHOULD" }),
+      localizedDocument("de", localizedSentences.de, { level: "SHOULD" }),
     ),
   /NormativeClause sequence differs/u,
 );
@@ -163,7 +171,9 @@ await expectFailure(
   (root) =>
     writeFile(
       path.join(root, "src/content/docs/es/0.1/reference/page.mdx"),
-      document("es", localizedSentences.es, { heading: "### Details" }),
+      localizedDocument("es", localizedSentences.es, {
+        heading: "### Details",
+      }),
     ),
   /heading-depth sequence differs/u,
 );
@@ -171,7 +181,7 @@ await expectFailure(
   (root) =>
     writeFile(
       path.join(root, "src/content/docs/ja/0.1/reference/page.mdx"),
-      document("ja", localizedSentences.ja, { link: "../wrong/" }),
+      localizedDocument("ja", localizedSentences.ja, { link: "../wrong/" }),
     ),
   /local-link sequence differs/u,
 );
@@ -179,7 +189,9 @@ await expectFailure(
   (root) =>
     writeFile(
       path.join(root, "src/content/docs/zh-tw/0.1/reference/page.mdx"),
-      document("zh-tw", localizedSentences["zh-tw"], { code: false }),
+      localizedDocument("zh-tw", localizedSentences["zh-tw"], {
+        code: false,
+      }),
     ),
   /code-block count differs/u,
 );
@@ -205,7 +217,7 @@ await expectFailure(async (root) => {
   );
   await writeFile(
     path.join(root, "src/content/docs/zh-cn/0.1/reference/page.mdx"),
-    document("zh-cn", `${localizedSentences["zh-cn"]} ${copied}`),
+    localizedDocument("zh-cn", `${localizedSentences["zh-cn"]} ${copied}`),
   );
 }, /contains untranslated English prose/u);
 
