@@ -1,0 +1,82 @@
+---
+title: Grupos y programación
+description: >-
+  Por colas Group, un programador propiedad de Worker, ranuras de ejecución
+  aisladas, preferencia segura de puntos de control y reproducción.
+---
+
+# Grupos y programación
+
+Un Worker puede pertenecer a muchos grupos Mission sin fusionar sus contextos.
+Mantiene una bandeja de entrada, un cursor y una cola de trabajo Event distintos
+para cada Group, y esas proyecciones locales siguen siendo reconstruibles a
+partir de eventos aceptados
+([MWP-WRK-008](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008)).
+
+```text
+Group A Events → Group A queue ┐
+Group B Events → Group B queue ├→ Worker Scheduler → isolated execution slots
+Group C Events → Group C queue ┘
+```
+
+## ¿Quién controla la prioridad?
+
+Los suministros Coordinator solicitaron urgencia, fecha límite e impacto
+comercial para su Mission. El programador Worker tiene control final sobre los
+pedidos cruzados Group; un Coordinator no puede forzar su Mission por delante de
+grupos no relacionados
+([MWP-WRK-009](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-009)).
+
+El Programador aplica la equidad ponderada y la lucha contra el hambre. El orden
+efectivo considera la clase de prioridad Organization, los plazos, la antigüedad
+de la cola, las cuotas por Group, las puertas de riesgo y los recursos
+disponibles.
+[MWP-WRK-010](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-010)
+excluye la programación pura e ilimitada de máxima prioridad.
+
+## Aislamiento y divulgación de horarios.
+
+Cada ranura activa aísla el contexto Mission, las credenciales, los puntos de
+control, los presupuestos de herramientas y las claves de efectos secundarios de
+todas las demás ranuras
+([MWP-WRK-011](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-011)).
+
+Un Worker puede publicar ventanas estimadas de inicio y finalización, confianza,
+estado de capacidad y tiempo de cálculo sin exponer la identidad, el contenido,
+las asignaciones o la posición exacta de la cola global de otro Group
+([MWP-WRK-012](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-012)).
+
+## Propiedad, arrendamientos y preferencia segura
+
+La aceptación inicia una Época de Propiedad y una fecha límite de inicio. La
+ejecución activa utiliza un contrato de arrendamiento de ejecución vinculado a
+Agent, Session Epoch, WorkItem, época de propiedad, ID de arrendamiento estable
+y vencimiento
+([MWP-WRK-013](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013)).
+
+Los cambios de prioridad reordenan el trabajo en cola inmediatamente. El trabajo
+activo llega a un punto de control seguro e idempotente antes de liberar su
+espacio:
+
+1. el Programador solicita preferencia;
+2. el Worker llega a un punto de control seguro;
+3. Worker registra el punto de control y hace una pausa;
+4. se libera la ranura de ejecución; y
+5. WorkItem regresa a su cola Group.
+
+Esta secuencia es el modelo normativo de preferencia cooperativa en
+[MWP-WRK-015](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-015).
+
+## Recuperación por repetición
+
+Event la entrega se realiza al menos una vez. Un Worker reiniciado restaura los
+cursores y colas Group a partir de instantáneas y reproducción ordenada,
+deduplica por ID Event y no hace avanzar un cursor duradero sobre un espacio de
+secuencia
+([MWP-WRK-029](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)).
+El reconocimiento informa la posición duradera contigua más alta sin eliminar el
+historial autorizado Group
+([MWP-WRK-030](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)).
+
+MissionWeaveProtocol define el orden dentro de cada Group, no un orden global
+entre grupos.

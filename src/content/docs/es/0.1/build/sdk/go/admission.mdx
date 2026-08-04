@@ -1,0 +1,151 @@
+---
+title: Ir Primera Admisión y Confianza Histórica
+description: >-
+  Adaptadores Go escritos, orden de llamada exacto, límites de confianza,
+  requisitos de registro atómico y un ejemplo de admisión ejecutable.
+---
+
+import goAdmissionExample from "../../../../../../../../examples/sdk/go/admission/main.go?raw";
+
+# Ir Primera Admisión y Confianza Histórica
+
+Go `AdmissionService` coloca la primera admisión y la confianza histórica por
+encima del verificador Signed Document de seis etapas
+([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+El flujo independiente del idioma es la
+[página de tiempo de ejecución de confianza histórica y de primera admisión local ](../../../runtime/first-admission-and-historical-trust/),
+y los requisitos exactos son las
+[cláusulas de confianza histórica y de primera admisión ](../../../../reference/specification/first-admission-and-historical-trust/)
+locales].
+
+## Adaptadores públicos y resultados.
+
+| Público API                                  | Responsabilidad                                                                                                                                                                                                                                                                                           |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.ResolveCurrent` | Devuelva evidencia Organization completa de Registry que la implementación afirma que está actualizada para esta decisión.                                                                                                                                                                                |
+| `TrustedAdmissionContext.Issue`              | Emita la identificación del registro confiable, el instante de aceptación y el servicio de aceptación solo después de una ausencia autorizada.                                                                                                                                                            |
+| `AdmissionLog.Lookup`                        | Devuelve un registro autenticado encontrado o `AdmissionLookup{AuthoritativeAbsence: true}`. Error de caché, tiempo de espera, ausencia no autenticada y error de estado indeterminado cerrado bajo [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
+| `AdmissionLog.AppendOrReturnExisting`        | Agregue atómicamente bytes candidatos o devuelva el ganador autorizado concurrente a través de una identidad de servicio autenticada.                                                                                                                                                                     |
+| `AuthenticatedAdmissionRecord`               | Vincule `RecordBytes` al servicio autenticado por el adaptador para que [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) pueda validar el registro devuelto.                                                                                          |
+| `AdmissionService.PrepareFirstAdmission`     | Cree y valide pruebas candidatas a partir de un `VerifiedSignedDocument` producido por SDK. No anexa ni implica admisión.                                                                                                                                                                                 |
+| `AdmissionService.AdmitFirst`                | Realice la verificación actual, la búsqueda autorizada, la creación de candidatos, la validación atómica de anexar o devolver existente y de registros devueltos en [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                                 |
+| `AdmissionService.VerifyHistoricalAdmission` | Vuelva a ejecutar la verificación de seis etapas con evidencia histórica Registry y solicite un registro existente sin emitir contexto ni agregar, como lo requiere [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                                 |
+| `AdmittedSignedDocument`                     | Devuelva evidencia de registro verificada y analizada más una copia defensiva `RecordBytes()`.                                                                                                                                                                                                            |
+
+Un valor booleano de confianza proporcionado por la persona que llama no es un
+resultado de búsqueda de admisión y nunca debe seleccionar la ruta exitosa.
+
+## Orden de llamada de primera admisión
+
+:::note[Informative example]
+
+```go
+first, err := missionweaveprotocol.NewAdmissionService().AdmitFirst(
+    missionweaveprotocol.SignedDocumentCommand,
+    documentBytes,
+    currentRegistry,
+    admissionLog,
+    trustedContext,
+)
+```
+
+:::
+
+`AdmitFirst` completa las seis etapas del documento firmado antes de consultar
+el registro. Un registro encontrado se valida y se devuelve sin emitir un
+contexto confiable ni agregarlo. Después de una ausencia autorizada, el servicio
+emite un contexto confiable, llama a `PrepareFirstAdmission`, invoca a
+`AppendOrReturnExisting`, toma una instantánea del valor devuelto y valida el
+registro realmente devuelto. Un ganador simultáneo es aceptable solo cuando su
+esquema, servicio autenticado, enlace de documentos y tiempo confiable pasan
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+y
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010).
+
+## Repetición histórica
+
+:::note[Informative example]
+
+```go
+historical, err := missionweaveprotocol.NewAdmissionService().VerifyHistoricalAdmission(
+    missionweaveprotocol.SignedDocumentCommand,
+    documentBytes,
+    historicalRegistry,
+    admissionLog,
+)
+```
+
+:::
+
+La reproducción histórica vuelve a ejecutar la verificación con el historial
+Registry retenido, requiere un registro encontrado y nunca llama a
+`TrustedAdmissionContext.Issue` o `AdmissionLog.AppendOrReturnExisting`. Los ID
+de registros coincidentes demuestran la recuperación del mismo registro
+autorizado; no prueban la actualización de Command, la autorización del
+firmante, la aceptación de la máquina de estado ni la verificación portátil a
+prueba de registros. Estos permanecen separados en
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+y
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
+
+## Superficie de error
+
+`AdmissionError.WireCode()` devuelve `AUTH_INVALID_SIGNATURE`, mientras que
+`ProtectedDiagnostic().Stage()` devuelve `admission`. Los motivos protegidos
+estables distinguen evidencia faltante, conflictiva, mal formada, no
+autenticada, no disponible, indeterminada y autoanclada, al tiempo que preservan
+el resultado de cable no oracular requerido por
+[MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012).
+
+Los adaptadores de implementación deben devolver `NewAdmissionAdapterError` con
+un motivo admitido cuando necesitan que el servicio reasigne una falla local
+confiable. Los errores arbitrarios no son prueba de ausencia autorizada.
+
+## Ejemplo ejecutable con fijación exacta
+
+:::note[Informative example]
+
+El ejemplo deriva de manera determinista una clave Ed25519, construye un
+Registry completo y un Command firmado, y proporciona adaptadores en memoria
+escritos. Un `sync.Mutex` protege el mapa autorizado compartido. `Lookup` y
+`AppendOrReturnExisting` lo adquieren de forma independiente; el mutex hace que
+`AppendOrReturnExisting` sea atómico cuando busca un ganador concurrente y lo
+agrega condicionalmente. El protocolo requiere una búsqueda autorizada y un
+comportamiento atómico de agregar o devolver lo existente, no una transacción
+que abarque ambas llamadas. La semilla fija es material de demostración y nunca
+debe usarse fuera del ejemplo.
+
+<pre>
+  <code>{goAdmissionExample}</code>
+</pre>
+
+Ejecútelo desde un pago SDK exacto:
+
+```bash
+go test ./...
+go run /absolute/path/to/examples/sdk/go/admission/main.go
+```
+
+El resultado esperado contiene el mismo ID de registro para `first admission` y
+`historical replay`. El programa también afirma que los hashes de firma y los
+bytes de registro coinciden y exactamente un anexo.
+
+:::
+
+:::note[Implementation note]
+
+Reemplace `currentRegistryFixture` con adaptadores Registry actuales e
+históricos autenticados, `inMemoryAdmissionLog` con un registro duradero
+autenticado que devuelve resultados de búsqueda autorizados y hace que
+`AppendOrReturnExisting` sea atómico sobre la clave lógica, y
+`fixedTrustedAdmissionContext` con tiempo de confianza controlado por
+Organization y emisión de servicio de aceptación. Una implementación puede
+utilizar una transacción más amplia, pero el protocolo no requiere que una
+transacción abarque `Lookup` y `AppendOrReturnExisting`.
+
+Reemplace `deterministicSigningKey` con un servicio de claves propiedad de la
+implementación. Conserve copias de bytes defensivas y no colapse los límites de
+autoridad en un valor booleano de confianza proporcionado por la persona que
+llama.
+
+:::

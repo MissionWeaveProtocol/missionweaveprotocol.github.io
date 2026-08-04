@@ -1,0 +1,84 @@
+---
+title: Documents signés et confiance
+description: >-
+  Comment le contenu protégé, les preuves Registry, l'historique des clés, la
+  canonisation et la vérification Ed25519 produisent un résultat en six étapes.
+---
+
+# Documents signés et confiance
+
+Un Signed Document est un objet de protocole durable dont la signature
+authentifie le contenu canonique protégé sous le profil de vérification Signed
+Document. Le profil sélectionne l'heure protégée et le signataire attendu pour
+chaque type de document.
+
+## L'enveloppe renvoie au contenu protégé
+
+L’entrée de signature v0.1 omet l’enveloppe complète de signature de niveau
+supérieur. Le vérificateur lie l'enveloppe via les exigences de temps protégé et
+Ed25519 dans
+[MWP-SDV-002](../../reference/specification/signed-documents-and-trust/#mwp-sdv-002),
+sélectionne le signataire attendu à l'aide de
+[MWP-SDV-001](../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)
+et suit la canonisation par étapes complète et les règles d'octet de signature
+dans
+[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015).
+
+Le hachage de signature est l'identité SHA-256 minuscule des octets RFC 8785 JCS
+exacts produits à l'étape 5. Il identifie le contenu protégé indépendamment de
+l'état d'admission
+([MWP-SDV-017](../../reference/specification/signed-documents-and-trust/#mwp-sdv-017)).
+
+## Registry la preuve est plus large qu'une clé sélectionnée
+
+L’étape 4 utilise une révision Registry cohérente et faisant autorité, de portée
+Organization. Les preuves établissent des liaisons de clés immuables, des
+invariants de non-réutilisation et sans alias à l'échelle Organization, ainsi
+que l'historique de validité conservé requis par le profil
+([MWP-SDV-008](../../reference/specification/signed-documents-and-trust/#mwp-sdv-008)).
+
+Un cache filtré par clé n'est pas suffisant simplement parce qu'il contient la
+clé demandée. La couture de résolution clé établit la portée des preuves,
+l'applicabilité des révisions, l'exhaustivité et la couverture historique, ou
+signale que ce n'est pas le cas
+([MWP-SDV-010](../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)).
+
+L'heure signée protégée est testée par rapport à l'intervalle de validité
+semi-ouvert de la clé sélectionnée. Le temps Registry est comparé à un instant
+et l'historique conservé peut rendre une signature antérieure vérifiable même
+après une expiration ou une révocation ultérieure
+([MWP-SDV-014](../../reference/specification/signed-documents-and-trust/#mwp-sdv-014)).
+
+## Vérification en six étapes
+
+La vérification suit les étapes ordonnées dans
+[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015) :
+
+1. analyse stricte UTF-8 JSON et rejet des membres en double ;
+2. Validation normative complète du schéma JSON ;
+3. signature-enveloppe et validation à temps protégé ;
+4. effectuer les vérifications des preuves Registry, de la résolution des clés,
+   de la liaison et de la validité ;
+5. Canonisation RFC 8785 et production de hachage de signature ; et
+6. vérification stricte de la signature Ed25519.
+
+Le vérificateur s'arrête à la première étape défaillante. Avant la réussite des
+six étapes, il n'autorise pas un acteur, n'ajoute pas de Event ou n'exécute pas
+de transition d'état.
+
+## Ce que signifie un résultat réussi
+
+Un résultat terminé conserve le Organization, le type de document, le hachage de
+signature, l'ID de clé résolu, le Principal lié, l'heure de signature protégée
+et l'intervalle de clé effectif. Il authentifie le contenu protégé et le
+Principal lié à la clé. Il n'admet pas par lui-même le document, ne prouve pas
+l'autorisation actuelle du protocole ou n'accepte pas une transition d'état.
+
+Les artefacts de schéma locaux exacts sont indexés dans le
+[JSON Schema catalog](../../reference/schemas/), et l'ensemble complet de
+preuves en six étapes est publié sous
+[cryptography conformance](../../reference/conformance/cryptography/).
+
+Continuez avec
+[Première admission et confiance historique](../first-admission-and-historical-trust/)
+pour la couche d'acceptation faisant autorité au-dessus de la cryptographie.

@@ -1,0 +1,158 @@
+---
+title: Go First Admission und Historical Trust
+description: >-
+  Typisierte Go-Adapter, genaue Aufrufreihenfolge, Vertrauensgrenzen, atomare
+  Protokollanforderungen und ein ausführbares Zulassungsbeispiel.
+---
+
+import goAdmissionExample from "../../../../../../../../examples/sdk/go/admission/main.go?raw";
+
+# Erste Zulassung und historisches Vertrauen
+
+Die Go-Schichten `AdmissionService` legen First Admission und Historical Trust
+über dem sechsstufigen Verifizierer Signed Document
+([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+Der sprachunabhängige Ablauf ist die lokale
+[First Admission and Historical Trust-Laufzeitseite](../../../runtime/first-admission-and-historical-trust/),
+und die genauen Anforderungen sind die lokalen
+[First-Admission- und Historical-Trust-Klauseln](../../../../reference/specification/first-admission-and-historical-trust/).
+
+## Öffentliche Adapter und Ergebnisse
+
+| Öffentlich API                               | Verantwortung                                                                                                                                                                                                                                                                                                                           |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.ResolveCurrent` | Geben Sie den vollständigen Organization-weiten Registry-Beweis zurück, dass die Bereitstellung für diese Entscheidung aktuell ist.                                                                                                                                                                                                     |
+| `TrustedAdmissionContext.Issue`              | Vergeben Sie die vertrauenswürdige Datensatz-ID, den Annahmezeitpunkt und den Annahmedienst erst nach behördlicher Abwesenheit.                                                                                                                                                                                                         |
+| `AdmissionLog.Lookup`                        | Gibt einen gefundenen authentifizierten Datensatz oder `AdmissionLookup{AuthoritativeAbsence: true}` zurück. Cache-Fehler, Zeitüberschreitung, nicht authentifizierte Abwesenheit und unbestimmter Statusfehler geschlossen unter [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
+| `AdmissionLog.AppendOrReturnExisting`        | Hängen Sie Kandidatenbytes atomar an oder geben Sie den gleichzeitigen autorisierenden Gewinner über eine authentifizierte Dienstidentität zurück.                                                                                                                                                                                      |
+| `AuthenticatedAdmissionRecord`               | Binden Sie `RecordBytes` an den vom Adapter authentifizierten Dienst, damit [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) den zurückgegebenen Datensatz validieren kann.                                                                                                         |
+| `AdmissionService.PrepareFirstAdmission`     | Erstellen und validieren Sie Kandidatennachweise aus einem von SDK erstellten `VerifiedSignedDocument`. Es stellt keine Zulassung dar und impliziert auch keine Zulassung.                                                                                                                                                              |
+| `AdmissionService.AdmitFirst`                | Führen Sie unter [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006)] eine aktuelle Überprüfung, eine autorisierende Suche, eine Kandidatenerstellung, eine atomare Append-or-Return-Existing- und zurückgegebene Datensatzvalidierung durch.                                          |
+| `AdmissionService.VerifyHistoricalAdmission` | Führen Sie die sechsstufige Überprüfung erneut mit historischen Registry-Beweisen durch und fordern Sie einen vorhandenen Datensatz an, ohne Kontext auszugeben oder anzuhängen, wie von [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) gefordert.                                |
+| `AdmittedSignedDocument`                     | Geben Sie verifizierte und analysierte Datensatzbeweise sowie eine defensive `RecordBytes()`-Kopie zurück.                                                                                                                                                                                                                              |
+
+Ein vom Anrufer bereitgestellter boolescher Vertrauensstellungswert ist kein
+Ergebnis der Zulassungssuche und darf niemals den Erfolgspfad auswählen.
+
+## Reihenfolge der Erstzulassung
+
+:::note[Informative example]
+
+```go
+first, err := missionweaveprotocol.NewAdmissionService().AdmitFirst(
+    missionweaveprotocol.SignedDocumentCommand,
+    documentBytes,
+    currentRegistry,
+    admissionLog,
+    trustedContext,
+)
+```
+
+:::
+
+`AdmitFirst` schließt alle sechs Phasen des signierten Dokuments ab, bevor das
+Protokoll konsultiert wird. Ein gefundener Datensatz wird validiert und
+zurückgegeben, ohne dass ein vertrauenswürdiger Kontext ausgegeben oder ein
+Anhang hinzugefügt wird. Nach autoritativer Abwesenheit gibt der Dienst einen
+vertrauenswürdigen Kontext aus, ruft `PrepareFirstAdmission` auf, ruft
+`AppendOrReturnExisting` auf, erstellt einen Snapshot des zurückgegebenen Werts
+und validiert den tatsächlich zurückgegebenen Datensatz. Ein gleichzeitiger
+Gewinner ist nur akzeptabel, wenn sein Schema, sein authentifizierter Dienst,
+seine Dokumentbindung und seine vertrauenswürdige Zeit
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+und
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)]
+verstreichen.
+
+## Historische Wiederholung
+
+:::note[Informative example]
+
+```go
+historical, err := missionweaveprotocol.NewAdmissionService().VerifyHistoricalAdmission(
+    missionweaveprotocol.SignedDocumentCommand,
+    documentBytes,
+    historicalRegistry,
+    admissionLog,
+)
+```
+
+:::
+
+Die historische Wiedergabe führt die Überprüfung mit dem beibehaltenen
+Registry-Verlauf erneut aus, erfordert einen gefundenen Datensatz und ruft
+niemals `TrustedAdmissionContext.Issue` oder
+`AdmissionLog.AppendOrReturnExisting` auf. Übereinstimmende Datensatz-IDs zeigen
+die Wiederherstellung desselben maßgeblichen Datensatzes. Sie beweisen nicht die
+Aktualität von Command, die Autorisierung des Unterzeichners, die Akzeptanz
+durch die Zustandsmaschine oder die Überprüfung der tragbaren
+Protokollsicherheit. Diese bleiben unter
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+und
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)]
+getrennt.
+
+## Fehleroberfläche
+
+`AdmissionError.WireCode()` gibt `AUTH_INVALID_SIGNATURE` zurück, während
+`ProtectedDiagnostic().Stage()` `admission` zurückgibt. Stabile geschützte
+Gründe unterscheiden fehlende, widersprüchliche, fehlerhafte, nicht
+authentifizierte, nicht verfügbare, unbestimmte und selbstverankernde Beweise
+und bewahren gleichzeitig das von
+[MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)
+geforderte nicht-orakelhafte Drahtergebnis.
+
+Bereitstellungsadapter sollten `NewAdmissionAdapterError` mit einem
+unterstützten Grund zurückgeben, wenn sie den Dienst benötigen, um einen
+vertrauenswürdigen lokalen Fehler neu zuzuordnen. Willkürliche Fehler sind kein
+Beweis für das Fehlen von Autorität.
+
+## Ausführbares, exakt angeheftetes Beispiel
+
+:::note[Informative example]
+
+Das Beispiel leitet deterministisch einen Ed25519-Schlüssel ab, erstellt einen
+vollständigen Registry und einen signierten Command und stellt typisierte
+In-Memory-Adapter bereit. Ein `sync.Mutex` schützt die gemeinsam genutzte
+autorisierende Karte. `Lookup` und `AppendOrReturnExisting` erwerben es
+unabhängig voneinander; Der Mutex macht `AppendOrReturnExisting` atomar, wenn er
+nach einem gleichzeitigen Gewinner sucht und bedingt anhängt. Das Protokoll
+erfordert eine autorisierende Suche und ein atomares
+Anfügen-oder-Rückgeben-Verhalten, nicht eine einzige Transaktion, die beide
+Aufrufe umfasst. Der feste Seed ist Demonstrationsmaterial und darf niemals
+außerhalb des Beispiels verwendet werden.
+
+<pre>
+  <code>{goAdmissionExample}</code>
+</pre>
+
+Führen Sie es von einem exakten SDK-Checkout aus:
+
+```bash
+go test ./...
+go run /absolute/path/to/examples/sdk/go/admission/main.go
+```
+
+Die erwartete Ausgabe enthält dieselbe Datensatz-ID für `first admission` und
+`historical replay`. Das Programm stellt außerdem passende Signatur-Hashes und
+Datensatzbytes sowie genau ein Anhängen sicher.
+
+:::
+
+:::note[Implementation note]
+
+Ersetzen Sie `currentRegistryFixture` durch authentifizierte aktuelle und
+historische Registry-Adapter, `inMemoryAdmissionLog` durch ein authentifiziertes
+dauerhaftes Protokoll, das maßgebliche Suchergebnisse zurückgibt und
+`AppendOrReturnExisting` über den logischen Schlüssel atomar macht, und
+`fixedTrustedAdmissionContext` durch Organization-gesteuerte vertrauenswürdige
+Zeit und Annahmedienstausgabe. Eine Bereitstellung kann eine umfassendere
+Transaktion verwenden, aber das Protokoll erfordert nicht, dass eine Transaktion
+`Lookup` und `AppendOrReturnExisting` umfasst.
+
+Ersetzen Sie `deterministicSigningKey` durch einen Schlüsseldienst im Besitz der
+Bereitstellung. Behalten Sie defensive Bytekopien bei und reduzieren Sie
+Autoritätsgrenzen nicht auf einen vom Aufrufer bereitgestellten booleschen
+Vertrauenswert.
+
+:::

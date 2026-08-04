@@ -1,0 +1,126 @@
+---
+title: C++ Laufzeitreferenz
+description: >-
+  Die vollständige Oberfläche des installierten Headers und die Laufzeitgrenzen
+  des exakt angehefteten C++ SDK.
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# C++ Laufzeitreferenz
+
+Diese Seite deckt die vollständige C++-Oberfläche ab, die durch das
+[genaue API Inventar](../api/) dargestellt wird. Das Verhalten des gemeinsam
+genutzten Protokolls bleibt durch die lokalen
+[Laufzeitreferenz](../../../runtime/architecture-and-bootstrap/) und
+[Referenzklauseln](../../../../reference/specification/)] definiert. Öffentliche
+Deklarationen befinden sich im Namespace `missionweaveprotocol`; Nachgelagerte
+CMake-Ziele verknüpfen `MissionWeaveProtocol::sdk`.
+
+<SupportStatus status="implemented" /> gilt für die unten aufgeführten
+installierten Header und das In-Process-Verhalten.
+
+<SupportStatus status="deployment-adapter-required" /> gilt für die aktuelle
+Registry-Autorität, den vertrauenswürdigen Zulassungskontext, den
+authentifizierten Protokollzugriff und andere Bereitstellungsdienste.
+
+<SupportStatus status="not-implemented" /> bedeutet, dass die exakt angeheftete
+Bibliothek keine entsprechende Laufzeit hat.
+
+## Bibliothek und Ausführungsmodell
+
+Das installierte Paket erfordert C++20, CMake 3.24, OpenSSL 3 und jsoncons
+1.8.1. Sein exportiertes Ziel ist `MissionWeaveProtocol::sdk`; Installierte
+öffentliche Header befinden sich unter `include/missionweaveprotocol`. Die
+separat installierte ausführbare Datei ist `missionweaveprotocol-conformance`.
+
+Durch das Verknüpfen der Bibliothek wird kein Dienst gestartet, kein Socket
+geöffnet, kein dauerhafter Speicher erstellt und keine Autorität gewährt.
+`std::span`-Ergebnisse verweisen auf SDK-eigene oder objekteigene Bytes gemäß
+der Deklaration von API und dürfen ihren Besitzer nicht überleben.
+
+## Vollständige Header-Map
+
+| Laufzeitproblem                  | Installierte öffentliche Header     | Vertrag beim angehefteten Commit                                                                                                                |
+| -------------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Versions- und Asset-Typen        | `version.hpp`, `bundle.hpp`         | SDK und Protokollidentität, unveränderliche eingebettete Asset-Spans, genaue Pins und Bundle-Zusammenfassungen.                                 |
+| Strikt JSON                      | `json.hpp`                          | `parse_strict_json` über Text oder Bytes mit doppeltem Mitglied, fehlerhaftem UTF-8/JSON und Ablehnung von nachgestellten Daten.                |
+| Schema und genaue Zeit           | `schema.hpp`, `signed_document.hpp` | Offline-Entwurfsvalidierung 2020-12, bestätigte Formate und genaue Beweise für die geschützte Zeit.                                             |
+| Kanonisch JSON und Ed25519       | `canonical.hpp`, `crypto.hpp`       | RFC 8785 Strings und Hashes plus strenge Ed25519 Signierungs- und Verifizierungshelfer.                                                         |
+| Signierte Dokumente und Registry | `signed_document.hpp`               | Neun Dokumentarten, Signierung, vollständige Registry-Validierung, sechsstufige Verifizierung und unveränderliche Beweise.                      |
+| Rahmen                           | `frame.hpp`                         | Strikte Dekodierung, kanonische Kodierung und Dokumentvalidierung für WebSocket-Framewerte. Dies ist ein Codec, kein gehosteter Gateway-Dienst. |
+| Strukturkonformität              | `conformance.hpp`                   | Eingebettete Schema-Vektorausführung, Vektorergebnisse und Berichtszusammenfassung.                                                             |
+| Eingebettete Pakete              | `bundle.hpp`                        | Exakter Asset-Zugriff und Digest-Verifizierung für Protokoll-, Kryptografie- und Zulassungspakete.                                              |
+| Erstzulassung                    | `admission.hpp`                     | Erste Zulassung und historisches Vertrauen über erfolgreiche Signed Document-Verifizierung.                                                     |
+
+## Validierung, Signierung und Registry Beweis
+
+`parse_strict_json` akzeptiert genau einen JSON-Wert. `SchemaCatalog::validate`
+prüft die 22 eingebetteten Schemata des Entwurfs 2020-12. `canonical_json`,
+`canonicalize_json`, `canonical_sha256` und `canonical_sha256_document`
+implementieren die Oberfläche RFC 8785.
+
+`SigningKey` ist die anwendungseigene Signaturschnittstelle. `Ed25519` stellt
+strikte Schlüssel-, Signatur- und Dokumenthilfsprogramme bereit.
+`SignedDocumentCodec::sign` und `verify` wählen einen von neun
+`SignedDocumentKind`-Werten aus und führen die Phasen Parse, Schema,
+Signaturumschlag, Schlüsselauflösung, Kanonisierung und Signatur aus.
+
+`KeyResolver::resolve` muss `KeyRegistrySnapshot::organization_wide` Beweise für
+eine kohärente anwendbare Organization Revision mit vollständiger
+Aufbewahrungshistorie zurückgeben. Ein ausgewählter Schlüssel, eine
+Teilprojektion, ein Cache-Treffer oder ein vom Aufrufer bereitgestelltes
+Vertrauensflag ist unzureichend. `VerifiedSignedDocument` stellt die empfangenen
+Bytes, signierten und kanonischen Zeichenfolgen und Hashes, die geschützte Zeit,
+das Signaturmaterial sowie den aufgelösten Schlüssel Registry und Principal
+bereit.
+
+## Frames, Bundles und Konformität
+
+`FrameCodec::decode`, `encode` und `validate_document` validieren Framewerte;
+Sie verfügen nicht über Transport, TLS, Sitzungsauthentifizierung,
+Cursorpersistenz, Routing, Gegendruck oder autorisierende Zustandsübergänge.
+
+`ProtocolBundle::verify` überprüft das Strukturpaket mit 22 Schemata und 59
+Dateien. `verify_cryptography` prüft 98 Artefakte, 22 Fälle und 62 deklarierte
+Bewertungen; `verify_admission` prüft 19 Artefakte, 5 Fälle und 30 deklarierte
+Bewertungen. Diese Aufrufe überprüfen Pins, Anzahlen, Pfade, Bytelängen und
+Digests, führen jedoch nicht jede Kryptografie oder Zulassungsbewertung aus.
+
+`ConformanceRunner::run` und `missionweaveprotocol-conformance` führen nur die
+eingebetteten strukturellen Schemavektoren aus. Die ausführbare Datei gibt nur
+dann Null zurück, wenn alle Vektoren ihrer erwarteten Gültigkeit entsprechen.
+
+## Erster Einlass
+
+`AdmissionService` macht `prepare_first_admission`, `admit_first` und
+`verify_historical_admission` verfügbar. Fahren Sie mit der
+[C++ Zulassungsreferenz](../admission/) für genaue Adapterergebnisse,
+Aufrufreihenfolge und das ausführbare verknüpfte Beispiel fort.
+
+## Explizite Verfügbarkeitsgrenzen
+
+<SupportStatus status="deployment-adapter-required" /> **Zulassungsbehörde** –
+die Anwendung stellt aktuelle Registry-Beweise, historische Registry-Beweise,
+vertrauenswürdigen Akzeptanzkontext und ein authentifiziertes
+Nur-Anhänge-Protokoll bereit.
+
+<SupportStatus status="not-implemented" /> **Mission Orchestrierung** – es wird
+keine übergeordnete Mission Zustandsmaschine oder Orchestrierungsfassade
+exportiert.
+
+<SupportStatus status="not-implemented" /> **Worker Scheduler** – keine Worker
+Warteschlange, kein Scheduler, Lease Runner oder Wiederherstellungsschleife wird
+exportiert.
+
+<SupportStatus status="not-implemented" /> **Gehosteter Gateway-Dienst** – die
+Bibliothek stellt `FrameCodec` bereit, keinen Gateway-Dienst mit Transport-,
+TLS-, Sitzungs-, Routing- oder Gegendruckbesitz.
+
+<SupportStatus status="not-implemented" /> **Autoritative Persistenzlaufzeit** –
+es wird keine datenbankgestützte oder Agent-lokale Persistenzlaufzeit
+exportiert.
+
+Diese Abwesenheiten sind Bestandteil des dokumentierten Betreuungsvertrages;
+Python Referenzlaufzeitfunktionen dürfen nicht aus gemeinsam genutzten
+Protokollnamen abgeleitet werden.

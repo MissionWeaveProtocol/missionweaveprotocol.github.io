@@ -1,0 +1,84 @@
+---
+title: Unterzeichnete Dokumente und Vertrauen
+description: >-
+  Wie geschützter Inhalt, Registry-Beweise, Schlüsselverlauf, Kanonisierung und
+  Ed25519-Verifizierung ein sechsstufiges Ergebnis erzeugen.
+---
+
+# Signierte Dokumente und Vertrauen
+
+A Signed Document ist ein dauerhaftes Protokollobjekt, dessen Signatur kanonisch
+geschützte Inhalte unter dem authentifiziert Signed Document
+Verifizierungsprofil. Das Profil wählt die geschützte Zeit und den erwarteten
+Unterzeichner für jede Dokumentart aus.
+
+## Der Umschlag wird wieder an den geschützten Inhalt gebunden
+
+Bei der Signatureingabe v0.1 wird der vollständige Signaturumschlag der obersten
+Ebene weggelassen. Der Verifizierer bindet den Umschlag durch die geschützte
+Zeit und Ed25519 Anforderungen in
+[MWP-SDV-002](../../reference/specification/signed-documents-and-trust/#mwp-sdv-002),
+wählt den erwarteten Unterzeichner mit
+[MWP-SDV-001](../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)und
+folgt den vollständigen abgestuften Kanonisierungs- und Signaturbyte-Regeln in
+[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015).
+
+Der Signatur-Hash ist der Kleinbuchstabe SHA-256 Identität des Genauen RFC 8785
+JCS Bytes, die in Stufe 5 erzeugt werden. Es identifiziert den geschützten
+Inhalt unabhängig vom Zulassungsstatus
+([MWP-SDV-017](../../reference/specification/signed-documents-and-trust/#mwp-sdv-017)).
+
+## Registry Der Beweis ist umfassender als ein ausgewählter Schlüssel
+
+Stufe 4 verwendet eine kohärente, maßgebliche Organization-skaliert Registry
+Revision. Die Beweise belegen unveränderliche Tastenkombinationen,
+Organization-weite No-Reuse- und No-Alias-Invarianten sowie der vom Profil
+geforderte beibehaltene Gültigkeitsverlauf
+([MWP-SDV-008](../../reference/specification/signed-documents-and-trust/#mwp-sdv-008)).
+
+Ein schlüsselgefilterter Cache reicht nicht aus, nur weil er den angeforderten
+Schlüssel enthält. Die Schlüsselauflösungsnaht legt den Beweisumfang, die
+Anwendbarkeit der Revision, die Vollständigkeit und die historische Abdeckung
+fest oder meldet, dass dies nicht möglich ist
+([MWP-SDV-010](../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)).
+
+Die geschützte signierte Zeit wird anhand des halboffenen Gültigkeitsintervalls
+des ausgewählten Schlüssels getestet. Registry Die Zeit wird als Augenblick
+verglichen und die gespeicherte Historie kann eine frühere Signatur auch nach
+späterem Ablauf oder Widerruf überprüfbar machen
+([MWP-SDV-014](../../reference/specification/signed-documents-and-trust/#mwp-sdv-014)).
+
+## Sechsstufige Verifizierung
+
+Die Verifizierung folgt den in
+[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015):
+
+1. streng UTF-8 JSON Parsing und Ablehnung doppelter Mitglieder;
+2. vollständig normativ JSON Schemavalidierung;
+3. Signatur-Umschlag und geschützte Zeitvalidierung;
+4. abgeschlossen Registry Beweise, Schlüsselauflösung, Bindung und
+   Gültigkeitsprüfungen;
+5. RFC 8785 Kanonisierung und Signatur-Hash-Produktion; und
+6. streng Ed25519 Signaturüberprüfung.
+
+Der Verifizierer stoppt bei der ersten fehlerhaften Stufe. Bevor alle sechs
+Phasen erfolgreich sind, wird kein Akteur autorisiert, sondern ein Event, oder
+einen Zustandsübergang ausführen.
+
+## Was ein erfolgreiches Ergebnis bedeutet
+
+Ein abgeschlossenes Ergebnis bleibt erhalten Organization, Dokumentart,
+Signatur-Hash, aufgelöste Schlüssel-ID, gebunden Principal, geschützte signierte
+Zeit und effektives Schlüsselintervall. Es authentifiziert geschützte Inhalte
+und die Principal an den Schlüssel gebunden. Es allein ist nicht die Zulassung
+des Dokuments, der Nachweis der aktuellen Protokollautorisierung oder die
+Annahme eines Zustandsübergangs.
+
+Die genauen lokalen Schemaartefakte sind im
+[JSON Schemakatalog](../../reference/schemas/), und das vollständige
+sechsstufige Beweisbündel wird unter [Kryptographiekonformität]
+veröffentlicht](../../reference/conformance/cryptography/).
+
+Weiter mit
+[Erste Zulassung und historisches Vertrauen](../first-admission-and-historical-trust/)
+für die maßgebliche Akzeptanzschicht oberhalb der Kryptographie.

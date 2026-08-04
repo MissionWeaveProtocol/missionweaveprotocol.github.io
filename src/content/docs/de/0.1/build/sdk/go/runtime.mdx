@@ -1,0 +1,122 @@
+---
+title: Go-Laufzeitreferenz
+description: >-
+  Die vollständig exportierte Paketoberfläche und die Laufzeitgrenzen des genau
+  angehefteten Go SDK.
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Gehen Sie zur Laufzeitreferenz
+
+Diese Seite behandelt das vollständige Go-Paket, das durch das
+[exakte API Inventar](../api/) dargestellt wird. Das Verhalten des gemeinsam
+genutzten Protokolls bleibt durch die lokalen
+[Laufzeitreferenz](../../../runtime/architecture-and-bootstrap/) und
+[Referenzklauseln](../../../../reference/specification/)] definiert. Die
+folgenden Namen definieren, wie das angeheftete Modul dieses Verhalten
+offenlegt.
+
+<SupportStatus status="implemented" /> gilt für die unten aufgeführten
+exportierten Paket-APIs und In-Process-Codecs.
+
+<SupportStatus status="deployment-adapter-required" /> gilt für die aktuelle
+Registry-Autorität, den vertrauenswürdigen Zulassungskontext, den
+authentifizierten atomaren Protokollzugriff und andere externe Dienste, die von
+einer Bereitstellung bereitgestellt werden.
+
+<SupportStatus status="not-implemented" /> bedeutet, dass das genau angeheftete
+Modul keine entsprechende exportierte Laufzeit hat.
+
+## Import- und Ausführungsmodell
+
+Importieren Sie das einzelne Paket als
+`missionweaveprotocol "github.com/missionweaveprotocol/go-sdk"`. Das Modul
+erfordert Go 1.24. Öffentliche Namen folgen den Go-Exportregeln; Nicht
+exportierte Helfer und Implementierungsadapter sind keine Anwendungsverträge.
+
+Das Modul verwendet die Standardbibliothek für JSON, Kryptografie, Einbettung
+und E/A sowie die deklarierten Schema- und RFC 8785-Abhängigkeiten. Durch die
+Paketinstallation allein wird weder ein Prozess gestartet noch eine Autorität
+erstellt.
+
+## Vollständige Quellkarte
+
+| Laufzeitproblem                   | Öffentliche Quelldateien                                                                         | Vertrag beim angehefteten Commit                                                                                                                  |
+| --------------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Paketidentität und Dokumentation  | `doc.go`                                                                                         | Umfang auf Paketebene und unterstützte Implementierungsgrenze.                                                                                    |
+| Strikte JSON und Zeitwerte        | `json.go`, `rfc3339.go`                                                                          | Strikte JSON-Dekodierung und die exportierte RFC 3339-Sofortvergleichsoberfläche, die von Verifizierung und Zulassung verwendet wird.             |
+| Schemakatalog                     | `schema.go`                                                                                      | Entwurf 2020-12 Schemaladen, Validierung und exakter Zugriff auf gepackte Schemata.                                                               |
+| Kanonisch JSON                    | `canonical.go`                                                                                   | RFC 8785 Kanonisierung und kanonische Byteproduktion.                                                                                             |
+| Signieren und signierte Dokumente | `signing.go`, `signed_document_codec.go`, `signed_document_verification.go`, `ed25519_strict.go` | Ed25519-Helfer, neun signierte Dokumentprofile, vollständige Registry-Auflösung, strenge Punktprüfungen und sechsstufige Verifizierungsnachweise. |
+| Rahmen                            | `frame.go`                                                                                       | Parse- und Codierungsvorgänge für unterstützte WebSocket-Framewerte. Dies ist ein Codec, kein gehosteter Gateway-Dienst.                          |
+| Konformität und Bundles           | `conformance.go`, `bundle.go`                                                                    | Eingebettete Bundle-Identität, Digest-Überprüfung, Manifestausführung und Befehlsunterstützung.                                                   |
+| Erstzulassung                     | `admission.go`                                                                                   | Erstzulassung und historisches Vertrauen mit typisierten Bereitstellungsadaptern über erfolgreicher Überprüfung.                                  |
+
+## Validierung und Kryptographie
+
+`DecodeJSON` erzwingt das unterstützte strenge Datenmodell JSON und
+`SchemaCatalog` validiert den genauen eingebetteten Schemasatz Draft 2020-12.
+`CanonicalizeJSON` und `MarshalCanonicalJSON` erzeugen RFC 8785 Bytes. Dies sind
+separate Tore: Schema-Erfolg impliziert keine kanonischen oder signierten
+Beweise.
+
+`SignedDocumentCodec.Sign` wählt den expliziten Dokumenttyp aus, validiert die
+geschützte Zeit, kanonisiert die unsignierte Projektion, ruft `SigningKey` auf,
+überprüft die Ed25519-Kodierung, hängt den Umschlag an und validiert das
+Ergebnis. `Verify` verbraucht Rohbytes und führt die Phasen Parse, Schema,
+Signatur-Envelope, Schlüsselauflösung, Kanonisierung und Signatur der Reihe nach
+aus. Der zurückgegebene `VerifiedSignedDocument` legt defensive Bytekopien,
+signierende und vollständige Hashes, geschützte Zeit, Signaturnachweise und den
+aufgelösten Schlüssel offen.
+
+`KeyResolver` muss vollständige Organization-weite Registry Beweise zurückgeben.
+Ein ausgewählter Schlüssel, Karteneintrag oder ein vom Anrufer bereitgestelltes
+Vertrauensflag reicht nicht aus.
+
+## Frames, Bundles und Konformität
+
+Frame-Funktionen analysieren und kodieren Werte, öffnen jedoch keine Sockets,
+authentifizieren keine Sitzung, behalten Cursor nicht bei, planen keine Arbeit
+und wenden keine autorisierenden Übergänge an. Dabei handelt es sich um
+Bereitstellungs- oder übergeordnete Laufzeitverantwortungen.
+
+`VerifyProtocolBundle`, `VerifyCryptographyBundle` und `VerifyAdmissionBundle`
+binden jeden eingebetteten Artefaktsatz an seine aufgezeichnete Identität.
+`RunEmbeddedConformance` führt die eingebetteten Strukturvektoren aus. Führen
+Sie diese erneut aus, wenn sich das SDK-Commit, die Protokoll-PIN, der
+Schemasatz, das Kryptografiepaket, das Zulassungspaket oder der
+Bereitstellungsadapter ändert. Das Übergeben beweist nur die ausgeübte
+Paketoberfläche.
+
+## Erster Einlass
+
+`NewAdmissionService` erstellt den Exact-Schema-Dienst. `PrepareFirstAdmission`,
+`AdmitFirst` und `VerifyHistoricalAdmission` sind synchrone Go-Aufrufe, die
+möglicherweise Adapter- oder Validierungsfehler zurückgeben.
+`AdmissionCurrentKeyResolver`, `TrustedAdmissionContext` und `AdmissionLog`
+bleiben Bereitstellungsschnittstellen. Fahren Sie mit der
+[Go-Zulassungsreferenz](../admission/)] fort, um die genauen Ergebnisse,
+Atomizitätsanforderungen und den historischen Pfad zu erfahren.
+
+## Explizite Verfügbarkeitsgrenzen
+
+<SupportStatus status="not-implemented" /> **Mission Orchestrierung** – es wird
+keine übergeordnete Mission Zustandsmaschine oder Orchestrierungsfassade
+exportiert.
+
+<SupportStatus status="not-implemented" /> **Worker Scheduler** – keine Worker
+Warteschlange, kein Scheduler, Lease Runner oder Wiederherstellungsschleife wird
+exportiert.
+
+<SupportStatus status="not-implemented" /> **Gehosteter Gateway-Dienst** – das
+Modul stellt Frame-Codecs bereit, keinen Gateway-Dienst mit Transport-,
+Sitzungs-, TLS-, Routing- oder Gegendruckbesitz.
+
+<SupportStatus status="not-implemented" /> **Autoritative Persistenzlaufzeit** –
+es wird keine datenbankgestützte oder Agent-lokale Persistenzlaufzeit
+exportiert.
+
+Diese Abwesenheiten sind Teil des unterstützten Laufzeitvertrags. Anwendungen
+dürfen Python-Referenzlaufzeitfunktionen nicht aus gemeinsam genutzten
+Protokollnamen ableiten.

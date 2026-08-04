@@ -1,0 +1,285 @@
+---
+title: Extensions, erreurs, contrôles et conformité
+description: >-
+  Profils d'extension, codes d'erreur, contrôles de sécurité, compatibilité,
+  conformité, exigences de preuve de concept et licences.
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 18. Profils d'extension
+
+<NormativeClause id="MWP-EXT-001" level={["MAY","MUST"]}>
+
+Les développeurs MAY définissent des commandes, des événements et des données
+personnalisés via des profils d'extension approuvés par Organization. Chaque
+profil MUST déclare un URI de profil unique au monde, une version sémantique, un
+URI et un hachage de schéma, les fonctionnalités requises, la criticité et la
+signature d'approbation Organization. Un Group épingle les versions majeures
+prises en charge des profils qu'il utilise.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-002" level={["MUST","MAY"]}>
+
+Les types d'extension MUST utilisent l'espace de noms
+`ext.<organization>.<profile>.<name>` défini par le profil. Une extension non
+critique inconnue MAY doit être conservée et relayée sans interprétation. Un
+Agent MUST refuse la participation à une transition qui dépend d'un profil
+critique inconnu.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-003" level="MUST NOT">
+
+Un Extension Profile MUST NOT remplace ou affaiblit l'identité, Membership,
+Event ordre, idempotence, Session Epoch, époque de propriété, bail, budget,
+Approval, provenance Artifact, isolation Mission ou règle selon laquelle les
+messages n'autorisent jamais d'actions.
+
+</NormativeClause>
+
+## 19. Erreurs
+
+<NormativeClause id="MWP-EXT-004" level={["MUST","SHOULD"]}>
+
+Les erreurs MUST sont conformes à `schemas/error.schema.json`. Une réponse
+d'erreur MUST doit être lisible par machine, MUST indique si la nouvelle
+tentative est sûre et SHOULD identifie la trame ou l'ID d'action associé sans
+exposer de données non autorisées. Les codes de base sont :
+
+| Codes                        | Signification                                                                                                           |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `UNSUPPORTED_VERSION`        | Aucune version de protocole compatible                                                                                  |
+| `AUTH_REQUIRED`              | L'authentification est absente                                                                                          |
+| `AUTH_INVALID_SIGNATURE`     | Échec de la signature du document signé, de la validité de la clé, de la preuve d'admission ou du contrôle de fraîcheur |
+| `AUTH_STALE_SESSION`         | Session Epoch est clôturé                                                                                               |
+| `AUTH_STALE_COORDINATOR`     | Coordinator L'époque est clôturée                                                                                       |
+| `AUTH_FORBIDDEN`             | L'acteur n'a pas d'autorisation ou d'éligibilité aux règles                                                             |
+| `GROUP_NOT_FOUND`            | Group est absent ou intentionnellement non divulgué                                                                     |
+| `MEMBERSHIP_REQUIRED`        | Non applicable Membership                                                                                               |
+| `MEMBERSHIP_STALE`           | Membership L'époque est clôturée                                                                                        |
+| `SCHEMA_VALIDATION_FAILED`   | L'objet n'est pas conforme à son schéma                                                                                 |
+| `INVALID_COMMAND`            | Command est bien formé mais sémantiquement invalide                                                                     |
+| `INVALID_STATE_TRANSITION`   | L'état agrégé interdit la transition                                                                                    |
+| `REVISION_CONFLICT`          | La révision attendue ne correspond pas                                                                                  |
+| `ACTION_ID_COLLISION`        | Stable Action ID a été réutilisé avec un contenu différent                                                              |
+| `UNKNOWN_CRITICAL_EXTENSION` | L'extension requise ne peut pas être interprétée                                                                        |
+| `WORK_CONTRACT_INCOMPLETE`   | Les informations requises sur le contrat de travail sont manquantes                                                     |
+| `WORK_OFFER_EXPIRED`         | L'offre n'est plus valable                                                                                              |
+| `WORK_ALREADY_OWNED`         | Un autre candidat a obtenu la propriété exclusive                                                                       |
+| `WORK_LEASE_EXPIRED`         | Le bail requis n'est plus valide                                                                                        |
+| `WORK_STALE_OWNERSHIP`       | L'époque de la propriété est clôturée                                                                                   |
+| `APPROVAL_REQUIRED`          | La porte politique n'a pas été satisfaite                                                                               |
+| `BUDGET_EXCEEDED`            | Un budget ferme Mission ou WorkItem est épuisé                                                                          |
+| `RATE_LIMITED`               | Le taux directeur ou le seuil de récursion a été atteint                                                                |
+| `BACKPRESSURE`               | Le récepteur ne peut actuellement pas accepter plus de trafic                                                           |
+| `CURSOR_TOO_OLD`             | Le replay en ligne ne contient plus la position demandée                                                                |
+| `PROTOCOL_VIOLATION`         | Cadrage violé par les pairs ou invariant de base                                                                        |
+| `INTERNAL_ERROR`             | L'autorité a échoué sans accepter la transition                                                                         |
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-005" level={["MUST","MUST NOT","MAY"]}>
+
+Une nouvelle tentative Command inchangée MUST conserve l'ID d'action d'origine
+et le contenu signé. `AUTH_INVALID_SIGNATURE` MUST NOT doit être réessayé sans
+modification avant que sa cause ne soit corrigée. Après correction locale de
+l'enveloppe de signature, de la clé faisant autorité ou de l'état d'admission,
+un expéditeur MAY réessaye l'ID d'action d'origine uniquement pendant que tout
+le contenu protégé reste valide. Si la fraîcheur Command a expiré, l'expéditeur
+MUST crée à la place un nouveau Command avec un nouvel ID d'action, un
+`issuedAt` actuel, un `signature.createdAt` correspondant et une nouvelle
+signature. `ACTION_ID_COLLISION` nécessite un nouveau Command avec un nouvel ID
+d'action. Une erreur de clôture obsolète nécessite l’époque faisant autorité
+actuelle et un nouveau Command avec un nouvel ID d’action et une nouvelle
+signature.
+
+</NormativeClause>
+
+## 20. Contrôles de débit, de récursivité et d'emballement
+
+<NormativeClause id="MWP-EXT-006" level={["MUST","SHOULD"]}>
+
+La politique Organization MUST prend en charge les limites sur Message et les
+taux de proposition, les cycles de clarification non résolus, les éléments de
+travail actifs et en file d'attente, la profondeur de la délégation, les budgets
+de jetons/temps/financiers et la décomposition circulaire ou en double. Ces
+contrôles SHOULD utilisent des seuils souples, une notification Coordinator et
+une escalade explicite plutôt que des plafonds de protocole bas fixes.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-007" level={["MUST","MUST NOT"]}>
+
+Une implémentation MUST rejette la délégation cyclique ou l'ascendance Mission.
+Lorsqu'un travail légitime nécessite plus de profondeur, de budget ou de taux,
+le Coordinator peut demander une approbation de politique ou MissionOwner et
+continuer après la subvention. Limites de la stratégie MUST NOT rejette
+silencieusement le travail accepté.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-008" level="MUST">
+
+Une escalade de limite de coopération MUST doit être représentée par une
+**octroi de remplacement de coopération** durable et unique, et non par un
+booléen injecté, un résultat de rappel local ou une exemption réutilisable.
+L'octroi MUST lie un Mission, Group, le nom de la stratégie, le bénéficiaire
+Principal, le type cible Command, l'ID d'action cible, le motif, l'approbateur,
+l'heure d'octroi et l'expiration. Seul le MissionOwner ou un acteur de stratégie
+Organization autorisé peut l'émettre. La cible Command MUST cite l'ID d'octroi
+dans son membre d'enveloppe `cooperationOverrideGrantId`.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-009" level="MUST">
+
+Avant d'accepter la transition cible, Group Authority MUST vérifier que la
+subvention citée existe, qu'elle n'est pas expirée, qu'elle n'est pas consommée
+et qu'elle correspond exactement à celle Commandc'est Mission, Group, acteur,
+genre, ID d'action et stratégie dépassée. Il MUST consommer atomiquement la
+subvention uniquement lorsque la transition cible est acceptée. Émission et
+consommation MUST être annexé au journal de politique faisant autorité, avec la
+consommation liée au Event. Une nouvelle tentative idempotente du même accepté
+Command renvoie son précédent Event; toute autre tentative d'utilisation de la
+subvention MUST échouer.
+
+</NormativeClause>
+
+## 21. Compatibilité des schémas et des versions
+
+<NormativeClause id="MWP-EXT-010" level="MUST">
+
+Tous les schémas v0.1 utilisent JSON Projet de schéma 2020-12. Ensemble d'objets
+de base `additionalProperties: false`; l'extensibilité ne se produit que par le
+biais d'explicites `extensions` membres et profils approuvés. Implémentations
+MUST conserver une extension non critique inconnue de manière équivalente en
+octets pour le relais canonique lorsque cela est possible.
+
+</NormativeClause>
+
+Le fil `protocolVersion` est `0.1`. Une clarification du schéma rétrocompatible
+incrémente la version du correctif de spécification sans modifier la version du
+fil. Un changement qui modifie la sémantique principale ou les champs
+obligatoires nécessite une nouvelle version mineure ou majeure du fil et une
+négociation de prise de contact.
+
+Les 22 schémas normatifs sont :
+
+-`common.schema.json` -`websocket-frame.schema.json` -`command.schema.json` -`event.schema.json` -`agent-card.schema.json` -`presence-record.schema.json` -`mission.schema.json` -`group.schema.json` -`membership.schema.json`
+
+- `conversation.schema.json` et `message.schema.json`
+- `work-contract.schema.json` et `work-item.schema.json`
+- `artifact.schema.json` et
+  `evidence.schema.json` -`lease.schema.json` -`approval.schema.json` -`context-package.schema.json` -`group-snapshot.schema.json` -`extension-profile.schema.json` -`first-admission-record.schema.json` -`error.schema.json`
+
+## 22. Conformité et preuve de concept requise
+
+Une implémentation est conforme à MissionWeaveProtocol 0.1 uniquement si :
+
+- valide chaque objet durable par rapport aux schémas normatifs ;
+- transmet les 58 vecteurs structurels dans `conformance/manifest.json`,
+  comprenant 27 documents attendus valides et 31 documents attendus invalides ;
+- réussit chaque évaluation dans `cryptography/manifest.json`, couvrant les neuf
+  profils de schéma dans le profil de vérification Signed Document et leurs
+  octets de signature canoniques, hachages, liaisons de clés et signatures ;
+- réussit les 30 évaluations dans le `admission/manifest.json` indépendant
+  ensemble comportemental, couvrant la première admission et la répétition
+  historique de cinq cas ;
+- applique toutes les transitions Mission et WorkItem ;
+- démontre la relecture, la déduplication, la concurrence optimiste et le
+  cloisonnement ;
+- démontre l'autorisation et l'invariant Message/non-autorité ; et
+- réussit les tests de récupération après échec sans accepter les côtés
+  obsolètes ou en double effets.
+
+<NormativeClause id="MWP-EXT-011" level="MUST">
+
+Pour le bundle de cryptographie, `manifest.fixtureSchemas` identifie les schémas
+normatifs Registry-fixture et test-only signature-key-fixture. Un exécuteur MUST
+valide chaque appareil par rapport au schéma nommé avant d'appliquer les étapes
+sémantiques déclarées. Pour vérifier `artifactDigest`, un exécuteur MUST
+supprime exactement le membre `artifactDigest` de niveau supérieur, sérialise le
+manifeste restant avec RFC 8785 JCS, hachez ces octets avec SHA-256 et comparez
+`sha256:` suivi des 64 chiffres hexadécimaux minuscules. Chaque hachage
+d'artefact déclaré s'applique aux octets exacts du fichier.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-012" level="MUST">
+
+Pour le bundle d'admission, `manifest.fixtureSchemas` identifie les schémas
+d'appareils First-Admission Record et Registry, et
+`manifest.cryptography.artifactDigest` épingle le bundle de cryptographie
+inchangé utilisé par chaque évaluation. Son `artifactDigest` est calculé avec la
+même procédure de suppression de membre de niveau supérieur, RFC 8785 JCS et
+SHA-256. Un exécuteur MUST vérifie tous les octets et hachages d'artefact
+d'admission déclarés, le résumé de cryptographie épinglé et chaque fichier
+référencé avant d'exécuter les résultats de l'adaptateur déclarés.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-013" level="MUST">
+
+La transmission de `missionweaveprotocol-conformance` ou des vecteurs de schéma
+du référentiel démontre uniquement la conformité du schéma et du vecteur. Il
+s’agit d’une preuve nécessaire mais non suffisante de la pleine conformité au
+protocole. La réussite de `cryptography/manifest.json` démontre uniquement les
+six étapes de vérification cryptographique de la
+[Section 6.4](../signed-documents-and-trust/#mwp-sdv-015). La transmission de
+`admission/manifest.json` démontre en outre les évaluations First-Admission
+Record et de réexécution historique déclarées, mais elle ne démontre pas la
+fraîcheur et l'application du décalage d'horloge de Command, l'autorisation du
+signataire en vertu du rôle et de la politique applicables, ou un format de
+preuve Admission Log portable déployé. Une implémentation MUST prouve ces
+exigences séparément. Une implémentation de référence MUST revendique la
+conformité complète à MissionWeaveProtocol 0.1 uniquement lorsque les preuves
+positives et négatives automatisées couvrent chaque type de base Command et
+Event [ci-dessus](../commands-events-and-ordering/#core-command-kinds) et chaque
+ligne de transition dans
+[Sections 7.1](../missions-groups-and-membership/#mission-transition-table) et
+[10.2](../work-scheduling-and-recovery/#workitem-transition-table) ; sinon, MUST
+signale explicitement le sous-ensemble vérifié le plus restreint.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-014" level="MUST">
+
+La preuve de concept de référence v0.1 MUST utilise Python et exécute deux
+missions de développement logiciel simultanées avec au moins une Worker
+partagée. Au moins un Mission MUST exerce l'analyse des exigences, la mise en
+œuvre, les tests, la révision du code, l'intégration et le Approval humain en
+tant qu'étapes graphiques distinctes. La preuve de concept MUST démontre des
+files d'attente distinctes par Group, une planification globale pondérée et
+équitable, une isolation du contexte et des informations d'identification,
+plusieurs emplacements d'exécution, une préemption sécurisée des points de
+contrôle, une révision Coordinator et une interface humaine Approval.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-015" level="MUST">
+
+Sa suite de défaillance MUST injecte la livraison Event en double, le
+redémarrage Worker et la reconstruction de la file d'attente, la défaillance
+Coordinator et le remplacement d'époque, la déconnexion temporaire Group,
+l'expiration du bail et WorkItem réaffectation, une arrivée hautement
+prioritaire et une demande de modification humaine. L'implémentation Python est
+une implémentation de référence, et non une spécification normative.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-016" level={["MUST","MUST NOT"]}>
+
+La preuve de concept MUST rester dans un Organization et une logique Group
+service. Il MUST NOT nécessitent une fédération, un routage physique
+peer-to-peer, un consensus distribué, Group un chiffrement de bout en bout ou
+des profils d'extension personnalisés pour démontrer la conformité de base.
+
+</NormativeClause>
+
+## 23. Licences
+
+La spécification, les schémas, la suite de conformité et l'implémentation de
+référence sont sous licence Apache License 2.0. La licence ne confère aucun
+droit de marque.

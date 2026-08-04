@@ -1,0 +1,78 @@
+---
+title: Python SDK
+description: >-
+  Installieren und navigieren Sie durch die vollständige Python
+  3.12-Referenzlaufzeit mit genau ihrem MissionWeaveProtocol 0.1-Commit.
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Python SDK
+
+Das Paket `missionweaveprotocol` ist die Referenzlaufzeit Python. Auf dieser
+Seite werden Commit `9403cf1310914670506c56cbab363fdaa465d3cc`, Paketversion
+`0.1.0` und Python 3.12 oder neuer beschrieben. Ein anderer Commit oder
+Paketbuild ist eine andere dokumentierte Implementierungseingabe, auch wenn die
+Versionszeichenfolge unverändert bleibt.
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="python"
+  command={`uv add "missionweaveprotocol @ git+https://github.com/MissionWeaveProtocol/python-sdk.git@9403cf1310914670506c56cbab363fdaa465d3cc"`}
+  verifyCommand={`uv run python -c "import missionweaveprotocol as mwp; print(mwp.__version__)"
+uv run missionweaveprotocol-conformance --help`}
+>
+  <p slot="notes">
+    Die genaue VCS-Anforderung erstellt das Paket aus dem dokumentierten Commit.
+    Eine Bereitstellung kann stattdessen ein Rad installieren, dessen
+    Build-Herkunft an diesen Commit gebunden ist und dessen gebündelte Artefakte
+    dieselben Digest-Prüfungen bestehen.
+  </p>
+</SdkInstall>
+
+:::
+
+Das Paket deklariert diese Konsolenbefehle beim dokumentierten Commit:
+
+| Command                            | Öffentlicher Zweck                                                       |
+| ---------------------------------- | ------------------------------------------------------------------------ |
+| `missionweaveprotocol-server`      | Starten Sie den konfigurierten Gateway-Dienst Group.                     |
+| `missionweaveprotocol-demo`        | Führen Sie die Demonstration der deterministischen Referenzlaufzeit aus. |
+| `missionweaveprotocol-conformance` | Führen Sie das umsetzungsneutrale Strukturschema und Vektormanifest aus. |
+
+Durch das Starten eines Befehls wird keine Bereitstellungsberechtigung erstellt.
+Der Server erfordert weiterhin bereitstellungseigenes Registry-Material,
+Persistenz, Sitzungsanmeldeinformationen, Netzwerkbindung und
+Produktions-TLS-Konfiguration.
+
+## Verwenden Sie diese Referenz
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every public module, runtime responsibility, persistence boundary, transport surface, and conformance entry point."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, Admission Log, and trusted-context adapters with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="All public classes, protocols, functions, methods, constants, and types resolved to exact source lines."
+    href="./api/"
+  />
+</CardGrid>
+
+## Unterstützung beim dokumentierten Commit
+
+<SdkRuntimeMatrix sdk="python" />
+
+Der Python SDK implementiert die vollständige Referenzlaufzeit, die durch die
+Matrix dargestellt wird. Datenbankdienste, Netzwerkbereitstellung, Zertifikate
+und Zulassungsberechtigung sind Bereitstellungsabhängigkeiten und keine
+Garantien, die durch die Installation des Pakets erstellt werden.

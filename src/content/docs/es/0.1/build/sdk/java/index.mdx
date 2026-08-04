@@ -1,0 +1,74 @@
+---
+title: Java SDK
+description: >-
+  Instale y navegue por la referencia de tiempo de ejecución Java fijada
+  exactamente para MissionWeaveProtocol 0.1.
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Java SDK
+
+`org.missionweaveprotocol:missionweaveprotocol-sdk` es el artefacto oficial
+Java. Esta referencia describe la confirmación exacta
+`3b2798c21d906c81887c54fe80e5bca8a19ddac7`, versión `0.1.0-SNAPSHOT`, Java 21 y
+Maven 3.9. El artefacto se instala desde el pin de origen exacto; una
+confirmación diferente o una instantánea instalada localmente es una entrada de
+implementación diferente.
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="java"
+  command={`git clone https://github.com/MissionWeaveProtocol/java-sdk.git missionweaveprotocol-java-sdk
+cd missionweaveprotocol-java-sdk
+git checkout --detach 3b2798c21d906c81887c54fe80e5bca8a19ddac7
+./mvnw -B -ntp verify
+./mvnw -B -ntp install`}
+  verifyCommand={`./mvnw -q -Dexec.mainClass=org.missionweaveprotocol.sdk.cli.ConformanceCli -Dexec.args='' exec:java`}
+>
+  <p slot="notes">
+    El contenedor Maven proporciona Maven 3.9.x pero aún requiere un tiempo de
+    ejecución Java 21. Las compilaciones posteriores deben fijar el artefacto
+    instalado en la procedencia para la confirmación exacta anterior; la cadena
+    de versión SNAPSHOT por sí sola no identifica los bytes de origen.
+  </p>
+</SdkInstall>
+
+:::
+
+La clase principal de CLI es `org.missionweaveprotocol.sdk.cli.ConformanceCli`.
+Su invocación admitida es `missionweaveprotocol-conformance [--root PATH]`; no
+define `--help` o `--json`. Sin raíz, ejecuta vectores de esquema estructurales
+empaquetados.
+
+## Utilice esta referencia
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every public class concern, package boundary, bundle verifier, CLI entry point, and explicit non-implementation."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, trusted-context, and Admission Log interfaces with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="Every public Java declaration resolved to its exact source line."
+    href="./api/"
+  />
+</CardGrid>
+
+## Soporte en el compromiso documentado
+
+<SdkRuntimeMatrix sdk="java" />
+
+El JAR proporciona comportamiento de protocolo en proceso, no autoridad de
+implementación. Las aplicaciones aún proporcionan evidencia Registry actual e
+histórica autenticada, contexto de admisión confiable y un Admission Log
+autorizado.

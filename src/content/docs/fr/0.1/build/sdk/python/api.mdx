@@ -1,0 +1,27 @@
+---
+title: Python inventaire public API
+description: >-
+  Chaque symbole public Python a été résolu en son fichier source exact et sa
+  ligne lors de la validation SDK documentée.
+---
+
+import SdkApiInventory from "../../../../../../../components/SdkApiInventory.astro";
+
+# Python inventaire public API
+
+Cet inventaire avec validation exacte est généré à partir de chaque module
+`src/missionweaveprotocol/*.py` propriétaire sur
+`9403cf1310914670506c56cbab363fdaa465d3cc`. Il enregistre les classes publiques,
+les protocoles, les énumérations, les classes de données, les fonctions, les
+méthodes, les constantes et les alias de type, y compris les API qui sont
+publiques via un sous-module mais qui ne sont pas réexportées par
+`missionweaveprotocol.__init__`.
+
+L'inventaire est la référence de dénomination et de provenance, et ne remplace
+pas la [sémantique d'exécution](../runtime/) ou le
+[flux d'appel d'admission](../admission/). La présence d'un symbole prouve que
+la source épinglée le déclare ; une utilisation réussie dépend toujours de sa
+validation documentée, de son autorité, de son état et de ses conditions
+préalables de déploiement.
+
+<SdkApiInventory sdk="python" />

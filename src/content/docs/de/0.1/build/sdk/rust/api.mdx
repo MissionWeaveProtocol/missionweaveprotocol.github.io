@@ -1,0 +1,24 @@
+---
+title: Rust öffentliches API Inventar
+description: >-
+  Jede unterstützte Crate-Root-Deklaration Rust wurde beim dokumentierten
+  SDK-Commit in ihre genaue Quelldatei und Zeile aufgelöst.
+---
+
+import SdkApiInventory from "../../../../../../../components/SdkApiInventory.astro";
+
+# Rust öffentliches API Inventar
+
+Dieses exakt festgeschriebene Inventar wird aus `src/lib.rs` und den Modulen
+generiert, die es selektiv bei `2727f8777737265d98dde4ceaca306612ef54c52` erneut
+exportiert. Es enthält 311 öffentliche Strukturen, Aufzählungen und Varianten,
+Merkmale, Aliase, Funktionen, Konstanten, öffentliche Felder und öffentliche
+Methoden, die vom Crate-Root aus erreichbar sind. Private Modulpfade und
+Deklarationen, die vom Crate-Root nicht erneut exportiert werden, sind keine
+Anwendungsverträge.
+
+Die Bestandsaufnahme ist die Benennung und genaue Quellenangabe und kein Ersatz
+für die lokale [Laufzeitsemantik](../runtime/) oder
+[Zulassungsaufrufablauf](../admission/).
+
+<SdkApiInventory sdk="rust" />

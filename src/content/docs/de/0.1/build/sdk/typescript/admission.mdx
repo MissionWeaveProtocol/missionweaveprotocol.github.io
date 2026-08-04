@@ -1,0 +1,155 @@
+---
+title: TypeScript Erstzulassung und historischer Trust
+description: >-
+  Typisierte TypeScript-Adapter, genaue asynchrone Aufrufreihenfolge,
+  Vertrauensgrenzen und ein ausführbares Zulassungsbeispiel.
+---
+
+import typescriptAdmissionExample from "../../../../../../../../examples/sdk/typescript/admission.ts?raw";
+
+# TypeScript Erstzulassung und historischer Trust
+
+Der TypeScript `AdmissionService` legt First Admission und Historical Trust über
+dem sechsstufigen Verifizierer Signed Document
+([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005))“.
+Der sprachunabhängige Ablauf ist die lokale
+[First Admission and Historical Trust-Laufzeitseite](../../../runtime/first-admission-and-historical-trust/),
+und die genauen Anforderungen sind die lokalen
+[First-Admission- und Historical-Trust-Klauseln](../../../../reference/specification/first-admission-and-historical-trust/).
+
+## Öffentliche Adapter und Ergebnisse
+
+| Öffentlich API                               | Verantwortung                                                                                                                                                                                                                                                                                                                   |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.resolveCurrent` | Geben Sie synchron den vollständigen Organization-weiten Registry-Beweis zurück, dass die Bereitstellung für diese Entscheidung aktuell ist.                                                                                                                                                                                    |
+| `TrustedAdmissionContext.issue`              | Geben Sie synchron oder asynchron die vertrauenswürdige Datensatz-ID, den Akzeptanzzeitpunkt und den Akzeptanzdienst erst nach maßgeblicher Abwesenheit aus.                                                                                                                                                                    |
+| `AdmissionLog.lookup`                        | Geben Sie `{ status: "found", record }` oder `{ status: "authoritative-absence" }` asynchron zurück. Cache-Fehler, Zeitüberschreitung, nicht authentifizierte Abwesenheit und unbestimmter Statusfehler geschlossen unter [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
+| `AdmissionLog.appendOrReturnExisting`        | Hängen Sie Kandidatenbytes atomar an oder geben Sie den gleichzeitigen autorisierenden Gewinner über eine authentifizierte Dienstidentität zurück.                                                                                                                                                                              |
+| `AuthenticatedAdmissionRecord`               | Binden Sie `recordBytes` an den vom Adapter authentifizierten Dienst, damit [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009) den zurückgegebenen Datensatz validieren kann.                                                                                                 |
+| `AdmissionService.prepareFirstAdmission`     | Erstellen und validieren Sie Kandidatennachweise aus einem von SDK erstellten `VerifiedSignedDocument`. Es stellt keine Zulassung dar und impliziert auch keine Zulassung.                                                                                                                                                      |
+| `AdmissionService.admitFirst`                | Führen Sie unter [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006)] eine aktuelle Überprüfung, eine autorisierende Suche, eine Kandidatenerstellung, eine atomare Append-or-Return-Existing-Funktion und eine Validierung zurückgegebener Datensätze durch.                  |
+| `AdmissionService.verifyHistoricalAdmission` | Führen Sie die sechsstufige Überprüfung erneut mit historischen Registry-Beweisen durch und fordern Sie einen vorhandenen Datensatz an, ohne Kontext auszugeben oder anzuhängen, wie in [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) erforderlich.                      |
+| `AdmittedSignedDocument`                     | Geben Sie unveränderliche `verified`- und `record`-Beweise sowie eine defensive `recordBytes`-Kopie zurück.                                                                                                                                                                                                                     |
+
+Der genaue maßgebliche Abwesenheitswert ist
+`{ status: "authoritative-absence" }`. Ein vom Anrufer bereitgestellter
+boolescher Vertrauensstellungswert ist kein Ergebnis der Zulassungssuche und
+darf niemals den Erfolgspfad auswählen.
+
+## Reihenfolge der Erstzulassung
+
+:::note[Informative example]
+
+```ts
+const first = await new AdmissionService().admitFirst(
+  SignedDocumentKind.Command,
+  documentBytes,
+  currentRegistry,
+  admissionLog,
+  trustedContext,
+);
+```
+
+:::
+
+`admitFirst` schließt alle sechs Phasen des signierten Dokuments ab, bevor das
+Protokoll konsultiert wird. Ein gefundener Datensatz wird validiert und
+zurückgegeben, ohne dass ein vertrauenswürdiger Kontext ausgegeben oder ein
+Anhang hinzugefügt wird. Nach autoritativer Abwesenheit gibt der Dienst
+vertrauenswürdigen Kontext aus, bereitet kanonische Kandidatenbytes vor, ruft
+`appendOrReturnExisting` auf und validiert den tatsächlich zurückgegebenen
+Datensatz. Ein gleichzeitiger Gewinner ist nur akzeptabel, wenn sein Schema,
+sein authentifizierter Dienst, seine Dokumentbindung und seine vertrauenswürdige
+Zeit
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+und
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010).
+
+## Historische Wiederholung
+
+:::note[Informative example]
+
+```ts
+const historical = await new AdmissionService().verifyHistoricalAdmission(
+  SignedDocumentKind.Command,
+  documentBytes,
+  historicalRegistry,
+  admissionLog,
+);
+```
+
+:::
+
+Die Überprüfung der historischen Wiederholung erfolgt mit beibehaltener
+Wiederholung Registry Geschichte, erfordert `status: "found"`, und ruft nie an
+`TrustedAdmissionContext.issue` oder `AdmissionLog.appendOrReturnExisting`.
+Übereinstimmende Datensatz-IDs zeigen die Wiederherstellung desselben
+maßgeblichen Datensatzes. sie beweisen es nicht Command Aktualität,
+Unterzeichnerautorisierung, Zustandsmaschinenakzeptanz oder tragbare
+protokollsichere Überprüfung. Diese bleiben unter [MWP-ADM-013]
+getrennt](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+und
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
+
+## Fehleroberfläche
+
+`AdmissionError` entlarvt `wireCode: "AUTH_INVALID_SIGNATURE"` und geschützt
+`auditDetail.stage: "admission"`. Stabile geschützte Gründe unterscheiden
+fehlende, widersprüchliche, fehlerhafte, nicht authentifizierte, nicht
+verfügbare, unbestimmte und selbstverankernde Beweise und bewahren gleichzeitig
+das von
+[MWP-ADM-012 geforderte nicht-orakelhafte Drahtergebnis](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012).
+
+Adapter können werfen `AdmissionLogError` mit einem unterstützten
+Zulassungsgrund. Andere Adapterausnahmen werden nicht automatisch neu
+kategorisiert. Bereitstellungen müssen ihre Fehler bewusst abbilden und dürfen
+allgemeinen Erfolg, Verfügbarkeit oder Cache-Status nicht als authentifizierten
+Beweis behandeln.
+
+## Ausführbares, exakt angeheftetes Beispiel
+
+:::note[Informative example]
+
+Das Beispiel leitet deterministisch einen Ed25519-Schlüssel ab, erstellt einen
+vollständigen Registry-Snapshot und signierten Command und stellt typisierte
+In-Memory-Adapter bereit. Der feste Seed ist Demonstrationsmaterial und darf
+niemals außerhalb des Beispiels verwendet werden.
+
+<pre>
+  <code>{typescriptAdmissionExample}</code>
+</pre>
+
+Führen Sie bei einem exakten SDK-Checkout eine Typprüfung durch und führen Sie
+ihn wie folgt aus:
+
+```bash
+npm ci
+cp /absolute/path/to/examples/sdk/typescript/admission.ts examples/website-admission.ts
+npm run typecheck:examples
+npm run build
+node --experimental-strip-types examples/website-admission.ts
+```
+
+Das Paket unterstützt Node.js 20. Die direkte Strip-Only-Ausführung dieser
+`.ts`-Quelle erfordert Node.js 22 oder neuer; Transpilieren Sie es auf Node.js
+20 mit der Toolchain des Projekts TypeScript, bevor Sie das ausgegebene ESM
+ausführen. Die erwartete Ausgabe enthält dieselbe Datensatz-ID für
+`first admission` und `historical replay`. Das Programm stellt außerdem passende
+Signatur-Hashes und Datensatzbytes sowie genau ein Anhängen sicher.
+
+:::
+
+:::note[Implementation note]
+
+Ersetzen Sie `CurrentRegistryFixture` durch authentifizierte aktuelle und
+historische Registry-Adapter, `InMemoryAdmissionLog` durch ein authentifiziertes
+dauerhaftes Protokoll, dessen Append-or-Return-Existing-Vorgang atomar ist, und
+`FixedTrustedAdmissionContext` durch Organization-gesteuerte vertrauenswürdige
+Zeit und Annahmedienstausgabe.
+
+Ersetzen Sie `DeterministicSigningKey` durch einen Schlüsseldienst im Besitz der
+Bereitstellung. Behalten Sie defensive Bytekopien bei und reduzieren Sie
+Autoritätsgrenzen nicht auf einen vom Aufrufer bereitgestellten booleschen
+Vertrauenswert.
+
+:::

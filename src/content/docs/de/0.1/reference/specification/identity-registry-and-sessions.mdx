@@ -1,0 +1,117 @@
+---
+title: Identität, Registry und Sitzungen
+description: >-
+  Normative Agent Card, Anwesenheitsaufzeichnung, Authentifizierung und Session
+  Epoch Anforderungen.
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 6. Identität, Agent Registry und Sitzungen
+
+### 6.1 Agent Karten
+
+<NormativeClause id="MWP-IDN-001" level={["MUST","MUST NOT"]}>
+
+Die Organization MUST stellen jedes Agent Card aus, überprüfen, versionieren und
+signieren es. Einem Agent MUST NOT kann nur deshalb vertraut werden, weil es
+eine Fähigkeit selbst deklariert. Die Agent Card MUST trennen:
+
+- stabile Identität, Besitz, Endpunkt, öffentliche Schlüssel und unterstütztes
+  Protokoll Versionen;
+- Versionierte Organization-gesteuerte Funktionen mit deklarierter Ein-/Ausgabe
+  Schemata, Einschränkungen und Überprüfung Evidence; und
+- Maximal unterstützte Parallelität.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-002" level="MUST NOT">
+
+Fähigkeit ist keine Autorisierung. Ein Agent Card MUST NOT enthält
+wiederverwendbare Anmeldeinformationen oder gewährt Zugriff auf Tools oder
+Geschäftsdaten. Die Berechtigung zur Autorisierung und die aktuelle Richtlinie
+bleiben Organization Entscheidungen.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-003" level={["MUST","MAY"]}>
+
+Zuweisungen MUST heften die Agent Card-Version und jede erforderliche
+Funktionsversion an. Ein kompatibles direktes Upgrade MAY wird gemäß der
+Richtlinie Organization fortgesetzt. Ein inkompatibler Checkpoint MUST für die
+aktive Arbeit und erneute Akzeptanz vor der Fortsetzung der Ausführung. Jeder
+Artifact MUST zeichnet die produzierenden Agent Card und Funktionsversionen auf.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-004" level={["SHOULD","MAY","SHOULD NOT"]}>
+
+Die Registry SHOULD verwalten funktionsspezifische, kontextbezogene
+Leistungsdatensätze getrennt von den Agent-Karten. Zu den Datensätzen MAY
+gehören Abschluss, Fehler, Neuzuweisung, menschliche Änderungsanforderung,
+Frist, Budget und Ergebnisse des Mietvertragsablaufs. Eine Implementierung
+SHOULD NOT reduziert die Leistung auf einen undurchsichtigen globalen
+Reputationswert.
+
+</NormativeClause>
+
+### 6.2 Anwesenheitsaufzeichnungen
+
+<NormativeClause id="MWP-IDN-005" level={["MUST","MAY","MUST NOT"]}>
+
+Die Präsenz ist kurzlebig und MUST muss vom stabilen Agent Card getrennt sein.
+Ein Anwesenheitsdatensatz MAY meldet den Online-Status, die aktuell verfügbaren
+Ausführungsslots, die Verfügbarkeit von Funktionen, die geschätzte Antwortlatenz
+und den letzten Herzschlag. Ein veralteter Anwesenheitsdatensatz MUST NOT wird
+als Auftragsannahme oder Mietvertragsverlängerung behandelt.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-006" level={["MAY","MUST NOT"]}>
+
+Präsenzaktualisierungen MAY werden in authentifizierten `PING` Frames übertragen
+und erfordern keine individuelle dauerhafte Signatur. Präsenz MUST NOT legt die
+Identität, den Inhalt, die WorkItems oder die genaue Warteschlangenposition
+eines anderen Group offen.
+
+</NormativeClause>
+
+### 6.3 Authentifizierung und Session Epoch Fencing
+
+<NormativeClause id="MWP-IDN-007" level="MUST">
+
+Jeder Agent MUST verfügt über mindestens einen Organization-registrierten
+öffentlichen Ed25519-Schlüssel. Der Handshake v0.1 WebSocket verwendet eine neue
+Server-Challenge:
+
+1. Der Agent sendet `HELLO/client_init` mit seiner Agent-ID, Schlüssel-ID, Nonce
+   und unterstützte Protokollversionen;
+2. Der Server antwortet `HELLO/server_challenge` mit einer unvorhersehbaren
+   Herausforderung und ausgewählte Version;
+3. Der Agent antwortet `HELLO/client_response` mit einer Ed25519-Signatur über
+   den kanonisches Challenge-Transkript; und
+4. Der Server antwortet `HELLO/server_accept` mit einem kurzlebigen
+   Sitzungstoken und ein neu ausgegebenes Session Epoch.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-008" level={["MUST","MUST NOT","MAY"]}>
+
+Durch die Ausgabe der Epoche `n + 1` wird jede Sitzung in der Epoche `n` oder
+niedriger für diese Agent-ID ungültig. Group Authority MUST validieren Session
+Epoch bei jeder Zustandsänderung Agent Command. Menschliche und
+Organization-Dienstbefehle enthalten kein Agent, Session Epoch und MUST NOT
+erfinden eines. Eine neu gestartete Laufzeit MAY fordert ihre stabile Agent-ID
+zurück; Zwei Laufzeiten MUST NOT betreiben diese Identität gleichzeitig.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-009" level={["MUST","NOT RECOMMENDED","MAY"]}>
+
+Dauerhafte Befehle und Artifact Manifeste MUST müssen einzeln signiert werden.
+Heartbeats und Presence Records basieren auf der authentifizierten Sitzung.
+Langlebige gemeinsame API-Schlüssel sind NOT RECOMMENDED. Eine Implementierung
+MAY fügt mTLS oder Workload-Identity-Authentifizierung hinzu, vorausgesetzt, sie
+behält die Agent-ID und die Fencing-Semantik bei.
+
+</NormativeClause>

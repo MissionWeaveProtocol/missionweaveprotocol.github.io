@@ -1,0 +1,80 @@
+---
+title: Autorisierung, Budgets und Nebenwirkungen
+description:
+  Normative Autorisierung, Fähigkeit, Genehmigung, Budget und
+  Nebenwirkungskontrollen.
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 12. Autorisierung, Budgets und Nebenwirkungen
+
+<NormativeClause id="MWP-AUT-001" level="MUST">
+
+Nach der Annahme von WorkItem und allen erforderlichen Genehmigungen stellt der
+Autorisierungsdienst ein kurzlebiges Funktionstoken mit den geringsten Rechten
+aus. Der Token MUST muss an Folgendes gebunden sein:
+
+- die Worker Agent ID und die aktuelle Session Epoch;
+- WorkItem ID und Besitzepoche;
+- die aktuelle Ausführungsleasing-ID;
+- erlaubte Tools, Ressourcen, Daten und Vorgänge;
+- Finanz-, Token-, Anruf-, Rechen-, Zeit- und Nebeneffektlimits; und
+- ein Ablauf spätestens nach dem geltenden Ausführungsvertrag.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-002" level={["MAY","MUST NOT","MUST"]}>
+
+Die Coordinator MAY fordern eine Autorisierung an, aber MUST NOT erstellt,
+kopiert oder leitet die Anmeldeinformationen eines Worker weiter. Token und
+Geheimnisse MUST NOT erscheinen in Nachrichten, Agent Karten, Kontextpaketen,
+Artefakten oder Group Ereignissen. Abgelaufene, widerrufene, nicht
+übereinstimmende oder überbudgetierte Token MUST werden abgelehnt.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-003" level={["MUST","MAY"]}>
+
+Organization Politik MUST in der Lage sein, a zu platzieren WorkItem hinein
+`awaiting_execution_approval` vor der Produktionsbereitstellung, Zahlungen,
+externen Kommunikationen, destruktiven Änderungen oder dem Zugriff auf sensible
+Daten. Der Autorisierungsdienst MUST Halten Sie das Fähigkeitstoken zurück, bis
+das unterzeichnete Genehmigungstor erfüllt ist. Arbeiten mit geringem Risiko MAY
+Fahren Sie gemäß der Richtlinie automatisch fort.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-004" level="MUST NOT">
+
+Mission Und WorkItem Budgets sind verbindliche Protokollkonzepte. Der
+MissionOwner Sätze Mission Grenzen, die Coordinator weist WorkItems und
+Unteraufgaben nicht mehr als diese Grenzwerte zu, und der Autorisierungsdienst
+erzwingt harte Grenzwerte. Die Erschöpfung des Budgets führt zu einer
+Unterbrechung der betroffenen Arbeiten und erfordert eine explizite Eskalation.
+Agenten MUST NOT stillschweigend eine Grenze überschreiten.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-005" level="MUST">
+
+Die Group Authority MUST behalten ein aggregiertes sechsdimensionales Budgetbuch
+bei. Ein signierter `ext.missionweaveprotocol.core.resource_usage_record`
+Command zeichnet ein Delta ungleich Null gegenüber einem WorkItem, einer
+Eigentümerepoche und einer Ausführungsleasing-ID auf; Der entsprechende
+`ext.missionweaveprotocol.core.resource_usage_recorded` Event trägt das Delta,
+die kumulative Nutzung und das verbleibende Budget. Der Verbrauch MUST
+aktualisiert den WorkItem und seine vollständige WorkItem/Mission-Abstammung in
+einem atomaren Übergang. Ein eindimensionaler Überlauf MUST lehnt den gesamten
+Übergang als `BUDGET_EXCEEDED` ab. Capability-Token-Budgets MUST werden sowohl
+durch den Arbeitsvertrag als auch durch das maßgebliche Restbudget begrenzt.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-006" level="MUST">
+
+Stornierung oder Notfallbeendigung MUST widerrufen relevante Leases und
+Fähigkeitstoken, stoppen neue Zuweisungen und initiieren bei Bedarf vertraglich
+definierte Bereinigungs- oder Vergütungs-WorkItems.
+
+</NormativeClause>

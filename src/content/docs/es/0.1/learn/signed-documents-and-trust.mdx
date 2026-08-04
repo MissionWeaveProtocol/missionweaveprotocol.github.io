@@ -1,0 +1,85 @@
+---
+title: Documentos firmados y confianza.
+description: >-
+  Cómo el contenido protegido, la evidencia Registry, el historial de claves, la
+  canonicalización y la verificación Ed25519 producen un resultado de seis
+  etapas.
+---
+
+# Documentos firmados y confianza.
+
+Un Signed Document es un objeto de protocolo duradero cuya firma autentica el
+contenido protegido canónico bajo el perfil de verificación Signed Document. El
+perfil selecciona la hora protegida y el firmante esperado para cada tipo de
+documento.
+
+## El sobre se vincula nuevamente al contenido protegido
+
+La entrada de firma v0.1 omite el sobre de firma de nivel superior completo. El
+verificador vincula el sobre a través de los requisitos de tiempo protegido y
+Ed25519 en
+[MWP-SDV-002](../../reference/specification/signed-documents-and-trust/#mwp-sdv-002),
+selecciona el firmante esperado usando
+[MWP-SDV-001](../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)
+y sigue las reglas completas de canonicalización por etapas y bytes de firma en
+[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015).
+
+El hash de firma es la identidad SHA-256 en minúsculas de los RFC 8785 JCS bytes
+exactos producidos en la etapa 5. Identifica el contenido protegido
+independientemente del estado de admisión
+([MWP-SDV-017](../../reference/specification/signed-documents-and-trust/#mwp-sdv-017)).
+
+## Registry la evidencia es más amplia que una clave seleccionada
+
+La etapa 4 utiliza una revisión Registry coherente y autorizada con alcance
+Organization. La evidencia establece combinaciones de teclas inmutables,
+invariantes sin reutilización y sin alias en todo Organization, y el historial
+de validez retenido requerido por el perfil
+([MWP-SDV-008](../../reference/specification/signed-documents-and-trust/#mwp-sdv-008)).
+
+Una caché filtrada por clave no es suficiente simplemente porque contiene la
+clave solicitada. La unión de resolución de claves establece el alcance de la
+evidencia, la aplicabilidad de la revisión, la integridad y la cobertura
+histórica, o informa que no puede
+([MWP-SDV-010](../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)).
+
+La hora firmada protegida se prueba con el intervalo de validez medio abierta de
+la clave seleccionada. El tiempo Registry se compara como un instante y el
+historial retenido puede hacer que una firma anterior sea verificable incluso
+después de su vencimiento o revocación posterior
+([MWP-SDV-014](../../reference/specification/signed-documents-and-trust/#mwp-sdv-014)).
+
+## Verificación de seis etapas
+
+La verificación sigue las etapas ordenadas en
+[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015):
+
+1. análisis estricto UTF-8 JSON y rechazo de miembros duplicados;
+2. validación completa del esquema normativo JSON;
+3. validación del sobre de firma y tiempo protegido;
+4. completar las pruebas Registry, la resolución de claves, la vinculación y las
+   comprobaciones de validez;
+5. RFC 8785 canonicalización y producción de hash de firma; y
+6. verificación estricta de firma Ed25519.
+
+El verificador se detiene en la primera etapa fallida. Antes de que las seis
+etapas tengan éxito, no autoriza a un actor, no agrega un Event ni ejecuta una
+transición de estado.
+
+## Qué significa un resultado exitoso
+
+Un resultado completo conserva el Organization, el tipo de documento, el hash de
+firma, el ID de clave resuelta, el Principal vinculado, la hora de firma
+protegida y el intervalo de clave efectivo. Autentica el contenido protegido y
+el Principal vinculado a la clave. No admite por sí solo el documento, ni
+acredita la autorización protocolaria vigente, ni acepta una transición de
+estado.
+
+Los artefactos exactos del esquema local están indexados en el
+[JSON Catálogo de esquemas](../../reference/schemas/), y el paquete completo de
+evidencia de seis etapas se publica en
+[conformidad de criptografía](../../reference/conformance/cryptography/).
+
+Continúe con
+[Primera admisión y confianza histórica](../first-admission-and-historical-trust/)
+para conocer la capa de aceptación autorizada por encima de la criptografía.

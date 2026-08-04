@@ -1,0 +1,60 @@
+---
+title: Artefacts et résumés
+description: >-
+  Comment le site Web MissionWeaveProtocol 0.1 lie les octets normatifs locaux
+  et les identités de version.
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import artifacts from "../../../../../data/normative/0.1/artifacts.json";
+
+# Artefacts et résumés
+
+Le bundle de protocole local contient **{artifacts.bundle.files} fichiers
+exacts** avec le résumé d'arborescence <code>{artifacts.bundle.digest}</code>.
+La broche de protocole SHA-256 est
+
+<code>{artifacts.protocolPin.sha256}</code> et le bundle de protocole épinglé
+SHA-256 est <code>{artifacts.protocolPin.bundleSha256}</code>.
+
+| Surfaces                |                                                           Fichiers ou artefacts | Résumé                                       |
+| ----------------------- | ------------------------------------------------------------------------------: | -------------------------------------------- |
+| Schémas                 |                                                       {artefacts.schemas.files} | <code>{artifacts.schemas.digest}</code>      |
+| Conformité structurelle | Fichiers {artifacts.structural.files} / vecteurs {artifacts.structural.vectors} | <code>{artifacts.structural.digest}</code>   |
+| Cryptographie           |                                             {artefacts.cryptographie.artefacts} | <code>{artifacts.cryptography.digest}</code> |
+| Admission               |                                                 {artefacts.admission.artefacts} | <code>{artifacts.admission.digest}</code>    |
+
+## Digérer la sémantique
+
+Les entrées de manifeste individuelles lient les octets exacts du fichier avec
+SHA-256 minuscule. Les valeurs `artifactDigest` de niveau supérieur de
+cryptographie et d'admission suppriment exactement ce membre, sérialisent le
+manifeste restant avec RFC 8785 JCS et hachent les octets canoniques. Leurs
+entrées d'artefact déclarées lient de manière transitive chaque fichier nommé.
+
+Le résumé de l'arborescence du site Web lie en outre chaque chemin relatif
+canonique, un séparateur NUL, les octets exacts du fichier et un séparateur NUL
+final dans l'ordre des chemins triés. Cela empêche deux présentations
+d'artefacts différentes de partager une identité simplement parce que leurs
+octets concaténés correspondent.
+
+## Artefacts de version locale
+
+-<ArtifactLink path="protocol/spec/PROTOCOL.md"> Source du protocole épinglé
+
+  </ArtifactLink>
+-<ArtifactLink path="protocol/CONTEXT.md">
+    Glossaire normatif épinglé
+  </ArtifactLink>
+-<ArtifactLink path="protocol/conformance/manifest.json">
+    Manifeste structurel
+  </ArtifactLink>
+-<ArtifactLink path="protocol/cryptography/manifest.json">
+    Manifeste de cryptographie
+  </ArtifactLink>
+-<ArtifactLink path="protocol/admission/manifest.json">
+    Manifeste d'admission
+  </ArtifactLink>
+-<ArtifactLink path="normative-release.json">
+    Manifeste de version de site Web généré
+  </ArtifactLink>

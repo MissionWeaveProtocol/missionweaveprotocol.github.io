@@ -1,0 +1,96 @@
+---
+title: Identité, rôles et autorité
+description: >-
+  Comment MissionWeaveProtocol sépare l'identité stable, la présence, les
+  sessions, la coordination, la planification, l'autorisation et l'approbation.
+---
+
+# Identité, rôles et autorité
+
+MissionWeaveProtocol 0.1 fonctionne à l'intérieur d'un système de confiance
+Organization. Le Organization gouverne Agent identité, politique, autorisation,
+durable Group l'ordre et la responsabilité humaine.
+
+## L'autorité est délibérément divisée
+
+| Préoccupation                                                                  | Autorité                                         |
+| ------------------------------------------------------------------------------ | ------------------------------------------------ |
+| Identité stable et capacités vérifiées                                         | Organization-contrôlé Agent Registry             |
+| Mission direction et approbation finale                                        | MissionOwner                                     |
+| Planification, affectation, intégration et soumission                          | Actuel Coordinator Époque                        |
+| Croix-Group ordre d'exécution                                                  | WorkerPlanificateur appartenant à l'entreprise   |
+| Validation et per-Group Event commander                                        | Group Authority                                  |
+| Autorisation des outils, des données, des ressources et des effets secondaires | Service d'autorisation et Organization politique |
+
+Le Group Authority est une autorité logique par Group. Une implémentation peut
+la répliquer en interne, mais la topologie de réplication ne fait pas partie de
+la sémantique du protocole. Les définitions de rôles Coordinator et Worker sont
+ancrées par
+[MWP-FND-010](../../reference/specification/foundations/#mwp-fnd-010) et
+[MWP-FND-011](../../reference/specification/foundations/#mwp-fnd-011).
+
+## L'identité n'est pas la présence
+
+Une **Agent Card** est une identité stable, versionnée et signée Organization.
+Il lie les clés publiques, les points de terminaison, les versions de protocole
+prises en charge, les fonctionnalités vérifiées et la concurrence maximale sous
+la signature de Organization
+([MWP-IDN-001](../../reference/specification/identity-registry-and-sessions/#mwp-idn-001)).
+
+Un **Enregistrement de Présence** est éphémère. Il peut signaler la
+disponibilité, les créneaux d'exécution ouverts, la disponibilité des
+fonctionnalités, la latence de réponse estimée et le temps de pulsation, mais il
+ne renouvelle pas de bail ni n'accepte d'affectation
+([MWP-IDN-005](../../reference/specification/identity-registry-and-sessions/#mwp-idn-005)).
+
+La capacité est également distincte de l’autorisation. Une capacité indique ce
+pour quoi un Agent est vérifié ; il ne place pas d'informations d'identification
+réutilisables ni d'accès aux données professionnelles dans Agent Card
+([MWP-IDN-002](../../reference/specification/identity-registry-and-sessions/#mwp-idn-002)).
+
+## Séances et escrime
+
+La poignée de main WebSocket authentifie une clé enregistrée Organization et un
+nouveau défi, puis émet un jeton de session de courte durée et un nouveau
+Session Epoch. La séquence de prise de contact est définie par
+[MWP-IDN-007](../../reference/specification/identity-registry-and-sessions/#mwp-idn-007).
+L’émission d’une époque ultérieure clôture les anciens environnements
+d’exécution pour cette identité Agent
+([MWP-IDN-008](../../reference/specification/identity-registry-and-sessions/#mwp-idn-008)).
+
+Des époques supplémentaires limitent davantage l’autorité :
+
+- une époque Membership clôture une ancienne version d'une époque Group
+  Membership ;
+- une époque Coordinator clôture un Coordinator remplacé et ses subventions ;
+- une époque de propriété clôt les anciens propriétaires d'œuvres exclusives ;
+  et
+- un identifiant de bail d'exécution clôture une période d'exécution expirée ou
+  révoquée.
+
+## Du contexte à un effet secondaire autorisé
+
+```text
+Message or Work Proposal
+        ↓ explicit authorization
+WorkItem and Work Contract
+        ↓ Worker acceptance
+Ownership Epoch
+        ↓ current session, policy, budget, and approval checks
+Execution Lease and scoped capability token
+        ↓
+Permitted operation
+```
+
+Le service d'autorisation émet un jeton de courte durée avec le moindre
+privilège uniquement après les vérifications pertinentes d'acceptation,
+d'approbation, de politique, de propriété, de bail et de budget. Ses champs de
+liaison sont définis par
+[MWP-AUT-001](../../reference/specification/authorization-and-budgets/#mwp-aut-001).
+Les informations d'identification ne transitent pas par les messages, les cartes
+Agent, les packages de contexte, les artefacts ou les événements ; voir
+[MWP-AUT-002](../../reference/specification/authorization-and-budgets/#mwp-aut-002).
+
+L'exécution Approval permet une opération risquée limitée. La version finale
+Approval est une décision signée distincte acceptant une révision Mission
+complétée et un ensemble Artifact exact.

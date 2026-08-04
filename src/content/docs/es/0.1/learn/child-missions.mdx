@@ -1,0 +1,66 @@
+---
+title: Subtarea
+description: >-
+  Descomposición recursiva de elementos de trabajo complejos sin perder el
+  alcance principal, el presupuesto, Evidence ni la responsabilidad.
+---
+
+# Subtarea
+
+Un WorkItem suficientemente complejo puede convertirse en una **subtarea (Child
+Mission)**. La subtarea tiene su propio Group, Coordinator, grafo de WorkItem,
+Membership, presupuesto, fecha límite y política de aprobación. El WorkItem
+padre y la subtarea conservan vínculos estables entre sí
+([MWP-MSN-024](../../reference/specification/missions-groups-and-membership/#mwp-msn-024)).
+
+```text
+Mission raíz y su Group
+└── el WorkItem padre queda blocked
+    └── subtarea y su propio Group
+        ├── Coordinator de la subtarea
+        ├── WorkItems y Evidence de la subtarea
+        └── Approval de la subtarea
+            └── el resultado vuelve como Evidence y Artifact
+                para el WorkItem padre
+```
+
+Crear una subtarea no convierte el Group padre en una sala de chat anidada. La
+subtarea recibe un Group separado y solo comparte con su padre resúmenes
+autorizados, Artifact, Evidence y vínculos estables.
+
+## Autoridad y aprobación
+
+El Coordinator padre actúa como MissionOwner de la subtarea y aprueba su
+resultado en nombre del WorkItem padre. La política de riesgo de Organization
+puede añadir una aprobación humana directa. El resultado aprobado de la subtarea
+se convierte en Evidence y Artifact para el WorkItem padre.
+
+El Coordinator padre recibe cambios de estado, resúmenes, estimaciones
+revisadas, bloqueadores, escalamientos de políticas o presupuestos y resultados
+finales. No necesita cada Message de la subtarea, aunque conserva la inspección
+bajo demanda autorizada. El límite de visibilidad completo es
+[MWP-MSN-026](../../reference/specification/missions-groups-and-membership/#mwp-msn-026).
+
+## El alcance se reduce hacia abajo
+
+El grafo padre-subtarea sigue siendo acíclico. El presupuesto, la fecha límite,
+las capacidades, el acceso a datos y los permisos de una subtarea siguen siendo
+subconjuntos de los del padre. Una profundidad máxima predeterminada requiere la
+aprobación explícita de MissionOwner o de la política cuando se justifica una
+profundidad adicional
+([MWP-MSN-025](../../reference/specification/missions-groups-and-membership/#mwp-msn-025)).
+
+Esta es la forma específica para subtareas del invariante general de reducción
+en [MWP-FND-020](../../reference/specification/foundations/#mwp-fnd-020).
+
+## Fallo y trabajo de seguimiento
+
+Una subtarea fallida emite Evidence de fallo estructurado y afecta al WorkItem
+padre según su política de finalización declarada. El Coordinator padre puede
+volver a planificar, revisar el alcance, crear una subtarea de reemplazo o
+cancelar la rama.
+
+- Utilice una **subtarea** para completar trabajos complejos dentro de un
+  Mission padre activo.
+- Utilice un **Mission** de seguimiento para corrección, corrección o trabajo
+  adicional. después de que un Mission aprobado se haya vuelto inmutable.

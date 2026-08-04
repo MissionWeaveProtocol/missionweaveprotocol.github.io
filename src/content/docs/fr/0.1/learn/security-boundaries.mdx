@@ -1,0 +1,64 @@
+---
+title: Limites de sécurité
+description: >-
+  Ce que la vérification et l'admission Signed Document établissent et quelles
+  décisions de sécurité restent distinctes.
+---
+
+# Limites de sécurité
+
+MissionWeaveProtocol sépare les couches de preuves afin qu'une vérification
+réussie ne soit jamais silencieusement promue en une revendication de confiance
+plus large.
+
+## Preuves actuelles et historiques Registry
+
+**Les preuves Registry actuelles** représentent une révision faisant autorité
+applicable à une nouvelle décision de vérification ou de première admission. Une
+révision remplacée ne peut pas être présentée comme actuelle. La couture de
+déploiement établit la devise de révision, la portée Organization,
+l'exhaustivité et la couverture historique comme décrit par
+[MWP-SDV-010](../../reference/specification/signed-documents-and-trust/#mwp-sdv-010).
+La première admission dépend donc des preuves Registry actuelles, et pas
+seulement de la dernière révision visible dans un cache non spécifié.
+
+**Les preuves historiques Registry** conservent le `validFrom` d'origine et
+chaque modification effective `validUntil` ou `revokedAt` nécessaire pour
+évaluer une heure signée protégée antérieure. Cet historique est uniquement
+ajouté ou explicitement versionné
+([MWP-SDV-012](../../reference/specification/signed-documents-and-trust/#mwp-sdv-012)).
+
+La première admission utilise les preuves actuelles ; la relecture historique
+utilise des preuves historiques faisant autorité et nécessite également un
+First-Admission Record existant.
+
+## Préoccupations distinctes et exclues
+
+| Préoccupation                                | Limite                                                                                                                                                                                                                                                                     |
+| -------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Command fraîcheur                            | Un Command nouvellement présenté a une vérification distincte de la fraîcheur et du décalage d'horloge `issuedAt` ([MWP-ADM-013](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)).                                                        |
+| autorisation du signataire                   | Un Principal lié à une clé vérifiée nécessite toujours un rôle faisant autorité et une autorisation de stratégie avant l'acceptation de l'état ([MWP-ADM-014](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)).                           |
+| portable Admission Log preuve                | La version 0.1 définit les résultats de l'adaptateur typé et la validation des enregistrements, et non un format de preuve déployé portable ([MWP-EXT-013](../../reference/specification/errors-extensions-and-security/#mwp-ext-013)).                                    |
+| acceptation de la machine à états            | La cryptographie et l'admission se terminent avant que Organization ou Group Authority valide la révision, les rôles, la politique, les époques, les budgets et les baux actuels ([MWP-EVT-004](../../reference/specification/commands-events-and-ordering/#mwp-evt-004)). |
+| booléens de confiance fournis par l'appelant | Un booléen fourni par l'appelant ne peut pas remplacer les résultats Admission Log authentifiés et typés ni leurs distinctions d'intégrité et d'absence ([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).                  |
+
+## Modèle de résultats en couches
+
+```text
+valid JSON and schema
+        ↓
+six-stage cryptographic result
+        ↓
+First Admission or Historical Trust result
+        ↓
+Command freshness when applicable
+        ↓
+signer role and policy authorization
+        ↓
+current state-machine validation and atomic Event append
+```
+
+Chaque flèche ajoute des preuves ; aucun ne modifie rétroactivement ce que la
+couche précédente a prouvé. En particulier, l'admission ne devient pas une
+septième étape cryptographique, et un First-Admission Record ne s'authentifie
+pas.

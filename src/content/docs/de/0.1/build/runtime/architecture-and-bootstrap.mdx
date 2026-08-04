@@ -1,0 +1,124 @@
+---
+title: Architektur und Bootstrap
+description: >-
+  So stellen Sie die normativen Vertrauensgrenzen zusammen und starten eine
+  Laufzeit mit einer genauen MissionWeaveProtocol 0.1-Version.
+---
+
+# Architektur und Bootstrap
+
+Eine Laufzeit beginnt mit expliziten Vertrauens- und Zustandsgrenzen.
+MissionWeaveProtocol ist nicht Agent-to-Agent RPC
+([MWP-FND-002](../../../reference/specification/foundations/#mwp-fnd-002)).
+Nachrichten und Modellausgabe können keine Nebenwirkungen zulassen
+([MWP-FND-014](../../../reference/specification/foundations/#mwp-fnd-014));
+Folgemaßnahmen sind mit akzeptierten Arbeiten, aktuellen Abgrenzungen,
+Richtlinien und einem eingeschränkten Fähigkeits-Token verbunden
+([MWP-FND-015](../../../reference/specification/foundations/#mwp-fnd-015)).
+
+## Logische Laufzeitverantwortung
+
+| Verantwortung          | Protokollrolle                                                                                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Agent Registry         | Veröffentlicht die von Organization verwaltete Agent-Identität, Funktionen, Endpunkte, Signaturschlüssel und Verlauf.                                  |
+| Signed Document Prüfer | Erstellt das sechsstufige kryptografische Ergebnis aus genauen Dokumentbytes und zuverlässigen Registry-Beweisen.                                      |
+| Zulassungsservice      | Erhält authentifizierte Admission Log-Ergebnisse und erzeugt Erstzulassungs- oder historische Vertrauensergebnisse.                                    |
+| Group Authority        | Authentifiziert Akteure, validiert den aktuellen Status und die aktuelle Richtlinie, serialisiert akzeptierte Übergänge und hängt Group-Ereignisse an. |
+| Autorisierungsdienst   | Gibt kurzlebige Fähigkeitstoken aus, die an akzeptierte Arbeiten, Epochen, Mietverträge, Richtlinien und Budgets gebunden sind.                        |
+| Agent Laufzeit         | Verwaltet lokale Projektionen im Group-Bereich, konsumiert Ereignisse, plant akzeptierte Arbeit und erzeugt Artefakte und Evidence.                    |
+
+Der Group Authority ist eine logische Autorität pro Group. Die Replikation kann
+eine interne Implementierungsauswahl sein, aber Konsens und Replikattopologie
+sind keine Protokollsemantik
+([MWP-FND-012](../../../reference/specification/foundations/#mwp-fnd-012)).
+
+Der von Organization ausgegebene Agent Card ist der stabile Identitäts- und
+Fähigkeitsstamm; Selbstdeklarierte Fähigkeit ist nicht ausreichend
+([MWP-IDN-001](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-001)).
+Jede Implementierung muss außerdem den vollständigen Invariantensatz
+beibehalten, einschließlich Konversation/Nichtautorität, Fencing,
+Nur-Anhängen-Verlauf, mindestens einmalige Zustellung, Mission Isolation und
+einschränkende Budgets
+([MWP-FND-013](../../../reference/specification/foundations/#mwp-fnd-013)).
+Mission-Inhalt, Anmeldeinformationen, Zwischenstatus und Agent Speicher bleiben
+im Group-Bereich, es sei denn, die Offenlegung erfolgt explizit und autorisiert
+([MWP-FND-019](../../../reference/specification/foundations/#mwp-fnd-019)).
+
+## Bootstrap-Reihenfolge
+
+1. **Wählen Sie ein genaues Release aus.** Laden Sie die festgeschriebenen
+   Release-Eingaben und überprüfen Sie sie die generierte
+   Website-Release-Identität, bevor lokale Artefakte akzeptiert werden.
+2. **Laden Sie Schemata und Skalarvalidatoren.** Registrieren Sie das Draft
+   2020-12-Format Behauptungen, strikte JSON-Behandlung, Zeitstempel, URI,
+   base64url, JCS und Ed25519 Verhalten vor der Dekodierung des
+   Protokollverkehrs.
+3. **Überprüfen Sie die Vertrauensvoraussetzungen.** Verweigern Sie die
+   Bereitschaft, es sei denn, die Laufzeit kann dies tun Stellen Sie die
+   anwendbaren aktuellen oder historischen Registry Beweise
+   ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010))
+   und authentifizierten Admission Log Ergebnisse
+   ([MWP-ADM-003](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003))
+   her. Nicht verfügbare oder unbestimmte Beweise stellen keine maßgebliche
+   Abwesenheit dar.
+4. **Dauerhaften Zustand öffnen.** Autorisierenden Dienststatus und Agent-local
+   wiederherstellen Projektionen, ohne die beiden zu verwechseln. Der Verlust
+   der lokalen Warteschlange oder des Cursors darf die Wahrheit von Mission
+   nicht verändern
+   ([MWP-FND-023](../../../reference/specification/foundations/#mwp-fnd-023)).
+5. **Stellen Sie eine Laufzeitidentität her.** Schließen Sie den HELLO-Austausch
+   mit der neuen Herausforderung ab und rufen Sie den neuen Session Epoch ab,
+   bevor Sie Agent-Befehle ausgeben
+   ([MWP-IDN-007](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-007)).
+   Ein späteres Session Epoch umzäunt jede frühere Laufzeit für diese
+   Agent-Identität
+   ([MWP-IDN-008](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-008)).
+   Dauerhafte Befehle und Artifact-Manifeste bleiben auch in einer
+   authentifizierten Sitzung individuell signiert
+   ([MWP-IDN-009](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-009)).
+6. **Abonnieren und erneut abspielen.** Nehmen Sie jedes autorisierte Group von
+   seinem dauerhaften Gerät wieder auf zusammenhängender Cursor, Route nach
+   Group-ID und schließen Sie etwaige Sequenzlücken vor der Live-Verarbeitung.
+7. **Zustandsübergänge aktivieren.** Ein Group Authority akzeptiert einen
+   Command erst danach Authentifizieren des Akteurs und Validieren von Schema,
+   Epochen, Revision, Rolle, Delegation, Budget, Richtlinie und Lease atomar
+   ([MWP-EVT-004](../../../reference/specification/commands-events-and-ordering/#mwp-evt-004)).
+8. **Nebenwirkungen zuletzt aktivieren.** Geben Sie nur Funktionstoken mit den
+   geringsten Rechten aus nach WorkItem-Akzeptanz und erforderlichen
+   Genehmigungen, mit Bindungen, die nicht umfassender oder langlebiger sind als
+   die aktuelle Ausführungsmiete
+   ([MWP-AUT-001](../../../reference/specification/authorization-and-budgets/#mwp-aut-001)).
+
+## Fail-Closed-Start
+
+Markieren Sie eine Laufzeit nicht als bereit, wenn ihr Schemakatalog, ihre
+genaue Release-Identität, ihr Registry-Beweis, ihr Zulassungsadapter, ihr
+dauerhafter Zustand oder ihr Session Epoch unbestimmt ist. Eine heruntergestufte
+Laufzeit kann weiterhin für die Diagnose verfügbar bleiben, darf jedoch keine
+Zustandsübergänge akzeptieren, deren Voraussetzungen nicht nachgewiesen sind.
+
+:::note[Implementation note]
+
+Die logischen Verantwortlichkeiten können in einem Prozess oder in mehreren
+Diensten ausgeführt werden. Eine kleine Bereitstellung kann Verifizierung,
+Zulassung, Group Authority und Transport kombinieren; Bei einer größeren
+Bereitstellung können sie hinter authentifizierten Adaptern isoliert werden.
+Prozesstopologie, Leiterwahl, Datenbankprodukte, Cache-Layout und
+Serviceerkennung sind Bereitstellungsoptionen, sofern sie die gleichen logischen
+Autoritäts- und Atomizitätsgrenzen beibehalten.
+
+Initialisieren Sie unterschiedliche typisierte Adapter für Organization,
+Registry, aktuelle und historische Schlüsselauflösung, Admission Log-Zugriff und
+vertrauenswürdigen Akzeptanzkontext, selbst wenn ein Dienst mehrere davon
+implementiert. Dies führt dazu, dass Übertragungsfehler, Cache-Fehler und
+autoritative Abwesenheit unterschiedliche Ergebnisse liefern.
+
+Behalten Sie einen expliziten Bereitschaftsstatus pro Abhängigkeit bei, anstatt
+jeden Fehler in einem einzigen booleschen Wert `healthy` zusammenzufassen.
+Dadurch ist es möglich, eine schreibgeschützte Wiederherstellungslaufzeit von
+einer zu unterscheiden, die zum Annehmen von Befehlen berechtigt ist.
+
+:::
+
+Fahren Sie mit [Protokolltypen](../protocol-types/)] fort, bevor Sie Codecs oder
+generierte Sprachmodelle implementieren.

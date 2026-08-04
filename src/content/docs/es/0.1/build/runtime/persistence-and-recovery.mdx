@@ -1,0 +1,168 @@
+---
+title: Persistencia y recuperación
+description: >-
+  Estado autorizado, proyecciones reconstruibles, recibos, simultaneidad
+  optimista, repetición, cursores, instantáneas y recuperación de efectos
+  secundarios externos.
+---
+
+# Persistencia y recuperación
+
+La persistencia está dividida por la autoridad. Las misiones, las membresías,
+los elementos de trabajo, las épocas de propiedad y arrendamiento, los recibos
+de deduplicación, las aprobaciones y los eventos Group tienen autoridad.
+Agent-local Los cursores, colas, puntos de control, bandejas de entrada,
+bandejas de salida y el estado del Programador son proyecciones reconstruibles;
+perderlos no puede cambiar la verdad Mission
+([MWP-FND-023](../../../reference/specification/foundations/#mwp-fnd-023)).
+
+## Transacción de aceptación autorizada
+
+Para una transición Group, la autoridad debe hacer que el cambio de estado
+aceptado, el anexo Event, la revisión agregada, las actualizaciones de barreras,
+los efectos presupuestarios o de aprobación y el recibo de idempotencia sean
+visibles como un resultado atómico. Un Event es el hecho aceptado inmutable que
+lleva su secuencia Group y revisión agregada
+([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)).
+
+El mismo contenido canónico `(actor ID, Action ID)` y equivalente en bytes
+devuelve el recibo original en lugar de agregar otra transición; contenido
+diferente bajo el mismo ID de acción falla con `ACTION_ID_COLLISION`
+([MWP-EVT-003](../../../reference/specification/commands-events-and-ordering/#mwp-evt-003)).
+
+Las actualizaciones estructuradas utilizan simultaneidad optimista. La
+discrepancia de revisión rechaza el Command completo, mientras que la primera
+propiedad, la renovación del arrendamiento, el cambio Membership y Approval
+siempre usan la aceptación de comparar y establecer
+([MWP-EVT-007](../../../reference/specification/commands-events-and-ordering/#mwp-evt-007)).
+
+## Transacción de proyección
+
+La entrega de Event se realiza al menos una vez, por lo que cada consumidor
+deduplica por ID Event y procesa cada Group en secuencia. Puede almacenar
+eventos posteriores, pero no puede hacer avanzar su cursor duradero sobre un
+espacio
+([MWP-WRK-029](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)).
+Esta es la forma en tiempo de ejecución del invariante al menos una vez
+([MWP-FND-018](../../../reference/specification/foundations/#mwp-fnd-018)). Cada
+Worker mantiene una bandeja de entrada, un cursor y una cola de trabajo Event
+distintos y duraderos según Group, todos reconstruibles a partir de eventos
+Group aceptados.
+([MWP-WRK-008](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008)).
+
+`ACK` informa el cursor duradero contiguo más alto. Puede permitir la limpieza
+de entregas, pero nunca elimina el historial autorizado de Group; La
+reproducción de reconexión puede incluir duplicados alrededor de una desconexión
+([MWP-WRK-030](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)).
+
+## Instantáneas y largos intervalos
+
+Cuando la reproducción en línea ya no contiene el cursor solicitado, el servidor
+devuelve `CURSOR_TOO_OLD` con una referencia de instantánea firmada. Restaure
+solo después de validar el esquema, el hash, la firma, el enlace Organization y
+Group y la secuencia de la instantánea. Luego reanude la reproducción
+estrictamente después de la secuencia de instantáneas. La
+[sección de entrega, reproducción y confirmación local ](../../../reference/specification/work-scheduling-and-recovery/#16-delivery-replay-and-acknowledgement)
+define esta ruta de recuperación.
+
+Los grupos activos conservan el historial Event completo. Archival produce una
+instantánea final firmada, conserva el registro de auditoría cifrado según la
+política Organization y registra la eliminación legal o la redacción de
+seguridad a través de lápidas auditables en lugar de reescribir ID o secuencias
+anteriores
+([MWP-MSN-009](../../../reference/specification/missions-groups-and-membership/#mwp-msn-009)).
+
+## Puntos de control, arrendamientos y reinicio
+
+La propiedad en cola y la ejecución activa están protegidas. El contrato de
+arrendamiento de ejecución vincula Agent, Session Epoch, WorkItem, época de
+propiedad, ID de arrendamiento estable y límites de tiempo; cada punto de
+control, bloqueo, publicación, envío y falla reportada hace referencia al ID de
+arrendamiento actual
+([MWP-WRK-013](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013)).
+
+El punto de control, el bloqueo y el envío liberan el contrato de arrendamiento.
+El reemplazo de sesión, reasignación, cancelación y falla la revocan; una sesión
+de reemplazo devuelve el trabajo afectado a `queued` antes de que se reanude la
+ejecución bajo nuevas concesiones
+([MWP-WRK-014](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-014)).
+
+Puntos de control de trabajo bloqueados, emite la resolución requerida, libera
+su ranura y regresa a su cola lista después de la resolución
+([MWP-WRK-017](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-017)).
+Los reintentos automáticos permanecen dentro de los presupuestos de intentos,
+retrasos, costos y plazos del contrato de trabajo y utilizan claves de intentos
+externas estables
+([MWP-WRK-018](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-018)).
+
+Si un Worker no cumple con su fecha límite de inicio o renovación de
+arrendamiento, un nuevo propietario puede reanudar desde el último punto de
+control en una Época de propiedad superior; Los resultados tardíos siguen sin
+ser autorizados Evidence
+([MWP-WRK-019](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-019)).
+
+## Recuperación de interrupción limitada
+
+Durante la indisponibilidad del servicio Group, un Worker puede continuar solo
+con el cálculo reversible ya activo dentro de su período de gracia limitado. No
+puede iniciar nuevos trabajos ni realizar nuevas operaciones de alto riesgo,
+irreversibles o visibles externamente sin un contrato de arrendamiento y un
+token vigentes, y se concilia antes del envío o de otros efectos secundarios
+([MWP-WRK-020](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-020)).
+
+Los comandos almacenados en búfer conservan el enlace crítico de ejecución fuera
+de línea limitada, luego modifican la base de los campos de la sesión actual y
+se vuelven a firmar al volver a conectarse
+([MWP-WRK-021](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-021)).
+La conciliación y su carga de recursos son una transacción autorizada; El
+desbordamiento del presupuesto rechaza tanto el cargo como el progreso sin
+estado parcial
+([MWP-WRK-022](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-022)).
+
+Cuando un reintento requiere un cambio de actualización o protección actual,
+siga las nuevas reglas de ID de acción y firma en
+[MWP-EXT-005](../../../reference/specification/errors-extensions-and-security/#mwp-ext-005).
+
+## Efectos secundarios externos
+
+La entrega de red no puede proporcionar efectos externos exactamente una vez.
+Las operaciones de herramienta utilizan una clave de idempotencia estable
+derivada del ID Mission, el ID WorkItem, la época de propiedad y el ID de
+operación lógica
+([MWP-WRK-031](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-031)).
+
+:::note[Implementation note]
+
+Un ciclo de aplicación local seguro es:
+
+```text
+begin local transaction
+→ reject or ignore duplicate Event ID
+→ verify next contiguous Group sequence
+→ update Group projection and per-Group queue
+→ persist any checkpoint or outbox intent
+→ advance durable Cursor
+→ commit
+```
+
+Para un efecto secundario externo, persista la intención antes del envío,
+conserve el recibo externo y concilie un resultado incierto antes de volver a
+intentarlo.
+
+Utilice abstracciones de almacenamiento independientes para el estado del
+servicio autorizado y las proyecciones locales Agent incluso si ambos están
+respaldados por un producto de base de datos. Haga que los límites de las
+transacciones sean visibles en API: `accept transition`, `apply Event`,
+`advance Cursor` y `record side-effect receipt` no deben ocultarse dentro de
+objetos guardados no relacionados.
+
+Una bandeja de salida es útil para la publicación de transporte después de una
+confirmación autorizada, y una bandeja de entrada o una tabla procesada-Event es
+útil para la deduplicación local. La retención, la cadencia de las instantáneas,
+la partición, la compactación y la elección de la base de datos son decisiones
+operativas; no pueden borrar las obligaciones de solo agregar y reproducir.
+
+:::
+
+Continúe con [Transporte y encuadre](../transport-and-framing/) para conectar la
+reproducción duradera al protocolo por cable.

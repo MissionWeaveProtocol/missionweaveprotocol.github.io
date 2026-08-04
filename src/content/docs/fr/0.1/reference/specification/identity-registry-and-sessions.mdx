@@ -1,0 +1,119 @@
+---
+title: Identité, Registry et sessions
+description: >-
+  Exigences normatives Agent Card, enregistrement de présence, authentification
+  et Session Epoch.
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 6. Identité, Agent Registry et sessions
+
+### 6.1 Agent Cartes
+
+<NormativeClause id="MWP-IDN-001" level={["MUST","MUST NOT"]}>
+
+Le Organization MUST émet, vérifie, versionne et signe chaque Agent Card. Un
+Agent MUST NOT doit être approuvé simplement parce qu'il auto-déclare une
+capacité. Le Agent Card MUST distinct :
+
+- Identité stable, propriété, point de terminaison, clés publiques et protocole
+  pris en charge variantes ;
+- capacités versionnées régies par Organization avec entrée/sortie déclarée
+  schémas, contraintes et vérification Evidence ; et
+- concurrence maximale prise en charge.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-002" level="MUST NOT">
+
+La capacité n’est pas l’autorisation. Un Agent Card MUST NOT contient des
+informations d'identification réutilisables ou accorde l'accès à des outils ou à
+des données d'entreprise. L’éligibilité à l’autorisation et la politique
+actuelle restent des décisions Organization.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-003" level={["MUST","MAY"]}>
+
+Les affectations MUST épinglent la version Agent Card et chaque version de
+fonctionnalité requise. Une mise à niveau sur place compatible MAY se poursuit
+sous la stratégie Organization. Un point de contrôle de mise à niveau
+incompatible MUST fonctionne et obtient une acceptation renouvelée avant la
+poursuite de l'exécution. Chaque Artifact MUST enregistre le Agent Card
+producteur et les versions de fonctionnalités.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-004" level={["SHOULD","MAY","SHOULD NOT"]}>
+
+Le Registry SHOULD conserve des enregistrements de performances contextuels
+spécifiques aux capacités séparément des cartes Agent. Les enregistrements MAY
+incluent les résultats d'achèvement, d'échec, de réaffectation, de demande de
+modification humaine, de délai, de budget et d'expiration du bail. Une
+implémentation SHOULD NOT réduit les performances à un score de réputation
+globale opaque.
+
+</NormativeClause>
+
+### 6.2 Enregistrements de présence
+
+<NormativeClause id="MWP-IDN-005" level={["MUST","MAY","MUST NOT"]}>
+
+La présence est éphémère et MUST doit être distincte de la version stable Agent
+Card. Un enregistrement de présence MAY signale l'état en ligne, les
+emplacements d'exécution actuellement disponibles, la disponibilité des
+fonctionnalités, la latence de réponse estimée et le dernier battement de cœur.
+Un enregistrement de présence obsolète MUST NOT soit traité comme une
+acceptation de cession ou un renouvellement de bail.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-006" level={["MAY","MUST NOT"]}>
+
+Les mises à jour de présence MAY doivent être transportées dans des trames
+`PING` authentifiées et ne nécessitent pas de signature individuelle durable. La
+présence MUST NOT expose l'identité, le contenu, les WorkItems ou la position
+exacte de la file d'attente d'un autre Group.
+
+</NormativeClause>
+
+### 6.3 Authentification et clôture Session Epoch
+
+<NormativeClause id="MWP-IDN-007" level="MUST">
+
+Chaque Agent MUST possède au moins une clé publique Organization enregistrée
+Ed25519. La poignée de main v0.1 WebSocket utilise un nouveau défi de serveur :
+
+1. le Agent envoie `HELLO/client_init` avec son ID Agent, son ID de clé, son nom
+   occasionnel et versions de protocole prises en charge ;
+2. le serveur répond `HELLO/server_challenge` avec un défi imprévisible et
+   version sélectionnée ;
+3. le Agent répond à `HELLO/client_response` avec une signature Ed25519 sur le
+   transcription de la contestation canonique ; et
+4. le serveur répond à `HELLO/server_accept` avec un jeton de session de courte
+   durée et un Session Epoch nouvellement émis.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-008" level={["MUST","MUST NOT","MAY"]}>
+
+L'émission de l'époque `n + 1` invalide chaque session à l'époque `n` ou
+inférieure pour cet ID Agent. Le Group Authority MUST valide le Session Epoch à
+chaque changement d'état Agent Command. Les commandes humaines et
+Organization-service ne portent pas de Agent, Session Epoch et MUST NOT en
+inventent un. Un runtime redémarré MAY récupère son ID stable Agent ; deux
+environnements d'exécution MUST NOT exploitent cette identité simultanément.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-009" level={["MUST","NOT RECOMMENDED","MAY"]}>
+
+Les commandes durables et les manifestes Artifact MUST doivent être signés
+individuellement. Les battements de cœur et les enregistrements de présence
+s'appuient sur la session authentifiée. Les clés API partagées de longue durée
+sont NOT RECOMMENDED. Une implémentation MAY ajoute une authentification mTLS ou
+Workload-Identity, à condition qu'elle préserve l'ID Agent et la sémantique de
+clôture.
+
+</NormativeClause>

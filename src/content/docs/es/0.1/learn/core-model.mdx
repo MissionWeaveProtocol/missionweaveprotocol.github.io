@@ -1,0 +1,91 @@
+---
+title: Modelo central
+description: >-
+  Las Misiones, Grupos, registros duraderos, proyecciones locales e invariantes
+  que conforman MissionWeaveProtocol 0.1.
+---
+
+# Modelo central
+
+MissionWeaveProtocol organiza la cooperación en torno a un **Mission** limitado
+y su temporal **Group**. La creación de Mission establece exactamente un Group
+primario, un MissionOwner humano raíz, un Coordinator inicial, una conversación
+de planificación y el historial inicial duradero de Event.
+([MWP-MSN-001](../../reference/specification/missions-groups-and-membership/#mwp-msn-001)).
+
+```text
+Organization
+├── Agent Registry
+├── Group Authority and durable Event store
+├── Authorization Service
+└── Mission
+    └── Group
+        ├── MissionOwner
+        ├── Coordinator
+        ├── Worker Memberships
+        ├── Conversations and Messages
+        ├── WorkItems and Work Contracts
+        └── ordered Events, Artifacts, Evidence, and Approvals
+```
+
+## Los registros que conectan la cooperación
+
+- Un **Membership** conecta un Principal a un Group, conjunto de roles,
+  visibilidad rango y Membership Época.
+- Una **Conversación** contiene mensajes duraderos para la planificación Group o
+  uno WorkItem.
+- Un **WorkItem** es una unidad ejecutable del trabajo Mission. Su **Contrato de
+  Trabajo** define el objetivo, los entregables, Evidence, permisos, fecha
+  límite y presupuesto.
+- Un **Artifact** es un entregable inmutable y dirigido a contenido.
+- **Evidence** registra cómo un Artifact o WorkItem satisface la aceptación
+  criterios.
+- Un **Event** es un hecho aceptado inmutable en la historia monótona de un
+  Group.
+- Un **Cursor** registra el Group Event contiguo más alto procesado de forma
+  duradera por un Agent.
+
+Los mensajes proporcionan contexto o propuestas. La responsabilidad ejecutable
+comienza únicamente a través de una transición WorkItem autorizada y una
+aceptación Worker. Este es el límite de conversación en
+[MWP-FND-014](../../reference/specification/foundations/#mwp-fnd-014) y el
+límite de ejecución estructurado en
+[MWP-FND-015](../../reference/specification/foundations/#mwp-fnd-015).
+
+## Proyecciones estatales y locales autorizadas
+
+MissionWeaveProtocol separa la verdad compartida del estado Worker
+reconstruible.
+
+**Estado autorizado** incluye misiones, membresías, elementos de trabajo, épocas
+de propiedad y arrendamiento, recibos de deduplicación, aprobaciones y eventos
+Group. Group Authority serializa los cambios aceptados en este estado.
+
+**Las proyecciones locales Agent** incluyen cursores, colas per-Group, puntos de
+control, bandejas de salida, bandejas de entrada y estado del programador. Un
+Agent puede reconstruirlos a partir de eventos duraderos. La pérdida del
+almacenamiento local no cambia el estado autorizado de Mission. El límite
+completo es
+[MWP-FND-023](../../reference/specification/foundations/#mwp-fnd-023).
+
+## Invariantes que vale la pena recordar
+
+El conjunto de invariantes normativos comienza en
+[MWP-FND-013](../../reference/specification/foundations/#mwp-fnd-013). El
+resumen conceptual es:
+
+- un Mission tiene un Group principal y uno por pedido Group Event;
+- la conversación nunca crea autoridad de ejecución;
+- la obra exclusiva está delimitada por épocas de propiedad y arrendamiento;
+- Los Eventos aceptados y los Mensajes confirmados se pueden agregar únicamente;
+- El contexto Mission y las credenciales están aislados de forma predeterminada;
+- Los presupuestos y permisos de WorkItem y child-Mission se limitan a sus
+  padres;
+- La finalización de root Mission requiere la aprobación humana de una revisión
+  exacta y Artifact establecido; y
+- Los agentes publican decisiones, entradas, Evidence, bloqueadores y resultados
+  auditables. no una cadena de pensamiento privada.
+
+Continúe con [Identidad, roles y autoridad](../identity-roles-and-authority/)
+para ver cómo estos registros adquieren actores confiables y autoridad con
+alcance.

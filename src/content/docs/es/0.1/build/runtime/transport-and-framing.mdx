@@ -1,0 +1,116 @@
+---
+title: Transporte y enmarcado
+description: >-
+  La autenticación normativa HELLO, vallado Session Epoch, marcos de texto
+  WebSocket, suscripciones Group, multiplexación, ACK, PING y modelo de
+  contrapresión.
+---
+
+# Transporte y enmarcado
+
+MissionWeaveProtocol 0.1 vincula el tiempo de ejecución al WebSocket autenticado
+a través de TLS 1.3. Encuadre y entrega de suministros de transporte; no
+reemplaza la verificación individual Signed Document, la autorización Group, la
+repetición duradera ni la barrera. El TLS requerido, WebSocket, JSON, JCS, el
+esquema y las especificaciones criptográficas se enumeran en
+[MWP-FND-003](../../../reference/specification/foundations/#mwp-fnd-003).
+
+## HOLA autenticación
+
+El intercambio HELLO de cuatro mensajes utiliza un desafío de servidor nuevo y
+una clave Ed25519 registrada en Organization. Negocia la versión del protocolo y
+devuelve un token de sesión de corta duración más un Session Epoch
+([MWP-IDN-007](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-007))
+recién emitido.
+
+La emisión de la época `n + 1` delimita cada tiempo de ejecución en la época `n`
+o inferior. Cada Agent Command que cambia de estado se compara con la época
+actual y dos tiempos de ejecución no pueden operar una identidad Agent estable
+al mismo tiempo
+([MWP-IDN-008](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-008)).
+
+## WebSocket límite del mensaje
+
+Un servidor proporciona `wss`; una conexión autenticada puede multiplexar todos
+los grupos utilizados por un Agent. Cada mensaje WebSocket contiene exactamente
+un marco de texto UTF-8 JSON conforme al esquema local `websocket-frame`. Las
+tramas binarias no pueden transportar objetos de protocolo ni contenido Artifact
+([MWP-EVT-008](../../../reference/specification/commands-events-and-ordering/#mwp-evt-008)).
+
+Los tipos de marcos centrales son:
+
+| Marco       | Propósito                                                                 |
+| ----------- | ------------------------------------------------------------------------- |
+| `HELLO`     | autenticación por desafío, negociación de versiones y emisión de sesiones |
+| `SUBSCRIBE` | posiciones autorizadas de selección y repetición Group                    |
+| `COMMAND`   | una solicitud firmada para una transición estructurada                    |
+| `EVENT`     | un hecho aceptado inmutable                                               |
+| `ACK`       | uno o más cursores contiguos duraderos                                    |
+| `PING`      | vivacidad y presencia opcional                                            |
+| `ERROR`     | guía de rechazo o transporte legible por máquina                          |
+
+## Suscríbete y enruta antes de secuenciar
+
+Después de la autenticación, `SUBSCRIBE` lleva los ID Group, posiciones de
+reproducción por Group y filtros de atención opcionales. El servidor aplica de
+forma independiente Membership y no revela si existe un Group no autorizado
+([MWP-EVT-009](../../../reference/specification/commands-events-and-ordering/#mwp-evt-009)).
+
+Es posible que se intercalen eventos de diferentes grupos. Un receptor enruta
+cada ID Event mediante Group antes de aplicar lógica de secuencia, cursor,
+deduplicación o cola; solo se define el pedido por Group
+([MWP-EVT-010](../../../reference/specification/commands-events-and-ordering/#mwp-evt-010)).
+
+## Vividez, progreso y presión.
+
+`ACK` informa de un progreso duradero. `PING` demuestra vivacidad y puede llevar
+un Registro de Presencia; el par repite su nonce. Los servidores utilizan
+buffers limitados y contrapresión según Group, pausando un Group sobrecargado
+con guía `BACKPRESSURE` en lugar de desconectar grupos no relacionados cuando
+sea posible
+([MWP-EVT-011](../../../reference/specification/commands-events-and-ordering/#mwp-evt-011)).
+
+La presencia puede viajar en `PING` autenticado sin una firma duradera
+individual, pero no puede exponer otro Group
+([MWP-IDN-006](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-006)).
+Un Group ruidoso no puede matar de hambre a otro; Las puertas de enlace
+proporcionan control de flujo según Group y cursores de suscripción
+independientes siempre que sea posible
+([MWP-MSN-014](../../../reference/specification/missions-groups-and-membership/#mwp-msn-014)).
+
+Un ACK no es un permiso para eliminar el historial Event autorizado, y una
+actualización de PING o Presencia no es una aceptación de asignación ni una
+renovación del contrato de arrendamiento. Los receptores deduplican eventos y
+nunca hacen avanzar un cursor sobre un espacio de secuencia
+([MWP-WRK-029](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)).
+La confirmación y la reproducción de reconexión utilizan el cursor duradero
+contiguo más alto y pueden volver a enviar eventos relacionados con una
+desconexión
+([MWP-WRK-030](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)).
+
+## Codificación en el límite del cable
+
+El cable JSON puede llegar en cualquier pedido de miembros, pero los nombres de
+miembros duplicados se rechazan antes de la validación del esquema. Cada firma,
+identificador derivado de contenido y hash utiliza el modelo de valor y bytes
+exactos RFC 8785 JCS
+([MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012)).
+El contenido de gran tamaño viaja como una referencia Artifact con dirección de
+contenido en lugar de un marco de protocolo de transmisión parcial o binario.
+
+:::note[Implementation note]
+
+Mantenga los buffers de recepción independientes per-Group y el estado de
+reproducción detrás de una conexión. Vuelva a conectarse con un retroceso
+limitado, pero conserve el último cursor duradero para cada Group y espere
+eventos duplicados alrededor del límite de desconexión.
+
+Aplique límites en toda la conexión como válvula de seguridad final y límites
+según Group como mecanismo de aislamiento normal. Los tamaños de búfer, los
+períodos de latido, la fluctuación de reconexión y las opciones de biblioteca de
+sockets son ajustes de implementación, no constantes de cableado.
+
+:::
+
+Continúe con [Errores y observabilidad](../errors-and-observability/) para
+rechazos de cables y diagnósticos protegidos.

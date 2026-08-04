@@ -1,0 +1,82 @@
+---
+title: Groupes et planning
+description: >-
+  Files d'attente par Group, un planificateur appartenant à Worker, emplacements
+  d'exécution isolés, préemption sécurisée par point de contrôle et relecture.
+---
+
+# Groupes et planning
+
+Un Worker peut appartenir à plusieurs groupes Mission sans fusionner leurs
+contextes. Il maintient une boîte de réception Event, un curseur et une file
+d'attente de travail distincts pour chaque Group, et ces projections locales
+restent reconstructibles à partir des événements acceptés
+([MWP-WRK-008](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-008)).
+
+```text
+Group A Events → Group A queue ┐
+Group B Events → Group B queue ├→ Worker Scheduler → isolated execution slots
+Group C Events → Group C queue ┘
+```
+
+## Qui contrôle la priorité
+
+Les fournitures Coordinator ont demandé l'urgence, le délai et l'impact
+commercial pour son Mission. Le planificateur Worker a le contrôle final sur
+l'ordre croisé Group ; un Coordinator ne peut pas forcer son Mission devant des
+groupes non liés
+([MWP-WRK-009](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-009)).
+
+Le planificateur applique une équité pondérée et une lutte contre la famine.
+L'ordre effectif prend en compte la classe de priorité Organization, les délais,
+le vieillissement de la file d'attente, les quotas par Group, les barrières de
+risque et les ressources disponibles. La planification pure et illimitée avec la
+priorité la plus élevée en premier est exclue par
+[MWP-WRK-010](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-010).
+
+## Isolement et divulgation des horaires
+
+Chaque emplacement actif isole le contexte Mission, les informations
+d'identification, les points de contrôle, les budgets d'outils et les clés
+d'effets secondaires de tous les autres emplacements
+([MWP-WRK-011](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-011)).
+
+Un Worker peut publier des fenêtres de début et de fin estimées, la confiance,
+l'état de la capacité et le temps de calcul sans exposer l'identité, le contenu,
+les affectations ou la position exacte de la file d'attente globale d'un autre
+Group
+([MWP-WRK-012](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-012)).
+
+## Propriété, baux et préemption sécurisée
+
+L'acceptation commence une époque de propriété et une date limite de démarrage.
+L'exécution active utilise un bail d'exécution lié au Agent, Session Epoch,
+WorkItem, à l'époque de propriété, à l'ID de bail stable et à l'expiration
+([MWP-WRK-013](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-013)).
+
+Les changements de priorité réorganisent immédiatement le travail en file
+d’attente. Le travail actif atteint un point de contrôle sûr et idempotent avant
+de libérer son emplacement :
+
+1. le planificateur demande la préemption ;
+2. le Worker atteint un point de contrôle sûr ;
+3. le Worker enregistre le point de contrôle et fait une pause ;
+4. le slot d'exécution est libéré ; et
+5. Le WorkItem retourne dans sa file d'attente Group.
+
+Cette séquence est le modèle normatif de préemption coopérative dans
+[MWP-WRK-015](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-015).
+
+## Récupération par replay
+
+La livraison Event est effectuée au moins une fois. Un Worker redémarré restaure
+les curseurs et les files d'attente par Group à partir d'instantanés et de
+relecture ordonnée, déduplique par ID Event et n'avance pas un curseur durable
+sur un intervalle de séquence.
+([MWP-WRK-029](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)).
+L'accusé de réception signale la position durable contiguë la plus élevée sans
+supprimer l'historique Group faisant autorité
+([MWP-WRK-030](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)).
+
+MissionWeaveProtocol définit l'ordre au sein de chaque Group, et non un ordre
+global entre les groupes.

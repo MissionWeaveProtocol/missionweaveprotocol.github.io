@@ -1,0 +1,38 @@
+---
+title: Normative Release-Identität
+description: >-
+  Festgeschriebene Eingaben und generierte Identitätsfelder für
+  MissionWeaveProtocol 0.1.
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import NormativeReleaseFacts from "../../../../../components/NormativeReleaseFacts.astro";
+
+# Normative Release-Identität
+
+MissionWeaveProtocol 0.1 wird als eine Website, ein Protokollartefaktpaket und
+sechs exakte SDK-Pins veröffentlicht. Der festgeschriebene `release-source.json`
+zeichnet alle nicht selbstreferenziellen Eingaben auf: Protokoll- und
+SDK-Commits, Release-Zähler, Profilidentitäten, Digests, Gebietsschemas und den
+Digest-Algorithmus des integrierten Baums.
+
+Die Öffentlichkeit
+
+<ArtifactLink path="normative-release.json">
+  <code>normative-release.json</code>
+</ArtifactLink>
+wird während des Produktionsaufbaus generiert. Es kopiert jedes festgeschriebene
+Release-Quellfeld und fügt Folgendes hinzu:
+
+- `websiteCommit`, der genaue Website-Git-Commit; – `buildIdentity`, entweder
+  das GitHub-Run/Atempt-Paar oder das lokale Commit Identität; und
+- `contentDigests`, ein Digest des erstellten HTML-Baums für jedes
+  Gebietsschema.
+
+Das generierte Manifest wird nicht festgeschrieben, da eine festgeschriebene
+Datei die Git-Identität des Festschreibens, das sie selbst enthält, nicht
+wahrheitsgetreu enthalten kann. Die Release-Überprüfung rekonstruiert die
+generierten Felder und vergleicht jedes festgeschriebene Feld mit
+`release-source.json`.
+
+<NormativeReleaseFacts />

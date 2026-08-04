@@ -1,0 +1,445 @@
+---
+title: Trabajo, programación y recuperación.
+description: >-
+  Elementos de trabajo, contratos de trabajo, programación, ejecución,
+  recuperación, artefactos, Evidence, reproducción y reconocimiento.
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../../components/InformativeBlock.astro";
+
+## 10. Elementos de trabajo y contratos de trabajo
+
+### 10.1 Contrato de Trabajo Requerido
+
+<NormativeClause id="MWP-WRK-001" level="MUST">
+
+Cada WorkItem MUST lleva un Contrato de Trabajo versionado y legible por máquina
+que contiene:
+
+- una meta y resultados requeridos;
+- criterios de aceptación y Evidence requeridos;
+- referencias de entrada y dependencia;
+- herramientas permitidas, datos, operaciones y restricciones de recursos;
+- ID y versiones de capacidades requeridas;
+- fecha límite, urgencia solicitada e impacto comercial;
+- presupuestos financieros, de tokens, de llamadas de herramientas, de
+  computación, de reloj de pared y de efectos secundarios, como aplicable;
+- reintentos, retrocesos, plazos y política de costos; y
+- clasificación de riesgo y cualquier requisito de aprobación previa a la
+  ejecución.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-002" level={["MUST","MUST NOT","MAY"]}>
+
+Se planteará una ambigüedad esencial MUST en la conversación WorkItem antes de
+la aceptación; Worker MUST NOT acepta WorkItem en su cola de ejecución. El
+Coordinator lo resuelve emitiendo un nuevo `work.offer` con el contrato
+corregido o autorizando un WorkItem de reemplazo. Un Contrato de Trabajo
+sustancialmente revisado incrementa su revisión y requiere una aceptación
+renovada de Worker. La prosa en lenguaje natural MAY complementa, pero MUST NOT
+reemplaza, los campos del contrato.
+
+</NormativeClause>
+
+### 10.2 WorkItem máquina de estados
+
+Los estados y transiciones principales de WorkItem son:
+
+<span id="workitem-transition-table"></span>
+
+| Estado actual                                                                       | Transición                                      | Siguiente estado           | Notas                                                                                           |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------- | -------------------------- | ----------------------------------------------------------------------------------------------- |
+| ninguno                                                                             | `work.propose`                                  | abrir propuesta de trabajo | Cualquier miembro de Group puede proponer; todavía no existe WorkItem                           |
+| ninguna o propuesta de trabajo abierta                                              | `work.authorize`                                | `open`                     | Coordinator o el delegado de ámbito crea el WorkItem                                            |
+| `open`, `offered`, `queued`, `active`, `blocked` o `failed`, sin propietario activo | `work.offer`                                    | `offered`                  | Crea, reemplaza o amplía una oferta duradera; un dueño caducado es vallado primero              |
+| `offered`                                                                           | `work.accept_offer`                             | `queued`                   | Comienza la era de la propiedad atómica                                                         |
+| `offered`                                                                           | vencimiento de la oferta                        | `offered`                  | La caducidad invalida la aceptación pero no agrega un Event ni cambia el estado                 |
+| `queued`                                                                            | `approval.grant_execution` cuando sea necesario | `queued`                   | Satisface la puerta de salida sin ejecutar trabajo                                              |
+| `queued`                                                                            | `work.start`                                    | `active`                   | Se requiere propiedad válida y contrato de arrendamiento de ejecución                           |
+| `active`                                                                            | `work.checkpoint`                               | `queued`                   | El progreso duradero libera la ejecución manteniendo un arrendamiento de propiedad limitado     |
+| `active`                                                                            | `work.block`                                    | `blocked`                  | Puesto de control y arrendamiento bloqueado acotado                                             |
+| `blocked`                                                                           | `work.unblock`                                  | `queued` o `open`          | Vuelve a entrar en su cola o se vuelve a ofrecer después de que expire la propiedad             |
+| `active`                                                                            | `work.submit`                                   | `submitted`                | Se requieren artefactos y Evidence                                                              |
+| `submitted`                                                                         | `work.accept_result`                            | `verified`                 | Coordinator revisión exitosa                                                                    |
+| `open`, `offered`, `queued`, `active`, `blocked` o `submitted`                      | `work.fail`                                     | `failed`                   | Se requiere el error Evidence; un Coordinator puede emitir posteriormente un nuevo `work.offer` |
+| `open`, `offered`, `queued`, `active`, `blocked` o `submitted`                      | `work.cancel`                                   | `cancelled`                | Se aplica la política de limpieza.                                                              |
+| `open`, `offered`, `queued`, `active` o `blocked`                                   | `mission.create_child`                          | `blocked`                  | La propiedad está protegida mientras se ejecuta el hijo vinculado Mission                       |
+| `blocked`                                                                           | hijo vinculado Mission aprobación               | `verified`                 | El hijo Approval se convierte en el padre WorkItem Evidence                                     |
+| `blocked`                                                                           | hijo vinculado Mission falla                    | `blocked` o `failed`       | La política declarada de fracaso infantil controla la propagación                               |
+| `open`, `offered`, `queued`, `active`, `blocked` o `submitted`                      | padre Mission error o cancelación               | `failed` o `cancelled`     | El estado del terminal Mission se propaga a elementos de trabajo sin terminar                   |
+
+<NormativeClause id="MWP-WRK-003" level={["MAY","MUST"]}>
+
+`verified` y `cancelled` son terminales para esa revisión WorkItem. `failed`
+devuelve el control a Coordinator y puede realizar la transición solo a través
+de un nuevo `work.offer`; Coordinator MAY en su lugar, cree un WorkItem de
+reemplazo o cancele la rama en el nivel Mission. Las implementaciones MUST
+rechazan las transiciones no permitidas por esta tabla y la revisión agregada
+actual.
+
+</NormativeClause>
+
+### 10.3 Ofertas, control de admisión y titularidad
+
+<NormativeClause id="MWP-WRK-004" level={["MAY","MUST NOT","SHOULD"]}>
+
+Un Worker MAY sin conexión recibe una oferta duradera con un tiempo de
+vencimiento. La oferta MUST NOT se reserva la propiedad exclusiva antes de su
+aceptación. Los WorkItems exclusivos SHOULD se ofrecerán secuencialmente al
+Worker elegible mejor clasificado. Para colocación urgente, la oferta
+Coordinator MAY para un conjunto de candidatos acotado; la primera aceptación
+válida gana atómicamente una nueva Época de Propiedad y cada oferta perdedora se
+retira antes de que la perdedora pueda ejecutarla.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-005" level={["MUST","SHOULD"]}>
+
+La aceptación significa un compromiso de programación duradero, no una ejecución
+inmediata. A Worker MUST realiza el control de admisión según la capacidad de la
+cola, la simultaneidad, la disponibilidad de la capacidad, los plazos, la
+elegibilidad de autorización, las dependencias y los presupuestos. MUST rechaza
+cuando no puede hacer un compromiso creíble y SHOULD utiliza un motivo
+estructurado como `capacity`, `deadline`, `capability`, `authorization`,
+`dependency` o `budget`.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-006" level={["MUST","MUST NOT"]}>
+
+Cada asignación MUST registra una base de selección estructurada: coincidencias
+de capacidad requerida, elegibilidad de autorización, estimación de
+disponibilidad, costo esperado, confiabilidad específica de capacidad Evidence y
+reglas de política aplicadas. Se incluirá la cadena de pensamiento privada MUST
+NOT.
+
+</NormativeClause>
+
+### 10.4 Dependencias y planificación dinámica
+
+<NormativeClause id="MWP-WRK-007" level={["MAY","MUST"]}>
+
+Los WorkItems de un Mission forman un gráfico acíclico dirigido en evolución. Un
+Coordinator MAY comienza la ejecución antes de que se conozca el gráfico
+completo, agrega elementos de trabajo a medida que se producen descubrimientos y
+ejecuta ramas independientes en paralelo. Un WorkItem es elegible solo cuando
+sus dependencias declaradas satisfacen la política de dependencia del contrato.
+Se rechazarán los ciclos de dependencia MUST.
+
+</NormativeClause>
+
+No hay ninguna transacción cruzada Group. Las relaciones cruzadas Group utilizan
+ID de correlación estable, vínculos Mission principal/secundario, artefactos y
+elementos de trabajo de compensación.
+
+## 11. Programación, ejecución y recuperación
+
+### 11.1 Colas por Group y programador global
+
+<NormativeClause id="MWP-WRK-008" level="MUST">
+
+Cada Worker MUST mantiene una bandeja de entrada, un cursor y una cola de
+trabajo Event distintos para cada Group. Las colas son proyecciones locales
+duraderas de eventos Group aceptados y MUST que se pueden reconstruir mediante
+reproducción. Mission, propiedad, arrendamiento y estado WorkItem siguen siendo
+autorizados en el registro Group.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-009" level="MUST NOT">
+
+Un programador propiedad de Worker selecciona elementos de trabajo elegibles de
+todas las colas por Group en ranuras de ejecución aisladas declaradas. El
+Programador tiene la autoridad final sobre la orden cruzada Group. A Coordinator
+suministra urgencia solicitada, fecha límite e impacto comercial, pero MUST NOT
+fuerza su Mission por delante de los demás. La escalada de prioridad de la
+organización pasa por la política o MissionOwner.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-010" level={["MUST","SHOULD"]}>
+
+El Programador MUST implementa equidad ponderada y lucha contra el hambre. El
+pedido efectivo SHOULD considera la clase de prioridad de la organización, los
+plazos, la antigüedad, las cuotas por Group, las puertas de riesgo y la
+disponibilidad de recursos. La programación pura e ilimitada de máxima prioridad
+es no conforme.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-011" level="MUST">
+
+Un Agent Card declara concurrencia máxima; Presencia informa la capacidad
+actual. Cada ranura activa MUST aísla el contexto Mission, las credenciales, los
+puntos de control, los presupuestos de herramientas y las claves de efectos
+secundarios de otras ranuras.
+
+</NormativeClause>
+
+### 11.2 Divulgación de programación
+
+<NormativeClause id="MWP-WRK-012" level={["SHOULD","MUST NOT"]}>
+
+En cuanto a la aceptación y los cambios en el cronograma de materiales, Worker
+SHOULD publica una ventana de inicio estimada, una finalización estimada, una
+confianza, un estado de capacidad y un tiempo de cálculo. MUST NOT expone
+nombres, contenido, asignaciones o posiciones exactas de la cola global de otro
+Group.
+
+</NormativeClause>
+
+### 11.3 Ejecución Arrendamientos y preferencia
+
+<NormativeClause id="MWP-WRK-013" level="MUST">
+
+La propiedad en cola y la ejecución activa utilizan arrendamientos vallados y
+renovables. Una concesión de propiedad MUST incluye una época de propiedad y una
+fecha límite de inicio. Para comenzar a trabajar se requiere un contrato de
+arrendamiento de ejecución con un ID de arrendamiento estable vinculado al ID
+Agent, Session Epoch, ID WorkItem, época de propiedad, inicio, historial de
+renovación y vencimiento. Cada renovación, punto de control, bloqueo,
+publicación Artifact, envío y falla MUST informada por Worker hacen referencia
+al ID de arrendamiento actual. Un Command retrasado que lleve un ID de
+arrendamiento anterior MUST se rechazará incluso cuando su época de propiedad no
+haya cambiado.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-014" level="MUST">
+
+Los tokens de capacidad se vinculan al ID del arrendamiento de ejecución, no al
+revés. Esto permite rotar o reducir los tokens mientras un contrato de
+arrendamiento permanece activo; cada token aún vence a más tardar en el límite
+del arrendamiento bajo el cual fue emitido. El punto de control, el bloqueo y el
+envío liberan el contrato de arrendamiento; el tiempo de espera expira; La
+sustitución de sesión, la reasignación, la cancelación y el fallo la revocan.
+Abrir una sesión Agent de reemplazo MUST revoca las concesiones activas de ese
+Agent y devuelve los elementos de trabajo afectados a `queued` antes de que el
+nuevo tiempo de ejecución pueda iniciarlos con nuevas concesiones.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-015" level="MUST NOT">
+
+Los cambios de prioridad reordenan inmediatamente los WorkItems en cola. El
+trabajo activo MUST NOT se interrumpirá por la fuerza en un punto inseguro. La
+preferencia es cooperativa:
+
+1. el Programador solicita preferencia;
+2. Worker alcanza un punto de control seguro e idempotente;
+3. emite el punto de control y hace una pausa;
+4. se libera su ranura de ejecución; y
+5. el WorkItem en pausa vuelve a ingresar a su cola Group para su posterior
+   reanudación.
+
+</NormativeClause>
+
+### 11.4 Progreso, bloqueo y reintentos
+
+<NormativeClause id="MWP-WRK-016" level={["MUST","SHOULD"]}>
+
+Los informes de progreso MUST se estructurarán en torno a la fase actual, los
+hitos completados, el próximo punto de control, los bloqueadores, la estimación
+revisada y las referencias Evidence. Los porcentajes arbitrarios no tienen
+autoridad. Los trabajadores SHOULD informan en puntos de control significativos,
+cuando una estimación cambia materialmente o cuando está bloqueada.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-017" level={["MUST","MAY"]}>
+
+Cuando se bloquea, un punto de control Worker MUST emite `work.blocked` con la
+resolución requerida y libera su ranura de ejecución. La propiedad MAY permanece
+durante un arrendamiento bloqueado limitado. El Coordinator puede resolver el
+bloqueador, autorizar el subtrabajo propuesto o reasignarlo. El trabajo
+desbloqueado vuelve a su cola lista según Group.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-018" level="MUST">
+
+Los reintentos automáticos están limitados por los presupuestos de intentos,
+retrasos, costos y plazos del contrato de trabajo. Los intentos externos MUST
+utilizan la clave de idempotencia de ejecución WorkItem o una clave de intento
+derivada determinista. El agotamiento o falla permanente emite `work.failed` con
+Evidence.
+
+</NormativeClause>
+
+### 11.5 Fallo Worker y Coordinator
+
+<NormativeClause id="MWP-WRK-019" level={["MAY","MUST NOT"]}>
+
+Si un Worker no cumple con su fecha límite de inicio o deja de renovar un
+contrato de arrendamiento, el Coordinator MAY se reasigna desde el último punto
+de control con una Época de propiedad superior. Un resultado tardío del antiguo
+propietario MAY se almacenará para auditoría, pero MUST NOT completa el
+WorkItem.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-020" level={["MAY","MUST NOT","MUST"]}>
+
+Si el servicio Group no está disponible, un Worker MAY continúa el cálculo
+reversible ya activo durante un período de gracia de arrendamiento limitado y
+amortigua el progreso firmado y los puntos de control. MUST NOT inicia nuevos
+WorkItems o realiza nuevas acciones de alto riesgo, irreversibles o visibles
+externamente sin un token de capacidad y arrendamiento actualmente válido. MUST
+se reconcilia al volver a conectarse antes del envío o de sufrir más efectos
+secundarios.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-021" level="MUST">
+
+Cada Command MUST almacenado en el búfer lleva el enlace crítico
+`urn:missionweaveprotocol:extension:bounded-offline-execution`. El enlace
+registra Agent, Group, WorkItem, Session Epoch original, época de propiedad, ID
+de arrendamiento de ejecución histórico, tiempo de desconexión, tiempo de búfer,
+fecha límite de gracia, vencimiento histórico del arrendamiento y el delta de
+uso de recursos de seis dimensiones. Al volver a conectar Worker MUST conserve
+ese enlace pero cambie la base y vuelva a firmar Command con un `issuedAt`,
+Session Epoch y Membership Época de la sesión autenticada actual. El Group
+Authority MUST rechaza el progreso almacenado en el búfer fuera de la ventana
+histórica de arrendamiento/gracia, después del cierre del arrendamiento, para un
+propietario cambiado o fuera de la conversación WorkItem limitada.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-022" level="MUST">
+
+La conciliación y su cargo de recursos son una transacción autorizada. Para cada
+delta fuera de línea distinto de cero, Group Authority MUST agrega un
+`ext.missionweaveprotocol.core.resource_usage_recorded` Event que identifica
+tanto la sesión de ejecución histórica como la sesión de conciliación, actualiza
+el WorkItem y el presupuesto completo ascendencia y luego aplica el Message o
+punto de control. Desbordamiento de presupuesto MUST rechaza tanto el cargo como
+el progreso Command sin un Event parcial o cambio de estado.
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+El siguiente bloque reanuda un segmento fuente fijado posteriormente. Consulte
+el [mapa fuente de especificación](./) para ver la página local intermedia y los
+rangos de líneas exactos.
+
+</InformativeBlock>
+
+## 13. Artefactos, Evidence y paquetes de contexto
+
+### 13.1 Artefactos
+
+<NormativeClause id="MWP-WRK-023" level="MUST">
+
+Un Artifact es inmutable y se aborda el contenido. El contenido binario MUST se
+almacenará fuera del registro Group Event. Su manifiesto firmado MUST contiene
+el hash de contenido, el tipo de medio y el esquema, la versión del productor
+Agent y Agent Card, Mission/Group/WorkItem ID, hash de origen Artifact,
+versiones relevantes de herramienta/modelo/capacidad, tiempo de creación,
+clasificación de datos, tamaño y URI de recuperación.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-024" level={["MUST","MUST NOT"]}>
+
+Los artefactos derivados forman un gráfico de procedencia. Las implementaciones
+MUST verifican el hash de contenido al recuperar un Artifact y MUST NOT tratan
+un URI mutable como identidad de contenido.
+
+</NormativeClause>
+
+### 13.2 Revisión basada en Evidence
+
+<NormativeClause id="MWP-WRK-025" level={["MUST","SHOULD"]}>
+
+La afirmación de finalización de un Worker es insuficiente. El envío WorkItem
+MUST incluye Evidence asignado a los criterios de aceptación. Coordinator revisa
+SHOULD, en orden:
+
+1. validar la integridad de Artifact y los esquemas de salida requeridos;
+2. ejecutar pruebas deterministas o reglas comerciales cuando estén disponibles;
+3. solicitar al revisor-Agent Evidence criterios semánticos o cualitativos;
+4. evaluar el Evidence combinado; y
+5. conservar todos los resultados del Approval humano final.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-026" level={["MUST","MUST NOT"]}>
+
+Evidence MUST asunto del registro, criterios, método, resultado, productor,
+marca de tiempo y artefactos referenciados. Evidence y los registros de decisión
+MUST NOT incluyen cadenas de pensamiento privadas.
+
+</NormativeClause>
+
+### 13.3 Paquetes de contexto
+
+<NormativeClause id="MWP-WRK-027" level="MUST">
+
+Un Context Package es un resumen firmado, versionado y con alcance, nunca un
+reemplazo autorizado del historial. MUST identifica el alcance Mission y
+WorkItem, el rango de origen Event, los hashes Artifact, las decisiones, las
+restricciones, las preguntas no resueltas, el generador, la hora y la firma. Un
+Worker puede recuperar los Eventos citados cuando su Membership lo permita. La
+actualización de un paquete crea una nueva versión y conserva la procedencia de
+la versión anterior.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-028" level="MUST NOT">
+
+Contenido Group MUST NOT ingresa otro contexto Mission de forma predeterminada.
+El conocimiento reutilizable debe publicarse explícitamente como Organization,
+clasificado y con procedencia aprobada por Artifact. El reenvío Cross-Group
+requiere comprobaciones de permisos y un Event auditable. El Programador global
+puede inspeccionar los metadatos de programación, pero MUST NOT inspecciona el
+contenido confidencial Mission.
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+El siguiente bloque reanuda un segmento fuente fijado posteriormente. Consulte
+el [mapa fuente de especificación](./) para ver la página local intermedia y los
+rangos de líneas exactos.
+
+</InformativeBlock>
+
+## 16. Entrega, repetición y reconocimiento
+
+<NormativeClause id="MWP-WRK-029" level={["MUST","MAY","MUST NOT"]}>
+
+MissionWeaveProtocol promete la entrega de Event al menos una vez. Un
+destinatario MUST deduplicado por ID Event y MUST procesa cada Group en orden
+secuencial. MAY almacena en buffer un Event fuera de servicio, pero MUST NOT
+avanza su cursor duradero sobre un espacio.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-030" level="MUST NOT">
+
+Un cursor es la secuencia Group contigua más alta procesada de forma duradera
+por un Agent. Un cuadro `ACK` informa uno o más cursores. La confirmación
+permite la limpieza de la entrega, pero MUST NOT elimina el historial autorizado
+Group. La reconexión utiliza `SUBSCRIBE.afterSequence`; el servidor reproduce
+eventos después de esa posición, posiblemente incluyendo duplicados en torno a
+una desconexión anterior.
+
+</NormativeClause>
+
+Si un cursor antiguo ya no está disponible en el registro en línea, el servidor
+devuelve `CURSOR_TOO_OLD` y una referencia de instantánea firmada. Agent
+restaura la instantánea, verifica su hash/firma y continúa desde la secuencia de
+instantáneas.
+
+<NormativeClause id="MWP-WRK-031" level="MUST">
+
+Las operaciones de herramientas externas MUST utilizan una clave de idempotencia
+estable derivada del ID Mission, el ID WorkItem, la época de propiedad y el ID
+de operación lógica. La entrega en red por sí sola nunca puede garantizar
+efectos secundarios externos que se produzcan exactamente una vez.
+
+</NormativeClause>

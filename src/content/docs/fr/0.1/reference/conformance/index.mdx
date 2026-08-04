@@ -1,0 +1,23 @@
+---
+title: Surfaces de conformité
+description:
+  Preuve structurelle, cryptographique et d'admission pour MissionWeaveProtocol
+  0.1.
+---
+
+# Surfaces de conformité
+
+MissionWeaveProtocol 0.1 sépare les preuves de conformité en trois surfaces
+versionnées indépendamment :
+
+1. [Conformance structurelle](./structural/) vérifie la validité du schéma JSON
+   pour documents neutres en termes de mise en œuvre.
+2. [Conformité de cryptographie](./cryptography/) vérifie les six Signed
+   Document étapes de vérification.
+3. [Chèques de première admission et de confiance historique](./admission/)
+   authentifiés comportement d'enregistrement d'acceptation en plus d'un
+   résultat réussi en six étapes.
+
+Passer une surface n’implique pas passer l’une ou l’autre des autres. La
+conformité complète du protocole nécessite également la preuve des clauses
+comportementales applicables dans la [spécification locale ](../specification/).

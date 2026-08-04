@@ -1,0 +1,129 @@
+---
+title: Référence d'exécution Rust
+description: >-
+  Surface complète de la racine de la caisse et limites d'exécution du Rust SDK
+  épinglé exactement.
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Référence d'exécution Rust
+
+Cette page couvre la surface complète de la racine de la caisse représentée par
+l'inventaire [exact API](../api/). Le comportement du protocole partagé reste
+défini par la
+[référence d'exécution ](../../../runtime/architecture-and-bootstrap/) et les
+[clauses de référence ](../../../../reference/specification/)] locales. Les noms
+des modules ci-dessous identifient la provenance de la mise en œuvre ; les
+appelants importent les réexportations publiques de `missionweaveprotocol` car
+les modules eux-mêmes sont privés.
+
+<SupportStatus status="implemented" /> s'applique aux API crate-root et au
+comportement en cours répertoriés ci-dessous.
+
+<SupportStatus status="deployment-adapter-required" /> s'applique à l'autorité
+Registry actuelle, au contexte d'admission approuvé, à l'accès au journal
+authentifié et à d'autres services de déploiement.
+
+<SupportStatus status="not-implemented" /> signifie que la caisse exactement
+épinglée n'a pas de runtime correspondant.
+
+## Caisse et modèle d'exécution
+
+La caisse est la version `0.1.0`, utilise l'édition 2024, déclare Rust 1.85
+comme chaîne d'outils minimale prise en charge et expose un binaire :
+`missionweaveprotocol-conformance`. `src/lib.rs` est la seule racine
+d'importation publique ; les chemins de module internes ne sont pas des API
+prises en charge.
+
+L'installation de la caisse ne démarre aucun service, n'ouvre aucun socket, ne
+conserve aucun état et n'accorde aucune autorité. Les tranches d'octets
+renvoyées et les objets de preuve restent des valeurs de processus locales à
+moins que l'application ne les stocke ou ne les transmette délibérément.
+
+## Carte source complète
+
+| Problème d'exécution            | Source de mise en œuvre publique                            | Contrat au commit épinglé                                                                                                                        |
+| ------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Racine et constantes du package | `lib.rs`                                                    | Réexporte la surface publique prise en charge et les versions SDK, de protocole et de fil.                                                       |
+| Stricte JSON                    | `strict_json.rs`                                            | `parse_strict_json` rejette le UTF-8 non valide, les membres en double, le JSON mal formé et les données de fin.                                 |
+| Schéma et heure exacte          | `schema.rs`, `signed_document.rs`                           | Validation hors ligne Draft 2020-12, formats URI/date-heure affirmés, recherche de schéma packagée et comparaison instantanée exacte.            |
+| Canoniques JSON et Ed25519      | `canonical.rs`                                              | RFC 8785 octets et hachages plus `Ed25519Signer` assistants.                                                                                     |
+| Documents signés et Registry    | `signed_document.rs`                                        | Neuf types de documents, signature, vérification en six étapes, résolution complète Organization Registry et preuves de vérification immuables.  |
+| Cadres                          | `frame.rs`                                                  | `FrameCodec` décode, encode et valide les documents. Il s'agit d'un codec et non d'un service de passerelle hébergé.                             |
+| Conformité structurelle         | `conformance.rs`, `bin/missionweaveprotocol-conformance.rs` | Exécution de vecteur de schéma intégré, résumés de rapports, état de sortie de la CLI et échecs détaillés facultatifs.                           |
+| Offres groupées intégrées       | `bundle.rs`                                                 | Accès exact aux broches, recherche d'artefacts et vérification de résumé pour les offres groupées de protocole, de cryptographie et d'admission. |
+| Première admission              | `admission.rs`                                              | Première admission et confiance historique au-dessus de la vérification Signed Document réussie.                                                 |
+
+## Validation, signature et preuves Registry
+
+`SchemaCatalog::new`, `validate`, `validate_bytes` et `identifier` fonctionnent
+sur les 22 schémas intégrés exacts. L'analyse stricte et la validation du schéma
+sont distinctes de la canonisation. `canonical_bytes`, `canonical_sha256` et
+`signature_input` implémentent RFC 8785 et la construction d'entrée de
+signature.
+
+`SigningKey` est la couture de signature appartenant à l'application.
+`Ed25519Signer` fournit des aides à la signature et à la vérification basées sur
+des valeurs de départ pour une utilisation locale contrôlée.
+`SignedDocumentCodec::sign` et `verify` sélectionnent l'une des neuf valeurs
+`SignedDocumentKind` explicites et exécutent les étapes d'analyse, de schéma,
+d'enveloppe de signature, de résolution de clé, de canonisation et de signature
+dans l'ordre.
+
+`KeyResolver::resolve` doit renvoyer la preuve
+`KeyRegistrySnapshot::organization_wide` pour une révision Organization
+cohérente et applicable avec un historique complet conservé. Une clé
+sélectionnée, une projection partielle, un accès au cache ou un indicateur de
+confiance fourni par l'appelant est insuffisant. `VerifiedSignedDocument` expose
+les octets reçus, la signature et les octets et hachages canoniques complets,
+l'heure protégée, les preuves de signature et les preuves Registry résolues.
+
+## Cadres, bundles et conformité
+
+`FrameCodec::decode`, `encode` et `validate_document` valident les valeurs de
+trame ; ils ne possèdent pas le transport, l'authentification de session, la
+persistance du curseur, la contre-pression, le routage ou les transitions d'état
+faisant autorité.
+
+`ProtocolBundle::verify` vérifie le groupe structurel de 22 schémas et de 59
+fichiers. `verify_cryptography` vérifie 98 artefacts, 22 cas et 62 évaluations
+déclarées ; `verify_admission` vérifie 19 artefacts, 5 cas et 30 évaluations
+déclarées. Ces deux appels vérifient les épingles, les décomptes et les résumés.
+Ils n'exécutent pas toutes les cryptographies ou évaluations d'admission. Le
+binaire de conformité et `ConformanceRunner::run` exécutent uniquement les
+vecteurs structurels.
+
+## Première admission
+
+`AdmissionService::new`, `prepare_first_admission`, `admit_first` et
+`verify_historical_admission` exposent le flux d'admission exact. Continuez avec
+la [référence d'admission Rust](../admission/) pour connaître les résultats de
+l'adaptateur, l'ordre d'appel et l'exemple de consommateur de package
+exécutable.
+
+## Limites de disponibilité explicites
+
+<SupportStatus status="deployment-adapter-required" /> **Autorité
+d'admission** : l'application fournit des preuves Registry actuelles, des
+preuves historiques Registry, un contexte d'acceptation fiable et un journal
+authentifié en ajout uniquement.
+
+<SupportStatus status="not-implemented" /> **Orchestration Mission** — aucune
+machine à états Mission de haut niveau ou façade d'orchestration n'est exportée.
+
+<SupportStatus status="not-implemented" /> **Planificateur Worker** : aucune
+file d'attente Worker, planificateur, exécuteur de bail ou boucle de
+récupération n'est exporté.
+
+<SupportStatus status="not-implemented" /> **Service de passerelle hébergé** :
+la caisse fournit un codec de trame, et non un service de passerelle avec
+propriété de transport, TLS, session, routage ou contre-pression.
+
+<SupportStatus status="not-implemented" /> **Exécution de persistance faisant
+autorité** : aucune exécution de persistance basée sur une base de données ou
+Agent locale n'est exportée.
+
+Ces absences font partie du contrat de support documenté ; Les capacités
+d'exécution de référence Python ne doivent pas être déduites des noms de
+protocole partagés.

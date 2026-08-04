@@ -1,0 +1,111 @@
+---
+title: Aprenda MissionWeaveProtocol 0.1
+description: >-
+  Un camino conceptual normativo a través de MissionWeaveProtocol 0.1, desde
+  Misiones y Grupos hasta límites de confianza, admisión y seguridad.
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+# Aprenda MissionWeaveProtocol 0.1
+
+:::caution[Draft Standard 0.1]
+
+Esta ruta de aprendizaje versionada es parte de la publicación normativa del
+sitio web. Explica el modelo en orden de lectura y vincula cada regla a su
+cláusula estable en la especificación de referencia local.
+
+:::
+
+MissionWeaveProtocol coordina agentes autónomos dentro de un Organization
+confiable. Separa la conversación de la autoridad de ejecución, mantiene
+aislados el estado y las credenciales de cada Mission y registra los hechos
+duraderos necesarios para la reproducción, la recuperación, Evidence y la
+responsabilidad humana. Estos límites comienzan con
+[MWP-FND-002](../reference/specification/foundations/#mwp-fnd-002) y los
+[invariantes principales](../reference/specification/foundations/#mwp-fnd-013).
+
+## La versión corta
+
+1. Un MissionOwner humano crea un Mission acotado con una definición de hecho,
+   plazo, presupuesto y política de aprobación.
+2. El Mission recibe exactamente un Group primario, un historial Event duradero,
+   y un Coordinator reemplazable.
+3. Los miembros Group intercambian mensajes duraderos y pueden proponer trabajo,
+   pero un Message nunca crea autoridad ejecutable por sí mismo
+   ([MWP-FND-014](../reference/specification/foundations/#mwp-fnd-014)).
+4. Un actor autorizado crea un WorkItem con un contrato de trabajo legible por
+   máquina.
+5. A Worker realiza el control de admisión, acepta la oferta en su Group cola y
+   lo programa en todos los grupos a través de su propio programador.
+6. El trabajo produce artefactos dirigidos al contenido y Evidence se asigna a
+   la aceptación. criterios.
+7. Coordinator verifica los resultados antes de que MissionOwner apruebe una
+   prueba exacta. Revisión Mission y conjunto Artifact.
+
+## Sigue el modelo
+
+<CardGrid>
+  <LinkCard
+    title="Core model"
+    description="Missions, Groups, durable records, local projections, and the invariants that connect them."
+    href="./core-model/"
+  />
+  <LinkCard
+    title="Identity, roles, and authority"
+    description="Organization identity, Agent Cards, Presence, sessions, fencing, and split authority."
+    href="./identity-roles-and-authority/"
+  />
+  <LinkCard
+    title="Work lifecycle"
+    description="Conversation, proposals, Work Contracts, acceptance, execution, Evidence, and approval."
+    href="./work-lifecycle/"
+  />
+  <LinkCard
+    title="Groups and scheduling"
+    description="Per-Group queues, global Worker scheduling, isolated slots, preemption, and replay."
+    href="./groups-and-scheduling/"
+  />
+  <LinkCard
+    title="Subtareas"
+    description="Descomposición recursiva sin perder el alcance, el presupuesto, Evidence ni la responsabilidad del padre."
+    href="./child-missions/"
+  />
+  <LinkCard
+    title="Signed Documents and trust"
+    description="Protected content, Registry evidence, six-stage verification, and signing hashes."
+    href="./signed-documents-and-trust/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Authoritative lookup, atomic admission, returned-record validation, and historical replay."
+    href="./first-admission-and-historical-trust/"
+  />
+  <LinkCard
+    title="Security boundaries"
+    description="What cryptography and Admission establish, and which concerns remain separate."
+    href="./security-boundaries/"
+  />
+</CardGrid>
+
+## Límites del protocolo
+
+MissionWeaveProtocol no define Agent-to-Agent RPC, federación entre
+organizaciones, enrutamiento físico de igual a igual, consenso distribuido,
+indicaciones de modelo o razonamiento de modelo privado. Un Organization
+proporciona identidad, política, autorización, orden Group duradera y
+responsabilidad humana. El contenido Mission permanece con el alcance Group de
+forma predeterminada
+([MWP-FND-019](../reference/specification/foundations/#mwp-fnd-019)), mientras
+que las decisiones y resultados auditables no requieren la divulgación de una
+cadena de pensamiento privada
+([MWP-FND-022](../reference/specification/foundations/#mwp-fnd-022)).
+
+Para conocer la redacción exacta de los requisitos, utilice la
+[especificación de referencia ](../reference/specification/), la
+[terminología ](../reference/terminology/), los
+[esquemas ](../reference/schemas/) y las
+[superficies de conformidad ](../reference/conformance/)] locales. Las
+confirmaciones exactas, los perfiles, los resúmenes y la identidad del sitio
+creado se publican en la
+[página de publicación normativa local ](../reference/normative-release/).

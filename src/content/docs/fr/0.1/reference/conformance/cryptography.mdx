@@ -1,0 +1,53 @@
+---
+title: Conformité de la cryptographie
+description:
+  L’ensemble complet de preuves du profil de vérification Signed Document local.
+---
+
+import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
+import BundleArtifactCatalog from "../../../../../../components/BundleArtifactCatalog.astro";
+import release from "../../../../../../data/normative/0.1/release-source.json";
+
+# Conformité de la cryptographie
+
+Le profil <code>{release.cryptography.profile}</code> lie les
+**{release.cryptography.artifacts} artefacts**, les
+**{release.cryptography.cases} cas** et les **{release.cryptography.evaluations}
+évaluations**. Exactement les évaluations de **{release.cryptography.complete}**
+sont terminées et **{release.cryptography.rejected}** sont rejetées. Son résumé
+lié à RFC 8785 est
+
+<code>{release.cryptography.digest}</code>.
+
+-<ArtifactLink path="protocol/cryptography/manifest.json"> Manifeste de
+cryptographie
+
+  </ArtifactLink>
+-<ArtifactLink path="protocol/cryptography/manifest.schema.json">
+    Schéma du manifeste
+  </ArtifactLink>
+-<ArtifactLink path="protocol/cryptography/README.md">
+    Sémantique des bundles locaux
+  </ArtifactLink>
+
+## Six étapes sémantiques
+
+Chaque évaluation de document signé utilise cette classification ordonnée :
+
+1. analyse stricte UTF-8 JSON ;
+2. normatif JSON Validation du schéma ;
+3. signature-enveloppe et validation à temps protégé ;
+4. résolution de la clé de signature et validation de la validité ;
+5. Canonisation RFC 8785 et production de hachage de signature ; et
+6. Vérification de la signature Ed25519.
+
+Les règles normatives correspondantes sont publiées dans la page
+[Documents signés et trust](../../specification/signed-documents-and-trust/).
+`complete` signifie que les six étapes sont terminées pour cette évaluation.
+
+La réussite de ce bundle ne prouve pas la validation First-Admission Record, la
+validation de confiance historique, la fraîcheur Command ou l'application du
+décalage d'horloge, ou l'autorisation du signataire en vertu du rôle et de la
+politique applicables.
+
+<BundleArtifactCatalog bundle="cryptography" />

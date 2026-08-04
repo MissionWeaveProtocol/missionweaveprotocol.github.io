@@ -1,0 +1,140 @@
+---
+title: Python Première admission et confiance historique
+description: >-
+  Adaptateurs Python saisis, ordre d'appel exact, limites de confiance et
+  exemple d'admission exécutable.
+---
+
+import admissionExample from "../../../../../../../../examples/sdk/python/admission.py?raw";
+
+# Python Première admission et confiance historique
+
+Les couches Python `AdmissionService` ont authentifié la première admission et
+la confiance historique au-dessus du vérificateur Signed Document en six étapes
+([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+Le flux de contrôle indépendant de la langue est la
+[page d'exécution locale de première admission et de confiance historique](../../../runtime/first-admission-and-historical-trust/),
+et les exigences exactes sont les
+[clauses locales de première admission et de confiance historique](../../../../reference/specification/first-admission-and-historical-trust/).
+
+## Types publics
+
+| Public API                                     | Responsabilité                                                                                                                                                                                                                                                                                                                |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.resolve_current`  | Renvoie la preuve complète Organization Registry que le déploiement affirme être à jour pour une nouvelle décision de première admission.                                                                                                                                                                                     |
+| `TrustedAdmissionContext.issue`                | Émettez l'ID d'enregistrement de confiance, l'acceptation de confiance instantanée et l'acceptation du service uniquement après une absence faisant autorité.                                                                                                                                                                 |
+| `AdmissionLog.lookup`                          | Renvoie `AdmissionLookupStatus.FOUND` avec des octets authentifiés ou `AdmissionLookupStatus.AUTHORITATIVE_ABSENCE`. Échec du transport, échec du cache, état indéterminé et échec d'absence non authentifié fermé sous [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
+| `AdmissionLog.append_or_return_existing`       | Ajoutez atomiquement les octets candidats ou renvoyez le gagnant faisant autorité simultané.                                                                                                                                                                                                                                  |
+| `AuthenticatedAdmissionRecord`                 | Bind a renvoyé des octets d'enregistrement à l'identité de service acceptante authentifiée par l'adaptateur pour la validation [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009).                                                                                          |
+| `AdmissionService.prepare_first_admission`     | Créez et validez des octets candidats à partir d’un document déjà vérifié et d’un contexte fiable. Cela n’ajoute ni n’implique une admission.                                                                                                                                                                                 |
+| `AdmissionService.admit_first`                 | Implémentez le flux de preuves actuelles, d'absence faisant autorité, d'ajout atomique et d'enregistrement renvoyé dans [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).                                                                                                 |
+| `AdmissionService.verify_historical_admission` | Réexécutez la vérification avec les preuves historiques Registry et exigez un enregistrement trouvé sans émettre de contexte ni ajouter, comme requis par [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                                                               |
+
+Le résultat de l’adaptateur est une preuve tapée. Un booléen de confiance fourni
+par l'appelant ne constitue pas un résultat de recherche faisant autorité et ne
+doit jamais sélectionner le chemin de réussite.
+
+## Appel de première admission
+
+:::note[Informative example]
+
+```python
+admitted = AdmissionService().admit_first(
+    SignedDocumentKind.COMMAND,
+    document_bytes,
+    current_registry,
+    admission_log,
+    trusted_context,
+)
+```
+
+:::
+
+`admit_first` vérifie avant d'appeler le journal. Lorsque la recherche renvoie
+`AdmissionLookupStatus.AUTHORITATIVE_ABSENCE`, elle appelle
+`prepare_first_admission`, appelle `append_or_return_existing`, puis valide
+l'enregistrement réellement renvoyé. Un gagnant simultané n'est acceptable que
+lorsque ses octets, son service authentifié, sa liaison de document et son heure
+de confiance sont tous validés
+([MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009),
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)).
+
+## Appel en rediffusion historique
+
+:::note[Informative example]
+
+```python
+historical = AdmissionService().verify_historical_admission(
+    SignedDocumentKind.COMMAND,
+    document_bytes,
+    historical_registry,
+    admission_log,
+)
+```
+
+:::
+
+La relecture historique utilise l'historique Registry conservé, nécessite un
+enregistrement d'admission trouvé et n'appelle jamais
+`TrustedAdmissionContext.issue` ou `AdmissionLog.append_or_return_existing`. Les
+ID d'enregistrement correspondants dans l'exemple démontrent que la relecture a
+récupéré le premier enregistrement faisant autorité ; ils ne prouvent pas par
+eux-mêmes la fraîcheur de Command, l'autorisation du signataire, l'acceptation
+de la machine d'état ou la vérification portable de la preuve de journal. La
+fraîcheur Command et l'autorisation du signataire restent des exigences
+distinctes sous
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+et
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
+
+## Exemple d'exécution exacte épinglée
+
+:::note[Informative example]
+
+L'exemple utilise uniquement les API publiques SDK et la dépendance d'exécution
+`cryptography` déclarée. Il crée de manière déterministe une clé Ed25519, un
+Organization complet Registry, un Command signé et des adaptateurs en mémoire
+saisis. La graine privée fixe est un matériel de démonstration et ne doit jamais
+être utilisée en dehors de l'exemple.
+
+<pre>
+  <code>{admissionExemple}</code>
+</pre>
+
+Exécutez-le à partir d'une caisse exacte après avoir installé tous les extras
+SDK :
+
+```bash
+uv sync --all-extras
+uv run python /absolute/path/to/examples/sdk/python/admission.py
+```
+
+La sortie attendue contient le même ID First-Admission Record pour
+`first admission` et `historical replay`. Le programme affirme également que les
+hachages de signature et les octets d'enregistrement correspondent, et que le
+journal est ajouté exactement une fois.
+
+:::
+
+:::note[Implementation note]
+
+Remplacez les exemples d'adaptateurs dans un déploiement :
+
+- `CurrentRegistryFixture` avec un résolveur courant-Registry authentifié ;
+- `InMemoryAdmissionLog` avec un Admission Log atomique authentifié, en ajout
+  uniquement ; et
+- `FixedTrustedAdmissionContext` avec une heure de confiance contrôlée par
+  Organization et émetteur de services acceptant.
+
+Remplacez `DeterministicSigningKey` par un service de signature ou un adaptateur
+de clé appartenant au déploiement. N'intégrez jamais de graine de signature
+privée dans le code de production.
+
+Ne réduisez pas ces limites en un seul indicateur de disponibilité ou de
+confiance.
+
+:::
+
+Le rejet d'admission post-cryptographique reste protégé par l'étape `admission`
+et le code électronique `AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).

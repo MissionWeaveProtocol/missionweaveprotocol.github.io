@@ -1,0 +1,126 @@
+---
+title: Java Erstzulassung und historischer Trust
+description: >-
+  Typisierte Java-Adapter, genaue Aufrufreihenfolge, Vertrauensgrenzen und ein
+  ausführbares Zulassungsbeispiel.
+---
+
+import javaAdmissionExample from "../../../../../../../../examples/sdk/java/AdmissionExample.java?raw";
+
+# Java Erstzulassung und historischer Trust
+
+Der Java `AdmissionService` legt die First Admission- und Historical
+Trust-Schichten über dem sechsstufigen Signed Document-Verifizierer
+([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005))).
+Der sprachunabhängige Ablauf ist die lokale
+[First Admission and Historical Trust-Laufzeitseite](../../../runtime/first-admission-and-historical-trust/),
+und die genauen Anforderungen sind die lokalen
+[Admission-Klauseln](../../../../reference/specification/first-admission-and-historical-trust/).
+
+## Öffentliche Adapter und Ergebnisse
+
+| Öffentlich API                                     | Verantwortung                                                                                                                                                                                                                                                                                            |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver.resolveCurrent`       | Geben Sie den vollständigen Organization-weiten Registry-Beweis zurück, dass die Bereitstellung für diese Entscheidung aktuell ist.                                                                                                                                                                      |
+| `TrustedAdmissionContext.issue`                    | Vergeben Sie die Akten-ID, die vertrauenswürdige Annahmestelle und die Annahmezustellung erst nach behördlicher Abwesenheit.                                                                                                                                                                             |
+| `AdmissionLog.lookup`                              | Geben Sie `AdmissionLookup.Found` oder `AdmissionLookup.AuthoritativeAbsence` zurück. Cache-Fehler, Zeitüberschreitung oder nicht authentifizierte Abwesenheit schlagen unter [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)] fehl.                |
+| `AdmissionLog.appendOrReturnExisting`              | Hängen Sie Kandidatenbytes atomar an oder geben Sie den gleichzeitigen autorisierenden Gewinner über eine authentifizierte Dienstidentität zurück.                                                                                                                                                       |
+| `AuthenticatedAdmissionRecord`                     | Binden Sie zurückgegebene Datensatzbytes an den vom Adapter authentifizierten Dienst für [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009).                                                                                                           |
+| `AdmissionService.prepareFirstAdmission`           | Erstellen und validieren Sie Kandidatennachweise aus einem von SDK erstellten `VerifiedSignedDocument`; es stellt keine Zulassung dar oder impliziert diese.                                                                                                                                             |
+| `AdmissionService.admitFirst`                      | Überprüfen Sie aktuelle Beweise, suchen Sie nach, bereiten Sie sie nach Abwesenheit vor, hängen Sie vorhandene an oder geben Sie sie zurück und validieren Sie den zurückgegebenen Datensatz unter [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006). |
+| `AdmissionService.verifyHistoricalAdmission`       | Führen Sie die Überprüfung mit historischen Registry-Beweisen erneut durch und fordern Sie einen vorhandenen Datensatz an, ohne Kontext auszugeben oder unter [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008) anzuhängen.                           |
+| `PreparedFirstAdmission`, `AdmittedSignedDocument` | Bewahren Sie unveränderliche Verifizierungs- und Aufzeichnungsbeweise auf und geben Sie defensive Datensatzkopien zurück.                                                                                                                                                                                |
+
+Ein vom Anrufer bereitgestellter boolescher Vertrauensstellungswert ist kein
+Ergebnis der Zulassungssuche und darf niemals den Erfolgspfad auswählen.
+
+## Reihenfolge der Erstzulassung
+
+:::note[Informative example]
+
+```java
+AdmittedSignedDocument first =
+    new AdmissionService()
+        .admitFirst(
+            SignedDocumentKind.COMMAND,
+            document,
+            currentRegistry,
+            admissionLog,
+            trustedContext);
+```
+
+:::
+
+`admitFirst` schließt alle sechs Überprüfungsphasen ab, bevor auf das Protokoll
+zugegriffen wird. Ein gefundener Datensatz wird validiert und zurückgegeben,
+ohne dass ein vertrauenswürdiger Kontext ausgegeben oder ein Anhang hinzugefügt
+wird. Nach maßgeblicher Abwesenheit gibt der Dienst Kontext aus, bereitet
+kanonische Kandidatenbytes vor und ruft auf `appendOrReturnExisting`und
+validiert den tatsächlich zurückgegebenen Datensatz. Ein gleichzeitiger Gewinner
+ist nur dann erfolgreich, wenn Schema, Authentifizierung, Dokumentbindung und
+vertrauenswürdige Zeit die Anforderungen erfüllen
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+und
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010).
+
+## Historische Wiedergabe und Fehler
+
+`verifyHistoricalAdmission` verwendet `KeyResolver`, führt alle sechs Phasen
+erneut durch, erfordert `AdmissionLookup.Found`, und ruft nie an
+`TrustedAdmissionContext.issue` oder `AdmissionLog.appendOrReturnExisting`.
+Übereinstimmende Datensatz-IDs stellen denselben maßgeblichen Datensatz wieder
+her, beweisen ihn jedoch nicht Command Aktualität, Autorisierung des
+Unterzeichners, Akzeptanz der Zustandsmaschine oder tragbare protokollsichere
+Überprüfung gemäß
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+und
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
+
+Es bleiben sechsstufige Fehler bestehen `SignedDocumentVerificationException`.
+Fehler in der Zulassungsphase sind `AdmissionException` mit Leitungscode
+`AUTH_INVALID_SIGNATURE`, Bühne `admission`, und eine getippte
+`AdmissionReason`, wie in
+[MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012).
+Bereitstellungsadapter lösen aus `AdmissionAdapterException`; Der allgemeine
+Erfolg oder die Verfügbarkeit ist kein authentifizierter Beweis.
+
+## Ausführbares, exakt angeheftetes Beispiel
+
+:::note[Informative example]
+
+Das Beispiel liest das signierte Command Und Registry aus Ressourcen, die im
+exakten JAR gepackt sind, und stellt dann typisierte In-Memory-Autoritätsadapter
+bereit. Es liest keine Repository-Dateien. Es bestätigt identische
+Datensatz-IDs, Signatur-Hashes und Datensatzbytes für die Erstzulassung und die
+historische Wiedergabe mit genau einem Anhang.
+
+<pre>
+  <code>{javaAdmissionExample}</code>
+</pre>
+
+Kopieren Sie es in eine genaue Kasse und führen Sie Folgendes aus:
+
+```bash
+cp /absolute/path/to/examples/sdk/java/AdmissionExample.java \
+  examples/src/main/java/org/missionweaveprotocol/examples/AdmissionExample.java
+./mvnw -B -ntp verify
+./mvnw -q -Dexec.mainClass=org.missionweaveprotocol.examples.AdmissionExample \
+  -Dexec.classpathScope=test exec:java
+```
+
+Die erwartete Ausgabe enthält dieselbe Datensatz-ID für `first admission` Und
+`historical replay`.
+
+:::
+
+:::note[Implementation note]
+
+Ersetzen Sie `CurrentRegistry` durch authentifizierte aktuelle und historische
+Registry-Adapter, `InMemoryAdmissionLog` durch ein authentifiziertes dauerhaftes
+Protokoll, dessen Append-or-Return-Existing-Vorgang atomar ist, und
+`FixedTrustedContext` durch Organization-gesteuerte vertrauenswürdige Zeit und
+Annahmedienstausgabe. Behalten Sie defensive Kopien bei und fassen Sie diese
+Autoritätsgrenzen niemals in einem vom Aufrufer bereitgestellten
+Vertrauensbooleschen Wert zusammen.
+
+:::

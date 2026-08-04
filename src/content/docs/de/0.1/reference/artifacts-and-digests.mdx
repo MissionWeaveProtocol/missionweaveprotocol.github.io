@@ -1,0 +1,60 @@
+---
+title: Artefakte und Digests
+description: >-
+  Wie die Website MissionWeaveProtocol 0.1 lokale normative Bytes und
+  Release-Identitäten bindet.
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import artifacts from "../../../../../data/normative/0.1/artifacts.json";
+
+# Artefakte und Digests
+
+Das lokale Protokollpaket enthält **{artifacts.bundle.files} genaue Dateien**
+mit dem Baum-Digest <code>{artifacts.bundle.digest}</code>. Der Protokoll-Pin
+SHA-256 lautet
+
+<code>{artifacts.protocolPin.sha256}</code> und das angeheftete Protokollpaket
+SHA-256 ist <code>{artifacts.protocolPin.bundleSha256}</code>.
+
+| Oberfläche          |                                                         Dateien oder Artefakte | Digest                                       |
+| ------------------- | -----------------------------------------------------------------------------: | -------------------------------------------- |
+| Schemata            |                                                      {artifacts.schemas.files} | <code>{artifacts.schemas.digest}</code>      |
+| Strukturkonformität | {artifacts.structural.files} Dateien / {artifacts.structural.vectors} Vektoren | <code>{artifacts.structural.digest}</code>   |
+| Kryptographie       |                                             {artifacts.cryptography.artifacts} | <code>{artifacts.cryptography.digest}</code> |
+| Eintritt            |                                                {artifacts.admission.artifacts} | <code>{artifacts.admission.digest}</code>    |
+
+## Digest-Semantik
+
+Einzelne Manifesteinträge binden genaue Dateibytes mit Kleinbuchstaben SHA-256.
+Die Kryptografie- und Zulassungswerte `artifactDigest` der obersten Ebene
+entfernen genau dieses Mitglied, serialisieren das verbleibende Manifest mit RFC
+8785 JCS und hashen die kanonischen Bytes. Ihre deklarierten Artefakteinträge
+binden transitiv jede benannte Datei.
+
+Der Website-Bundle-Tree-Digest bindet zusätzlich jeden kanonischen relativen
+Pfad, ein NUL-Trennzeichen, die genauen Dateibytes und ein abschließendes
+NUL-Trennzeichen in sortierter Pfadreihenfolge. Dadurch wird verhindert, dass
+zwei unterschiedliche Artefaktlayouts eine Identität teilen, nur weil ihre
+verketteten Bytes übereinstimmen.
+
+## Lokale Release-Artefakte
+
+- <ArtifactLink path="protocol/spec/PROTOCOL.md">
+    Angepinnte Protokollquelle
+  </ArtifactLink>
+- <ArtifactLink path="protocol/CONTEXT.md">
+    Angeheftetes normatives Glossar
+  </ArtifactLink>
+- <ArtifactLink path="protocol/conformance/manifest.json">
+    Strukturelles Manifest
+  </ArtifactLink>
+- <ArtifactLink path="protocol/cryptography/manifest.json">
+    Kryptographie-Manifest
+  </ArtifactLink>
+- <ArtifactLink path="protocol/admission/manifest.json">
+    Zulassungsmanifest
+  </ArtifactLink>
+- <ArtifactLink path="normative-release.json">
+    Generiertes Website-Release-Manifest
+  </ArtifactLink>

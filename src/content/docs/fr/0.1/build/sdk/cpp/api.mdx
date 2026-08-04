@@ -1,0 +1,24 @@
+---
+title: C++ inventaire public API
+description: >-
+  Chaque déclaration d'en-tête installé C++ prise en charge est résolue en son
+  fichier source exact et sa ligne lors de la validation SDK documentée.
+---
+
+import SdkApiInventory from "../../../../../../../components/SdkApiInventory.astro";
+
+# C++ inventaire public API
+
+Cet inventaire avec validation exacte est généré à partir de chaque en-tête
+public sous `include/missionweaveprotocol` à
+`481b0ce3a65c1f2265935318b54481ece5032fdf`. Il contient 314 classes publiques,
+structures et champs, énumérations et membres, alias, utilisant des
+déclarations, des constantes, des constructeurs, des destructeurs, des
+opérateurs, des méthodes et des fonctions. Les aides privées et les déclarations
+de test/exemple sont exclues.
+
+L'inventaire est la référence de dénomination et de provenance exacte de la
+source, et ne remplace pas la [sémantique d'exécution](../runtime/) ou le
+[flux d'appel d'admission](../admission/).
+
+<SdkApiInventory sdk="cpp" />

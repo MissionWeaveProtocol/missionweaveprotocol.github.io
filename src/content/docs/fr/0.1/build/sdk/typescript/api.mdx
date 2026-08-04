@@ -1,0 +1,25 @@
+---
+title: TypeScript inventaire public API
+description: >-
+  Chaque déclaration de racine de package TypeScript prise en charge est résolue
+  en son fichier source exact et sa ligne lors de la validation SDK documentée.
+---
+
+import SdkApiInventory from "../../../../../../../components/SdkApiInventory.astro";
+
+# TypeScript inventaire public API
+
+Cet inventaire de validation exacte est généré à partir des déclarations
+d'exportation réelles de la racine du package dans
+`6d53ebfcf8350ae81d89fd818611b07f7373685c`. Les exportations vedettes incluent
+leurs déclarations publiques ; les exportations sélectives incluent uniquement
+la surface racine nommée. Les importations ordinaires et les déclarations
+uniquement internes sont exclues.
+
+L'inventaire est la référence de dénomination et de provenance exacte de la
+source, et ne remplace pas la [sémantique d'exécution](../runtime/) ou le
+[flux d'appel d'admission](../admission/). Le package exporte uniquement `.` et
+`./package.json` ; un module source répertorié ici n'est pas un sous-chemin de
+package pris en charge indépendamment.
+
+<SdkApiInventory sdk="typescript" />

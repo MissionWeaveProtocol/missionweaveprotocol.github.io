@@ -1,0 +1,96 @@
+---
+title: Primera Admisión y Fideicomiso Histórico
+description: >-
+  La búsqueda autorizada, la adición atómica, la validación de registros
+  devueltos y la reproducción histórica fluyen por encima de la verificación de
+  seis etapas.
+---
+
+# Primera Admisión y Confianza Histórica
+
+La verificación criptográfica demuestra bytes protegidos y un Principal
+vinculado a una clave. Primera admisión agrega un instante de aceptación
+confiable asignado Organization y un registro autorizado de solo agregar. La
+capa de Admisión permanece separada de las seis etapas criptográficas
+([MWP-ADM-005](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+
+## contrato Admission Log
+
+La clave lógica es `(organizationId, signingHash)`. Admission Log autentica su
+servicio de aceptación, distingue un registro encontrado de una ausencia
+autorizada, preserva la integridad de solo agregar y expone una operación
+atómica de agregar o devolver existente. Los resultados escritos no se cierran;
+un indicador de confianza de la persona que llama no puede reemplazarlos
+([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).
+
+La forma exacta del registro de nueve campos, la prohibición de un miembro
+`signature` y el límite sin autenticación automática se definen en
+[MWP-ADM-001](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001).
+Su artefacto local exacto está indexado en el catálogo de esquemas
+[JSON](../../reference/schemas/), y el paquete completo de pruebas de primera
+admisión y reproducción se publica en
+[Conformidad de admisión](../../reference/conformance/admission/).
+
+## Flujo de primera admisión
+
+La secuencia visible para el lector es exactamente:
+
+```text
+six-stage cryptographic verification
+→ authoritative Admission Log lookup
+→ found record validation OR authoritative absence
+→ trusted context and candidate preparation
+→ atomic append-or-return-existing
+→ returned record validation
+→ admitted result
+```
+
+El punto de bifurcación importa. Un registro encontrado pasa directamente a la
+validación de registros. Sólo la ausencia de autoridad permite un contexto
+confiable y una preparación del candidato. El anexo atómico puede devolver el
+candidato local o un registro confirmado simultáneamente, y el registro devuelto
+siempre se valida antes del éxito. Los bytes candidatos por sí solos nunca
+establecen la admisión. Esta orquestación está definida por
+[MWP-ADM-006](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).
+
+La preparación del candidato tampoco añade un Event ni implica una transición de
+estado
+([MWP-ADM-007](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-007)).
+
+## Validación del registro devuelto
+
+El First-Admission Record devuelto se analiza como un valor estricto UTF-8 JSON,
+se valida con el esquema local y se compara con el resultado de seis etapas para
+Organization, tipo de documento, hash de firma, ID de clave y Principal. Su
+identidad `acceptedBy` coincide con el servicio autenticado por el resultado del
+adaptador
+([MWP-ADM-009](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)).
+
+El instante de aceptación confiable se prueba de forma independiente con el
+mismo intervalo de clave seleccionado utilizado para la hora firmada protegida
+([MWP-ADM-010](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)).
+
+Las fallas después de completar las seis etapas conservan la etapa de
+diagnóstico protegida `admission` y se asignan en el cable a
+`AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).
+
+## Repetición histórica
+
+La repetición histórica sigue un camino más estrecho:
+
+```text
+six-stage cryptographic verification
+→ required found record
+→ record validation
+→ no trusted context or append
+```
+
+Las seis etapas utilizan evidencia histórica autorizada Registry que contiene el
+historial de validez retenido necesario para el tiempo firmado protegido. La
+reproducción requiere un registro existente, lo valida y nunca crea una nueva
+admisión ni emite un contexto de candidato confiable
+([MWP-ADM-008](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)).
+
+La admisión permanece separada de la actualización Command y la autorización del
+firmante; la página siguiente hace explícitos esos límites.

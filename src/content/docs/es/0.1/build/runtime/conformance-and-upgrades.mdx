@@ -1,0 +1,115 @@
+---
+title: Conformidad y actualizaciones
+description: >-
+  Cómo verificar los artefactos de lanzamiento exactos, informar el subconjunto
+  de soporte probado, preservar las extensiones y actualizar sin cambiar la
+  semántica de la versión 0.1.
+---
+
+# Conformidad y actualizaciones
+
+La conformidad pertenece a un conjunto de artefactos exacto, no a un nombre de
+rama ni a una afirmación general de que un SDK admite MissionWeaveProtocol.
+Comience con la
+[identidad de publicación normativa ](../../../reference/normative-release/)
+local, verifique cada resumen fijado y luego ejecute las superficies de
+evidencia aplicables.
+
+## Capas de evidencia requeridas
+
+1. El catálogo de esquemas [JSON](../../../reference/schemas/) define el formas
+   de objetos duraderas y formatos afirmados.
+2. El
+   [el paquete de conformidad estructural](../../../reference/conformance/structural/)
+   ejercita documentos de protocolo esperados válidos y esperados no válidos.
+3. El [paquete de criptografía](../../../reference/conformance/cryptography/)
+   ejercita cada perfil Signed Document a través de las seis etapas semánticas.
+4. Los ejercicios del
+   [paquete de admisión](../../../reference/conformance/admission/) Primera
+   admisión y confianza histórica encima del paquete de criptografía fijado.
+5. Las afirmaciones de tiempo de ejecución completo también necesitan evidencia
+   positiva y negativa para Comandos, eventos, transiciones de estado,
+   repetición, barreras, autorización, presupuestos, recuperación de fallas y
+   efectos secundarios obsoletos o duplicados.
+
+La [descripción general de conformidad ](../../../reference/conformance/) local
+mantiene estas superficies separadas para que al pasar una capa no se avance
+silenciosamente a otra.
+
+## Verificar manifiestos antes de los casos.
+
+Para el paquete de criptografía, valide los esquemas de dispositivos, elimine
+exactamente el miembro `artifactDigest` de nivel superior, JCS: canonicalice el
+manifiesto restante, haga un hash con SHA-256 y verifique cada hash de bytes de
+artefacto declarado antes de ejecutar los casos.
+([MWP-EXT-011](../../../reference/specification/errors-extensions-and-security/#mwp-ext-011)).
+
+El manifiesto de admisión utiliza el mismo procedimiento de resumen y, además,
+fija el resumen de criptografía sin cambios. Verifique todos los artefactos a
+los que se hace referencia y ese pin antes de ejecutar los resultados del
+adaptador
+([MWP-EXT-012](../../../reference/specification/errors-extensions-and-security/#mwp-ext-012)).
+
+## Indique el subconjunto probado
+
+Los vectores de esquema demuestran el comportamiento de esquema y vector. La
+criptografía prueba las seis etapas de verificación. La admisión también prueba
+sus casos declarados de primera admisión y repetición histórica, pero no la
+frescura Command, la autorización del firmante, la aceptación de la máquina de
+estado o un formato de prueba Admission Log portátil implementado. Una
+implementación de referencia puede reclamar conformidad total con
+MissionWeaveProtocol 0.1 solo cuando la evidencia positiva y negativa
+automatizada cubra cada tipo Command principal, cada tipo Event principal y cada
+fila de transición. De lo contrario, informa explícitamente el subconjunto
+verificado más limitado
+([MWP-EXT-013](../../../reference/specification/errors-extensions-and-security/#mwp-ext-013)).
+
+## Extensiones y compatibilidad
+
+Un Extension Profile declara su URI globalmente único, versión semántica, URI de
+esquema y hash, capacidades, criticidad y firma de aprobación Organization
+([MWP-EXT-001](../../../reference/specification/errors-extensions-and-security/#mwp-ext-001)).
+Los datos de extensión desconocidos y no críticos se pueden retener y
+transmitir, mientras que se rechaza una transición que depende de un perfil
+crítico desconocido
+([MWP-EXT-002](../../../reference/specification/errors-extensions-and-security/#mwp-ext-002)).
+Ningún perfil puede debilitar la identidad, el ordenamiento, la idempotencia,
+las barreras, los presupuestos, Approval, la procedencia, el aislamiento o el
+invariante Message/no autoridad
+([MWP-EXT-003](../../../reference/specification/errors-extensions-and-security/#mwp-ext-003)).
+
+Los esquemas v0.1 rechazan propiedades centrales desconocidas y admiten
+extensibilidad solo a través de miembros de extensión explícitos. Conserve bytes
+de extensión no críticos desconocidos para la retransmisión canónica siempre que
+sea posible
+([MWP-EXT-010](../../../reference/specification/errors-extensions-and-security/#mwp-ext-010)).
+
+Pin de asignaciones Agent Card y versiones de capacidad requeridas. Una
+actualización de capacidad incompatible marca el trabajo activo y requiere una
+aceptación renovada antes de que continúe la ejecución
+([MWP-IDN-003](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-003)).
+
+## Regla de actualización
+
+El cable `protocolVersion` sigue siendo `0.1` para aclaraciones sobre
+especificaciones compatibles con versiones anteriores. Un cambio en la semántica
+principal, los campos obligatorios o los bytes de firma requiere una nueva
+versión mayor o menor de cable negociada. Nunca introduzca una nueva regla de
+protección de sobre de firma como comportamiento silencioso v0.1
+([MWP-SDV-019](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-019)).
+
+:::note[Implementation note]
+
+Trate una actualización como un nuevo conjunto de versiones inmutable. Organice
+el lanzamiento del nuevo sitio web, los esquemas, los manifiestos, los pines SDK
+y los inventarios generados juntos; verificarlos en un ambiente aislado; luego
+negocie o haga rodar el tráfico solo donde ambos lados admitan la versión de
+cable requerida y los perfiles de extensión.
+
+Mantenga los validadores antiguos y la Registry/evidencia de admisión histórica
+disponibles para reproducir los registros creados según su publicación exacta.
+Canarying, ventanas de reversión, herramientas de migración de bases de datos y
+secuenciación de implementación son opciones operativas, pero una reversión no
+puede reinterpretar eventos o bytes de firma ya aceptados.
+
+:::

@@ -1,0 +1,28 @@
+---
+title: JSON Catalogue de schémas
+description:
+  Parcourez chaque schéma normatif MissionWeaveProtocol 0.1 JSON localement.
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import SchemaCatalog from "../../../../../components/SchemaCatalog.astro";
+import release from "../../../../../data/normative/0.1/release-source.json";
+
+# JSON Catalogue de schémas
+
+MissionWeaveProtocol 0.1 publie **{release.schemas.count}** fichiers normatifs
+JSON Schema Draft 2020-12. Les fichiers ci-dessous sont les artefacts exacts de
+la version locale. Leurs notes de validation partagées sont disponibles dans le
+
+<ArtifactLink path="protocol/schemas/README.md">
+  <code>schemas/README.md</code> artefact
+</ArtifactLink>
+.
+
+La validation du schéma est basée sur les assertions, y compris chaque `format`
+déclaré. La règle locale complète est
+[MWP-FND-009](../specification/foundations/#mwp-fnd-009). La réussite de ces
+schémas prouve uniquement la forme structurelle ; il ne remplace pas les
+exigences comportementales, cryptographiques ou d'admission.
+
+<SchemaCatalog />

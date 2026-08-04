@@ -1,0 +1,123 @@
+---
+title: Rust Première admission et confiance historique
+description: >-
+  Adaptateurs Rust saisis, ordre d'appel exact, limites de confiance et exemple
+  d'admission exécutable.
+---
+
+import rustAdmissionExample from "../../../../../../../../examples/sdk/rust/admission.rs?raw";
+
+# Rust Première admission et confiance historique
+
+Le Rust `AdmissionService` superpose la première admission et la confiance
+historique au-dessus du vérificateur Signed Document en six étapes
+([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+Le flux indépendant de la langue est la
+[page d'exécution de première admission et de confiance historique locale](../../../runtime/first-admission-and-historical-trust/),
+et les exigences exactes sont les
+[clauses d'admission](../../../../reference/specification/first-admission-and-historical-trust/)
+locales.
+
+## Adaptateurs et résultats publics
+
+| Public API                                         | Responsabilité                                                                                                                                                                                                                                                       |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver::resolve_current`     | Renvoie la preuve complète Organization Registry selon laquelle le déploiement affirme qu'elle est à jour pour cette décision.                                                                                                                                       |
+| `TrustedAdmissionContext::issue`                   | Émettez l'ID d'enregistrement, l'acceptation de confiance instantanée et l'acceptation du service uniquement après une absence faisant autorité.                                                                                                                     |
+| `AdmissionLog::lookup`                             | Renvoyez `AdmissionLookup::Found` ou `AdmissionLookup::AuthoritativeAbsence`. Échec d’échec de cache, d’expiration de délai ou d’absence non authentifiée sous [MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003). |
+| `AdmissionLog::append_or_return_existing`          | Ajoutez atomiquement des octets candidats ou renvoyez le gagnant faisant autorité simultané via une identité de service authentifiée.                                                                                                                                |
+| `AuthenticatedAdmissionRecord`                     | Bind a renvoyé des octets d'enregistrement à l'identité de service authentifiée par l'adaptateur de journal pour [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009).                                               |
+| `AdmissionService::prepare_first_admission`        | Créer et valider des preuves de candidat à partir d'un SDK produit par `VerifiedSignedDocument` ; cela n’ajoute ni n’implique l’admission.                                                                                                                           |
+| `AdmissionService::admit_first`                    | Vérifiez les preuves actuelles, recherchez, préparez-vous après une absence, ajoutez ou retournez l'existant et validez l'enregistrement renvoyé sous [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).          |
+| `AdmissionService::verify_historical_admission`    | Réexécutez la vérification avec les preuves historiques Registry et exigez un enregistrement existant sans émettre de contexte ni ajouter sous [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008).                 |
+| `PreparedFirstAdmission`, `AdmittedSignedDocument` | Préserver une vérification immuable et enregistrer des preuves ; `FirstAdmissionRecord::bytes` renvoie les octets validés.                                                                                                                                           |
+
+Un booléen de confiance fourni par l'appelant n'est pas un résultat de recherche
+d'admission et ne doit jamais sélectionner le chemin de réussite.
+
+## Ordre d'appel de première admission
+
+:::note[Informative example]
+
+```rust
+let first = AdmissionService::new()?.admit_first(
+    SignedDocumentKind::Command,
+    document,
+    &current_registry,
+    &admission_log,
+    &trusted_context,
+)?;
+```
+
+:::
+
+`admit_first` termine les six étapes de vérification avant l'accès au journal.
+Un enregistrement trouvé est validé et renvoyé sans émettre de contexte fiable
+ni ajout. Après une absence faisant autorité, le service émet le contexte,
+prépare les octets candidats canoniques, appelle `append_or_return_existing` et
+valide l'enregistrement effectivement renvoyé. Un gagnant simultané ne réussit
+que lorsque le schéma, l'authentification, la liaison de document et l'heure de
+confiance satisfont
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+et
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010).
+
+## Relecture historique et erreurs
+
+`verify_historical_admission` utilise `KeyResolver`, réexécute les six étapes,
+nécessite `AdmissionLookup::Found` et n'appelle jamais
+`TrustedAdmissionContext::issue` ou `AdmissionLog::append_or_return_existing`.
+Les ID d'enregistrement correspondant récupèrent le même enregistrement faisant
+autorité mais ne prouvent pas la fraîcheur de Command, l'autorisation du
+signataire, l'acceptation de la machine d'état ou la vérification de preuve de
+journal portable sous
+[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+et
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014).
+
+`AdmissionOperationError` conserve soit l'échec de vérification en six étapes
+d'origine, soit un `AdmissionError`. Les échecs d'admission exposent le code
+filaire `AUTH_INVALID_SIGNATURE`, l'étape protégée `admission` et un
+`AdmissionReason` typé, comme l'exige
+[MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012).
+Les adaptateurs renvoient `AdmissionAdapterError` ; le succès ou la
+disponibilité générique ne constitue pas une preuve authentifiée.
+
+## Exemple d'exécution exacte épinglée
+
+:::note[Informative example]
+
+L’exemple lit les Command et Registry signés à partir du `ProtocolBundle`
+intégré vérifié du SDK, puis fournit des adaptateurs d’autorité en mémoire
+saisis. Il ne lit pas les fichiers du référentiel. Il affirme des ID
+d'enregistrement, des hachages de signature et des octets d'enregistrement
+identiques pour la première admission et la relecture historique, avec
+exactement un ajout.
+
+<pre>
+  <code>{rustAdmissionExample}</code>
+</pre>
+
+Copiez-le dans une caisse exacte et exécutez :
+
+```bash
+cp /absolute/path/to/examples/sdk/rust/admission.rs examples/website_admission.rs
+cargo test --locked --all-features
+cargo run --locked --example website_admission
+```
+
+La sortie attendue contient le même ID d’enregistrement pour `first admission`
+et `historical replay`.
+
+:::
+
+:::note[Implementation note]
+
+Remplacez `CurrentRegistry` par des adaptateurs Registry actuels et historiques
+authentifiés, `InMemoryAdmissionLog` par un journal durable authentifié dont
+l'opération d'ajout ou de retour existante est atomique et `FixedTrustedContext`
+par Organization contrôlé. temps de confiance et émission de service
+d'acceptation. Conservez les copies défensives et ne réduisez jamais ces limites
+d’autorité en un seul booléen de confiance fourni par l’appelant.
+
+:::

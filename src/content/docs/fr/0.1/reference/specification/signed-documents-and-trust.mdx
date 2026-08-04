@@ -1,0 +1,332 @@
+---
+title: Documents signés et vérification de la confiance
+description: >-
+  Le profil de vérification Signed Document, le contrat de preuve Registry, les
+  étapes sémantiques et les diagnostics protégés.
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../../components/InformativeBlock.astro";
+
+### 6.4 Signed Document Profil de vérification
+
+Un **Signed Document** est un objet de protocole durable dont le schéma
+nécessite un `signature` de niveau supérieur. Le profil de vérification v0.1
+**Signed Document** lie chacun de ces schémas à un champ d'heure de signature
+protégé et à un signataire attendu :
+
+| Signed Document    | Heure signée protégée | Signataire attendu                                                                       |
+| ------------------ | --------------------- | ---------------------------------------------------------------------------------------- |
+| Agent Card         | `issuedAt`            | Service Organization Principal autorisé à émettre des cartes Agent pour `organizationId` |
+| Approval           | `occurredAt`          | `approver`                                                                               |
+| Artifact manifeste | `createdAt`           | Agent identifié par `producer.agentId`                                                   |
+| Command            | `issuedAt`            | `actor`                                                                                  |
+| Context Package    | `generatedAt`         | `generatedBy`                                                                            |
+| Event              | `occurredAt`          | `acceptedBy`                                                                             |
+| Evidence           | `createdAt`           | `generatedBy`                                                                            |
+| Extension Profile  | `approvedAt`          | `approvedBy`                                                                             |
+| Group Snapshot     | `createdAt`           | `createdBy`                                                                              |
+
+<NormativeClause id="MWP-SDV-001" level="MUST">
+
+Pour chaque ligne à l'exception de Agent Card, le signataire attendu est le
+Principal exact identifié par le champ répertorié. Pour un Agent Card,
+l'enregistrement de clé de signature MUST identifie un service Organization
+Principal ; son autorisation d'émettre des cartes Agent pour `organizationId`
+est vérifiée après vérification cryptographique.
+
+</NormativeClause>
+
+À moins qu'un Extension Profile ne spécifie une signature supplémentaire, une
+signature v0.1 couvre la forme canonique JCS de l'objet complet avec son membre
+de niveau supérieur `signature` omis. Seul ce membre de niveau supérieur est
+omis ; les membres imbriqués nommés `signature` restent protégés. La signature
+Command couvre donc au moins son ID d'action, son acteur, sa session applicable,
+ses époques Membership et Coordinator, son ID Group lorsqu'il est présent, son
+type, sa charge utile, son ID de corrélation, l'heure de signature protégée et
+ses extensions. Une signature Event est effectuée par l'autorité acceptante et
+couvre son ID Event, la séquence Group lorsqu'elle est présente, la cause,
+l'acteur, la charge utile et l'heure de signature protégée.
+
+<NormativeClause id="MWP-SDV-002" level={["MUST","MUST NOT"]}>
+
+Étant donné que l’intégralité de l’enveloppe de signature de niveau supérieur
+est omise de l’entrée de signature v0.1, un vérificateur MUST relie l’enveloppe
+au contenu protégé. Le `signature.algorithm` MUST est `Ed25519`. L'heure signée
+protégée et `signature.createdAt` MUST sont toutes deux des valeurs UTC RFC 3339
+utilisant le suffixe majuscule `Z` et MUST sont identiques octet par octet. Un
+vérificateur MUST NOT répare, normalise ou remplace l'une ou l'autre valeur
+avant de comparer ou de vérifier le Signed Document.
+
+</NormativeClause>
+
+MissionWeaveProtocol 0.1 utilise Ed25519 pur tel que défini par RFC 8032, et non
+Ed25519ctx ou Ed25519ph. Soit
+`L = 2^252 + 27742317777372353535851937790883648493` l'ordre premier du point de
+base Ed25519 `B`, et `I` le point d'identité Edwards25519.
+
+<NormativeClause id="MWP-SDV-003" level={["MUST","MUST NOT"]}>
+
+Après avoir décodé une signature Ed25519 de 64 octets en tant que
+`Renc || Senc`, un vérificateur MUST décode canoniquement `Renc` en tant que
+point Edwards25519 et exige que `[L]R` soit égal à l'identité. Le point
+d'identité est autorisé pour `R`. Le vérificateur MUST interprète `Senc` comme
+un entier petit-boutiste non signé, exige `0 <= S < L` et MUST NOT réduire une
+valeur hors plage modulo `L`. Les codages de `R` non canoniques, hors courbe,
+d'ordre réduit non identitaire ou d'ordre mixte, ainsi que les valeurs de `S`
+hors plage, MUST faire échouer l'étape 3.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-004" level={["MUST NOT","MUST"]}>
+
+Un ID de clé MUST NOT doit être réutilisé. Le Agent Registry MUST fournit des
+liaisons de clé de signature pour chaque type Principal qui peut être un
+signataire attendu ; seuls les mandataires Agent nécessitent des cartes Agent.
+La liaison d’un ID de clé à exactement un Principal, un algorithme et une clé
+publique est immuable. Dans un Organization, la même clé publique MUST NOT doit
+être enregistrée sous un autre Principal ou ID de clé, et le même Principal, le
+même algorithme et le même tuple de clé publique MUST NOT ont un alias d'ID de
+clé. Les déclarations répétées d'une liaison identique dans les versions Agent
+Card ou Registry sont la même liaison logique, et non une réutilisation ou un
+alias.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-005" level={["MUST","MUST NOT"]}>
+
+Avant d'accepter une liaison Ed25519, le Registry MUST décode strictement la clé
+publique de 32 octets comme le codage de points Edwards25519 compressé défini
+par la RFC 8032. Le codage MUST soit canonique, MUST décode en un point de la
+courbe, MUST NOT est le point d'identité et MUST est dans le sous-groupe d'ordre
+premier : pour l'ordre du sous-groupe `L`, `[L]A` MUST est égal à l'identité.
+Une vérification de longueur, une liste noire de petite taille ou une
+importation réussie dans un backend de cryptographie à usage général ne
+suffisent pas. Les codages non canoniques, les codages à zéro négatif, les
+points d'ordre réduit et les points d'ordre mixte MUST doivent être rejetés
+avant que la liaison immuable et les contrôles d'unicité à l'échelle de
+Organization ne soient appliqués.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-006" level="MUST">
+
+Une fois les vérifications d'encodage de signature de l'étape 3 et les
+vérifications de clé publique de l'étape 4 réussies, l'étape 6 MUST nécessite
+l'équation Ed25519 pure `[S]B = R + [k]A`, où `k` est SHA-512 sur
+`Renc || Aenc || M`, interprété petit-boutiste et réduit modulo `L`, et `M` est
+la séquence d'octets de signature exacte produite à l'étape 5. Parce que `A` et
+`R` sont tous deux dans le sous-groupe d'ordre premier, un fournisseur qui
+évalue l’équation cofactorisée RFC 8032 équivalente a le même résultat
+d’acceptation.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-007" level="MUST">
+
+Le Registry MUST applique ces invariants dans le Organization avant d'accepter
+toute liaison et MUST conserve suffisamment d'index et d'historique pour établir
+à la fois l'unicité de l'ID de clé et l'absence d'alias de clé publique ou de
+tuple. La résolution de clé MUST échoue lorsque Registry ne peut pas établir ces
+invariants pour la liaison résolue.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-008" level="MUST">
+
+Pour une vérification Signed Document, les preuves Registry utilisées à l'étape
+4 MUST doivent être limitées à exactement un Organization et MUST représentent
+une autorité cohérente. Registry révision applicable à la décision de
+vérification. Il suffit MUST d'établir la liaison immuable et les invariants
+d'unicité à l'échelle Organization pour toutes les liaisons de clé de signature
+et l'historique complet de validité conservé requis par ce profil.
+L'implémentation MUST valide les preuves avant d'utiliser `signature.keyId` pour
+sélectionner un enregistrement Registry ; une liaison non liée ou un
+enregistrement d'historique non valide MUST provoque l'échec de l'étape 4.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-009" level={["MAY","MUST NOT"]}>
+
+Une implémentation MAY établit ces propriétés à partir d'un instantané Registry
+complet ou d'index faisant autorité et de requêtes historiques qui prouvent les
+mêmes revendications d'absence, d'unicité et d'historique à l'échelle de
+Organization. Une projection filtrée par clé, un cache partiel, un ensemble de
+pages incomplet ou une couverture non spécifiée MUST NOT sera accepté à moins
+que l'implémentation ne puisse établir les mêmes revendications à partir d'un
+état faisant autorité. L'ID de clé demandé est uniquement le contexte de routage
+et MUST NOT doit être traité comme une autorisation d'omettre les preuves
+nécessaires aux vérifications à l'échelle de Organization.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-010" level={["MUST","MUST NOT"]}>
+
+L'adaptateur de résolution de clé est une couture de déploiement fiable dans la
+version 0.1. Quand il fournit Registry preuve à un vérificateur, il MUST établir
+les conditions requises Organization scope, applicable authoritative revision,
+evidence completeness, and historical coverage or report that it cannot. Un
+remplacé Registry État MUST NOT be presented as current evidence for a new
+verification or first-admission decision. Le Organization MUST définir comment
+l'adaptateur établit la devise ou l'applicabilité des révisions.
+MissionWeaveProtocol 0.1 ne standardise pas les identifiants de révision, un
+portable Agent Registry artefact de fil d'instantané, transport, mécanisme de
+fraîcheur ou preuve d'exhaustivité cryptographique.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-011" level={["MUST","MAY"]}>
+
+Une conclusion à clé inconnue faisant autorité MUST ne peut être effectuée
+qu'une fois que l'exhaustivité requise a été établie pour la révision faisant
+autorité applicable. Incapacité d'établir l'exhaustivité, indisponible Registry
+les preuves et une clé faisant autorité absente échouent toutes à l'étape 4. Une
+implémentation MAY conserver des diagnostics protégés distincts pour ces
+conditions, mais ils MUST restent indiscernables sur le fil comme requis
+ci-dessous.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-012" level={["MUST","MAY","MUST NOT"]}>
+
+Le statut de validité de la clé est un état historique et ne fait pas partie de
+la liaison d'identité immuable. Le Registry MUST conserve le `validFrom`
+d'origine et chaque modification apportée à `validUntil` ou `revokedAt` via des
+enregistrements d'état de validité en ajout uniquement ou explicitement
+versionnés. Le premier `validFrom` enregistré est immuable. Une limite
+`validUntil` ou `revokedAt` MAY doit être ajoutée ou déplacée plus tôt, mais
+MUST NOT doit être effacée ou déplacée ultérieurement. Sa valeur effective est
+la première valeur non absente de l'historique Registry. L'extension de la
+validité nécessite un nouveau matériel de clé sous un nouvel ID de clé. Registry
+MUST NOT réécrit ou supprime un enregistrement d'état antérieur dont peut
+dépendre la vérification historique.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-013" level="MUST">
+
+La règle de signataire de la table et `signature.keyId` sélectionnent ensemble
+l'enregistrement Registry. Son Principal MUST lié est égal au Principal exact
+nommé par le document ou est un service Organization Principal pour un Agent
+Card. La résolution du même ID de clé sous un autre Principal ou vers un élément
+de clé différent MUST échoue.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-014" level="MUST">
+
+Pour l'heure signée protégée `t`, une clé n'est valide que lorsque
+`validFrom <= t`, `validUntil` est absent ou `t < validUntil`, et `revokedAt`
+est absent ou `t < revokedAt`. Une clé dont `revokedAt` est égal ou antérieur à
+`t` MUST être rejetée. Les horodatages de validité de Registry MUST respecter le
+profil d'horodatage de MissionWeaveProtocol et être comparés comme des instants,
+non lexicalement ; la règle d'égalité octet par octet des deux horodatages
+protégés du document ne s'applique pas aux champs d'intervalle de Registry. La
+vérification durable des signatures MUST évaluer cet intervalle à l'heure signée
+protégée.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-015" level={["MUST","MUST NOT"]}>
+
+La vérification MUST s'arrête à la première étape défaillante et MUST NOT
+effectue une autorisation, ajoute un Event ou exécute une transition avant la
+réussite de chaque étape :
+
+1. analyser strictement exactement une valeur UTF-8 JSON et rejeter UTF-8 non
+   valide, une marque d'ordre des octets, données de fin et noms de membres
+   d'objet décodés en double ;
+2. valider le Signed Document complet par rapport à son schéma normatif, y
+   compris l'enveloppe de signature requise et l'algorithme pris en charge ;
+3. appliquez ce profil de vérification, y compris le formulaire UTC-`Z` à temps
+   protégé validation, égalité exacte `createdAt` sans transformation, sélection
+   de règle de signataire attendu, décodage canonique base64url non complété de
+   `signature.value` et validation stricte `Renc` et `Senc` d'un octet de 64
+   octets. Signature Ed25519 ;
+4. obtenir des preuves Organization complètes de portée Registry, valider chaque
+   liaison nécessaire pour établir la liaison de clé de signature immuable, les
+   invariants de non-réutilisation et sans alias à l'échelle Organization, et
+   compléter l'historique de validité conservé, puis sélectionner la clé
+   épinglée sous le signataire attendu et valider son intervalle de temps
+   protégé, y compris le décodage canonique non complété de l'url base64 et la
+   validation ponctuelle stricte de sa clé publique Ed25519 de 32 octets ;
+5. omettez exactement le membre `signature` de niveau supérieur, rejetez les
+   valeurs en dehors du modèle de données RFC 8785 et I-JSON défini dans
+   [Section 2](../foundations/#mwp-fnd-006) et produire des octets de signature
+   JCS à partir des valeurs reçues sans horodatage ni transformation de nombre
+   au-delà de la sérialisation binaire64 RFC 8785 requise ; et
+6. vérifiez la signature Ed25519 sur ces octets.
+
+</NormativeClause>
+
+L’échec du profil d’horodatage de base pour un horodatage de document déclaré
+par le schéma est un échec de niveau 2. L’échec de la règle de temps protégé
+supplémentaire UTC-`Z` ou d’égalité d’octets est l’étape 3. Un horodatage de
+validité Registry mal formé est un échec de l’étape 4.
+
+<NormativeClause id="MWP-SDV-016" level={["MAY","MUST","SHOULD"]}>
+
+Ces nombres définissent les étapes sémantiques normatives et la classification
+des erreurs, et non les limites des fonctions internes requises. Une
+implémentation MAY détecte une condition de stade ultérieur lors de l'analyse,
+mais MUST conserve suffisamment de structure sans perte pour évaluer toutes les
+étapes sémantiques antérieures et MUST classe la condition à son stade normatif.
+En particulier, un nombre JSON syntaxiquement valide en dehors du domaine
+binaire64 fini ou une chaîne décodée contenant un substitut non apparié est un
+échec du modèle de données JCS de stade 5, et non un échec de syntaxe JSON de
+stade 1. Un vecteur de conformité qui affirme une étape de défaillance SHOULD
+isole cette défaillance afin que chaque implémentation puisse signaler le
+diagnostic prévu sans ambiguïté à partir d'un autre champ délibérément invalide.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-017" level="MUST NOT">
+
+Le **hachage de signature** est
+`sha256:<lowercase hex SHA-256 of the exact stage-5 JCS signing bytes>`. Les six
+étapes ci-dessus constituent une vérification cryptographique et MUST NOT
+nécessitent un état d'admission. Un résultat vérifié cryptographiquement peut
+donc exister avant une première admission distincte ou une validation de
+confiance historique par le Organization acceptant.
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+Le bloc suivant reprend un segment source épinglé ultérieur. Consultez la
+[source de spécification map](./) pour connaître la page locale intermédiaire et
+les plages de lignes exactes.
+
+</InformativeBlock>
+
+<NormativeClause id="MWP-SDV-018" level={["MUST NOT","MUST"]}>
+
+Un JSON non valide, des membres en double ou une valeur qui ne peut pas entrer
+dans le modèle de données JCS est un `PROTOCOL_VIOLATION`. L’échec du schéma, de
+l’enveloppe requise ou de l’algorithme non pris en charge est
+`SCHEMA_VALIDATION_FAILED`. L'échec de l'étape cryptographique 3, 4 ou 6, de
+l'étape sémantique `admission` ou des contrôles de fraîcheur Command est
+`AUTH_INVALID_SIGNATURE` ; les exemples incluent une incompatibilité de liaison
+temporelle, une URL base64 valide avec un schéma avec des bits de remplissage
+inutilisés différents de zéro, une clé inconnue ou mal liée, un intervalle de
+clé non valide, une clé publique non canonique ou d'ordre non premier, une clé
+décodée ou une longueur de signature mal formée, ou une incompatibilité
+cryptographique. Une réponse filaire MUST NOT révèle quelle résolution de clé,
+admission ou vérification cryptographique a échoué. Le Organization MUST
+conserve la première étape sémantique défaillante et sa raison de diagnostic
+spécifique dans un enregistrement d'audit protégé et à accès contrôlé
+conformément à la politique de conservation applicable. Un échec de portée Group
+MUST peut être référencé à partir du journal de stratégie par des auditeurs
+autorisés sans exposer ce diagnostic à l'appelant non fiable.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-019" level="MUST NOT">
+
+Une future révision du protocole pourrait protéger les métadonnées de signature
+en omettant uniquement `signature.value` au lieu du membre complet de niveau
+supérieur `signature`. Cela modifie les octets de signature canoniques et
+constitue une révision de rupture de signature filaire. Il MUST NOT doit être
+introduit, généré ou accepté silencieusement en tant que comportement v0.1.
+
+</NormativeClause>

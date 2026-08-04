@@ -1,0 +1,72 @@
+---
+title: Unteraufgabe
+description: >-
+  Rekursive Zerlegung komplexer WorkItems, ohne den übergeordneten Umfang, das
+  Budget, Evidence oder die Verantwortlichkeit zu verlieren.
+---
+
+# Unteraufgabe
+
+Ein ausreichend komplexes WorkItem kann zu einer **Unteraufgabe (Child
+Mission)** werden. Die Unteraufgabe besitzt ein eigenes Group, einen
+Coordinator, einen WorkItem-Graphen, Membership, Budget, Frist und
+Genehmigungsrichtlinie. Das übergeordnete WorkItem und die Unteraufgabe behalten
+stabile Verbindungen zueinander
+([MWP-MSN-024](../../reference/specification/missions-groups-and-membership/#mwp-msn-024)).
+
+```text
+Root-Mission und ihr Group
+└── das übergeordnete WorkItem wird blocked
+    └── Unteraufgabe und ihr eigenes Group
+        ├── Coordinator der Unteraufgabe
+        ├── WorkItems und Evidence der Unteraufgabe
+        └── Approval der Unteraufgabe
+            └── das Ergebnis kehrt als Evidence und Artifact
+                für das übergeordnete WorkItem zurück
+```
+
+Das Erstellen einer Unteraufgabe verwandelt das übergeordnete Group nicht in
+einen verschachtelten Chatraum. Die Unteraufgabe erhält ein separates Group und
+teilt mit ihrem übergeordneten Element nur autorisierte Zusammenfassungen,
+Artifact, Evidence und stabile Verknüpfungen.
+
+## Autorität und Zustimmung
+
+Der übergeordnete Coordinator fungiert als MissionOwner der Unteraufgabe und
+genehmigt ihr Ergebnis im Namen des übergeordneten WorkItem. Die
+Risikorichtlinie von Organization kann eine direkte menschliche Genehmigung
+hinzufügen. Das genehmigte Ergebnis der Unteraufgabe wird zu Evidence und
+Artifact für das übergeordnete WorkItem.
+
+Der übergeordnete Coordinator empfängt Statusänderungen, Zusammenfassungen,
+überarbeitete Schätzungen, Blocker, Budget- oder Richtlinieneskalationen und
+Endergebnisse. Er benötigt nicht jedes Message der Unteraufgabe, während die
+autorisierte On-Demand-Inspektion beibehalten wird. Die vollständige
+Sichtbarkeitsgrenze ist
+[MWP-MSN-026](../../reference/specification/missions-groups-and-membership/#mwp-msn-026).
+
+## Geltungsbereich verengt sich nach unten
+
+Der Graph aus übergeordnetem Element und Unteraufgabe bleibt azyklisch. Budget,
+Frist, Fähigkeiten, Datenzugriff und Berechtigungen einer Unteraufgabe bleiben
+Teilmengen der entsprechenden Grenzen des übergeordneten Elements. Eine
+standardmäßige maximale Tiefe erfordert die ausdrückliche Genehmigung durch
+MissionOwner oder die Richtlinie, wenn zusätzliche Tiefe gerechtfertigt ist
+([MWP-MSN-025](../../reference/specification/missions-groups-and-membership/#mwp-msn-025)).
+
+Dies ist die Unteraufgabenform der allgemeinen einschränkenden Invariante in
+[MWP-FND-020](../../reference/specification/foundations/#mwp-fnd-020).
+
+## Ausfall und Nacharbeit
+
+Eine fehlgeschlagene Unteraufgabe gibt strukturiertes Fehler-Evidence aus und
+wirkt sich gemäß ihrer deklarierten Abschlussrichtlinie auf das übergeordnete
+WorkItem aus. Der übergeordnete Coordinator kann neu planen, den Umfang
+überarbeiten, eine Ersatz-Unteraufgabe erstellen oder die Verzweigung abbrechen.
+
+- Verwenden Sie eine **Unteraufgabe**, um komplexe Arbeiten innerhalb eines
+  aktiven übergeordneten Mission abzuschließen.
+
+- Verwenden Sie ein **Folge-Mission** für Korrekturen, Abhilfemaßnahmen oder
+  zusätzliche Arbeiten nachdem ein genehmigter Mission unveränderlich geworden
+  ist.

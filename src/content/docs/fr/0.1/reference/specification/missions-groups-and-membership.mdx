@@ -1,0 +1,348 @@
+---
+title: Missions, groupes, Membership et conversations
+description: >-
+  Cycle de vie Mission et Group, adhésion, visibilité, conversation, messages et
+  sous-tâches.
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../../components/InformativeBlock.astro";
+
+## 7. Cycle de vie Mission et Group
+
+### 7.1 Création
+
+<NormativeClause id="MWP-MSN-001" level="MUST">
+
+Un Mission MUST déclare un objectif limité, une définition lisible par machine
+de la fin, du délai, du budget exécutoire, de la politique de risque/approbation
+et MissionOwner. Une racine Mission MissionOwner MUST soit humaine. La création
+alloue exactement une conversation de niveau Group et une conversation de niveau
+Group. Les ID Mission et les ID Group MUST restent stables.
+
+</NormativeClause>
+
+Le cycle de vie Mission est :
+
+<span id="mission-transition-table"></span>
+
+| État actuel         | Command ou cause                                                  | État suivant        | Autorité                                                    |
+| ------------------- | ----------------------------------------------------------------- | ------------------- | ----------------------------------------------------------- |
+| aucun               | `mission.create` avec un bail Coordinator                         | `active`            | humain MissionOwner, éventuellement via le plan de contrôle |
+| aucun               | `mission.create_follow_up` lié à un Mission                       | `active`            | le même humain MissionOwner                                 |
+| aucun               | `mission.create_child` lié à un parent WorkItem                   | `active`            | Parent Coordinator en tant qu'enfant MissionOwner           |
+| `active`            | `mission.submit_for_approval`                                     | `awaiting_approval` | actuel Coordinator                                          |
+| `awaiting_approval` | `mission.request_changes`                                         | `active`            | MissionOwner                                                |
+| `awaiting_approval` | `mission.approve`                                                 | `approved`          | MissionOwner                                                |
+| non terminal        | `mission.cancel` ou propaga d'annulation parenttion               | `cancelled`         | Stratégie MissionOwner ou Organization                      |
+| non terminal        | `mission.terminate` ou propagation de défaillance enfant déclarée | `failed`            | Stratégie Coordinator ou Organization                       |
+
+<NormativeClause id="MWP-MSN-002" level={["MUST NOT","MUST"]}>
+
+`approved`, `cancelled` et `failed` sont des terminaux. Un Mission MUST NOT
+approuvé doit être rouvert ou réécrit. Corrections, révocation d'approbation ou
+remédiation MUST créent un suivi lié Mission ; la révocation reste un nouveau
+Event et n'efface pas le Approval d'origine.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-003" level={["MAY","MUST NOT","MUST"]}>
+
+Le point de contrôle Coordinator MAY bloque ou bloque des éléments de travail
+individuels et recommande l'annulation, mais MUST NOT annule normalement le
+Mission. Le MissionOwner MAY émet des directives vers le Coordinator.
+L'affectation humaine directe à un Worker est une dérogation d'urgence explicite
+et auditée et MUST respecte toujours les règles d'acceptation, de capacité,
+d'autorisation, de budget et de location de Worker.
+
+</NormativeClause>
+
+### 7.2 Coordinator bail
+
+<NormativeClause id="MWP-MSN-004" level="MAY">
+
+Exactement une époque de bail Coordinator MAY est en cours. Le bail identifie
+l'époque Agent, Coordinator, Session Epoch, l'expiration et la politique de
+renouvellement. Seule l'époque Coordinator actuelle peut autoriser ou attribuer
+des éléments de travail, accepter les résultats Worker, soumettre le Mission ou
+créer des sous-tâches.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-005" level={["MAY","MUST"]}>
+
+Si le Coordinator cesse de renouveler son bail, le plan de contrôle Organization
+ou MissionOwner MAY nomme un remplaçant avec une époque Coordinator supérieure.
+Les événements produits par l'ancien Coordinator restent un historique valide,
+mais ses commandes de coordination ultérieures MUST seront rejetées comme
+obsolètes. Le MUST de remplacement reçoit un Context Package signé et MUST
+rapproche l'état WorkItem actuel avant d'émettre de nouvelles affectations.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-006" level={["SHOULD","MAY","MUST NOT"]}>
+
+Le Coordinator SHOULD réserve la capacité pour la planification, la
+surveillance, l'intégration et l'escalade. Il MAY exécute des WorkItems natifs
+de coordination et un travail de secours exceptionnel, mais MUST NOT est le seul
+réviseur de sa propre sortie.
+
+</NormativeClause>
+
+### 7.3 Progrès et achèvement
+
+<NormativeClause id="MWP-MSN-007" level={["MUST","MAY","MUST NOT"]}>
+
+La progression Mission faisant autorité MUST peut être dérivée du graphe de
+dépendance WorkItem, du Evidence accepté, du chemin critique, des bloqueurs, des
+délais et de l'état d'approbation. Un Coordinator MAY publie des résumés
+narratifs, des risques et des prévisions, mais MUST NOT remplace l'état dérivé
+par un pourcentage non justifié.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-008" level="MUST">
+
+Avant la soumission, le Coordinator MUST examine tous les résultats WorkItem
+requis et l'acceptation Evidence. Il émet ensuite `mission.submit_for_approval`
+pour une révision Mission spécifique et un ensemble Artifact. Le MissionOwner
+émet soit un Approval signé, soit une demande de modification signée. Les
+modifications demandées rouvrent le même Mission et le Coordinator crée des
+éléments de travail révisés ou correctifs sans supprimer les soumissions
+antérieures.
+
+</NormativeClause>
+
+### 7.4 Conservation et archivage
+
+<NormativeClause id="MWP-MSN-009" level={["MUST","MUST NOT","MAY"]}>
+
+Un Group MUST actif conserve son historique complet Event. L'archive MUST
+produit un instantané final signé contenant les décisions, les éléments de
+travail, les approbations et les références Artifact. Le journal d'audit chiffré
+d'origine est conservé conformément à la stratégie Organization. Suppression
+légale ou rédaction de sécurité MUST ajouter une pierre tombale auditable ; il
+MUST NOT réécrit silencieusement les ID ou numéros de séquence Event précédents.
+La reconnexion MAY utilise un instantané suivi d'événements ultérieurs.
+
+</NormativeClause>
+
+## 8. Membership, visibilité et attention
+
+<NormativeClause id="MWP-MSN-010" level="MUST">
+
+Membership lie un Agent ou un humain à un Group, une époque, un rôle, une
+séquence de démarrage de visibilité et des fonctionnalités explicites. Un Agent
+de portée Group ou un Command MUST humain porte son époque Membership actuelle ;
+un Command d'une époque Membership révoquée ou périmée MUST soit rejeté. Les
+commandes Organization-service sont authentifiées et autorisées par la stratégie
+Organization plutôt que par l'invention d'une époque Group Membership. Les
+adhésions MissionOwner et Coordinator MUST ont une visibilité complète sur
+Group.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-011" level="SHOULD">
+
+Worker Membership SHOULD être juste à temps :
+
+1. le Coordinator sélectionne un candidat et accorde un Membership provisoire
+   limité ;
+2. le Worker reçoit une offre expirant et signée Context Package ;
+3. l'acceptation de l'offre active Membership et crée la propriété ; et
+4. Membership se termine lorsque le Worker n'a aucun élément de travail ou
+   obligation de révision, ou le Mission est archivé.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-012" level={["MUST NOT","MAY"]}>
+
+Un Worker MUST NOT qui rejoint tardivement reçoit automatiquement un historique
+sans restriction. Il reçoit les références Context Package, Conversation et
+Artifact pertinentes, et uniquement l'historique autorisé par son Membership. Il
+MAY récupère les événements sources cités lorsqu'il est autorisé.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-013" level={["MUST","SHOULD","MAY"]}>
+
+Tous les messages validés restent dans l'historique durable Group, mais la
+diffusion en direct MUST prend en charge les filtres d'attention. Un Worker
+SHOULD reçoit ses WorkItem Conversations, mentions directes, annonces
+importantes et sujets transversaux souscrits. D'autres historiques autorisés
+sont récupérables sur demande. Le Coordinator MAY consomme tous les messages ou
+résumés continus. Les MissionOwner SHOULD reçoivent des notifications
+récapitulatives tout en conservant tous les droits d'inspection.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-014" level={["MUST NOT","MUST","SHOULD"]}>
+
+Le Group MUST NOT bruyant d'un Agent prive le trafic d'un autre Group. Les
+passerelles MUST implémentent le contrôle de flux par Group et SHOULD autorisent
+des curseurs d'abonnement indépendants.
+
+</NormativeClause>
+
+## 9. Conversations et messages
+
+<NormativeClause id="MWP-MSN-015" level={["MUST","MAY"]}>
+
+La création d'un Mission crée une conversation de planification de niveau Group.
+Chaque WorkItem MUST possède une conversation dédiée. Une implémentation MAY
+crée une conversation de révision et des conversations liées et restreintes pour
+les éléments sensibles. Les conversations restreintes restent dans la limite
+d'audit de Mission et MUST peuvent être inspectées par Coordinator et
+MissionOwner.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-016" level={["MAY","MUST NOT"]}>
+
+Un Message validé contient uniquement du contenu terminé. MissionWeaveProtocol
+0.1 ne définit pas de jeton partiel ni de streaming `message.delta`. Le contenu
+Message MAY inclut du texte et des références à des artefacts ou à des données
+structurées. Les données binaires volumineuses MUST NOT doivent être intégrées ;
+il est transféré sous forme de référence Artifact.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-017" level="MUST NOT">
+
+Chaque objet Message possède `authority: false`. Un Message tel que « déployer
+immédiatement » n'est qu'une conversation. Pour agir, un acteur autorisé doit
+créer ou autoriser un WorkItem via un Command. Les interfaces MUST NOT
+présentent un Message comme affectation exécutable.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-018" level="MAY">
+
+Tout Group Agent MAY :
+
+- poster un Message ;
+- proposer un WorkItem ;
+- demander de l'aide; et
+- discuter du contexte directement avec ses pairs dans la conversation
+  pertinente.
+
+</NormativeClause>
+
+### 9.1 Autorité de travail déléguée
+
+<NormativeClause id="MWP-MSN-019" level={["MAY","MUST"]}>
+
+Seul le Coordinator actuel, un remplacement d'urgence MissionOwner ou un Agent
+détenant une autorisation de délégation explicite MAY autorise et propose un
+WorkItem. Le rôle `work_delegate` rend uniquement un membre Group éligible à
+l'utilisation d'une subvention ; le rôle à lui seul ne véhicule aucune autorité
+de création d’œuvre. Un `work.authorize` ou `work.offer` Command MUST délégué
+citent un ID de subvention persistant.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-020" level={["MAY","MUST"]}>
+
+Uniquement le problème Coordinator MAY actuel `membership.grant_delegation`. La
+subvention résultante MUST enregistre son ID de subvention, l'ID du bénéficiaire
+Agent, l'ID Mission, l'ID Group, l'ID cible WorkItem, les ID de capacité
+autorisés et les versions minimales, la devise et les plafonds explicites pour
+les six budgets de ressources. dimensions, profondeur maximale des descendants,
+époque du bénéficiaire Membership, époque Coordinator, émission Coordinator,
+heure d'octroi et expiration. L'acceptation émet
+`membership.delegation.granted`.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-021" level={["MAY","MUST"]}>
+
+La cible WorkItem est la racine de la portée de la subvention. Le bénéficiaire
+MAY proposer cette racine ou un descendant existant, et MAY autoriser un nouveau
+descendant seulement lorsque `parentWorkItemId` le lie explicitement à ce
+sous-arbre. Chaque capacité requise du contrat de travail MUST être autorisé par
+la subvention et respecter sa version minimale. Les budgets cumulés de tous les
+WorkItems créés ou proposés dans le cadre de la subvention MUST rester dans les
+limites de chaque plafond de subvention. Profondeur descendante MUST satisfaire
+à la fois au montant maximum de la subvention et Organization politique de
+coopération.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-022" level={["MUST","MUST NOT"]}>
+
+A chaque utilisation, l'acteur MUST être le bénéficiaire et détenir une
+participation active `work_delegate` Membership dont l'époque est égale à celle
+du bénéficiaire de la subvention Membership Époque. Les subventions Mission,
+Group, Coordinator Époque, émetteur et intervalle de validité MUST correspond
+toujours à l’état faisant autorité actuel. Un remplacé Coordinator, modifié ou
+terminé Membership, une subvention expirée, une cible manquante ou une cible qui
+échoue, est annulée ou vérifiée, invalide immédiatement toute utilisation
+ultérieure. Une subvention n'est pas transférable. Les travailleurs sans
+subvention valide peuvent proposer des sous-travaux, mais MUST NOT créer des
+obligations exécutables pour un autre Worker.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-023" level={["MUST","MAY"]}>
+
+Les messages acceptés sont immuables. Une correction, une rétractation ou une
+rédaction MUST ajoute un nouveau Event faisant référence à l'ID Message
+d'origine. La rédaction nécessite une raison de politique vérifiable. Les
+interfaces utilisateur MAY affichent le dernier formulaire en vigueur tout en
+conservant la chaîne Event.
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+Le bloc suivant reprend un segment source épinglé ultérieur. Consultez la
+[source de spécification map](./) pour connaître la page locale intermédiaire et
+les plages de lignes exactes.
+
+</InformativeBlock>
+
+## 14. Missions parents et enfants
+
+<NormativeClause id="MWP-MSN-024" level={["MAY","MUST"]}>
+
+Un WorkItem MAY suffisamment complexe soit promu au rang d'enfant Mission avec
+son propre graphique Group, Coordinator, WorkItem, adhésions, budget, délai et
+politique d’approbation. Le parent WorkItem et l'enfant Mission MUST sont liés
+l'un à l'autre.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-MSN-025" level="MUST">
+
+Le graphe parent-enfant MUST soit acyclique. Les budgets enfants, les délais,
+les capacités, l'accès aux données et les autorisations MUST sont des
+sous-ensembles du parent. Les organisations MUST configurent une profondeur
+maximale par défaut et exigent une MissionOwner explicite ou une approbation de
+stratégie au-delà de ce seuil. La complexité légitime approuvée MUST soit
+autorisée ; les limites sont des garde-fous, pas des plafonds protocolaires
+stricts.
+
+</NormativeClause>
+
+Par défaut, l'enfant Coordinator examine et soumet le résultat de l'enfant et le
+parent Coordinator agit en tant qu'enfant MissionOwner. L’approbation de la
+racine humaine est également requise lorsque la politique en matière de risques
+le précise. Le résultat enfant approuvé devient Evidence et Artefacts pour le
+parent WorkItem.
+
+Un enfant en échec Mission ne fait pas automatiquement échouer son parent. Il
+émet un échec structuré Evidence et bloque ou fait échouer le parent WorkItem.
+Le parent Coordinator peut replanifier, réviser la portée, créer un enfant de
+remplacement ou annuler. L'échec se propage automatiquement uniquement lorsque
+la politique d'achèvement du parent déclare cet enfant indispensable sans
+alternative.
+
+<NormativeClause id="MWP-MSN-026" level={["MUST NOT","MUST"]}>
+
+Le parent Coordinator reçoit les modifications du statut de l'enfant, les
+résumés de progression, les estimations révisées, les bloqueurs, les escalades
+de budget/politique et les résultats finaux. Il MUST NOT doit ingérer chaque
+enfant Message, mais conserve une inspection autorisée à la demande. La racine
+MissionOwner MUST pourra inspecter l'arborescence complète Mission.
+
+</NormativeClause>

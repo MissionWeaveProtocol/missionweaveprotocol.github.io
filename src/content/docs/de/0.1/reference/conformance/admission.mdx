@@ -1,0 +1,47 @@
+---
+title: Erstzulassung und Konformität mit dem Historical Trust
+description: >-
+  Das vollständige lokale Zulassungsnachweispaket, das über der sechsstufigen
+  Verifizierung liegt.
+---
+
+import ArtifactLink from "../../../../../../components/ArtifactLink.astro";
+import BundleArtifactCatalog from "../../../../../../components/BundleArtifactCatalog.astro";
+import release from "../../../../../../data/normative/0.1/release-source.json";
+
+# Erstzulassung und Konformität mit dem Historical Trust
+
+Das Profil <code>{release.admission.profile}</code> bindet
+**{release.admission.artifacts}-Artefakte**, **{release.admission.cases}-Fälle**
+und **{release.admission.evaluations}-Bewertungen**. Genau
+**{release.admission.complete}** Bewertungen abgeschlossen und
+**{release.admission.rejected}** abgelehnt. Seine Zusammenfassung ist
+
+<code>{release.admission.digest}</code> und es pinnt den unveränderten
+Kryptographie-Digest <code>{release.admission.cryptographyDigest}</code>.
+
+- <ArtifactLink path="protocol/admission/manifest.json">
+    Zulassungsmanifest
+  </ArtifactLink>
+- <ArtifactLink path="protocol/admission/manifest.schema.json">
+    Manifest-Schema
+  </ArtifactLink>
+- <ArtifactLink path="protocol/admission/README.md">
+    Lokale Bündelsemantik
+  </ArtifactLink>
+
+Bei jeder Bewertung wird zunächst die gleiche sechsstufige kryptografische
+Überprüfung wiederholt und dann entweder die Erstzulassung oder die historische
+Wiederholung durchgeführt. Die normative Orchestrierung und Fehlerzuordnung
+finden Sie auf der Spezifikationsseite [First Admission and Historical
+Trust].](../../specification/first-admission-and-historical-trust/).
+
+## Geltungsbereichsausschlüsse
+
+Dieses Paket demonstriert nicht die Aktualität oder Durchsetzung von
+Taktabweichungen von Command, die Autorisierung des Unterzeichners,
+Zustandsmaschinenübergänge, die Erstellung von Event, ein tragbares Proof-Format
+Admission Log oder bereitstellungsspezifische Autorisierungs- und
+Aufbewahrungsrichtlinien. Diese Bedenken bedürfen gesonderter Beweise.
+
+<BundleArtifactCatalog bundle="admission" />

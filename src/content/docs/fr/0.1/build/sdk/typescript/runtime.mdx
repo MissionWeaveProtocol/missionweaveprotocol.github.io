@@ -1,0 +1,128 @@
+---
+title: Référence d'exécution TypeScript
+description: >-
+  Surface publique complète de la racine du package et limites d'exécution du
+  TypeScript SDK exactement épinglé.
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Référence d'exécution TypeScript
+
+Cette page couvre la surface complète TypeScript représentée par l'inventaire
+[exact API](../api/). Le comportement du protocole partagé reste défini par la
+[référence d'exécution ](../../../runtime/architecture-and-bootstrap/) et les
+[clauses de référence ](../../../../reference/specification/)] locales. Les noms
+ci-dessous définissent la manière dont le package épinglé expose ce
+comportement.
+
+<SupportStatus status="implemented" /> s'applique aux API racine du package et
+aux codecs en cours répertoriés ci-dessous.
+
+<SupportStatus status="deployment-adapter-required" /> s'applique à l'autorité
+Registry actuelle, au contexte d'admission approuvé, à l'accès au journal
+atomique authentifié et à d'autres services externes fournis par un déploiement.
+
+<SupportStatus status="not-implemented" /> signifie que le package exactement
+épinglé n’a pas de runtime public correspondant.
+
+## Modèle d'importation et d'exécution
+
+Importez les noms publics à partir de `@missionweaveprotocol/sdk`. Le package
+publie des points d'entrée ESM et CommonJS et nécessite Node.js 20 ou plus
+récent. Il n'expose pas les sous-chemins pris en charge tels que
+`@missionweaveprotocol/sdk/admission` ; Les noms de module source ci-dessous
+sont des regroupements de provenance pour la racine de package unique API.
+
+Le SDK utilise la cryptographie de nœud et les ressources du système de fichiers
+packagées pour les offres groupées de schéma, de conformité, de cryptographie et
+d'admission. Le package épinglé ne revendique pas la prise en charge du
+navigateur ou du runtime Deno.
+
+## Carte source complète
+
+| Problème d'exécution                 | Modules de sources publiques                    | Contrat au commit épinglé                                                                                                                                                                                                              |
+| ------------------------------------ | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Identité du package et types JSON    | `src/index.ts`, `src/json-types.ts`             | Métadonnées du package, constantes de protocole et types de domaine JSON acceptés par les codecs publics.                                                                                                                              |
+| JSON strictes et valeurs temporelles | `src/strict-json.ts`, `src/rfc3339.ts`          | Exportations d’analyse stricte de la racine du package plus le type public `Rfc3339Instant`. Les analyseurs internes RFC 3339 et les assistants strict-JSON de vérification uniquement ne sont pas des exportations racine du package. |
+| Catalogue de schémas                 | `src/schema-catalog.ts`                         | Échecs de la découverte, de la validation et de la validation structurée du projet 2020-12 sur l'ensemble de protocoles packagés.                                                                                                      |
+| Canonique JSON                       | `src/canonical-json.ts`                         | RFC 8785 canonisation et production d'octets pour les entrées de signature et de résumé.                                                                                                                                               |
+| Documents signés                     | `src/signed-document-codec.ts`, `src/crypto.ts` | Ed25519 aides à la signature, neuf profils de documents signés, complets Organization-large Registry résolution et le résultat de la vérification en six étapes.                                                                       |
+| Cadres                               | `src/frame-codec.ts`                            | Opérations d'analyse et d'encodage strictes pour les supports pris en charge WebSocket objets de cadre. Il s'agit d'un codec et non d'un service de passerelle hébergé.                                                                |
+| Conformité et offres groupées        | `src/conformance.ts`, `src/package-root.ts`     | Découverte de racines packagées, exécution de manifeste structurel et `missionweaveprotocol-conformance` commande. Les actifs de cryptographie et d'admission sont packagés mais n'ont pas d'outil de vérification publique.           |
+| Première admission                   | `src/admission.ts`                              | Flux de première admission typé et de confiance historique superposés après une vérification réussie en six étapes.                                                                                                                    |
+
+## Validation et cryptographie
+
+`parseStrictJson` et `parseStrictJsonObject` rejettent les UTF-8 non valides,
+les nomenclatures, les membres d'objet en double, les entrées numériques non
+prises en charge et toute autre syntaxe en dehors du pipeline JSON documenté.
+`SchemaCatalog` valide l’ensemble de schémas packagé exact. `canonicalJsonBytes`
+crée RFC 8785 octets ; Une validation réussie du schéma ne remplace pas à elle
+seule la canonisation ou la vérification de la signature.
+
+`SignedDocumentCodec.sign` sélectionne un profil explicite, valide l'heure
+protégée, canonise la projection non signée, obtient une signature Ed25519
+stricte de 64 octets via `SigningKey`, joint l'enveloppe et valide le document
+final. `verify` consomme les octets bruts UTF-8 et exécute les étapes d'analyse,
+de schéma, d'enveloppe de signature, de résolution de clé, de canonisation et de
+signature dans cet ordre. Le `VerifiedSignedDocument` renvoyé expose des preuves
+immuables, des copies d'octets défensives, des hachages de signature et
+complets, l'heure protégée et la clé résolue.
+
+La résolution des clés nécessite des preuves complètes Organization Registry.
+Une clé sélectionnée, une entrée de cache ou un indicateur de confiance fourni
+par l'appelant ne constitue pas un instantané Registry complet.
+
+## Cadres, bundles et conformité
+
+`FrameCodec` analyse et code les valeurs de trame prises en charge, mais n'ouvre
+pas de socket, n'authentifie pas une session, ne conserve pas un curseur, ne
+planifie pas de travail ou n'applique pas de transition faisant autorité. Un
+déploiement doit fournir ces responsabilités d'exécution de niveau supérieur.
+
+`packageRoot` localise l'arborescence d'artefacts packagés en trouvant son
+`PROTOCOL_PIN.json` ; la localisation de ce fichier ne valide pas son contenu ni
+aucun résumé d'artefact. `runConformance` exécute uniquement le manifeste de
+conformité structurelle et les vecteurs via le catalogue de schémas packagé. La
+commande `missionweaveprotocol-conformance` appelle ce même exécuteur
+structurel.
+
+Le package épinglé inclut les actifs de cryptographie et d'admission pour
+connaître la provenance exacte de la version, mais il n'expose pas les API
+publiques qui vérifient la cryptographie ou les résumés du bundle d'admission ou
+exécutent ces manifestes d'évaluation. Les applications ne doivent pas traiter
+`packageRoot` ou un rapport de conformité structurelle réussi comme preuve que
+ces deux ensembles ont été vérifiés.
+
+## Première admission
+
+`AdmissionService` expose la préparation asynchrone, la première admission et la
+relecture historique au-dessus du vérificateur synchrone des documents signés.
+La résolution actuelle Registry est synchrone ; l'émission dans un contexte de
+confiance peut être synchrone ou asynchrone ; La recherche et l'ajout Admission
+Log sont asynchrones. Continuez avec la
+[référence d'admission TypeScript](../admission/) pour connaître les résultats
+exacts de l'adaptateur et l'ordre des appels.
+
+## Limites de disponibilité explicites
+
+<SupportStatus status="not-implemented" /> **Orchestration Mission** — aucune
+façade de machine à états ou d'orchestration Mission de haut niveau n'est
+exportée.
+
+<SupportStatus status="not-implemented" /> **Planificateur Worker** : aucune
+file d'attente Worker, planificateur, exécuteur de bail ou boucle de
+récupération n'est exporté.
+
+<SupportStatus status="not-implemented" /> **Service de passerelle hébergée** —
+le package fournit `FrameCodec`, et non un service de passerelle hébergée avec
+propriété de transport, de session, de TLS, de routage ou de contre-pression.
+
+<SupportStatus status="not-implemented" /> **Exécution de persistance faisant
+autorité** : aucune exécution de persistance basée sur une base de données ou
+Agent locale n'est exportée.
+
+Ces absences font partie du contrat d'exécution pris en charge. Les applications
+ne doivent pas déduire les capacités d'exécution de référence Python à partir
+des noms de protocole partagés.

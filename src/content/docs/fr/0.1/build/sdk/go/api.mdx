@@ -1,0 +1,23 @@
+---
+title: Rendre l'inventaire API public
+description: >-
+  Chaque déclaration Go exportée a été résolue dans son fichier source et sa
+  ligne exacts au niveau du commit SDK documenté.
+---
+
+import SdkApiInventory from "../../../../../../../components/SdkApiInventory.astro";
+
+# Rendre l'inventaire public API
+
+Cet inventaire de validation exacte est généré à partir des fichiers source du
+package racine dans `80c39852e8a2053ac761b8d53d62483264f803f1`. Il enregistre
+les types, interfaces, structures, constantes, fonctions, méthodes et accesseurs
+exportés à l'aide des déclarations présentes lors de cette validation.
+
+L'inventaire est la référence de dénomination et de provenance exacte de la
+source, et ne remplace pas la [sémantique d'exécution](../runtime/) ou le
+[flux d'appel d'admission](../admission/). La présence d'une déclaration ne
+fournit pas l'autorité externe, l'atomicité, la durabilité ou la preuve
+authentifiée requise par son contrat.
+
+<SdkApiInventory sdk="go" />

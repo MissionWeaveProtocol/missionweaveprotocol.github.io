@@ -1,0 +1,24 @@
+---
+title: Konformitätsoberflächen
+description:
+  Strukturelle, kryptografische und Zulassungsnachweise für MissionWeaveProtocol
+  0.1.
+---
+
+# Konformitätsoberflächen
+
+MissionWeaveProtocol 0.1 trennt Konformitätsnachweise in drei unabhängig
+versionierte Oberflächen:
+
+1. [Strukturkonformität](./structural/) prüft die Gültigkeit des JSON Schemas
+   für umsetzungsneutrale Dokumente.
+2. [Kryptographiekonformität](./cryptography/) prüft die sechs Signed Document
+   Verifizierungsstufen.
+3. [Erste Zulassung und historische Vertrauensprüfungen](./admission/)
+   authentifiziert Abnahmeverhalten zusätzlich zu einem erfolgreichen
+   Sechs-Stufen-Ergebnis.
+
+Das Passieren einer Oberfläche bedeutet nicht, dass auch eine der anderen
+passiert. Die vollständige Protokollkonformität erfordert außerdem den Nachweis
+der anwendbaren Verhaltensklauseln in der
+[lokalen Spezifikation](../specification/).

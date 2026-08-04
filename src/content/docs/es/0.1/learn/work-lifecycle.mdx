@@ -1,0 +1,95 @@
+---
+title: Ciclo de vida laboral
+description: >-
+  Cómo la conversación se vuelve explícita: WorkItems, ejecución aceptada,
+  Evidence, verificación y aprobación Mission.
+---
+
+# Ciclo de vida laboral
+
+MissionWeaveProtocol mantiene fluida la cooperación conversacional y al mismo
+tiempo hace explícita la responsabilidad ejecutable. Un Message puede
+proporcionar contexto o solicitar trabajo, pero las interfaces no pueden
+presentarlo como una instrucción ejecutable
+([MWP-MSN-017](../../reference/specification/missions-groups-and-membership/#mwp-msn-017)).
+
+## De la discusión al compromiso
+
+1. **Discutir.** Los agentes intercambian mensajes completados en un Group o
+   WorkItem Conversación.
+2. **Proponer.** Cualquier miembro de Group puede enviar una propuesta de
+   trabajo. Sin ejecutable WorkItem todavía existe.
+3. **Autorizar.** El Coordinator actual, una anulación de emergencia
+   MissionOwner o un Agent con una concesión de delegación de alcance válida
+   crea el WorkItem.
+4. **Oferta.** El actor autorizado ofrece el WorkItem a un Worker elegible y
+   registra la base de selección. El conjunto de autorización exclusivo y la
+   regla de oferta delegada se definen en
+   [MWP-MSN-019](../../reference/specification/missions-groups-and-membership/#mwp-msn-019).
+5. **Aceptar.** El Worker realiza el control de admisión. La aceptación inicia
+   una nueva Época de propiedad y coloca el WorkItem en la cola por Group de ese
+   Worker.
+
+La aceptación es un compromiso de programación duradero, no una ejecución
+inmediata. Las comprobaciones de admisión y los efectos de propiedad del Worker
+se definen en
+[MWP-WRK-005](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-005).
+
+## El contrato de trabajo
+
+Cada WorkItem lleva un Contrato de Trabajo versionado y legible por máquina. Su
+forma requerida se identifica con
+[MWP-WRK-001](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-001)
+e incluye:
+
+- objetivo, resultados y criterios de aceptación;
+- Evidence requerido y referencias de entrada o dependencia;
+- herramientas, datos, recursos y operaciones permitidos;
+- identificadores y versiones de capacidades requeridas;
+- fecha límite, urgencia solicitada e impacto comercial;
+- presupuestos financieros, de tokens, de llamadas de herramientas, de
+  computación, de reloj de pared y de efectos secundarios;
+- reintentos, retrocesos, plazos y política de costos; y
+- clasificación de riesgo y cualquier puerta de aprobación previa a la
+  ejecución.
+
+Una ambigüedad esencial se resuelve antes de la aceptación. Una revisión de
+contrato de material regresa mediante la aceptación renovada de Worker
+([MWP-WRK-002](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-002)).
+
+## Un camino común hacia el éxito
+
+```text
+Work Proposal
+    ↓ authorize
+open WorkItem
+    ↓ offer
+offered
+    ↓ Worker accepts
+queued
+    ↓ valid ownership, approval gates, and Execution Lease
+active
+    ↓ Worker submits Artifacts and Evidence
+submitted
+    ↓ Coordinator accepts the result
+verified
+```
+
+El trabajo activo puede regresar al punto de control `queued`, ingresar
+`blocked` con un punto de control duradero, fallar con Evidence o cancelarse. La
+tabla de transición completa se encuentra en la
+[página de especificaciones WorkItem](../../reference/specification/work-scheduling-and-recovery/#workitem-transition-table).
+
+## Evidence antes de la aprobación
+
+Un reclamo Worker no es prueba suficiente de finalización. El envío incluye
+artefactos y Evidence asignados a los criterios de aceptación. La revisión
+Coordinator verifica la integridad Artifact, las pruebas deterministas, el
+revisor cualitativo Evidence y la decisión de aceptación registrada en el orden
+descrito en
+[MWP-WRK-025](../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-025).
+
+Una vez verificados los WorkItems requeridos, Coordinator envía una revisión
+Mission específica y un conjunto Artifact. El MissionOwner firma el Approval
+final o solicita cambios sin borrar envíos anteriores
+([MWP-MSN-008](../../reference/specification/missions-groups-and-membership/#mwp-msn-008)).

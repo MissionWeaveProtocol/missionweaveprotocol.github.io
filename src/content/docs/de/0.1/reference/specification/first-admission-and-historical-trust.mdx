@@ -1,0 +1,214 @@
+---
+title: Erstzulassung und historischer Trust
+description: >-
+  Der maßgebliche Admission Log-Vertrag, der Erstzulassungsablauf, die
+  historische Wiedergabe und die Fehlerzuordnung.
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+<NormativeClause id="MWP-ADM-001" level={["MUST","MUST NOT"]}>
+
+A **First-Admission Record** ist maßgeblich für das Anhängen von Metadaten
+außerhalb von Signed Document Verifizierungsprofil. Es MUST entsprechen
+`schemas/first-admission-record.schema.json` und enthalten genau diese neun
+Pflichtfelder: `protocolVersion`, `admissionRecordId`, `organizationId`,
+`documentKind`, `signingHash`, `keyId`, `principal`, `trustedAcceptedAt`, Und
+`acceptedBy`. `trustedAcceptedAt` ist das Organization-zugewiesener
+vertrauenswürdiger Akzeptanzzeitpunkt. Der Datensatz ist kein Signed Document,
+MUST NOT enthalten a `signature`, authentifiziert sich nicht und MUST NOT allein
+aufgrund seiner eigenen Bytes akzeptiert werden.
+
+</NormativeClause>
+
+Die Feldeinschränkungen sind:
+
+| Feld                | Einschränkung                                                                                                                                 |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `protocolVersion`   | die v0.1 `protocolVersion` konstant                                                                                                           |
+| `admissionRecordId` | absolute Protokollkennung                                                                                                                     |
+| `organizationId`    | absolute Protokollkennung                                                                                                                     |
+| `documentKind`      | einer von `agent-card`, `approval`, `artifact`, `command`, `context-package`, `event`, `evidence`, `extension-profile`, oder `group-snapshot` |
+| `signingHash`       | `sha256:` gefolgt von 64 hexadezimalen Kleinbuchstaben                                                                                        |
+| `keyId`             | absolute Protokollkennung                                                                                                                     |
+| `principal`         | genaue gemeinsame Schauspielerform                                                                                                            |
+| `trustedAcceptedAt` | RFC 3339 unter dem Protokoll-Zeitstempelprofil                                                                                                |
+| `acceptedBy`        | gemeinsame Akteurform mit `type: service`                                                                                                     |
+
+<NormativeClause id="MWP-ADM-002" level="MUST">
+
+Die lexikalische Schreibweise von `trustedAcceptedAt` MUST bleibt erhalten. Im
+Gegensatz zu den beiden geschützten Signed Document-Zeitstempeln ist es nicht
+erforderlich, `Z` in Großbuchstaben zu verwenden. es wird als exakter Zeitpunkt
+verglichen.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]}>
+
+Innerhalb eines Organization Admission Log ist der logische Such- und
+Anhängeschlüssel `(organizationId, signingHash)`. Das Protokoll MUST
+authentifiziert den akzeptierenden Dienst, beschränkt Schreibvorgänge auf von
+Organization autorisierte Dienste, bewahrt die Nur-Anhänge-Integrität,
+unterstützt eine autorisierende Suche, die zwischen Gefundenem und
+autorisierendem Nichtvorhandensein unterscheidet, und stellt einen atomaren
+Vorgang zum Anhängen oder Zurückgeben eines vorhandenen Schlüssels für diesen
+logischen Schlüssel bereit. Nicht verfügbare, unbestimmte, nicht
+authentifizierte, Integritätsfehler, Konflikte oder fehlgeschlagene
+Commit-Ergebnisse MUST fehlgeschlagen. Ein vom Aufrufer bereitgestellter
+Vertrauens-, Authentifizierungs- oder Integritätsboolean MUST NOT ersetzt das
+typisierte Ergebnis des Adapters.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-004" level={["MUST NOT","MUST"]}>
+
+Für einen logischen Schlüssel darf höchstens ein maßgeblicher Datensatz
+vorhanden sein. Ein `admissionRecordId` MUST NOT identifiziert Datensätze unter
+verschiedenen logischen Schlüsseln. Ein beim Wiederholungsversuch gefundener
+gültiger kompatibler Datensatz ist ein idempotenter Erfolg und MUST wird ohne
+Anhängen zurückgegeben. Ein Datensatz unter demselben logischen Schlüssel mit
+einer anderen Dokumentart, Schlüssel-ID oder Principal stellt einen Konflikt dar
+und MUST NOT muss ersetzt, repariert oder stillschweigend abgeglichen werden.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-005" level="MUST">
+
+Die Zulassung ist eine separate semantische Schicht nach den sechs
+kryptografischen Stufen. Seine geschützte Diagnosestufe ist `admission`; Es
+handelt sich nicht um eine siebte kryptografische Stufe und es werden keine
+Änderungen an den Signaturbytes, dem Signatur-Hash, der Schlüsselauflösung oder
+dem Signaturergebnis vorgenommen. Jeder Zulassungs- oder historische
+Vertrauenspfad MUST schließt zunächst alle sechs Phasen ab und behält den
+resultierenden Organization, die Dokumentart, den Signatur-Hash, die aufgelöste
+Schlüssel-ID, die gebundene Principal und das effektive
+Schlüsselgültigkeitsintervall bei.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-006" level="MUST">
+
+Für die Erstzulassung ist die Registry Beweise, die der Stufe 4 vorgelegt wurden
+MUST aktuell sein und auf eine neue Zulassungsentscheidung anwendbar sein
+[wie oben erforderlich](../signed-documents-and-trust/#mwp-sdv-010). Nach
+sechsstufiger Verifizierung erfolgt die Umsetzung MUST Nachschlagen
+`(organizationId, signingHash)`. Ein gefundener Datensatz MUST wie unten
+beschrieben validiert werden. Nur eine maßgebliche Abwesenheit ermöglicht es der
+Implementierung, einen vertrauenswürdigen Akzeptanzkontext zu erhalten und einen
+Kandidaten vorzubereiten First-Admission Recordund rufen Sie
+append-or-return-existing auf. Die erste Zulassung ist erst abgeschlossen, wenn
+der von dieser Operation zurückgegebene authentifizierte Datensatz, unabhängig
+davon, ob er neu festgeschrieben oder gleichzeitig vorhanden ist, selbst
+validiert wurde. Es reicht nicht aus, nur die Kandidatenbytes zu validieren.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]}>
+
+Kandidatenvorbereitung MUST NOT anhängen Event, einen Zustandsübergang ausführen
+oder implizieren, dass die Zulassung erfolgreich war. Ein gleichzeitiger
+Gewinner ist zurückgekehrt `admissionRecordId` oder `trustedAcceptedAt` MAY
+unterscheiden sich vom unterlegenen Kandidaten, der zurückgegebene Datensatz
+wird jedoch nur akzeptiert, wenn alle unten aufgeführten Bindungs- und
+Intervallregeln erfolgreich sind.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-008" level={["MUST","MUST NOT"]}>
+
+Die historische Wiedergabe MUST führt die sechs kryptografischen Phasen erneut
+mit maßgeblichen historischen Registry Beweisen aus, die den vollständigen, für
+die geschützte signierte Zeit erforderlichen Gültigkeitsverlauf enthalten. Es
+MUST erfordert dann ein gefundenes First-Admission Record und validiert es. Die
+historische Wiedergabe MUST NOT gibt einen neuen vertrauenswürdigen
+Akzeptanzkontext aus, fügt einen fehlenden Datensatz hinzu oder behandelt das
+Dokument als neue Zulassung. Ein späterer Ablauf oder Widerruf macht eine
+verankerte historische Signatur nicht automatisch ungültig, wenn sowohl die
+geschützte signierte Zeit als auch `trustedAcceptedAt` innerhalb des Intervalls
+des ausgewählten Schlüssels lagen.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-009" level={["MUST","MUST NOT"]}>
+
+Datensatzvalidierung MUST Analysieren Sie strikt genau eine UTF-8 JSON Wert,
+wenden Sie das normative Schema an und fordern Sie eine genaue Gleichheit
+zwischen der Aufzeichnung und dem sechsstufigen Beweis dafür `organizationId`,
+`documentKind`, `signingHash`, `keyId`, Und `principal`. Die Aufzeichnung
+`acceptedBy` MUST entspricht genau der vom authentifizierten Dienstidentität
+Admission Log Ergebnis. Ein Datensatz für denselben nicht signierten Inhalt
+unter einem anderen Organization, Dokumentart, Schlüssel-ID oder Principal MUST
+NOT wiederverwendet werden. Die Nur-Anhänge-Integrität und die authentifizierte
+Dienstidentität des Datensatzes sind Bereitstellungszusicherungen des
+Erfolgreichen Admission Log Adapterergebnis; Die Aufzeichnungen beweisen für
+sich genommen keine der beiden Eigenschaften.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-010" level="MUST NOT">
+
+Für vertrauenswürdige Akzeptanz sofort `t`, die Zulassung ist nur gültig, wenn
+`validFrom <= t`, `validUntil` nicht vorhanden ist oder `t < validUntil` gilt
+und `revokedAt` nicht vorhanden ist oder `t < revokedAt` gilt. Dies sind
+dieselben halboffenen Intervallgrenzen wie für die geschützte signierte Zeit,
+unabhängig bei `trustedAcceptedAt` ausgewertet und unter Verwendung der
+frühesten wirksamen, beibehaltenen Grenzen von `validUntil` und `revokedAt`. Ein
+neu vorgelegtes Dokument MUST NOT allein deshalb akzeptiert werden, weil sein
+Unterzeichner die geschützte Zeit auf einen Zeitpunkt vor Ablauf oder Widerruf
+zurückdatiert hat.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-011" level={["MUST NOT","MAY"]}>
+
+Für eine unterzeichnete Event, Das Event dokumentieren MUST NOT als sein eigenes
+dienen First-Admission Record entweder durch Lookup oder
+Append-or-Return-Existing und seine Signatur MUST NOT wird als Authentifizierung
+des Datensatzes oder seines Zulassungsankers behandelt. Später signiert Event
+MAY einen separaten Datensatz veröffentlichen oder darauf verweisen; seine
+Signatur authentifiziert nur die Event's Referenz.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-012" level="MUST">
+
+Jeder Fehler nach dem sechsstufigen Abschluss bei der Suche, der
+Kandidatenvorbereitung, der Validierung vertrauenswürdiger Zeitintervalle, dem
+Anhängen oder Zurückgeben vorhandener Dateien, dem Parsen zurückgegebener
+Datensätze, der Schemavalidierung, der Bindung, dem Vergleich authentifizierter
+Dienste usw Event selbstverankernd MUST Karte auf dem Draht zu
+`AUTH_INVALID_SIGNATURE`. Die geschützte Audit-Diagnose MUST Bühne behalten
+`admission` und einen stabilen Grund, ohne diesen Grund dem nicht
+vertrauenswürdigen Anrufer preiszugeben.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-013" level="MUST">
+
+Ein neu präsentiertes Command MUST erfüllen zusätzlich eine
+Organization-definiertes, begrenztes Frische- und Clock-Skew-Fenster für
+`issuedAt`. Diese Aktualitätsprüfung und die Autorisierung des Unterzeichners
+gemäß der geltenden Rolle und Richtlinie bleiben davon getrennt First-Admission
+Record Validierung.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-014" level="MUST">
+
+Die kryptografische Verifizierung authentifiziert die Principal an den Schlüssel
+gebunden; das gewährt es nicht Principal Protokollautorität. Bevor Sie einen
+Zustandsübergang akzeptieren, müssen die entsprechenden Organization oder Group
+Authority MUST Überprüfen Sie die Rolle und Autorisierung des Unterzeichners
+anhand der maßgeblichen Richtlinie und des Status, die zum Zeitpunkt der
+geschützten Unterzeichnung gelten, und für die Erstzulassung anhand der
+vertrauenswürdigen Annahmezeit. Insbesondere, `acceptedBy` MUST ein
+autorisierter sein Group Authority oder Organization Event Dienst, ein Agent
+Card Emittent MUST dazu berechtigt sein Organization, ein Extension Profile
+Genehmiger und Approval Genehmiger MUST erfüllen Organization Politik und a
+Group Snapshot Schöpfer MUST ein autorisierter Archivdienst sein. Diese
+Autorisierungsprüfung erfolgt erst, nachdem alle sechs kryptografischen Phasen
+und alle anwendbaren Erstzulassungs- oder historischen Vertrauensvalidierungen
+erfolgreich waren. Scheitern ist `AUTH_FORBIDDEN`.
+
+</NormativeClause>

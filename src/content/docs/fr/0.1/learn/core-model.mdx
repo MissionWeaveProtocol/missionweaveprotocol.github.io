@@ -1,0 +1,91 @@
+---
+title: Modèle de base
+description: >-
+  Les missions, groupes, enregistrements durables, projections locales et
+  invariants qui composent MissionWeaveProtocol 0.1.
+---
+
+# Modèle de base
+
+MissionWeaveProtocol organise la coopération autour d'un **Mission** délimité et
+de son **Group** temporaire. La création de Mission établit exactement un Group
+principal, un MissionOwner humain racine, un Coordinator initial, une
+conversation de planification et l'historique initial durable Event.
+([MWP-MSN-001](../../reference/specification/missions-groups-and-membership/#mwp-msn-001)).
+
+```text
+Organization
+├── Agent Registry
+├── Group Authority and durable Event store
+├── Authorization Service
+└── Mission
+    └── Group
+        ├── MissionOwner
+        ├── Coordinator
+        ├── Worker Memberships
+        ├── Conversations and Messages
+        ├── WorkItems and Work Contracts
+        └── ordered Events, Artifacts, Evidence, and Approvals
+```
+
+## Les records qui relient la coopération
+
+- Un **Membership** connecte un Principal à un Group, ensemble de rôles,
+  visibilité plage et Membership Époque.
+- Une **Conversation** contient des messages durables pour la planification
+  Group ou un WorkItem.
+- Un **WorkItem** est une unité exécutable du travail Mission. Son **contrat de
+  travail** définit l'objectif, les livrables, Evidence, les autorisations, la
+  date limite et le budget.
+- Un **Artifact** est un livrable immuable adressé par contenu.
+- **Evidence** enregistre comment un Artifact ou WorkItem satisfait à
+  l'acceptation critères.
+- Un **Event** est un fait accepté immuable dans l'histoire monotone d'un Group.
+- Un **Curseur** enregistre le Group Event contigu le plus élevé traité de
+  manière durable par un Agent.
+
+Les messages fournissent un contexte ou des propositions. La responsabilité
+exécutable ne commence que par une transition WorkItem autorisée et une
+acceptation Worker. Il s'agit de la limite de conversation dans
+[MWP-FND-014](../../reference/specification/foundations/#mwp-fnd-014) et de la
+limite d'exécution structurée dans
+[MWP-FND-015](../../reference/specification/foundations/#mwp-fnd-015).
+
+## Projections étatiques et locales faisant autorité
+
+MissionWeaveProtocol sépare la vérité partagée de l'état Worker reconstructible.
+
+**L'état faisant autorité** inclut les missions, les adhésions, les éléments de
+travail, les époques de propriété et de location, les reçus de déduplication,
+les approbations et les événements Group. Le Group Authority sérialise les
+modifications acceptées dans cet état.
+
+**Les projections Agent-locales** incluent les curseurs, les files d'attente par
+Group, les points de contrôle, les boîtes d'envoi, les boîtes de réception et
+l'état du planificateur. Un Agent peut les reconstruire à partir d'événements
+durables. La perte du stockage local ne modifie pas l’état faisant autorité de
+Mission. La limite complète est
+[MWP-FND-023](../../reference/specification/foundations/#mwp-fnd-023).
+
+## Invariants à retenir
+
+L'ensemble des invariants normatifs commence à
+[MWP-FND-013](../../reference/specification/foundations/#mwp-fnd-013). Le résumé
+conceptuel est le suivant :
+
+- un Mission a un Group principal et un par Group Event ;
+- la conversation ne crée jamais d'autorité d'exécution ;
+- le travail exclusif est délimité par les époques de propriété et de location ;
+- Les événements acceptés et les messages validés sont uniquement en annexe ;
+- Le contexte et les informations d'identification Mission sont isolés par
+  défaut ;
+- Les budgets et autorisations WorkItem et enfant-Mission sont restreints à
+  leurs parents ;
+- L'achèvement de la racine Mission nécessite l'approbation humaine d'une
+  révision exacte et Artifact défini ; et
+- Les agents publient des décisions, des entrées, des Evidence, des bloqueurs et
+  des résultats vérifiables, pas une chaîne de pensée privée.
+
+Continuez avec [Identité, rôles et autorité](../identity-roles-and-authority/)
+pour voir comment ces enregistrements acquièrent des acteurs de confiance et une
+autorité étendue.

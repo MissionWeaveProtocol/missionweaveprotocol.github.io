@@ -1,0 +1,78 @@
+---
+title: Referencias oficiales de tiempo de ejecución SDK
+description: >-
+  Instalación de confirmación exacta, tiempo de ejecución, admisión, soporte y
+  referencias públicas de API para los seis SDK oficiales de
+  MissionWeaveProtocol.
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkRuntimeMatrix from "../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Referencias oficiales de tiempo de ejecución SDK
+
+:::caution[Draft Standard 0.1]
+
+Estas páginas SDK versionadas forman parte de la publicación normativa del sitio
+web. Definen la superficie de tiempo de ejecución pública admitida en cada
+confirmación SDK exacta. Los enlaces de fuentes exactas establecen la
+procedencia; Las páginas README o `docs/` del repositorio no proporcionan los
+requisitos faltantes.
+
+:::
+
+La [referencia de tiempo de ejecución](../runtime/architecture-and-bootstrap/)
+compartida define el orden independiente del idioma y los límites de confianza.
+Cada árbol SDK agrega su identidad de paquete real, cadena de herramientas,
+nombres públicos, adaptadores, ejemplos ejecutables y límites de disponibilidad
+explícitos sin crear paridad entre idiomas.
+
+## Matriz de liberación exacta
+
+<SdkRuntimeMatrix />
+
+`Implemented` significa que la fuente fijada contiene la superficie pública
+documentada. `Deployment adapter required` significa que SDK proporciona el
+contrato de ejecución, pero la implementación debe proporcionar autoridad
+externa, persistencia o infraestructura de red. `Not implemented` significa que
+el SDK anclado no tiene una superficie de tiempo de ejecución pública
+correspondiente.
+
+## Referencias de tiempo de ejecución
+
+<CardGrid>
+  <LinkCard
+    title="Python reference runtime"
+    description="Install the exact package, assemble the full runtime, run First Admission and Historical Trust, and inspect every public API entry."
+    href="./python/"
+  />
+  <LinkCard
+    title="TypeScript SDK"
+    description="Install the exact package-root runtime, run First Admission and Historical Trust, and inspect every supported export."
+    href="./typescript/"
+  />
+  <LinkCard
+    title="Go SDK"
+    description="Install the exact module, run typed First Admission and Historical Trust, and inspect every exported API entry."
+    href="./go/"
+  />
+  <LinkCard
+    title="Rust SDK"
+    description="Install the exact crate, run typed First Admission and Historical Trust, and inspect every crate-root API entry."
+    href="./rust/"
+  />
+  <LinkCard
+    title="Java SDK"
+    description="Install the exact Maven artifact, run typed First Admission and Historical Trust, and inspect every public Java API entry."
+    href="./java/"
+  />
+  <LinkCard
+    title="C++ SDK"
+    description="Install the exact CMake package, run typed First Admission and Historical Trust, and inspect every installed-header API entry."
+    href="./cpp/"
+  />
+</CardGrid>
+
+Cada árbol anterior es parte de la misma versión normativa. La publicación aún
+requiere que cada ejemplo nativo esté fijado exactamente y que la versión del
+sitio web verifique que cumpla con su límite de verificación documentada.

@@ -1,0 +1,109 @@
+---
+title: Cree un tiempo de ejecución MissionWeaveProtocol 0.1
+description: >-
+  La ruta de implementación normativa compartida para análisis, confianza,
+  admisión, persistencia, transporte, diagnóstico, conformidad y
+  actualizaciones.
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+# Construir un tiempo de ejecución MissionWeaveProtocol 0.1
+
+:::caution[Draft Standard 0.1]
+
+Esta ruta de compilación versionada es parte de la publicación normativa del
+sitio web. Organiza las cláusulas de referencia locales en orden de
+implementación sin redefinirlas. Cuando un resumen y una cláusula vinculada
+difieren, la cláusula vinculada es el requisito de control.
+
+:::
+
+El lenguaje de requisitos BCP 14 utilizado por la especificación local se define
+en [MWP-FND-001](../reference/specification/foundations/#mwp-fnd-001). La ruta
+compartida describe la semántica que cada implementación de lenguaje debe
+preservar. Las páginas específicas de SDK pueden agregar comandos de
+instalación, tipos de lenguaje y sintaxis pública API, pero no deben debilitar
+ni reemplazar estas reglas.
+
+:::note[Implementation note]
+
+## Secuencia de implementación recomendada
+
+1. Arranque una versión exacta, un límite de confianza, validadores, tiendas y
+   tiempo de ejecución identidad.
+2. Preservar el protocolo JSON, identificadores, marcas de tiempo, hashes y
+   tipos de sobres. sin normalización del lenguaje anfitrión.
+3. Implementar análisis estricto, validación de esquemas, canonicalización,
+   firma, Resolución de clave respaldada por Registry y canal de verificación de
+   seis etapas.
+4. Primera capa de admisión y confianza histórica por encima de la verificación
+   criptográfica.
+5. Separar el estado autoritativo de las proyecciones reconstruibles y luego
+   implementar repetición, idempotencia, esgrima y recuperación de efectos
+   secundarios.
+6. Autenticar y multiplexar grupos a través del marco normativo WebSocket.
+7. Exponga errores de cables estables mientras conserva diagnósticos protegidos
+   y útiles señales operativas.
+8. Verificar los artefactos de liberación exactos, informar el subconjunto de
+   conformidad comprobada y actualice sin cambiar silenciosamente la semántica
+   del cable.
+
+Esta orden es una guía de implementación. Las cláusulas de referencia vinculadas
+definen los requisitos y sus límites de aceptación.
+
+:::
+
+## Referencia de tiempo de ejecución compartida
+
+<CardGrid>
+  <LinkCard
+    title="Architecture and bootstrap"
+    description="Trust boundaries, runtime responsibilities, release loading, identity, recovery, and startup order."
+    href="./runtime/architecture-and-bootstrap/"
+  />
+  <LinkCard
+    title="Protocol types"
+    description="Wire JSON, scalar profiles, durable objects, envelopes, generated types, and semantic state."
+    href="./runtime/protocol-types/"
+  />
+  <LinkCard
+    title="Validation, canonicalization, and signing"
+    description="Strict parsing, Schema assertions, JCS, Ed25519, Registry evidence, and signing hashes."
+    href="./runtime/validation-canonicalization-and-signing/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed Admission Log outcomes, atomic first admission, record validation, and historical replay."
+    href="./runtime/first-admission-and-historical-trust/"
+  />
+  <LinkCard
+    title="Persistence and recovery"
+    description="Authoritative state, local projections, receipts, replay, Cursors, snapshots, and side effects."
+    href="./runtime/persistence-and-recovery/"
+  />
+  <LinkCard
+    title="Transport and framing"
+    description="HELLO authentication, Session Epoch fencing, subscriptions, multiplexing, ACK, PING, and backpressure."
+    href="./runtime/transport-and-framing/"
+  />
+  <LinkCard
+    title="Errors and observability"
+    description="Wire-safe errors, retry decisions, protected diagnostics, audit records, metrics, and tracing boundaries."
+    href="./runtime/errors-and-observability/"
+  />
+  <LinkCard
+    title="Conformance and upgrades"
+    description="Exact artifacts, structural and trust bundles, claim boundaries, extensions, and version transitions."
+    href="./runtime/conformance-and-upgrades/"
+  />
+</CardGrid>
+
+## Lanzamiento antes del código
+
+Comience desde la
+[identidad de versión normativa local ](../reference/normative-release/), no una
+rama del repositorio no fijada o SDK README. La página de lanzamiento vincula
+los artefactos del protocolo, las seis confirmaciones, perfiles, resúmenes,
+configuraciones regionales y la identidad exacta del sitio integrado SDK
+utilizados en esta documentación.

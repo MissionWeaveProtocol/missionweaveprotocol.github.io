@@ -1,0 +1,121 @@
+---
+title: Transport et encadrement
+description: >-
+  L'authentification normative HELLO, la clôture Session Epoch, les cadres de
+  texte WebSocket, les abonnements Group, le multiplexage, l'ACK, le PING et le
+  modèle de contre-pression.
+---
+
+# Transport et encadrement
+
+MissionWeaveProtocol 0.1 lie le runtime au WebSocket authentifié via TLS 1.3.
+Encadrement et livraison des fournitures de transport ; il ne remplace pas la
+vérification individuelle Signed Document, l'autorisation Group, la relecture
+durable ou l'escrime. Les spécifications TLS, WebSocket, JSON, JCS, schéma et
+cryptographiques requises sont énumérées par
+[MWP-FND-003](../../../reference/specification/foundations/#mwp-fnd-003).
+
+## BONJOUR authentification
+
+L'échange HELLO à quatre messages utilise un nouveau défi de serveur et une clé
+Ed25519 enregistrée par Organization. Il négocie la version du protocole et
+renvoie un jeton de session de courte durée ainsi qu'un Session Epoch
+nouvellement émis
+([MWP-IDN-007](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-007)).
+
+L'époque d'émission `n + 1` clôture chaque exécution à l'époque `n` ou
+inférieure. Chaque Agent Command à changement d'état est vérifié par rapport à
+l'époque actuelle, et deux environnements d'exécution ne peuvent pas exploiter
+simultanément une identité Agent stable
+([MWP-IDN-008](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-008)).
+
+## WebSocket limite du message
+
+Un serveur fournit `wss` ; une connexion authentifiée peut multiplexer tous les
+groupes utilisés par un seul Agent. Chaque message WebSocket contient exactement
+un cadre de texte UTF-8 JSON conforme au schéma `websocket-frame` local. Les
+trames binaires ne peuvent pas transporter d'objets de protocole ou de contenu
+Artifact
+([MWP-EVT-008](../../../reference/specification/commands-events-and-ordering/#mwp-evt-008)).
+
+Les types de trames principales sont :
+
+| Cadre       | Objectif                                                                 |
+| ----------- | ------------------------------------------------------------------------ |
+| `HELLO`     | authentification par défi, négociation de version et émission de session |
+| `SUBSCRIBE` | Group positions de sélection et de relecture autorisées                  |
+| `COMMAND`   | une demande signée pour une transition structurée                        |
+| `EVENT`     | un fait immuable accepté                                                 |
+| `ACK`       | un ou plusieurs curseurs contigus durables                               |
+| `PING`      | vivacité et présence facultative                                         |
+| `ERROR`     | guidage de rejet ou de transport lisible par machine                     |
+
+## Abonnez-vous et acheminez avant le séquençage
+
+Après l'authentification, `SUBSCRIBE` contient des identifiants Group, des
+positions de relecture par Group et des filtres d'attention facultatifs. Le
+serveur applique indépendamment Membership et ne révèle pas s'il existe un Group
+non autorisé
+([MWP-EVT-009](../../../reference/specification/commands-events-and-ordering/#mwp-evt-009)).
+
+Les événements de différents groupes peuvent s'entrelacer. Un récepteur achemine
+chaque Event par l'ID Group avant d'appliquer une logique de séquence, de
+curseur, de déduplication ou de file d'attente ; seule la commande par Group est
+définie
+([MWP-EVT-010](../../../reference/specification/commands-events-and-ordering/#mwp-evt-010)).
+
+## Vivacité, progrès et pression
+
+`ACK` signale des progrès durables. `PING` prouve l'activité et peut comporter
+un enregistrement de présence ; le pair fait écho à son occasionnel. Les
+serveurs utilisent des tampons limités et une contre-pression par Group, mettant
+en pause un Group surchargé avec les conseils de `BACKPRESSURE` plutôt que de
+déconnecter les groupes non liés lorsque cela est possible
+([MWP-EVT-011](../../../reference/specification/commands-events-and-ordering/#mwp-evt-011)).
+
+La présence peut voyager sur un `PING` authentifié sans signature individuelle
+durable, mais ne peut pas exposer un autre Group
+([MWP-IDN-006](../../../reference/specification/identity-registry-and-sessions/#mwp-idn-006)).
+Un Group bruyant ne peut pas en affamer un autre ; les passerelles fournissent
+un contrôle de flux par Group et des curseurs d'abonnement indépendants lorsque
+cela est possible
+([MWP-MSN-014](../../../reference/specification/missions-groups-and-membership/#mwp-msn-014)).
+
+Un ACK ne constitue pas une autorisation de suppression de l'historique Event
+faisant autorité, et une mise à jour PING ou de présence ne constitue pas une
+acceptation d'affectation ou un renouvellement de bail. Les récepteurs
+dédupliquent les événements et n'avancent jamais un curseur sur un intervalle de
+séquence
+([MWP-WRK-029](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-029)).
+L'ACK et la relecture de reconnexion utilisent le curseur durable contigu le
+plus élevé et peuvent restituer les événements autour d'une déconnexion
+([MWP-WRK-030](../../../reference/specification/work-scheduling-and-recovery/#mwp-wrk-030)).
+
+## Encodage à la limite du fil
+
+Le fil JSON peut arriver dans n'importe quel ordre de membre, mais les noms de
+membre en double sont rejetés avant la validation du schéma. Chaque signature,
+identifiant dérivé du contenu et hachage utilise le modèle de valeur et les
+octets exacts RFC 8785 JCS
+([MWP-EVT-012](../../../reference/specification/commands-events-and-ordering/#mwp-evt-012)).
+Le contenu volumineux est transmis sous la forme d'une référence Artifact
+adressée au contenu plutôt que d'une trame de protocole de streaming binaire ou
+partiel.
+
+:::note[Implementation note]
+
+Conservez des tampons de réception indépendants par Group et un état de
+relecture derrière la seule connexion. Reconnectez-vous avec un espacement
+limité, mais conservez le dernier curseur durable pour chaque Group et
+attendez-vous à des événements en double autour de la limite de déconnexion.
+
+Appliquez des limites à l'échelle de la connexion en tant que soupape de
+sécurité finale et des limites par Group en tant que mécanisme d'isolation
+normal. Les tailles de tampon, les périodes de pulsation, la gigue de
+reconnexion et les choix de bibliothèque de sockets sont des réglages de
+déploiement et non des constantes de fil.
+
+:::
+
+Continuez avec [Erreurs et observabilité](../errors-and-observability/) pour les
+rejets de fils et les diagnostics protégés.

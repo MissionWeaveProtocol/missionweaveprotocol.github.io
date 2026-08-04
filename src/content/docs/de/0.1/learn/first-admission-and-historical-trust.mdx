@@ -1,0 +1,102 @@
+---
+title: Erstzulassung und historischer Trust
+description: >-
+  Die maßgebliche Suche, das atomare Anhängen, die Validierung zurückgegebener
+  Datensätze und die historischen Wiedergabeabläufe liegen über der
+  sechsstufigen Überprüfung.
+---
+
+# Erstzulassung und historisches Vertrauen
+
+Die kryptografische Überprüfung weist geschützte Bytes und eine Schlüsselbindung
+nach Principal. Erster Eintritt fügt eine hinzu Organization-zugewiesener
+vertrauenswürdiger Akzeptanzzeitpunkt und ein maßgeblicher
+Nur-Anhänge-Datensatz. Die Zulassungsschicht bleibt von den sechs
+kryptografischen Stufen getrennt
+([MWP-ADM-005](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)).
+
+## Admission Log Vertrag
+
+Der logische Schlüssel ist `(organizationId, signingHash)`. Der Admission Log
+authentifiziert seinen akzeptierenden Dienst, unterscheidet einen gefundenen
+Datensatz von einer autorisierenden Abwesenheit, wahrt die
+Nur-Anhänge-Integrität und macht einen atomaren Anhänge-oder-Rückgabe-Vorgang
+verfügbar. Typisierte Ergebnisse schlagen fehl, geschlossen; ein
+Anrufer-Vertrauensflag kann sie nicht ersetzen
+([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)).
+
+Die genaue Neun-Felder-Rekordform, Verbot auf a `signature` Mitglied und nicht
+selbstauthentifizierende Grenze werden durch
+[MWP-ADM-001 definiert](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001).
+Sein genaues lokales Artefakt ist im
+[JSON Schemakatalog](../../reference/schemas/), und das vollständige Bündel der
+Erstzulassungs- und Wiederholungsnachweise wird unter [Zulassungskonformität]
+veröffentlicht](../../reference/conformance/admission/).
+
+## Ablauf bei der Erstaufnahme
+
+Die für den Leser sichtbare Sequenz ist genau:
+
+```text
+six-stage cryptographic verification
+→ authoritative Admission Log lookup
+→ found record validation OR authoritative absence
+→ trusted context and candidate preparation
+→ atomic append-or-return-existing
+→ returned record validation
+→ admitted result
+```
+
+Der Verzweigungspunkt ist wichtig. Ein gefundener Datensatz gelangt direkt zur
+Datensatzvalidierung. Nur verbindliche Abwesenheit ermöglicht einen
+vertrauenswürdigen Kontext und eine Kandidatenvorbereitung. Das atomare Anhängen
+kann den lokalen Kandidaten oder einen gleichzeitig festgeschriebenen Datensatz
+zurückgeben, und der zurückgegebene Datensatz wird vor dem Erfolg immer
+validiert. Kandidatenbytes allein begründen niemals die Zulassung. Diese
+Orchestrierung ist definiert durch
+[MWP-ADM-006](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).
+
+Zur Kandidatenvorbereitung gehört auch kein Anhang Event oder einen
+Zustandsübergang implizieren
+([MWP-ADM-007](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-007)).
+
+## Validierung des zurückgegebenen Datensatzes
+
+Die zurückgegeben First-Admission Record wird als eine strenge Analyse
+analysiert UTF-8 JSON Wert, validiert gegen das lokale Schema und verglichen mit
+dem sechsstufigen Ergebnis für Organization, Dokumentart, Signatur-Hash,
+Schlüssel-ID und Principal. Es ist `acceptedBy` Identität stimmt mit dem durch
+das Adapterergebnis authentifizierten Dienst überein
+([MWP-ADM-009](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)).
+
+Der vertrauenswürdige Akzeptanzzeitpunkt wird unabhängig anhand desselben
+ausgewählten Schlüsselintervalls getestet, das für die geschützte signierte Zeit
+verwendet wird
+([MWP-ADM-010](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)).
+
+Bei Ausfällen nach Abschluss der sechs Stufen bleibt die geschützte
+Diagnosestufe erhalten `admission` und Karte auf dem Draht zu
+`AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).
+
+## Historische Wiederholung
+
+Die historische Wiedergabe folgt einem engeren Weg:
+
+```text
+six-stage cryptographic verification
+→ required found record
+→ record validation
+→ no trusted context or append
+```
+
+Die sechs Stufen verwenden maßgebliche historische Registry-Beweise, die den für
+die geschützte signierte Zeit erforderlichen beibehaltenen Gültigkeitsverlauf
+enthalten. Die Wiedergabe erfordert einen vorhandenen Datensatz, validiert ihn
+und erstellt niemals eine neue Zulassung oder gibt keinen vertrauenswürdigen
+Kandidatenkontext aus
+([MWP-ADM-008](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)).
+
+Die Zulassung bleibt getrennt von Command Aktualität und
+Unterzeichnerautorisierung; Auf der nächsten Seite werden diese Grenzen
+deutlich.

@@ -1,0 +1,128 @@
+---
+title: Fehler und Beobachtbarkeit
+description: >-
+  Wire-safe-Fehler, Wiederholungsentscheidungen, geschützte
+  Überprüfungsdiagnosen, zugriffskontrollierte Prüfaufzeichnungen, Metriken und
+  Nachverfolgungsgrenzen.
+---
+
+# Fehler und Beobachtbarkeit
+
+Der Wire-Fehler ist ein stabiles Protokollergebnis und kein Dump interner
+Ausnahmen. Fehler entsprechen dem lokalen Fehlerschema, geben an, ob ein
+erneuter Versuch sicher ist, und können den zugehörigen Frame oder die
+Aktions-ID identifizieren, ohne nicht autorisierte Daten preiszugeben
+([MWP-EXT-004](../../../reference/specification/errors-extensions-and-security/#mwp-ext-004)).
+
+## Auf der richtigen Ebene klassifizieren
+
+| Schicht                                                               | Öffentliches Ergebnis                                         |
+| --------------------------------------------------------------------- | ------------------------------------------------------------- |
+| ungültiger JSON, doppelte Mitglieder oder unmöglicher JCS Wert        | `PROTOCOL_VIOLATION`                                          |
+| vollständiges Schema oder erforderlicher Umschlagfehler               | `SCHEMA_VALIDATION_FAILED`                                    |
+| Fehler der kryptografischen Stufe 3, 4 oder 6                         | `AUTH_INVALID_SIGNATURE`                                      |
+| Zulassung oder Command-Freshness-Fehler                               | `AUTH_INVALID_SIGNATURE`                                      |
+| fehlende Berechtigung oder Richtlinienberechtigung                    | `AUTH_FORBIDDEN`                                              |
+| veraltete Sitzung, Membership, Coordinator, Besitz oder Leasingstatus | die entsprechende Stallzaunordnung                            |
+| aktuelle aggregierte Revisionsinkongruenz                             | `REVISION_CONFLICT`                                           |
+| akzeptierte Druckgrenze                                               | `BACKPRESSURE` oder `RATE_LIMITED` mit Wiederholungsanleitung |
+
+Kryptografie- und Zulassungsfehler fallen absichtlich auf der Leitung zusammen.
+Der Organization behält die erste fehlgeschlagene semantische Stufe und den
+spezifischen Grund nur in einem geschützten, zugriffskontrollierten
+Prüfdatensatz
+([MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)).
+Stufennummern sind semantische Klassifizierungen und keine erforderlichen
+internen Funktionsgrenzen
+([MWP-SDV-016](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-016)).
+Jeder Fehler nach sechsstufigem Abschluss im Zulassungspfad verwendet die
+geschützte Stufe `admission` und denselben öffentlichen
+`AUTH_INVALID_SIGNATURE`-Code
+([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)).
+
+## Entscheidungen wiederholen
+
+Das Wiederholungsverhalten hängt vom stabilen Code ab und davon, ob geschützte
+Inhalte gültig bleiben:
+
+- Bei einem unverändert akzeptierten Command-Wiederholungsversuch bleibt die
+  ursprüngliche Aktions-ID erhalten und signiert Inhalt; –
+  `AUTH_INVALID_SIGNATURE` wird nicht unverändert wiederholt, bis die Ursache
+  vorliegt korrigiert;
+- abgelaufen Command Frische erfordert ein neues Command, Aktions-ID, geschützte
+  Zeit, und Unterschrift;
+- `ACTION_ID_COLLISION` erfordert immer eine neue Aktions-ID und signierten
+  Inhalt; und – Veraltete Fencing-Fehler erfordern aktuelle maßgebliche Epochen
+  sowie ein neues Command und Unterschrift.
+
+Die vollständigen Regeln lauten
+[MWP-EXT-005](../../../reference/specification/errors-extensions-and-security/#mwp-ext-005)).
+Transport-Timeouts ohne eine autorisierende Antwort sind unbestimmt: Fragen Sie
+die stabile Identität ab oder wiederholen Sie sie, bevor Sie entscheiden, ob ein
+neuer Übergang gesendet werden soll.
+
+## Geschützter Prüfdatensatz
+
+Der Organization speichert die erste fehlgeschlagene semantische Stufe und ihren
+spezifischen Grund in einem geschützten, zugriffskontrollierten Prüfdatensatz,
+wie von
+[MWP-SDV-018](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-018)
+gefordert.
+
+Fügen Sie keine Geheimnisse, Funktionstokens, privates Schlüsselmaterial,
+Rohanmeldeinformationen, unbefugte Existenz von Group oder geschützte
+Vertrauens-Fehler-Unterscheidungen in die Drahtantwort ein. Token und
+Anmeldeinformationen sind ebenfalls von Nachrichten, Agent Karten,
+Kontextpaketen, Artefakten und Ereignissen ausgeschlossen
+([MWP-AUT-002](../../../reference/specification/authorization-and-budgets/#mwp-aut-002)).
+
+Prüfungsnachweise decken Entscheidungen, Eingaben, Blocker und Ergebnisse ab,
+ohne dass eine private Gedankenkette, versteckte Eingabeaufforderungen oder
+roher interner Speicher erforderlich sind
+([MWP-FND-022](../../../reference/specification/foundations/#mwp-fnd-022)).
+
+## Revisionsempfindliche Fehler
+
+Behandeln Sie alternatives Signaturbyte-Verhalten nicht als
+Kompatibilitätswiederherstellungspfad. Eine Revision, die einen anderen Teil des
+Signaturumschlags schützt, ändert die Wire-Signing-Bytes und kann nicht
+generiert oder stillschweigend als Version 0.1 akzeptiert werden
+([MWP-SDV-019](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-019)).
+
+:::note[Implementation note]
+
+Verwenden Sie getrennte Typen „public-error“ und „protected-diagnostic“, damit
+der Serialisierungscode nicht versehentlich einen internen Grund offenlegen
+kann. Protokolle und Traces sollten auf stabile IDs und Hashes verweisen,
+anstatt vollständige Protokolldokumente einzubetten.
+
+Zu den nützlichen strukturierten Feldern für einen autorisierten Prüfer gehören:
+
+– die erste fehlerhafte semantische Stufe, der stabile interne Grund und der
+Quelladapter;
+
+- genaue Version, Schema, Profil und Implementierungsversion;
+- autorisiert Organization, Group, Akteur, Aktions-ID, Korrelations-ID und
+  Signatur Hash-Referenzen;
+- relevant Registry Überarbeitung bzw Admission Log Ergebnisidentität; und
+- ob sich der maßgebliche Staat geändert hat.
+
+Befehle verfügen bereits über eine stabile Aktions- und Korrelationsidentität
+([MWP-EVT-001](../../../reference/specification/commands-events-and-ordering/#mwp-evt-001))
+und akzeptierte Ereignisse behalten unveränderliche Ursache, Akteur,
+Korrelation, Reihenfolge und Revisionskontext bei
+([MWP-EVT-005](../../../reference/specification/commands-events-and-ordering/#mwp-evt-005)).
+Bevorzugen Sie diese Verweise auf eine unabhängige Nachverfolgungsidentität.
+
+Zu den nützlichen Metriken gehören akzeptierte und abgelehnte Befehle durch
+öffentlichen Code, die erste fehlgeschlagene geschützte Stufe in eingeschränkter
+Telemetrie und die Verzögerung bei der Wiedergabe Group, Anzahl der
+Cursorlücken, Duplikat Event Anzahl, Lease- und Budget-Ablehnungszahlen, Dauer
+des Gegendrucks, Ergebnisse des Zulassungsadapters und
+End-to-End-Übergangslatenz. Definieren Sie die begrenzte Kardinalität vor dem
+Anhängen Organization, Group, Akteur, Aktion, Schlüssel oder Signatur-Hash-IDs.
+
+:::
+
+Beenden Sie mit [Konformität und Upgrades](../conformance-and-upgrades/) bevor
+Sie Unterstützung für eine Veröffentlichung in Anspruch nehmen.
