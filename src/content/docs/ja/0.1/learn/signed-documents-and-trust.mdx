@@ -1,0 +1,50 @@
+---
+title: 署名された文書と信頼
+description:
+  保護されたコンテンツ、Registry 証拠、鍵履歴、正規化、および Ed25519
+  検証によって 6 段階の結果がどのように生成されるか。
+---
+
+# 署名された文書と信頼
+
+Signed Document は、その署名が Signed
+Document 検証プロファイルに基づいて正規に保護されたコンテンツを認証する耐久性のあるプロトコル オブジェクトです。プロファイルは、文書の種類ごとに保護される時刻と予想される署名者を選択します。
+
+## エンベロープは保護されたコンテンツにバインドされます
+
+v0.1 署名入力では、完全なトップレベルの署名エンベロープが省略されています。検証者は、[MWP-SDV-002](../../reference/specification/signed-documents-and-trust/#mwp-sdv-002)] の保護時間要件と Ed25519 要件に従ってエンベロープをバインドし、[MWP-SDV-001](../../reference/specification/signed-documents-and-trust/#mwp-sdv-001)] を使用して期待される署名者を選択し、完全な段階的正規化と署名バイト ルールに従います。
+[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)。
+
+署名ハッシュは、ステージ 5 で生成された正確な RFC 8785
+JCS バイトの小文字の SHA-256 アイデンティティです。これは、アドミッション状態 ([MWP-SDV-017](../../reference/specification/signed-documents-and-trust/#mwp-sdv-017)]) とは関係なく、保護されたコンテンツを識別します。
+
+## Registry 証拠は、選択された 1 つのキーよりも広いです
+
+ステージ 4 では、一貫性のある、権限のある Organization スコープの Registry リビジョンを 1 つ使用します。この証拠により、不変のキー バインディング、Organization 全体の非再利用および非エイリアスの不変条件、およびプロファイルで必要とされる保持された有効性履歴が確立されます ([MWP-SDV-008](../../reference/specification/signed-documents-and-trust/#mwp-sdv-008)])。
+
+キーでフィルターされたキャッシュは、要求されたキーが含まれているだけでは十分ではありません。鍵解決シームは、証拠の範囲、リビジョンの適用性、完全性、および履歴範囲を確立するか、確立できないことを報告します ([MWP-SDV-010](../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)])。
+
+保護された署名時間が、選択されたキーのハーフオープン有効期間に対してテストされます。 Registry 時間は瞬間として比較され、保持された履歴により、後の有効期限または失効後でも以前の署名を検証可能にすることができます ([MWP-SDV-014](../../reference/specification/signed-documents-and-trust/#mwp-sdv-014)])。
+
+## 6 段階の検証
+
+検証は、[MWP-SDV-015](../../reference/specification/signed-documents-and-trust/#mwp-sdv-015):] の順序付けされた段階に従います。
+
+1. 厳密な UTF-8 JSON 解析と重複メンバーの拒否。
+2. 標準的な JSON スキーマ検証を完了します。
+3. 署名エンベロープと保護時間の検証。
+4. 完全な Registry 証拠、キー解決、バインディング、および有効性チェック。
+5. RFC 8785 の正規化と署名ハッシュの生成。そして
+6. 厳密な Ed25519 署名検証。
+
+ベリファイアは最初の失敗ステージで停止します。 6 つのステージすべてが成功するまでは、アクターの承認、Event の追加、または状態遷移の実行は行われません。
+
+## 成功した結果が意味するもの
+
+完了した結果には、Organization、ドキュメントの種類、署名ハッシュ、解決されたキー ID、バインドされた Principal、保護された署名時間、および有効なキー間隔が保持されます。保護されたコンテンツとキーにバインドされた Principal を認証します。それ自体では、文書を承認したり、現在のプロトコルの認可を証明したり、状態遷移を受け入れたりすることはありません。
+
+正確なローカル スキーマ アーティファクトは
+[JSON スキーマ カタログ ](../../reference/schemas/)] でインデックス付けされており、完全な 6 段階の証拠バンドルは
+[暗号化準拠 ](../../reference/conformance/cryptography/)] で公開されています。
+
+暗号化上の権威受諾層については、[最初の許可と歴史的信頼](../first-admission-and-historical-trust/)] に進みます。

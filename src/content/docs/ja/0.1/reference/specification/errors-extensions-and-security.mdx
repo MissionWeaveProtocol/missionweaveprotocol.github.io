@@ -1,0 +1,230 @@
+---
+title: 拡張機能、エラー、制御、および適合性
+description:
+  拡張プロファイル、エラー
+  コード、セキュリティ制御、互換性、準拠、概念実証要件、およびライセンス。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 18. 拡張プロファイル
+
+<NormativeClause id="MWP-EXT-001" level={["MAY","MUST"]}>
+
+開発者 MAY は、Organization で承認された拡張プロファイルを通じてカスタム コマンド、イベント、データを定義します。各プロファイル MUST は、グローバルに一意のプロファイル URI、セマンティック バージョン、スキーマ URI とハッシュ、必要な機能、重要度、および Organization 承認署名を宣言します。 Group は、使用するプロファイルのサポートされているメジャー バージョンを固定します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-002" level={["MUST","MAY"]}>
+
+拡張機能の種類 MUST は、プロファイルによって定義された
+`ext.<organization>.<profile>.<name>`
+名前空間を使用します。未知の非クリティカル拡張子 MAY は、解釈せずに保持および中継されます。 Agent
+MUST は、不明な重要なプロファイルに依存する移行への参加を拒否します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-003" level="MUST NOT">
+
+Extension Profile MUST
+NOT オーバーライドまたはアイデンティティの弱体化、Membership、Event 順序付け、冪等性、Session
+Epoch、所有権エポック、リース、予算、 Approval、Artifact 来歴、Mission 分離、またはメッセージがアクションを許可しないというルール。
+
+</NormativeClause>
+
+## 19. エラー
+
+<NormativeClause id="MWP-EXT-004" level={["MUST","SHOULD"]}>
+
+エラー MUST は `schemas/error.schema.json`
+に準拠します。エラー応答 MUST は機械可読であり、MUST は再試行が安全かどうかを示し、SHOULD は無許可のデータを公開することなく関連するフレームまたはアクション ID を識別します。コアコードは次のとおりです。
+
+| コード                       | 意味                                                                         |
+| ---------------------------- | ---------------------------------------------------------------------------- |
+| `UNSUPPORTED_VERSION`        | 互換性のあるプロトコル バージョンがありません                                |
+| `AUTH_REQUIRED`              | 認証がありません                                                             |
+| `AUTH_INVALID_SIGNATURE`     | 署名付き文書の署名、鍵の有効性、入場証明、または鮮度チェックに失敗しました。 |
+| `AUTH_STALE_SESSION`         | Session Epoch はフェンスで囲まれています                                     |
+| `AUTH_STALE_COORDINATOR`     | Coordinator エポックはフェンスで囲まれています                               |
+| `AUTH_FORBIDDEN`             | アクターには許可またはポリシーの資格がありません。                           |
+| `GROUP_NOT_FOUND`            | Group が存在しないか、意図的に非公開です。                                   |
+| `MEMBERSHIP_REQUIRED`        | 該当なし Membership                                                          |
+| `MEMBERSHIP_STALE`           | Membership エポックはフェンスで囲まれています                                |
+| `SCHEMA_VALIDATION_FAILED`   | オブジェクトがそのスキーマに準拠していません。                               |
+| `INVALID_COMMAND`            | Command は整形式ですが、意味的には無効です。                                 |
+| `INVALID_STATE_TRANSITION`   | 集約状態は遷移を禁止します                                                   |
+| `REVISION_CONFLICT`          | 予期されたリビジョンが一致しません                                           |
+| `ACTION_ID_COLLISION`        | 安定したアクション ID が別のコンテンツで再利用されました                     |
+| `UNKNOWN_CRITICAL_EXTENSION` | 必要な拡張子を解釈できません。                                               |
+| `WORK_CONTRACT_INCOMPLETE`   | 必要な作業契約情報が欠落しています                                           |
+| `WORK_OFFER_EXPIRED`         | オファーはもう有効ではありません                                             |
+| `WORK_ALREADY_OWNED`         | 別の候補者が独占的所有権を獲得                                               |
+| `WORK_LEASE_EXPIRED`         | 必要なリースはもう有効ではありません                                         |
+| `WORK_STALE_OWNERSHIP`       | 所有権エポックは囲われています                                               |
+| `APPROVAL_REQUIRED`          | ポリシーゲートが満たされていません                                           |
+| `BUDGET_EXCEEDED`            | ハード Mission または WorkItem 予算は、 疲れ果てた                           |
+| `RATE_LIMITED`               | ポリシー レートまたは再帰のしきい値に達しました                              |
+| `BACKPRESSURE`               | 受信機は現在、これ以上のトラフィックを受け入れることができません。           |
+| `CURSOR_TOO_OLD`             | オンライン再生には要求された位置が含まれなくなりました                       |
+| `PROTOCOL_VIOLATION`         | ピアがフレーミングまたはコアの不変条件に違反しました。                       |
+| `INTERNAL_ERROR`             | 権限は移行を受け入れずに失敗しました                                         |
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-005" level={["MUST","MUST NOT","MAY"]}>
+
+変更しない Command 再試行 MUST では、元のアクション ID と署名されたコンテンツが保持されます。
+`AUTH_INVALID_SIGNATURE` MUST
+NOT は、原因が修正される前に変更せずに再試行してください。署名エンベロープ、権限のあるキー、またはアドミッション状態のローカル修正後、送信者 MAY は、すべての保護されたコンテンツが有効なままである間のみ、元のアクション ID を再試行します。 Command の鮮度が期限切れになっている場合、送信者 MUST は代わりに、新しいアクション ID、現在の
+`issuedAt`、一致する
+`signature.createdAt`、および新しい署名を使用して新しい Command を作成します。
+`ACTION_ID_COLLISION`
+には、新しいアクション ID を持つ新しい Command が必要です。古いフェンシング エラーには、現在の権限のあるエポックと、新しいアクション ID と署名を持つ新しい Command が必要です。
+
+</NormativeClause>
+
+## 20. レート、再帰、暴走制御
+
+<NormativeClause id="MWP-EXT-006" level={["MUST","SHOULD"]}>
+
+Organization ポリシー MUST は、Message および提案レート、未解決の明確化ラウンド、アクティブおよびキューに入れられた作業項目、委任の深さ、トークン/時間/財務予算、および循環または重複分解の制限をサポートします。これらの制御 SHOULD は、固定の低いプロトコル上限ではなく、ソフトしきい値、Coordinator 通知、および明示的なエスカレーションを使用します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-007" level={["MUST","MUST NOT"]}>
+
+実装 MUST は循環委任または Mission 祖先を拒否します。正当な作業にさらに深度、予算、または料金が必要な場合、Coordinator はポリシーまたは MissionOwner の承認を要求し、付与後に継続することができます。ポリシー制限 MUST
+NOT は、受け入れられた作業をサイレントに破棄します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-008" level="MUST">
+
+協力制限エスカレーション MUST は、注入されたブール値、ローカル コールバック結果、または再利用可能な除外ではなく、永続的なワンショット
+**協力オーバーライド許可**
+によって表されます。付与 MUST は、Mission、Group、ポリシー名、受益者 Principal、ターゲット Command の種類、ターゲット アクション ID、理由、承認者、付与時刻、および有効期限をバインドします。 MissionOwner または認可された Organization ポリシー アクターのみが発行できます。ターゲット Command
+MUST は、`cooperationOverrideGrantId`
+エンベロープ メンバーで付与 ID を引用します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-009" level="MUST">
+
+ターゲット遷移を受け入れる前に、Group Authority
+MUST は、引用された付与が存在すること、期限切れおよび消費されていないこと、および Command の Mission、Group、アクター、種類、アクションと正確に一致することを検証します。 ID、およびポリシーを超過しました。 MUST は、ターゲットの遷移が受け入れられた場合にのみ、許可をアトミックに消費します。発行と消費 MUST の両方が信頼できるポリシー ログに追加され、消費は受け入れられた Event にリンクされます。受け入れられた同じ Command を冪等で再試行すると、以前の Event が返されます。許可 MUST をその他に使用しようとすると失敗します。
+
+</NormativeClause>
+
+## 21. スキーマとバージョンの互換性
+
+<NormativeClause id="MWP-EXT-010" level="MUST">
+
+すべての v0.1 スキーマは、JSON スキーマ ドラフト 2020-12 を使用します。コア オブジェクト セット
+`additionalProperties: false`;拡張性は、明示的な `extensions`
+メンバーと承認されたプロファイルを通じてのみ発生します。 MUST 実装では、可能であれば、未知の非クリティカル拡張バイトと同等の正規リレーを保存します。
+
+</NormativeClause>
+
+ワイヤ `protocolVersion` は `0.1`
+です。下位互換性のあるスキーマの明確化により、ワイヤのバージョンを変更せずに仕様のパッチのバージョンが増加します。コア セマンティクスまたは必須フィールドを変更する変更には、新しいワイヤー マイナー バージョンまたはメジャー バージョンとハンドシェイク ネゴシエーションが必要です。
+
+22 の規範的なスキーマは次のとおりです。
+
+- `common.schema.json`
+- `websocket-frame.schema.json`
+- `command.schema.json`
+- `event.schema.json`
+- `agent-card.schema.json`
+- `presence-record.schema.json`
+- `mission.schema.json`
+- `group.schema.json`
+- `membership.schema.json`
+- `conversation.schema.json` および `message.schema.json`
+- `work-contract.schema.json` および `work-item.schema.json`
+- `artifact.schema.json` および `evidence.schema.json`
+- `lease.schema.json`
+- `approval.schema.json`
+- `context-package.schema.json`
+- `group-snapshot.schema.json`
+- `extension-profile.schema.json`
+- `first-admission-record.schema.json`
+- `error.schema.json`
+
+## 22. 適合性と必要な概念実証
+
+実装は、次の場合にのみ MissionWeaveProtocol 0.1 に準拠します。
+
+- すべての耐久性のあるオブジェクトを標準スキーマに対して検証します。
+- `conformance/manifest.json`
+  内の 27 個の構造ベクトルを含む 58 個の構造ベクトルをすべて渡します。有効と予想される文書と無効と予想される文書 31 件。
+- `cryptography/manifest.json`
+  のすべての評価に合格し、9 つすべてをカバーします Signed
+  Document 検証プロファイル内のスキーマ プロファイルとその正規署名バイト、ハッシュ、キー バインディング、および署名。
+- 独立した `admission/manifest.json`
+  の 30 件の評価すべてに合格します。行動バンドル。5 件の症例にわたる最初の入院と過去の再現をカバー。
+- すべての Mission および WorkItem 遷移を強制します。
+- リプレイ、重複排除、オプティミスティック同時実行性、およびフェンシングを示します。
+- 認可と Message/non-authority の不変式を示します。そして
+- 古い側または重複した側を受け入れずに障害回復テストに合格します。効果。
+
+<NormativeClause id="MWP-EXT-011" level="MUST">
+
+暗号化バンドルの場合、`manifest.fixtureSchemas`
+は、標準の Registry フィクスチャ スキーマとテスト専用署名キー フィクスチャ スキーマを識別します。ランナー MUST は、宣言されたセマンティック ステージを適用する前に、名前付きスキーマに対して各フィクスチャを検証します。
+`artifactDigest` を検証するには、ランナー MUST が最上位の `artifactDigest`
+メンバーを正確に削除し、残りのマニフェストを RFC 8785
+JCS でシリアル化し、それらのバイトを次のようにハッシュします。 SHA-256 を比較し、`sha256:`
+に続く 64 個の小文字 16 進ダイジェスト桁を比較します。宣言された各アーティファクト ハッシュは、正確なファイル バイトに適用されます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-012" level="MUST">
+
+Admission バンドルの場合、`manifest.fixtureSchemas` は First-Admission
+Record および Registry フィクスチャ スキーマを識別し、`manifest.cryptography.artifactDigest`
+はすべての評価で使用される変更されていない暗号バンドルを固定します。その
+`artifactDigest` は、同じ最上位メンバーの削除、RFC
+8785、JCS、および SHA-256 プロシージャを使用して計算されます。ランナー MUST は、宣言されたアダプターの結果を実行する前に、宣言されたすべてのアドミッション アーティファクトのバイトとハッシュ、固定された暗号化ダイジェスト、およびすべての参照ファイルを検証します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-013" level="MUST">
+
+`missionweaveprotocol-conformance`
+またはリポジトリのスキーマ ベクターを渡すと、スキーマとベクターの適合性のみが示されます。これはプロトコルに完全に準拠していることの必要な証拠ではありますが、十分ではありません。
+`cryptography/manifest.json`
+を渡すことは、[セクション 6.4](../signed-documents-and-trust/#mwp-sdv-015)] の 6 つの暗号検証段階のみを示しています。
+`admission/manifest.json` を渡すと、宣言された First-Admission
+Record と履歴リプレイ評価がさらに実証されますが、Command の鮮度およびクロック スキューの強制、該当するロールとポリシーに基づく署名者の承認、またはポータブルに展開された Admission
+Log 証明形式は実証されません。実装 MUST は、これらの要件を個別に証明します。参照実装 MUST は、自動化された肯定的および否定的な証拠がすべてのコア Command および Event の種類
+[](../commands-events-and-ordering/#core-command-kinds) および [セクション]
+のすべての遷移行をカバーする場合にのみ、完全な MissionWeaveProtocol
+0.1 準拠を主張します。 7.1](../missions-groups-and-membership/#mission-transition-table) および
+[10.2](../work-scheduling-and-recovery/#workitem-transition-table);それ以外の場合、MUST は、より狭い検証済みのサブセットを明示的に報告します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-014" level="MUST">
+
+v0.1 参照概念実証 MUST は Python を使用し、少なくとも 1 つの共有 Worker を使用して 2 つのソフトウェア開発ミッションを同時に実行します。少なくとも 1 つの Mission
+MUST 演習要件分析、実装、テスト、コード レビュー、統合、および個別のグラフ ステージとしての人間の Approval 。概念実証 MUST は、Group ごとの個別のキュー、グローバル加重公平スケジューリング、コンテキストと資格情報の分離、複数の実行スロット、安全なチェックポイントのプリエンプション、Coordinator レビュー、および人間による Approval インターフェイスを示しています。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-015" level="MUST">
+
+その障害スイート MUST は重複した Event 配信の挿入、Worker の再起動とキューの再構築、Coordinator の障害とエポックの置換、一時的な Group の切断、リース期限切れ、およびWorkItem の再割り当て、高優先度の到着、および人間による変更リクエスト。 Python 実装は参照実装であり、標準仕様ではありません。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EXT-016" level={["MUST","MUST NOT"]}>
+
+概念実証 MUST は、1 つの Organization および 1 つの論理 Group サービス内に残ります。 MUST
+NOT には、フェデレーション、物理ピアツーピア ルーティング、分散コンセンサス、Group エンドツーエンド暗号化、またはコア準拠を実証するためのカスタム拡張プロファイルが必要です。
+
+</NormativeClause>
+
+## 23. ライセンス
+
+仕様、スキーマ、適合スイート、およびリファレンス実装は、Apache License
+2.0 に基づいてライセンスされています。このライセンスは商標権を付与するものではありません。

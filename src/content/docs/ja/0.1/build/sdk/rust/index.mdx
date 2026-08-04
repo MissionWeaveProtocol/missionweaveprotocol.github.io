@@ -1,0 +1,71 @@
+---
+title: Rust SDK
+description:
+  MissionWeaveProtocol 0.1 の完全に固定された Rust ランタイム
+  リファレンスをインストールして操作します。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Rust SDK
+
+`missionweaveprotocol`
+は、公式の Rust クレートです。このリファレンスでは、正確なコミット
+`2727f8777737265d98dde4ceaca306612ef54c52`、クレート バージョン `0.1.0`、Rust
+1.85 以降、およびエディション 2024 について説明します。文書化されたピンは crates.io では公開されていません。異なる Git リビジョンまたはパッケージ アーカイブは、異なる実装入力です。
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="rust"
+  command={`git clone https://github.com/MissionWeaveProtocol/rust-sdk.git missionweaveprotocol-rust-sdk
+cd missionweaveprotocol-rust-sdk
+git checkout --detach 2727f8777737265d98dde4ceaca306612ef54c52
+cargo test --locked --all-features
+cargo package --locked`}
+  verifyCommand={`cargo run --locked --quiet --bin missionweaveprotocol-conformance
+cargo install --locked --path . --bin missionweaveprotocol-conformance
+missionweaveprotocol-conformance --verbose`}
+>
+  <p slot="notes">
+    アプリケーションは、<code>rev</code> が上記のコミットとまったく同じである
+    Cargo Git
+    依存関係でライブラリをバインドします。ベンダーまたはパッケージ化されたコピーは、その来歴が同じバイトに解決され、その埋め込まれたプロトコル
+    バンドルが文書化された検証呼び出しに合格した場合にのみ受け入れられます。
+  </p>
+</SdkInstall>
+
+:::
+
+`missionweaveprotocol-conformance` バイナリは、オプションの `--verbose`
+を受け入れます。埋め込まれた構造スキーマ ベクトルを実行します。 Registry 通貨、Admission
+Log 耐久性、ネットワーク セキュリティ、または運用準備を確立するものではありません。
+
+## このリファレンスを使用してください
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every crate-root re-export, codec, bundle verifier, CLI boundary, and explicit non-implementation."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, trusted-context, and Admission Log traits with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="Every public crate-root declaration resolved to its exact source line."
+    href="./api/"
+  />
+</CardGrid>
+
+## 文書化されたコミットでのサポート
+
+<SdkRuntimeMatrix sdk="rust" />
+
+クレートは、デプロイメント権限ではなく、インプロセス プロトコルの動作を提供します。アプリケーションは引き続き、認証された現在および過去の Registry 証拠、信頼できるアドミッション コンテキスト、および権限のある追加専用 Admission
+Log を提供します。

@@ -1,0 +1,33 @@
+---
+title: 規範的なリリースのアイデンティティ
+description:
+  MissionWeaveProtocol 0.1 のコミットされた入力と生成された ID フィールド。
+---
+
+import ArtifactLink from "../../../../../components/ArtifactLink.astro";
+import NormativeReleaseFacts from "../../../../../components/NormativeReleaseFacts.astro";
+
+# 標準リリースのアイデンティティ
+
+MissionWeaveProtocol
+0.1 は、1 つの Web サイト、プロトコル アーティファクト バンドル、および 6 つの正確な SDK ピンとしてリリースされます。コミットされた
+`release-source.json`
+は、すべての非自己参照入力 (プロトコルおよび SDK コミット、リリース数、プロファイル ID、ダイジェスト、ロケール、および構築されたツリー ダイジェスト アルゴリズム) を記録します。
+
+一般の人々
+
+<ArtifactLink path="normative-release.json">
+  <code>normative-release.json</code>
+</ArtifactLink>
+実稼働ビルド中に生成されます。すべてのコミットされたリリース ソース
+フィールドをコピーし、以下を追加します。
+
+- `websiteCommit`、正確な Web サイトの Git コミット。
+- `buildIdentity`、GitHub の実行/試行のペアまたはローカル コミットのいずれかアイデンティティ。そして
+- `contentDigests`、ロケールごとに構築された HTML ツリーの 1 つのダイジェスト。
+
+コミットされたファイルには、それ自体を含むコミットの Git
+ID を正確に含めることができないため、生成されたマニフェストはコミットされません。リリース検証では、生成されたフィールドが再構築され、コミットされたすべてのフィールドが
+`release-source.json` と比較されます。
+
+<NormativeReleaseFacts />

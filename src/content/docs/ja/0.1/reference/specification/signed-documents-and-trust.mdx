@@ -1,0 +1,252 @@
+---
+title: 署名された文書と信頼性の検証
+description:
+  Signed Document 検証プロファイル、Registry 証拠コントラクト、セマンティック
+  ステージ、および保護された診断。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../../components/InformativeBlock.astro";
+
+### 6.4 Signed Document 検証プロファイル
+
+**Signed Document**
+は永続的なプロトコル オブジェクトであり、そのスキーマにはトップレベルの
+`signature` が必要です。 v0.1 **Signed Document 検証プロファイル**
+は、このような各スキーマを 1 つの保護された署名時間フィールドと 1 つの予期される署名者にバインドします。
+
+| Signed Document       | 保護された署名付き時刻 | 予想される署名者                                                                                     |
+| --------------------- | ---------------------- | ---------------------------------------------------------------------------------------------------- |
+| Agent Card            | `issuedAt`             | Organization サービス Principal は、`organizationId` の Agent カードを発行する権限を与えられました。 |
+| Approval              | `occurredAt`           | `approver`                                                                                           |
+| Artifact マニフェスト | `createdAt`            | Agent は `producer.agentId` によって識別されます                                                     |
+| Command               | `issuedAt`             | `actor`                                                                                              |
+| Context Package       | `generatedAt`          | `generatedBy`                                                                                        |
+| Event                 | `occurredAt`           | `acceptedBy`                                                                                         |
+| Evidence              | `createdAt`            | `generatedBy`                                                                                        |
+| Extension Profile     | `approvedAt`           | `approvedBy`                                                                                         |
+| Group Snapshot        | `createdAt`            | `createdBy`                                                                                          |
+
+<NormativeClause id="MWP-SDV-001" level="MUST">
+
+Agent
+Card を除くすべての行について、予期される署名者は、リストされたフィールドで識別される正確な Principal です。 Agent
+Card の場合、署名キー レコード MUST は Organization サービス Principal を識別します。
+`organizationId`
+の Agent カードを発行する権限は、暗号化検証後にチェックされます。
+
+</NormativeClause>
+
+Extension Profile で追加の署名が指定されていない限り、v0.1 署名は、最上位の
+`signature`
+メンバーが省略された完全なオブジェクトの JCS 正規形式をカバーします。最上位のメンバーのみが省略されます。
+`signature`
+という名前のネストされたメンバーは保護されたままになります。したがって、Command 署名は、少なくともそのアクション ID、アクター、該当するセッション、Membership および Coordinator エポック、存在する場合は Group
+ID、種類、ペイロード、相関 ID、保護された署名時間、および拡張子をカバーします。 Event 署名は受け入れ機関によって作成され、その Event
+ID、存在する場合の Group シーケンス、原因、アクター、ペイロード、および保護された署名時間をカバーします。
+
+<NormativeClause id="MWP-SDV-002" level={["MUST","MUST NOT"]}>
+
+トップレベルの署名エンベロープ全体が v0.1 署名入力から省略されているため、ベリファイア MUST はエンベロープを保護されたコンテンツにバインドし直します。
+`signature.algorithm` MUST は `Ed25519` になります。保護された署名時刻と
+`signature.createdAt` MUST は両方とも、大文字の `Z` サフィックスを使用した RFC
+3339 UTC 値となり、MUST はバイトごとに同一になります。ベリファイア MUST
+NOT は、Signed
+Document を比較または検証する前に、いずれかの値を修復、正規化、または置換します。
+
+</NormativeClause>
+
+MissionWeaveProtocol 0.1 は、Ed25519ctx や Ed25519ph ではなく、RFC
+8032 で定義されている純粋な Ed25519 を使用します。
+`L = 2^252 + 27742317777372353535851937790883648493` を Ed25519 基点 `B`
+の素数順序とし、`I` を Edwards25519 識別点とします。
+
+<NormativeClause id="MWP-SDV-003" level={["MUST","MUST NOT"]}>
+
+64 バイトの Ed25519 署名を `Renc || Senc` としてデコードした後、検証者 MUST は
+`Renc` を Edwards25519 ポイントとして正規にデコードし、`[L]R`
+がアイデンティティ。 ID ポイントは `R`
+に対して許可されます。ベリファイア MUST は、`Senc`
+を符号なしリトルエンディアン整数として解釈します。`0 が必要です <= S < L`, and
+MUST NOT reduce an out-of-range value modulo `L`. Noncanonical, off-curve,
+non-identity small-order, or mixed-order `R` encodings and out-of-range `S`
+values MUST fail stage 3.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-004" level={["MUST NOT","MUST"]}>
+
+キー ID MUST NOT は再利用されます。 Agent Registry
+MUST は、予期される署名者となる可能性のあるすべての Principal 型に署名キー バインディングを提供します。 Agent プリンシパルのみ Agent カードが必要です。 1 つのキー ID と 1 つの Principal、1 つのアルゴリズム、および 1 つの公開キーのバインドは不変です。 1 つの Organization 内では、同じ公開鍵 MUST
+NOT が別の Principal または鍵 ID の下に登録され、同じ Principal、アルゴリズム、および公開鍵タプル MUST
+NOT には鍵 ID 別名があります。 Agent
+Card バージョンまたは Registry バージョン間で同一のバインディングの繰り返し宣言は、同じ論理バインディングであり、再利用やエイリアシングではありません。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-005" level={["MUST","MUST NOT"]}>
+
+Ed25519 バインディングを受け入れる前に、Registry MUST は、RFC
+8032 で定義された圧縮 Edwards25519 ポイント エンコーディングとして 32 バイトの公開キーを厳密にデコードします。エンコーディング MUST は正規である必要があります。 MUST は曲線上の点にデコードされ、MUST
+NOT は識別点、MUST は素数次数サブグループ内にあります。サブグループ次数の場合は
+`L`、`[L]A`
+MUST は ID と同じです。長さのチェック、小規模なブラックリスト、または汎用暗号化バックエンドへのインポートの成功だけでは十分ではありません。非正規エンコーディング、負のゼロ エンコーディング、小次数ポイント、および混合次数ポイント MUST は、不変バインディングと Organization 全体の一意性チェックが適用される前に拒否されます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-006" level="MUST">
+
+ステージ 3 の署名エンコード チェックとステージ 4 の公開鍵チェックが成功した後、ステージ 6
+MUST では、純粋な Ed25519 式 `[S]B = R + [k]A` が必要になります。ここで、`k`
+は SHA-512 です。
+`Renc || Aenc || M`、リトルエンディアンおよび縮小モジュロで解釈された
+`L`、および `M` は、ステージ 5 で生成された正確な署名バイト シーケンスです。 `A`
+と `R` は両方とも素数順序であるためです。サブグループでは、同等の RFC
+8032 余因数式を評価するプロバイダーは、同じ受け入れ結果を持ちます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-007" level="MUST">
+
+Registry
+MUST は、バインディングを受け入れる前に Organization 全体でこれらの不変条件を強制し、MUST はキー ID の一意性と公開キーまたはタプルのエイリアスの不在の両方を確立するのに十分なインデックスと履歴を保持します。キー解決 MUST は、Registry が解決されたバインディングに対してそれらの不変条件を確立できない場合にフェールクローズされます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-008" level="MUST">
+
+1 つの Signed Document 検証の場合、ステージ 4
+MUST で使用される Registry 証拠は、1 つの一貫した権威を表す Organization と MUST にスコープが限定されます。 Registry リビジョンが検証の決定に適用されます。 MUST は、すべての署名キー バインディングに対する不変バインディングと Organization 全体の一意性不変条件、およびこのプロファイルで必要な完全に保持された有効性履歴を確立するのに十分です。実装 MUST は、`signature.keyId`
+を使用して Registry レコードを選択する前に証拠を検証します。無効な無関係なバインディングまたは履歴レコード MUST により、ステージ 4 が失敗します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-009" level={["MAY","MUST NOT"]}>
+
+実装 MAY は、完全な Registry スナップショット、または同じ Organization 全体の不在、一意性、履歴の主張を証明する信頼できるインデックスと履歴クエリからこれらのプロパティを確立します。キーフィルターされたプロジェクション、部分キャッシュ、不完全なページセット、またはその他の未指定のカバレッジ MUST
+NOT は、実装が権限のある状態から同じクレームを確立できない限り受け入れられます。要求されたキー ID はルーティング コンテキストのみであり、MUST
+NOT は、Organization 全体のチェックに必要な証拠を省略する許可として扱われます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-010" level={["MUST","MUST NOT"]}>
+
+キー解決アダプターは、v0.1 の信頼された展開シームです。 Registry 証拠を検証者に提供すると、必要な Organization 範囲、該当する正式な改訂、証拠の完全性、および歴史的カバレッジまたはそれができないレポートを MUST 確立します。置き換えられた Registry 状態 MUST
+NOT は、新しい検証または最初の承認の決定の現在の証拠として提示されます。 Organization
+MUST は、アダプターがリビジョンの最新性または適用性を確立する方法を定義します。 MissionWeaveProtocol
+0.1 は、リビジョン識別子、移植可能な Agent
+Registry スナップショット ワイヤ アーティファクト、トランスポート、鮮度メカニズム、または暗号完全性証明を標準化していません。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-011" level={["MUST","MAY"]}>
+
+権威ある未知キーの結論 MUST は、該当する権威リビジョンに対して必要な完全性が確立された後にのみ作成されます。完全性を確立できないこと、Registry の証拠が利用できないこと、および鍵が正式に存在しないことはすべてステージ 4 で失敗します。実装 MAY は、これらの条件に対して個別に保護された診断を保持しますが、以下で要求されるように、MUST は回線上で区別できないままになります。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-012" level={["MUST","MAY","MUST NOT"]}>
+
+キーの有効性ステータスは履歴的な状態であり、不変の ID バインディングの一部ではありません。 Registry
+MUST は、元の `validFrom`
+と、追加専用または明示的にバージョン管理された有効性ステータス レコードを通じて
+`validUntil` または `revokedAt`
+に対するすべての変更を保持します。最初に登録された `validFrom` は不変です。
+`validUntil` または `revokedAt` 境界 MAY は先に追加または移動しますが、MUST
+NOT は後でクリアまたは移動します。その有効な値は、Registry 履歴の中で最も古い非存在値です。有効性を延長するには、新しいキー ID での新しいキー マテリアルが必要です。 Registry
+MUST
+NOT は、履歴検証に依存する可能性がある以前のステータス レコードを書き換えるか破棄します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-013" level="MUST">
+
+テーブルの署名者ルールと `signature.keyId`
+を組み合わせて、Registry レコードを選択します。バインドされた Principal
+MUST は、ドキュメントによって指定された正確な Principal と等しいか、Agent
+Card の Organization サービス Principal になります。別の Principal または別の鍵マテリアル MUST で同じ鍵 ID を解決すると、失敗します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-014" level="MUST">
+
+保護された署名時間 `t` の場合、キーは `validFrom <= t`, `validUntil` is absent
+or `t < validUntil`, and `revokedAt` is absent or `t < revokedAt`. A key whose
+`revokedAt` is equal to or earlier than `t` MUST be rejected. Registry validity
+timestamps MUST conform to the MissionWeaveProtocol timestamp profile and be
+compared as instants, not lexically; the byte-equality rule for the two
+protected document timestamps does not apply to Registry interval fields.
+Durable signature verification MUST evaluate this interval at the protected
+signed time.
+
+</NormativeClause> の場合にのみ有効です。
+
+<NormativeClause id="MWP-SDV-015" level={["MUST","MUST NOT"]}>
+
+検証 MUST は最初に失敗したステージで停止し、MUST
+NOT は認可を実行するか、Event を追加するか、すべてのステージが成功する前に遷移を実行します。
+
+1. 厳密に 1 つの UTF-8
+   JSON 値を解析し、無効な UTF-8 を拒否します。バイトオーダーマーク、後続データ、および重複したデコードされたオブジェクトメンバー名。
+2. 完全な Signed
+   Document をその標準スキーマに対して検証します。必要な署名エンベロープとサポートされるアルゴリズム。
+3. 保護時間 UTC-`Z`
+   フォームを含むこの検証プロファイルを適用します検証、変換なしの `createdAt`
+   の正確な等価性、予期される署名者ルールの選択、`signature.value`
+   の正規のパディングされていない Base64URL デコード、および 64 バイトの厳密な
+   `Renc` および `Senc` 検証Ed25519 署名;
+4. Organization をスコープとする Registry の完全な証拠を取得し、すべてのバインディングを検証します不変の署名キー バインディング、Organization ワイドの再利用なしおよびエイリアスなしの不変条件、および完全な保持有効性履歴を確立するために必要です。次に、予想される署名者の下でピン留めされたキーを選択し、正規のパディングされていない Base64URL デコードと 32 バイトの Ed25519 公開キーの厳密なポイント検証を含む、保護された時間間隔を検証します。
+5. 最上位の `signature` メンバーを正確に省略し、で定義されている RFC
+   8785 および I-JSON データ モデル外の値を拒否します。
+   [セクション 2](../foundations/#mwp-fnd-006)、必要な RFC 8785
+   binary64 シリアル化を超えるタイムスタンプや数値変換を行わずに、受信した値から JCS 署名バイトを生成します。そして
+6. これらのバイトに対する Ed25519 署名を検証します。
+
+</NormativeClause>
+
+スキーマで宣言されたドキュメント タイムスタンプのベース タイムスタンプ プロファイルの失敗は、ステージ 2 の失敗です。追加の保護時間 UTC-`Z`
+またはバイト等価ルールの失敗はステージ 3 です。不正な形式の Registry 有効性タイムスタンプはステージ 4 の失敗です。
+
+<NormativeClause id="MWP-SDV-016" level={["MAY","MUST","SHOULD"]}>
+
+これらの数値は、規範的な意味段階とエラー分類を定義するものであり、必須の内部機能境界ではありません。実装 MAY は解析中に後の段階の条件を検出しますが、MUST は初期のすべてのセマンティック段階を評価するのに十分なロスレス構造を保持し、MUST は基準段階で条件を分類します。特に、有限の binary64 ドメイン外にある構文的に有効な JSON 数値、またはペアになっていないサロゲートを含むデコードされた文字列は、ステージ 1 の JSON 構文エラーではなく、ステージ 5 の JCS データ モデル エラーとなります。 1 つの障害ステージ SHOULD をアサートする適合ベクトルは、その障害を分離するため、すべての実装が別の意図的に無効なフィールドからの曖昧さなく意図した診断を報告できます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-017" level="MUST NOT">
+
+**署名ハッシュ**は
+`sha256:<lowercase hex SHA-256 of the exact stage-5 JCS signing bytes>`
+です。上記の 6 つの段階は暗号検証を構成し、MUST
+NOT にはアドミッション状態が必要です。したがって、暗号的に検証された結果は、Organization を受け入れる側による個別の初回承認または履歴信頼検証の前に存在する可能性があります。
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+次のブロックでは、後で固定されたソース セグメントが再開されます。介在するローカル ページと正確な行範囲については、[仕様ソース map](./)] を参照してください。
+
+</InformativeBlock>
+
+<NormativeClause id="MWP-SDV-018" level={["MUST NOT","MUST"]}>
+
+無効な JSON、重複メンバー、または JCS データ モデルに入力できない値は
+`PROTOCOL_VIOLATION`
+です。スキーマ、必須エンベロープ、またはサポートされていないアルゴリズムの失敗は
+`SCHEMA_VALIDATION_FAILED`
+です。暗号化ステージ 3、4、または 6、セマンティック ステージ
+`admission`、または Command の鮮度チェックでの失敗は `AUTH_INVALID_SIGNATURE`
+です。例としては、時間バインディングの不一致、ゼロ以外の未使用パッド ビットを含むスキーマ有効なbase64url、未知または間違ってバインドされたキー、無効なキー間隔、非正規または非素数順序の公開キー、不正な形式のデコードされたキーまたは署名の長さ、または暗号化の不一致が含まれます。ワイヤ応答 MUST
+NOT により、どのキー解決、アドミッション、または暗号化チェックが失敗したかが明らかになります。 Organization
+MUST は、適用される保持ポリシーに従って、最初に失敗したセマンティック ステージとその特定の診断理由を、保護されたアクセス制御された監査レコードに保持します。 Group スコープの障害 MUST は、信頼できない呼び出し元に診断を公開することなく、承認された監査人によってポリシー ログから参照可能です。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-SDV-019" level="MUST NOT">
+
+将来のプロトコル リビジョンでは、完全なトップレベル `signature`
+メンバーの代わりに `signature.value`
+のみを省略することで署名メタデータが保護される可能性があります。これは正規の署名バイトを変更するものであり、ワイヤー署名のリビジョンを破壊するものです。 MUST
+NOT は、v0.1 の動作としてサイレントに導入、生成、または受け入れられます。
+
+</NormativeClause>

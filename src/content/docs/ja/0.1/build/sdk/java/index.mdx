@@ -1,0 +1,71 @@
+---
+title: Java SDK
+description:
+  MissionWeaveProtocol 0.1 の完全に固定された Java ランタイム
+  リファレンスをインストールして操作します。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# Java SDK
+
+`org.missionweaveprotocol:missionweaveprotocol-sdk`
+は、公式の Java アーティファクトです。このリファレンスでは、正確なコミット
+`3b2798c21d906c81887c54fe80e5bca8a19ddac7`、バージョン `0.1.0-SNAPSHOT`、Java
+21、および Maven
+3.9 について説明します。アーティファクトは正確なソース ピンからインストールされます。別のコミットまたはローカルにインストールされた SNAPSHOT は別の実装入力です。
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="java"
+  command={`git clone https://github.com/MissionWeaveProtocol/java-sdk.git missionweaveprotocol-java-sdk
+cd missionweaveprotocol-java-sdk
+git checkout --detach 3b2798c21d906c81887c54fe80e5bca8a19ddac7
+./mvnw -B -ntp verify
+./mvnw -B -ntp install`}
+  verifyCommand={`./mvnw -q -Dexec.mainClass=org.missionweaveprotocol.sdk.cli.ConformanceCli -Dexec.args='' exec:java`}
+>
+  <p slot="notes">
+    Maven ラッパーは Maven 3.9.x を提供しますが、依然として Java 21
+    ランタイムが必要です。ダウンストリーム
+    ビルドでは、上記の正確なコミットのために、インストールされたアーティファクトの出自を固定する必要があります。
+    SNAPSHOT バージョン文字列だけではソース バイトを識別しません。
+  </p>
+</SdkInstall>
+
+:::
+
+CLI のメイン クラスは `org.missionweaveprotocol.sdk.cli.ConformanceCli`
+です。サポートされている呼び出しは
+`missionweaveprotocol-conformance [--root PATH]` です。 `--help` または `--json`
+は定義されていません。ルートがない場合は、パッケージ化された構造スキーマ ベクトルを実行します。
+
+## このリファレンスを使用してください
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every public class concern, package boundary, bundle verifier, CLI entry point, and explicit non-implementation."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, trusted-context, and Admission Log interfaces with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="Every public Java declaration resolved to its exact source line."
+    href="./api/"
+  />
+</CardGrid>
+
+## 文書化されたコミットでのサポート
+
+<SdkRuntimeMatrix sdk="java" />
+
+JAR は、デプロイメント権限ではなく、インプロセス プロトコルの動作を提供します。アプリケーションは引き続き、認証された現在および過去の Registry 証拠、信頼できるアドミッション コンテキスト、および権限のある Admission
+Log を提供します。

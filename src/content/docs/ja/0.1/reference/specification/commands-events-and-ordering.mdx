@@ -1,0 +1,230 @@
+---
+title: コマンド、イベント、および順序付け
+description:
+  Command および Event エンベロープ、同時実行性、Group 順序、WebSocket
+  トランスポート、および正規ワイヤ エンコーディング。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../../components/InformativeBlock.astro";
+
+## 15. コマンド、イベント、および同時実行性
+
+### 15.1 コマンド
+
+<NormativeClause id="MWP-EVT-001" level={["MUST","MUST NOT"]}>
+
+Command は、1 つの構造化された状態遷移に対する署名付きリクエストです。すべての Command エンベロープ MUST には、安定したアクション ID、プロトコル バージョン、アクター、種類、ペイロード、相関 ID、発行時刻、および署名が含まれています。 Group スコープの Command
+MUST には、Group ID が含まれます。状態変更 Agent Command
+MUST には、現在の Session
+Epoch および Membership エポックがさらに含まれます。既存の Group 内の人間の Command
+MUST には現在の Membership エポックが含まれ、MUST
+NOT には Agent が含まれます。 Session Epoch。 Organization サービス Command MUST
+NOT は、Agent セッションまたは Membership エポックを作成します。
+
+</NormativeClause>
+
+`mission.create` および `mission.create_follow_up`
+には、作成される Group の ID が含まれますが、新しい Group
+Membership は含まれないため、Membership およびセッション エポックは省略されます。まだ存在しており、人間のコマンドは Agent セッションを使用しません。コントロール プレーンは
+`mission.create`
+を認証、中継、検証できますが、署名された Command アクターと結果として得られるルート MissionOwner は人間のままです。コントロール プレーンは MissionOwner にはなりません。 Organization が所有する
+`ext.missionweaveprotocol.registry.agent_card_register` および
+`ext.missionweaveprotocol.identity.session_open`
+ブートストラップ コマンドは、Group
+ID と 3 つのロール/セッション エポックすべてを省略します。
+
+<NormativeClause id="MWP-EVT-002" level={["MUST","SHOULD"]}>
+
+現在の Coordinator リース MUST から権限が派生する Agent
+Command には、現在の Coordinator エポックが含まれています。これは、`mission.renew_coordinator`、`mission.submit_for_approval`、`mission.create_child`、`membership.grant_delegation`、および
+`work.accept_result`、および Agent で発行されたものに必要です。
+`mission.terminate`。サービスによって発行された `mission.terminate`
+は、代わりに Organization ポリシーによって承認され、Coordinator エポックは含まれません。 Command
+SHOULD には、既存の構造化状態を変更するときに予期される集計リビジョンが含まれます。ワンショット連携エスカレーション MUST を使用する Command には、`cooperationOverrideGrantId`
+も含まれます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EVT-003" level={["MUST","MUST NOT"]}>
+
+バイト同等の正規署名コンテンツ MUST を持つ同じ `(actor ID, Action ID)`
+は元のレシートを返し、MUST
+NOT は 2 番目の状態遷移を追加します。異なる正規コンテンツ MUST で同じアクション ID を再利用すると、`ACTION_ID_COLLISION`
+で失敗します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EVT-004" level="MUST">
+
+Group Authority
+MUST はアクターを認証します。セッションと Membership エポック、スキーマ、現在の集計リビジョン、ロール、委任、予算、ポリシー、およびリースを検証します。そして、Command を拒否するか、結果の Event をその Group 内にアトミックに追加します。
+
+</NormativeClause>
+
+<span id="core-command-kinds"></span>
+
+コア Command の種類は次のとおりです。
+
+```text
+mission.create                 mission.assign_coordinator
+mission.renew_coordinator      mission.submit_for_approval
+mission.approve                mission.request_changes
+mission.cancel                 mission.terminate
+mission.create_child           mission.create_follow_up
+membership.change             membership.end
+membership.grant_delegation
+message.post                   message.correct
+message.retract                message.redact
+work.propose                   work.authorize
+work.offer                     work.accept_offer
+work.start                     work.checkpoint
+work.block                     work.unblock
+work.submit                    work.accept_result
+work.fail                      work.cancel
+artifact.publish               approval.grant_execution
+policy.grant_cooperation_override
+```
+
+参照コアはさらに、Agent
+Card の登録、セッションのアクティブ化、依存関係の挿入、実行リースの更新、権限のあるリソース使用量の記録、および Group アーカイブのための Organization が所有する
+`ext.missionweaveprotocol.*` コマンドを定義します。将来の Extension
+Profile では、明示的なオファーの拒否、説明、Mission の一時停止などの便利なコマンドが標準化される可能性がありますが、これらの名前は v0.1 コア移行ではありません。
+
+### 15.2 イベントと Group の順序
+
+<NormativeClause id="MWP-EVT-005" level={["MUST","MUST NOT"]}>
+
+Event は不変の受け入れられた事実です。 Group Event エンベロープ MUST には、Event
+ID、Group
+ID、厳密に増加する Group シーケンス、集約リビジョン、種類、アクター、原因が含まれます。相関 ID、発生時刻、ペイロード、および Group
+Authority 署名。 Organization スコープの
+`ext.missionweaveprotocol.registry.agent_card_registered` および
+`ext.missionweaveprotocol.identity.session_opened` ファクトには、共通の Event
+ID、アクター、原因、相関、ペイロード、時間、承認権限、署名フィールドが含まれていますが、MUST
+NOT にはGroup ID、Group シーケンス、または Group 集約リビジョン。
+
+</NormativeClause>
+
+Group Authority は、すべての耐久性のある Group
+Event に 1 つの単調シーケンスを割り当てます。このシーケンスにより、決定的な表示、回復、および監査の順序が提供されます。通常のメッセージは、サービスが表示順序を割り当てている場合でも、論理的に同時である可能性があります。構造化された遷移は、Event の順序と集計リビジョンに依存します。
+
+<span id="core-event-kinds"></span>
+
+コア Event 種類は、以下を含むコア コマンドに対応する過去形の事実です。
+
+```text
+mission.created                 mission.coordinator.assigned
+mission.coordinator.renewed     mission.submitted_for_approval
+mission.approved                mission.changes_requested
+mission.cancelled               mission.terminated
+mission.child.created           mission.follow_up.created
+membership.changed              membership.ended
+membership.delegation.granted
+message.posted                  message.corrected
+message.retracted               message.redacted
+work.proposed                   work.authorized
+work.offer.created              work.offer.accepted
+work.contract.revised           work.started
+work.progressed                 work.checkpointed
+work.blocked                    work.unblocked
+work.submitted                  work.result.accepted
+work.failed                     work.cancelled
+artifact.published              approval.execution.granted
+policy.cooperation_override.granted
+group.snapshot.created          group.archived
+```
+
+`work.contract.revised` および `work.progressed`
+は、参照 Organization が所有する依存関係の挿入および実行リース更新コマンドによって発行されるコア WorkItem ファクトです。 Agent
+Card およびセッション アクティベーション ファクトは、`ext.missionweaveprotocol.*`
+Event の種類を保持します。 `group.snapshot.created` および `group.archived`
+は、署名付きスナップショットとポリシー ログ リンクの検証後に、Organization が所有する
+`ext.missionweaveprotocol.core.group_archive`
+Command によってアトミックに発行されるコア アーカイブ ファクトです。
+
+<NormativeClause id="MWP-EVT-006" level="MAY">
+
+自動イベント MAY は、受け入れられた Command、以前の Event、タイマー、またはポリシーの決定によって発生します。異なるグループのイベントには定義された順序はありません。
+
+</NormativeClause>
+
+### 15.3 楽観的な同時実行性
+
+<NormativeClause id="MWP-EVT-007" level={["SHOULD","MUST","MUST NOT"]}>
+
+構造化集計コマンド SHOULD は `expectedRevision`
+を提供します。現在のリビジョンと等しくない場合、Group Authority MUST は
+`REVISION_CONFLICT` を使用して Command を拒否し、MUST
+NOT はそれを部分的に適用します。アトミックファーストアクセプト所有権、リース更新、Membership 変更、および Approval では、特権を持つ内部アクターによってワイヤー フィールドが省略された場合でも、常に比較と設定の処理が必要です。
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+次のブロックでは、後で固定されたソース セグメントが再開されます。介在するローカル ページと正確な行範囲については、[仕様ソース map](./)] を参照してください。
+
+</InformativeBlock>
+
+## 17. WebSocket バインディング
+
+### 17.1 接続
+
+<NormativeClause id="MWP-EVT-008" level={["MUST","MUST NOT"]}>
+
+MissionWeaveProtocol 0.1 サーバー MUST は、TLS 1.3
+(`wss`) 経由で WebSocket を提供します。単一の認証された接続は、1 つの Agent で使用されるすべてのグループを多重化します。各 WebSocket メッセージ MUST には、`schemas/websocket-frame.schema.json`
+に準拠する UTF-8
+JSON テキスト フレームが 1 つだけ含まれます。バイナリ WebSocket メッセージ MUST
+NOT には、v0.1 の MissionWeaveProtocol オブジェクトまたは Artifact コンテンツが含まれます。
+
+</NormativeClause>
+
+コア フレーム タイプは、`HELLO`、`SUBSCRIBE`、`COMMAND`、`EVENT`、`ACK`、`PING`、および`ERROR`。部分的な Message ストリーミング フレームが定義されていません。
+
+### 17.2 サブスクリプション
+
+<NormativeClause id="MWP-EVT-009" level={["MUST","MUST NOT"]}>
+
+認証後、クライアントは Group
+ID、Group ごとのリプレイ位置、およびオプションのアテンション フィルターを含む
+`SUBSCRIBE`
+を送信します。フィルターは、承認や永続的な履歴ではなく、ライブ配信を変更します。サーバー MUST は、すべての Group および MUST
+NOT に対して独立して Membership を適用し、不正な Group が存在するかどうかを明らかにします。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-EVT-010" level={["MAY","MUST"]}>
+
+1 つの接続 MAY が複数のグループからのイベントをインターリーブします。順序は各 Group 内でのみ保証されます。受信側 MUST は、シーケンス ロジックを適用する前に Group
+ID によってルーティングします。
+
+</NormativeClause>
+
+### 17.3 フロー制御と活性度
+
+<NormativeClause id="MWP-EVT-011" level={["MAY","MUST","SHOULD"]}>
+
+`ACK` は永続的な進行状況を提供します。 `PING`
+は活性を提供し、MAY はプレゼンス レコードを保持します。ピアは応答 `PING`
+でその nonce をエコーし​​ます。サーバー MUST は、制限付きバッファリングと Group ごとのバックプレッシャーを適用します。制限に達すると、無関係なグループを切断するのではなく、SHOULD が Group を一時停止し、再試行ガイダンス付きで
+`BACKPRESSURE` を発行します。
+
+</NormativeClause>
+
+### 17.4 正規エンコーディング
+
+<NormativeClause id="MWP-EVT-012" level="MUST">
+
+ワイヤー JSON 正規メンバーの順序で到着する必要はありませんが、すべてのハッシュ、コンテンツから派生した識別子、または署名が到着します。 MUST 使用 RFC
+8785
+JCS バイト。オブジェクトのメンバー名が重複しています MUST スキーマ検証の前に拒否される可能性があります。数値と文字列 MUST
+finite-binary64 と I- を満たすJSON [セクション 2]
+のルール](../foundations/#mwp-fnd-006);適合する実装 MUST 同じものを生産する JCS 同じバイト数 JSON 価値。
+
+</NormativeClause>
+
+大規模なコンテンツは Artifact
+URI とコンテンツ ハッシュによって参照されます。不明なコア プロパティは v0.1 スキーマによって拒否されます。不明、非クリティカル Extension
+Profile データは変更されずに保存および中継されます。不明な重大な拡張機能の原因
+`UNKNOWN_CRITICAL_EXTENSION`.

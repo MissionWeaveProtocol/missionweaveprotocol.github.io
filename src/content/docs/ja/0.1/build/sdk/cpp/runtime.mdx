@@ -1,0 +1,118 @@
+---
+title: C++ ランタイム リファレンス
+description:
+  完全に固定された C++ SDK の完全なインストール済みヘッダー
+  サーフェスと実行時境界。
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# C++ ランタイムリファレンス
+
+このページでは、[正確な API 在庫](../api/)] で表される完全な C++ サーフェスについて説明します。共有プロトコルの動作は、ローカルの
+[ランタイム参照 ](../../../runtime/architecture-and-bootstrap/) および
+[参照句 ](../../../../reference/specification/)] によって定義されたままです。パブリック宣言は名前空間
+`missionweaveprotocol` にあります。ダウンストリーム CMake ターゲット リンク
+`MissionWeaveProtocol::sdk`。
+
+<SupportStatus status="implemented" />
+は、以下にリストされているインストールされたヘッダーとプロセス内の動作に適用されます。
+
+<SupportStatus status="deployment-adapter-required" /> は、現在の Registry
+権限、信頼されたアドミッション コンテキスト、認証されたログ
+アクセス、およびその他のデプロイメント サービスに適用されます。
+
+<SupportStatus status="not-implemented" />
+は、正確に固定されたライブラリに対応するランタイムがないことを意味します。
+
+## ライブラリと実行モデル
+
+インストールされるパッケージには、C++20、CMake 3.24、OpenSSL 3、および jsoncons
+1.8.1 が必要です。エクスポートされたターゲットは `MissionWeaveProtocol::sdk`
+です。インストールされているパブリック ヘッダーは `include/missionweaveprotocol`
+の下にあります。個別にインストールされる実行可能ファイルは
+`missionweaveprotocol-conformance` です。
+
+ライブラリをリンクしても、サービスは開始されず、ソケットも開かれず、永続ストアは作成されず、権限も付与されません。
+`std::span`
+の結果は、API の宣言に従って、SDK が所有するバイトまたはオブジェクトが所有するバイトを参照し、その所有者を超えて存続することはできません。
+
+## 完全なヘッダー マップ
+
+| 実行時の懸念                    | インストールされたパブリックヘッダー | ピン留めされたコミットで契約する                                                                                                                        |
+| ------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| バージョンとアセットの種類      | `version.hpp`、`bundle.hpp`          | SDK とプロトコル ID、不変の埋め込み資産スパン、正確な PIN、およびバンドルの概要。                                                                       |
+| 厳密 JSON                       | `json.hpp`                           | 重複メンバーを含むテキストまたはバイトに対する `parse_strict_json`、不正な形式の UTF-8/JSON、および末尾データの拒否。                                   |
+| スキーマと正確な時間            | `schema.hpp`、`signed_document.hpp`  | オフライン ドラフト 2020-12 検証、アサートされた形式、および正確な保護期間の証拠。                                                                      |
+| 正規の JSON および Ed25519      | `canonical.hpp`、`crypto.hpp`        | RFC 8785 文字列とハッシュ、および厳密な Ed25519 署名および検証ヘルパー。                                                                                |
+| 署名付きドキュメントと Registry | `signed_document.hpp`                | 9 種類の文書、署名、完全な Registry 検証、6 段階の検証、および不変の証拠。                                                                              |
+| フレーム                        | `frame.hpp`                          | WebSocket フレーム値の厳密なデコード、正規エンコード、およびドキュメント検証。これはコーデックであり、ホストされたゲートウェイ サービスではありません。 |
+| 構造適合性                      | `conformance.hpp`                    | 埋め込みスキーマ ベクトルの実行、ベクトルの結果、およびレポートの概要。                                                                                 |
+| 埋め込みバンドル                | `bundle.hpp`                         | プロトコル、暗号化、アドミッションバンドルの正確な資産アクセスとダイジェスト検証。                                                                      |
+| 初回入場                        | `admission.hpp`                      | Signed Document 検証が成功した以上の最初の入場と歴史的信頼。                                                                                            |
+
+## 検証、署名、および Registry の証拠
+
+`parse_strict_json` は、JSON 値を 1 つだけ受け入れます。
+`SchemaCatalog::validate`
+は、22 個の埋め込まれたドラフト 2020-12 スキーマをチェックします。
+`canonical_json`、`canonicalize_json`、`canonical_sha256`、および
+`canonical_sha256_document` は、RFC 8785 サーフェスを実装します。
+
+`SigningKey` は、アプリケーション所有の署名インターフェイスです。 `Ed25519`
+は、厳密なキー、​​署名、およびドキュメント ヘルパーを公開します。
+`SignedDocumentCodec::sign` および `verify` は、9 つ​​の `SignedDocumentKind`
+値のいずれかを選択し、解析、スキーマ、署名エンベロープ、鍵解決、正規化、および署名の各ステージを実行します。
+
+`KeyResolver::resolve`
+は、完全に保持された履歴を含む 1 つの一貫した該当する Organization リビジョンに対する
+`KeyRegistrySnapshot::organization_wide`
+証拠を返さなければなりません。選択されたキー、部分的な投影、キャッシュ ヒット、または呼び出し元が提供した信頼フラグが不十分です。
+`VerifiedSignedDocument`
+は、受信したバイト、署名文字列と正規文字列とハッシュ、保護された時間、署名素材、解決された Registry キーと Principal を公開します。
+
+## フレーム、バンドル、および適合性
+
+`FrameCodec::decode`、`encode`、および `validate_document`
+はフレーム値を検証します。これらは、トランスポート、TLS、セッション認証、カーソル永続性、ルーティング、バックプレッシャー、または権限のある状態遷移を所有しません。
+
+`ProtocolBundle::verify`
+は、22 個のスキーマと 59 個のファイルの構造バンドルをチェックします。
+`verify_cryptography`
+は、98 個のアーティファクト、22 個のケース、および 62 個の宣言された評価をチェックします。
+`verify_admission`
+は、19 個のアーティファクト、5 個のケース、および 30 個の宣言された評価をチェックします。これらの呼び出しでは、ピン、カウント、パス、バイト長、ダイジェストが検証されますが、すべての暗号化やアドミッション評価は実行されません。
+
+`ConformanceRunner::run` および `missionweaveprotocol-conformance`
+は、埋め込まれた構造スキーマ ベクトルのみを実行します。実行可能ファイルは、すべてのベクトルが期待される有効性と一致する場合にのみ、ゼロを返します。
+
+## 初回入場
+
+`AdmissionService` は、`prepare_first_admission`、`admit_first`、および
+`verify_historical_admission` を公開します。
+[C++ アドミッション リファレンス ](../admission/)] に進み、アダプターの正確な結果、呼び出し順序、および実行可能なリンクされた例を確認してください。
+
+## 明示的な可用性境界
+
+<SupportStatus status="deployment-adapter-required" /> **承認権限** -
+アプリケーションは、現在の Registry 証拠、過去の Registry
+証拠、信頼できる受け入れコンテキスト、および認証された追加専用ログを提供します。
+
+<SupportStatus status="not-implemented" /> **Mission オーケストレーション** -
+高レベルの Mission ステート マシンまたはオーケストレーション
+ファサードはエクスポートされません。
+
+<SupportStatus status="not-implemented" /> **Worker スケジューラ** - Worker
+キュー、スケジューラ、リース ランナー、またはリカバリ
+ループはエクスポートされません。
+
+<SupportStatus status="not-implemented" /> **ホストされたゲートウェイ サービス**
+- ライブラリは `FrameCodec`
+を提供しますが、トランスポート、TLS、セッション、ルーティング、またはバックプレッシャーの所有権を持つゲートウェイ
+サービスではありません。
+
+<SupportStatus status="not-implemented" /> **権限のある永続性ランタイム** -
+データベースベースまたは Agent
+ローカルの永続性ランタイムはエクスポートされません。
+
+これらの不在は、文書化されたサポート契約の一部です。 Python 参照ランタイム機能は、共有プロトコル名から推測してはなりません。

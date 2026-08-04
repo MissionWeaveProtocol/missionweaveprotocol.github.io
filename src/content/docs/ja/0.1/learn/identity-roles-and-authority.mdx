@@ -1,0 +1,73 @@
+---
+title: アイデンティティ、役割、権限
+description:
+  MissionWeaveProtocol が安定した
+  ID、プレゼンス、セッション、調整、スケジュール、認可、承認をどのように分離するか。
+---
+
+# アイデンティティ、役割、権限
+
+MissionWeaveProtocol
+0.1 は、1 つの信頼できる Organization 内で動作します。 Organization は、Agent アイデンティティ、ポリシー、認可、永続的な Group 順序付け、および人間の説明責任を管理します。
+
+## 権限は意図的に分割されています
+
+| 懸念事項                                     | 権限                                 |
+| -------------------------------------------- | ------------------------------------ |
+| 安定した ID と検証された機能                 | Organization 制御 Agent Registry     |
+| Mission の指示と最終承認                     | MissionOwner                         |
+| 計画、割り当て、統合、提出                   | 現在の Coordinator エポック          |
+| Cross-Group 実行順序                         | Worker が所有するスケジューラ        |
+| 移行の検証と Group Event ごとの順序          | Group Authority                      |
+| ツール、データ、リソース、および副作用の許可 | 認可サービスと Organization ポリシー |
+
+Group
+Authority は、Group ごとに 1 つの論理権限です。実装ではそれを内部的に複製できますが、レプリカ トポロジはプロトコル セマンティクスの一部ではありません。 Coordinator および Worker ロール定義は、[MWP-FND-010](../../reference/specification/foundations/#mwp-fnd-010)
+および
+[MWP-FND-011](../../reference/specification/foundations/#mwp-fnd-011)] によってアンカーされています。
+
+## アイデンティティは存在ではありません
+
+**Agent Card**
+は、安定した、バージョン管理された、Organization 署名付き ID です。 Organization の署名 ([MWP-IDN-001](../../reference/specification/identity-registry-and-sessions/#mwp-idn-001))] に基づいて、公開鍵、エンドポイント、サポートされているプロトコルのバージョン、検証済みの機能、および最大同時実行性をバインドします。
+
+**プレゼンス レコード**は一時的なものです。可用性、開いている実行スロット、機能の可用性、推定応答遅延、およびハートビート時間を報告する場合がありますが、リースを更新したり、割り当てを受け入れたりすることはありません ([MWP-IDN-005](../../reference/specification/identity-registry-and-sessions/#mwp-idn-005)])。
+
+能力は認可とも異なります。機能は、Agent が何を行うことが検証されているかを示します。再利用可能な資格情報やビジネス データ アクセスは Agent
+Card
+([MWP-IDN-002](../../reference/specification/identity-registry-and-sessions/#mwp-idn-002))] に配置されません。
+
+## セッションとフェンシング
+
+WebSocket ハンドシェイクは、Organization に登録されたキーと新しいチャレンジを認証し、有効期間の短いセッション トークンと新しい Session
+Epoch を発行します。ハンドシェイク シーケンスは
+[MWP-IDN-007](../../reference/specification/identity-registry-and-sessions/#mwp-idn-007).後のエポックを発行すると、その Agent
+ID
+([MWP-IDN-008](../../reference/specification/identity-registry-and-sessions/#mwp-idn-008))] の古いランタイムが隔離されます。
+
+エポックを追加すると、権限がさらに狭められます。
+
+- Membership エポックは、Group Membership の古いバージョンをフェンスします。
+- Coordinator エポックは、置き換えられた Coordinator とその許可をフェンスします。
+- 所有権エポックは、排他的な作品の前の所有者を囲みます。そして
+- 実行リース ID は、期限切れまたは取り消された実行期間を囲みます。
+
+## コンテキストから許可される副作用まで
+
+```text
+Message or Work Proposal
+        ↓ explicit authorization
+WorkItem and Work Contract
+        ↓ Worker acceptance
+Ownership Epoch
+        ↓ current session, policy, budget, and approval checks
+Execution Lease and scoped capability token
+        ↓
+Permitted operation
+```
+
+認可サービスは、関連する受諾、承認、ポリシー、所有権、リース、および予算のチェック後にのみ、有効期間が短く、最小限の特権のトークンを発行します。そのバインディング フィールドは
+[MWP-AUT-001](../../reference/specification/authorization-and-budgets/#mwp-aut-001).認証情報は、メッセージ、Agent カード、コンテキスト パッケージ、アーティファクト、またはイベントを介して送信されません。
+[MWP-AUT-002](../../reference/specification/authorization-and-budgets/#mwp-aut-002)] を参照してください。
+
+Approval の実行により、制限された危険な操作が許可されます。最終的な Approval は、完了した Mission リビジョンと正確な Artifact セットを受け入れる、別の署名済み決定です。

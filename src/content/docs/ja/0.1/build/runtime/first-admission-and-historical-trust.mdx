@@ -1,0 +1,104 @@
+---
+title: 最初の入場と歴史的信頼
+description:
+  ランタイム層が暗号化を介して Admission Log
+  の結果、アトミックな追加、返されたレコードの検証、および履歴の再生を認証する方法。
+---
+
+# 最初の入場と歴史的信頼
+
+入場は、6 段階の暗号検証後の別のセマンティック レイヤーになります。署名バイト、署名ハッシュ、鍵解決、署名結果は変更されません ([MWP-ADM-005](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)])。その前提条件は、アドミッションに依存しない署名ハッシュ ([MWP-SDV-017](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-017)]) と正しい現在または過去の Registry 証拠コントラクトを含む、完了した 6 段階の結果 ([MWP-SDV-015](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-015)]) です。 ([MWP-SDV-010](../../../reference/specification/signed-documents-and-trust/#mwp-sdv-010))。
+
+## 必要なインターフェース
+
+アドミッション層は、次のような明確な証拠と権限の境界に依存します。
+
+:::note[Implementation note]
+
+各境界を型付きインターフェースで表現します。
+
+- 新しい初回入院決定の現在の Registry 証拠。
+- リプレイのための信頼できる歴史的 Registry 証拠。
+- 認証された Admission Log ルックアップ。
+- 1 つのアトミックな追加または既存のリターン操作。そして
+- Organization - 権限のある不在の後にのみ使用される信頼できる受け入れコンテキスト。
+
+:::
+
+Admission Log 論理キーは `(organizationId, signingHash)`
+です。受け入れサービスを認証し、見つかったサービスと正式な不在を区別し、追加のみの整合性を保持し、利用不可、不確定、未認証、整合性失敗、競合、またはコミット失敗の結果に対してフェールクローズする必要があります ([MWP-ADM-003](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)])。呼び出し元が提供する信頼ブール値は、それらの結果の 1 つではありません。
+
+論理キーに対して存在する権限のあるレコードは最大 1 つです。再試行で同一の有効なレコードが見つかった場合はべき等成功と見なされますが、競合するドキュメントの種類、キー ID、または Principal は置換されずに拒否されます ([MWP-ADM-004](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-004))。
+
+## 初回受付アルゴリズム
+
+```text
+six-stage cryptographic verification
+→ authoritative Admission Log lookup
+→ found record validation OR authoritative absence
+→ trusted context and candidate preparation
+→ atomic append-or-return-existing
+→ returned record validation
+→ admitted result
+```
+
+正式な不在の場合のみ、信頼できるコンテキストの取得と候補者の準備が可能になります。追加により、ローカルの候補者または同時勝者が返される場合があり、返されたレコードは成功する前に常に検証されます ([MWP-ADM-006](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006)])。
+
+First-Admission
+Record は、独立した署名されていない 9 フィールドのオブジェクトです。それ自体は認証されず、`signature`
+([MWP-ADM-001](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001))] を含めることはできません。
+`trustedAcceptedAt`
+の語彙スペルを保持します。保護されたドキュメント時間 ([MWP-ADM-002](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-002)]) で使用される大文字の
+`Z` スペルを必要とせずに、RFC 3339 インスタントとして比較します。
+
+候補の準備では、Event の追加、遷移の実行、または成功の暗示は行われません。同時勝者は異なるレコード ID または信頼できる時間を返す可能性がありますが、成功できるのは検証された返されたバイトのみです ([MWP-ADM-007](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-007)])。
+
+## 返されたレコードの検証
+
+レコードの検証:
+
+1. 厳密に 1 つの UTF-8 JSON 値を解析します。
+2. 標準的な First-Admission Record スキーマを適用します。
+3. `organizationId`、`documentKind`、`signingHash`、`keyId`、および `principal`
+   は 6 段階の結果とまったく同じです。
+4. `acceptedBy` を、によって認証されたサービス ID と正確に比較します。Admission
+   Log アダプター。そして
+5. 保持されている選択されたキーに対して `trustedAcceptedAt`
+   を個別にチェックします。半開有効期間。
+
+正確なバインディング ルールは
+[MWP-ADM-009](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)]、信頼できる時間間隔ルールは
+[MWP-ADM-010](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)] です。候補バイトのみを検証するだけでは決して十分ではありません。署名付き Event は、それ自体の First-Admission
+Record として機能することはできません。後の Event は、別のレコード ([MWP-ADM-011](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-011))] を公開または参照することのみ可能です。
+
+## 歴史的なリプレイ
+
+```text
+six-stage cryptographic verification with authoritative historical Registry evidence
+→ required found record
+→ record validation
+→ no trusted context or append
+```
+
+Replay は、欠落している承認を作成したり、新しい信頼できるコンテキストを発行したり、古いドキュメントを新しく承認されたものとして扱うことはできません ([MWP-ADM-008](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)])。
+
+## 入学後の境界線
+
+承認された結果でも、Command の鮮度または署名者の承認が確立されていません。新たに提示された Command には、個別の鮮度およびクロック スキュー チェック ([MWP-ADM-013](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)]) があり、関連する当局は、保護され信頼できる受け入れ時間に署名者の役割とポリシーを個別に検証します ([MWP-ADM-014](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014))。
+
+暗号化後のアドミッション失敗はすべて、保護ステージ `admission`
+を保持し、回線上で `AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012))] にマップされます。
+
+:::note[Implementation note]
+
+現在のキーの解決、履歴のキーの解決、Admission
+Log アクセス、およびトラステッド コンテキストの取得を、1 つのサービスで複数実装している場合でも、別個の型付きアダプターとして維持します。これにより、キャッシュ ミス、トランスポート エラー、または呼び出し元のブール値が正式な不在として誤って表現されるのを防ぎます。
+
+アダプター API は、レコード自体から取得された `acceptedBy`
+フィールドをレコード検証で誤って信頼できないように、認証されたサービス ID を検出されたバイトまたは追加されたバイトとともに返す必要があります。
+
+:::
+
+ローカルの
+[アドミッション適合バンドル](../../../reference/conformance/admission/)] を使用して、最初のアドミッションと失敗したアダプターの結果を含む履歴再生の両方をテストします。

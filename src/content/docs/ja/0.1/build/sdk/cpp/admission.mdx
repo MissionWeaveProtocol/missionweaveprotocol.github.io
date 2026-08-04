@@ -1,0 +1,112 @@
+---
+title: C++ 最初の入場と歴史的信頼
+description:
+  入力された C++
+  アダプター、正確な呼び出し順序、信​​頼境界、および実行可能なアドミッションの例。
+---
+
+import cppAdmissionExample from "../../../../../../../../examples/sdk/cpp/admission.cpp?raw";
+import cppAdmissionCmake from "../../../../../../../../examples/sdk/cpp/CMakeLists.txt?raw";
+
+# C++ 最初の入場と歴史的信頼
+
+C++ `AdmissionService` は、6 段階の Signed
+Document 検証者 ([MWP-ADM-005](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005))] の上に、初回入場と歴史的信頼を重ねます。言語に依存しないフローは、ローカルの
+[初回入場および歴史的信頼のランタイム ページ ](../../../runtime/first-admission-and-historical-trust/)] であり、正確な要件はローカル
+[入場条項 ](../../../../reference/specification/first-admission-and-historical-trust/)] です。
+
+## パブリックアダプターと結果
+
+| パブリック API                                     | 責任                                                                                                                                                                                                                                                                                        |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdmissionCurrentKeyResolver::resolve_current`     | デプロイメントがこの決定に対して最新であると主張する完全な Organization 全体の Registry 証拠を返します。                                                                                                                                                                                    |
+| `TrustedAdmissionContext::issue`                   | レコード ID を発行し、信頼できる即時受け入れを行い、正式な不在の後にのみサービスを受け入れます。                                                                                                                                                                                            |
+| `AdmissionLog::lookup`                             | `AdmissionLookup::found` または `AdmissionLookup::authoritative_absence` を返します。キャッシュミス、タイムアウト、または認証されていない不在により、[MWP-ADM-003](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)] に基づいてクローズが失敗します。 |
+| `AdmissionLog::append_or_return_existing`          | 候補バイトをアトミックに追加するか、認証されたサービス ID を通じて同時に権威のある勝者を返します。                                                                                                                                                                                          |
+| `AuthenticatedAdmissionRecord`                     | [MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)] のアダプターによって認証されたサービス ID に、返されたレコード バイトをバインドします。                                                                                               |
+| `AdmissionService::prepare_first_admission`        | SDK によって生成された `VerifiedSignedDocument` から候補証拠を作成および検証します。追加したり、承認を暗示したりするものではありません。                                                                                                                                                    |
+| `AdmissionService::admit_first`                    | [MWP-ADM-006](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006)] に基づいて、現在の証拠を確認し、検索し、不在後の準備をし、既存の追加または返却を行い、返されたレコードを検証します。                                                                  |
+| `AdmissionService::verify_historical_admission`    | 過去の Registry 証拠を使用して検証を再実行し、コンテキストを発行したり [MWP-ADM-008](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)] に基づいて追加したりせずに既存のレコードを要求します。                                                         |
+| `PreparedFirstAdmission`、`AdmittedSignedDocument` | 不変の検証を保存し、証拠を記録します。 `record_bytes` は、検証されたレコード バイトのビューを返します。                                                                                                                                                                                     |
+
+呼び出し元が提供する信頼ブール値はアドミッション検索結果ではないため、成功パスを選択してはなりません。
+
+## 初回受付の電話順番
+
+:::note[Informative example]
+
+```cpp
+const auto first = AdmissionService{}.admit_first(
+    SignedDocumentKind::command,
+    document,
+    current_registry,
+    admission_log,
+    trusted_context);
+```
+
+:::
+
+`admit_first`
+は、ログにアクセスする前に 6 つの検証段階をすべて完了します。見つかったレコードは検証され、信頼できるコンテキストの発行や追加を行わずに返されます。正式な不在の後、サービスはコンテキストを発行し、正規の候補バイトを準備し、`append_or_return_existing`
+を呼び出し、実際に返されたレコードを検証します。同時勝者は、スキーマ、認証、ドキュメント バインディング、および信頼できる時間が
+[MWP-ADM-009](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009)
+および
+[MWP-ADM-010](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)] を満たす場合にのみ成功します。
+
+## 過去のリプレイとエラー
+
+`verify_historical_admission` は `KeyResolver`
+を使用し、6 つのステージすべてを再実行し、見つかったレコードを必要とし、`TrustedAdmissionContext::issue`
+または `AdmissionLog::append_or_return_existing`
+を呼び出すことはありません。レコード ID が一致すると、同じ権限のあるレコードが復元されますが、[MWP-ADM-013](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)
+および
+[MWP-ADM-014](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)] に基づく Command の鮮度、署名者の承認、ステートマシンの受け入れ、またはポータブル ログプルーフ検証は証明されません。
+
+6 段階の障害は `SignedDocumentVerificationError`
+のままです。アドミッション ステージの障害は、[MWP-ADM-012](../../../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012)] で要求されているように、ワイヤー コード
+`AUTH_INVALID_SIGNATURE` の `AdmissionError`、ステージ
+`admission`、および型指定された `AdmissionReason`
+です。デプロイメント・アダプターは `AdmissionAdapterError`
+をスローします。一般的な成功や可用性は、認証された証拠ではありません。
+
+## 実行可能な完全に固定された例
+
+:::note[Informative example]
+
+この例では、SDK の検証済み埋め込み `ProtocolBundle`
+から署名付き Command および Registry を読み取り、型指定されたメモリ内権限アダプターを提供します。リポジトリ ファイルは読み取りません。これは、初回受付と履歴再生に対して同一のレコード ID、署名ハッシュ、レコード バイトを 1 回の追加でアサートします。
+
+<pre>
+  <code>{cppAdmissionExample}</code>
+</pre>
+
+`admission.cpp` とそれに続く `CMakeLists.txt`
+を 1 つの空のコンシューマ ディレクトリにコピーします。ビルド レシピは実行可能ファイル自体を定義し、正確に固定された SDK チェックアウトを依存関係として追加します。消費者が宣言していないターゲットには依存しません。
+
+<pre>
+  <code>{cppAdmissionCmake}</code>
+</pre>
+
+そのコンシューマ ディレクトリから、次を実行します。
+
+```bash
+cmake -S . -B build \
+  -DMISSIONWEAVEPROTOCOL_SDK_ROOT=/absolute/path/to/exact/cpp-sdk \
+  -DOPENSSL_ROOT_DIR=/absolute/path/to/openssl-3
+cmake --build build --target missionweaveprotocol_website_admission --parallel 2
+./build/missionweaveprotocol_website_admission
+```
+
+予期される出力には、`first admission` と `historical replay`
+の同じレコード ID が含まれています。
+
+:::
+
+:::note[Implementation note]
+
+`CurrentRegistry`
+を認証された現在および過去の Registry アダプタに置き換え、`InMemoryAdmissionLog`
+を既存の追加または返却操作がアトミックである認証された永続ログに置き換え、`FixedTrustedContext`
+を次のアダプタに置き換えます。 Organization によって制御される信頼できる時間とサービス発行の受付。バイトの有効期間を保持し、これらの権限境界を呼び出し側が提供する 1 つの信頼ブール値に決して分割しないでください。
+
+:::

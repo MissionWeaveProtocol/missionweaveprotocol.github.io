@@ -1,0 +1,104 @@
+---
+title: ID、Registry、およびセッション
+description:
+  標準的な Agent Card、プレゼンス レコード、認証、および Session Epoch の要件。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 6. ID、Agent Registry、およびセッション
+
+### 6.1 Agent カード
+
+<NormativeClause id="MWP-IDN-001" level={["MUST","MUST NOT"]}>
+
+Organization MUST は、各 Agent
+Card を発行、検証、バージョン付け、署名します。 Agent MUST
+NOT は、機能を自己宣言しているという理由だけで信頼されます。 Agent Card
+MUST は次のように分離されます。
+
+- 安定したアイデンティティ、所有権、エンドポイント、公開鍵、およびサポートされているプロトコルバージョン。
+- 宣言された入出力を備えた、バージョン化された Organization によって管理される機能スキーマ、制約、および検証 Evidence;そして
+- サポートされる最大同時実行数。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-002" level="MUST NOT">
+
+能力は許可ではありません。 Agent Card MUST
+NOT には、再利用可能な資格情報が含まれるか、ツールまたはビジネス データへのアクセスが許可されます。認可資格と現在のポリシーは Organization の決定のままです。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-003" level={["MUST","MAY"]}>
+
+割り当て MUST は、Agent
+Card バージョンとすべての必要な機能バージョンを固定します。互換性のあるインプレース アップグレード MAY は、Organization ポリシーに基づいて続行されます。互換性のないアップグレード MUST チェックポイントがアクティブに動作し、実行を続行する前に新たな承認を取得します。すべての Artifact
+MUST は、生成された Agent Card と機能のバージョンを記録します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-004" level={["SHOULD","MAY","SHOULD NOT"]}>
+
+Registry
+SHOULD は、Agent カードとは別に、機能固有のコンテキストに応じたパフォーマンス レコードを保持します。レコード MAY には、完了、失敗、再割り当て、人間による変更要求、期限、予算、およびリース期限の結果が含まれます。 SHOULD
+NOT の実装により、パフォーマンスが 1 つの不透明なグローバル レピュテーション スコアに低下します。
+
+</NormativeClause>
+
+### 6.2 プレゼンス記録
+
+<NormativeClause id="MWP-IDN-005" level={["MUST","MAY","MUST NOT"]}>
+
+存在は一時的であり、MUST は安定した Agent
+Card とは別のものです。プレゼンス レコード MAY は、オンライン状態、現在利用可能な実行スロット、機能の可用性、推定応答遅延時間、および最後のハートビートを報告します。古いプレゼンス レコード MUST
+NOT は、割り当ての承諾またはリースの更新として扱われます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-006" level={["MAY","MUST NOT"]}>
+
+プレゼンスの更新 MAY 認証されて持ち込まれる `PING`
+フレームであり、個別の耐久性のある署名を必要としません。面前 MUST
+NOT 別のものを公開する Groupの ID、コンテンツ、WorkItem、または正確なキューの位置。
+
+</NormativeClause>
+
+### 6.3 認証と Session Epoch フェンシング
+
+<NormativeClause id="MWP-IDN-007" level="MUST">
+
+それぞれ Agent
+MUST 少なくとも 1 つ持っている Organization-登録済み Ed25519 公開鍵。 v0.1
+WebSocket ハンドシェイクではフレッシュ サーバー チャレンジが使用されます。
+
+1. Agent 送信します `HELLO/client_init` それと Agent
+   ID、キーID、ノンス、サポートされているプロトコルのバージョン。
+2. サーバーが応答します `HELLO/server_challenge`
+   予測不可能な挑戦とともにおよび選択されたバージョン。
+3. Agent 返信する `HELLO/client_response`
+   と Ed25519 の上に署名正規のチャレンジ記録。そして
+4. サーバーが応答します `HELLO/server_accept`
+   有効期間の短いセッション トークンを使用し、新しく発行された Session Epoch.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-008" level={["MUST","MUST NOT","MAY"]}>
+
+エポック `n + 1` を発行すると、その Agent ID のエポック `n`
+以下のすべてのセッションが無効になります。 Group Authority
+MUST は、状態が変化するすべての Agent Command で Session
+Epoch を検証します。人間のコマンドと Organization サービス コマンドには、Agent
+Session Epoch および MUST
+NOT が作成されません。再起動されたランタイム MAY は安定した Agent
+ID を再利用します。 2 つのランタイム MUST NOT がその ID を同時に操作します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-IDN-009" level={["MUST","NOT RECOMMENDED","MAY"]}>
+
+永続コマンドと Artifact マニフェスト MUST は個別に署名されます。ハートビートとプレゼンス レコードは、認証されたセッションに依存します。有効期間の長い共有 API キーは NOT
+RECOMMENDED です。 MAY 実装では、Agent
+ID とフェンシング セマンティクスを保持する場合に、mTLS またはワークロード ID 認証を追加します。
+
+</NormativeClause>

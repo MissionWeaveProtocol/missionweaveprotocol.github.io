@@ -1,0 +1,77 @@
+---
+title: TypeScript SDK
+description:
+  MissionWeaveProtocol 0.1 の完全に固定された TypeScript ランタイム
+  リファレンスをインストールして操作します。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+import SdkInstall from "../../../../../../../components/SdkInstall.astro";
+import SdkRuntimeMatrix from "../../../../../../../components/SdkRuntimeMatrix.astro";
+
+# TypeScript SDK
+
+`@missionweaveprotocol/sdk`
+は、公式の TypeScript 実装パッケージです。このリファレンスでは、正確なコミット
+`6d53ebfcf8350ae81d89fd818611b07f7373685c`、パッケージ バージョン
+`0.1.0`、および Node.js
+20 以降について説明します。バージョン文字列が変更されていない場合でも、異なるコミットまたはパッケージのビルドは、文書化された異なる実装入力となります。
+
+:::note[Implementation note]
+
+<SdkInstall
+  sdk="typescript"
+  command={`git clone https://github.com/MissionWeaveProtocol/typescript-sdk.git missionweaveprotocol-typescript-sdk
+cd missionweaveprotocol-typescript-sdk
+git checkout --detach 6d53ebfcf8350ae81d89fd818611b07f7373685c
+npm ci
+npm run build
+npm pack --pack-destination ..
+cd ..
+npm install ./missionweaveprotocol-sdk-0.1.0.tgz`}
+  verifyCommand={`node -e 'import("@missionweaveprotocol/sdk").then(({ sdkMetadata }) => console.log(sdkMetadata()))' npx --no-install Missionweaveprotocol-conformance --json`}
+>
+  <p slot="notes">
+    パッケージ ルートは、ESM ビルドと CommonJS
+    ビルドの両方を提供します。パッケージ ルートと <code>package.json</code>{" "}
+    のみがサポートされているエクスポートです。内部ソース ファイル
+    パスはパブリック サブパス API ではありません。固定されたソース
+    パッケージは、Git 依存関係の直接インストール中に <code>dist/</code>{" "}
+    をビルドしないため、文書化されたフローでは tarball
+    を明示的にビルドしてインストールします。別の tarball
+    は、その来歴がまったく同じコミットにバインドされている場合にのみ、それを置き換えることができます。
+  </p>
+</SdkInstall>
+
+:::
+
+インストールされた `missionweaveprotocol-conformance`
+コマンドは、パッケージ化されたスキーマおよびベクター サーフェスを実行します。デプロイメント権限、Admission
+Log 耐久性、ネットワーク セキュリティ、実稼働の準備状態は確立されません。
+
+## このリファレンスを使用してください
+
+<CardGrid>
+  <LinkCard
+    title="Complete runtime"
+    description="Every supported package-root module, Node runtime boundary, conformance entry point, and explicit non-implementation."
+    href="./runtime/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Typed current-Registry, trusted-context, and Admission Log adapters with one runnable example."
+    href="./admission/"
+  />
+  <LinkCard
+    title="Exact public API"
+    description="Every public package-root declaration resolved to its exact source line."
+    href="./api/"
+  />
+</CardGrid>
+
+## 文書化されたコミットでのサポート
+
+<SdkRuntimeMatrix sdk="typescript" />
+
+このマトリックスは、プロセス内の実装と展開が所有する権限を区別します。パッケージをインストールしても、現在の Registry サービス、認証されたアトミック Admission
+Log、ホストされたゲートウェイ、または永続的なランタイム永続性は提供されません。

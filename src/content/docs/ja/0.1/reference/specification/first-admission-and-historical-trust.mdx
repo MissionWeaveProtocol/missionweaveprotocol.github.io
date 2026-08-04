@@ -1,0 +1,167 @@
+---
+title: 最初の入場と歴史的信頼
+description:
+  権限のある Admission Log
+  コントラクト、初回受付フロー、履歴リプレイ、および障害マッピング。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+<NormativeClause id="MWP-ADM-001" level={["MUST","MUST NOT"]}>
+
+**First-Admission Record** は、Signed
+Document 検証プロファイルの外部にある権限のある追加メタデータです。 MUST は
+`schemas/first-admission-record.schema.json`
+に準拠しており、次の 9 つの必須フィールドが含まれています:
+`protocolVersion`、`admissionRecordId`、`organizationId`、`documentKind`、
+`signingHash`、`keyId`、`principal`、`trustedAcceptedAt`、および `acceptedBy`。
+`trustedAcceptedAt`
+は、Organization によって割り当てられた信頼できる受け入れインスタントです。レコードは Signed
+Document ではなく、MUST NOT には `signature`
+が含まれており、それ自体を認証せず、MUST
+NOT はそれ自身のバイトのみに基づいて受け入れられます。
+
+</NormativeClause>
+
+フィールドの制約は次のとおりです。
+
+| フィールド          | 制約                                                                                                                                            |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `protocolVersion`   | v0.1 `protocolVersion` 定数                                                                                                                     |
+| `admissionRecordId` | 絶対プロトコル識別子                                                                                                                            |
+| `organizationId`    | 絶対プロトコル識別子                                                                                                                            |
+| `documentKind`      | `agent-card`、`approval`、`artifact`、`command`、`context-package`、`event`、のいずれか`evidence`、`extension-profile`、または `group-snapshot` |
+| `signingHash`       | `sha256:` の後に 64 桁の小文字 16 進数が続きます。                                                                                              |
+| `keyId`             | 絶対プロトコル識別子                                                                                                                            |
+| `principal`         | 正確な一般的なアクターの形状                                                                                                                    |
+| `trustedAcceptedAt` | プロトコル タイムスタンプ プロファイルの下の RFC 3339                                                                                           |
+| `acceptedBy`        | `type: service` を使用した一般的なアクターの形状                                                                                                |
+
+<NormativeClause id="MWP-ADM-002" level="MUST">
+
+`trustedAcceptedAt` MUST の語彙スペルは保持されます。 2 つの保護された Signed
+Document タイムスタンプとは異なり、大文字の `Z`
+を使用する必要はありません。それは正確な瞬間として比較されます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-003" level={["MUST","MUST NOT"]}>
+
+1 つの Organization の Admission Log 内では、論理検索および追加キーは
+`(organizationId, signingHash)`
+です。ログ MUST は、受け入れサービスを認証し、Organization で許可されたサービスへの書き込みを制限し、追加のみの整合性を保持し、見つかったものと権限のある不在を区別する権限のある検索をサポートし、その論理キーに対して 1 つのアトミックな追加または既存の戻り操作を提供します。利用不可、不確定、未認証、整合性失敗、競合、またはコミット失敗の結果 MUST はフェールクローズされました。呼び出し元が提供する信頼、認証、または整合性のブール値 MUST
+NOT は、アダプターの型指定された結果を置き換えます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-004" level={["MUST NOT","MUST"]}>
+
+1 つの論理キーに対して最大 1 つの権限のあるレコードが存在できます。 1 つの
+`admissionRecordId` MUST
+NOT は、異なる論理キーにあるレコードを識別します。再試行時に有効な互換レコードが見つかった場合は冪等成功となり、追加なしで MUST が返されます。同じ論理キーの下にあり、ドキュメントの種類、キー ID、または Principal が異なるレコードは競合であるため、MUST
+NOT は置換、修復、またはサイレント調整の対象になります。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-005" level="MUST">
+
+入場は、6 つの暗号化段階の後の別のセマンティック レイヤーです。保護された診断ステージは
+`admission`
+です。これは 7 番目の暗号化段階ではなく、署名バイト、署名ハッシュ、鍵解決、署名結果は変更されません。すべてのアドミッション パスまたは履歴信頼パス MUST は、最初に 6 つのステージすべてを完了し、結果の Organization、ドキュメントの種類、署名ハッシュ、解決されたキー ID、バインドされた Principal、および有効なキー有効期間を保持します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-006" level="MUST">
+
+最初の入院の場合、ステージ 4
+MUST に提供された Registry 証拠は最新のものであり、新しい入院決定に適用可能です
+[上記で必要な ](../signed-documents-and-trust/#mwp-sdv-010)。 6 段階の検証の後、実装 MUST は
+`(organizationId, signingHash)`
+を検索します。見つかったレコード MUST は、以下で説明するように検証されます。権限のある不在の場合のみ、実装は信頼できる受け入れコンテキストを取得し、候補 First-Admission
+Record を準備し、append-or-return-existing を呼び出すことができます。最初の許可は、その操作によって返された認証済みレコード (新しくコミットされたものであるか、同時に存在しているものであるかに関係なく) 自体が検証されるまで完了しません。候補バイトのみを検証するだけでは十分ではありません。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-007" level={["MUST NOT","MAY"]}>
+
+候補の準備 MUST
+NOT は Event を追加し、状態遷移を実行するか、承認が成功したことを暗示します。同時勝者の返された
+`admissionRecordId` または `trustedAcceptedAt`
+MAY は敗者候補とは異なりますが、返されたレコードは、以下のすべてのバインディングおよび間隔ルールが成功した場合にのみ受け入れられます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-008" level={["MUST","MUST NOT"]}>
+
+履歴リプレイ MUST は、保護された署名時間に必要な完全な保持有効性履歴を含む信頼できる履歴 Registry 証拠を使用して 6 つの暗号化ステージを再実行します。次に、MUST は、見つかった First-Admission
+Record を要求し、それを検証します。履歴リプレイ MUST
+NOT は、新しい信頼できる承認コンテキストを発行するか、欠落しているレコードを追加するか、ドキュメントを新しい承認として扱います。保護された署名時刻と
+`trustedAcceptedAt`
+の両方が選択したキーの間隔内にあった場合、後の有効期限または失効だけでは、アンカーされた履歴署名は無効になりません。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-009" level={["MUST","MUST NOT"]}>
+
+レコード検証 MUST は、UTF-8
+JSON 値を 1 つだけ厳密に解析し、規範的なスキーマを適用し、レコードと
+`organizationId`、`documentKind` の 6 段階の証拠の間の正確な同等性を要求します。
+`signingHash`、`keyId`、および `principal`。レコードの `acceptedBy`
+MUST は、Admission
+Log の結果によって認証されたサービス ID とまったく同じです。別の Organization、ドキュメントの種類、キー ID、または Principal
+MUST
+NOT の下で同じ署名されていないコンテンツのレコードが再利用されます。レコードの追加専用の整合性と認証されたサービス ID は、成功した Admission
+Log アダプターの結果のデプロイメント アサーションです。記録自体はどちらの性質も証明しません。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-010" level="MUST NOT">
+
+信頼できる承認インスタント `t` の場合、承認は「validFrom <=
+t`, `validUntil`is absent or`t < validUntil`, and `revokedAt`is absent or`t <
+revokedAt`. These are the same half-open boundaries used for the protected signed time, evaluated independently at `trustedAcceptedAt`, using the earliest effective retained `validUntil`and`revokedAt`
+boundaries. A newly presented document MUST NOT be accepted solely because its
+signer backdated the protected time to precede expiry or revocation.
+
+</NormativeClause>」の場合にのみ有効です。
+
+<NormativeClause id="MWP-ADM-011" level={["MUST NOT","MAY"]}>
+
+署名付き Event の場合、その Event ドキュメント MUST
+NOT は、検索または既存の追加または返却によって独自の First-Admission
+Record として機能し、その署名 MUST
+NOT はレコードを認証するものとして扱われます。またはそのアドミッションアンカー。後で署名された Event
+MAY は別のレコードを公開または参照します。その署名は、Event の参照のみを認証します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-012" level="MUST">
+
+ルックアップ、候補の準備、信頼できる時間間隔の検証、既存の追加または返却、返されたレコードの解析、スキーマの検証、バインディング、認証されたサービスの比較、または
+`AUTH_INVALID_SIGNATURE`
+へのワイヤ上の Event セルフアンカー MUST マップにおける 6 段階の完了後のすべての失敗。保護された監査診断 MUST は、信頼できない呼び出し元にその理由を明らかにすることなく、ステージ
+`admission` と安定した理由を保持します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-013" level="MUST">
+
+新しく提示された Command MUST は、Organization で定義された、`issuedAt`
+の制限された鮮度およびクロック スキュー ウィンドウをさらに満たします。該当するロールおよびポリシーに基づく鮮度チェックと署名者の承認は、First-Admission
+Record 検証とは別のままです。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-ADM-014" level="MUST">
+
+暗号検証では、キーにバインドされた Principal を認証します。 Principal プロトコル権限は付与されません。状態遷移を受け入れる前に、関連する Organization または Group
+Authority
+MUST は、保護された署名時間、および最初の許可の場合は信頼できる受け入れ時間に適用される権限のあるポリシーと状態を使用して、署名者の役割と権限を検証します。特に、`acceptedBy`
+MUST は認可された Group Authority または Organization
+Event サービスであり、Agent
+Card 発行者 MUST はそのサービスに対して認可されています。 Organization、Extension
+Profile 承認者と Approval 承認者 MUST は Organization ポリシーを満たし、Group
+Snapshot 作成者MUST は、承認されたアーカイブ サービスである必要があります。この認可チェックは、6 つの暗号段階がすべて完了し、該当する初回許可または履歴信頼の検証が成功した後にのみ行われます。失敗は
+`AUTH_FORBIDDEN` です。
+
+</NormativeClause>

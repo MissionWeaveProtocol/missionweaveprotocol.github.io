@@ -1,0 +1,52 @@
+---
+title: セキュリティ境界線
+description:
+  Signed Document
+  検証とアドミッションによって確立されるものと、セキュリティに関する決定は分離されたままになります。
+---
+
+# セキュリティ境界
+
+MissionWeaveProtocol 証拠の層を分離することで、1 つの成功したチェックが暗黙のうちにより広範な信頼の主張に昇格することがなくなります。
+
+## 現在と歴史 Registry 証拠
+
+**現在 Registry 証拠**は、新しい検証または最初の承認の決定に適用される権威ある改訂を表します。置き換えられたリビジョンを最新のものとして提示することはできません。デプロイメントシームによりリビジョン通貨が確立されます。 Organization
+[MWP-SDV-010]
+で説明されている範囲、完全性、および歴史的範囲](../../reference/specification/signed-documents-and-trust/#mwp-sdv-010)。したがって、最初の入学は現在の状況に応じて異なります Registry 不特定のキャッシュに表示される単に最新のリビジョンではなく、証拠です。
+
+**歴史的 Registry 証拠**はオリジナルを保持します `validFrom`
+そしてあらゆる効果的な `validUntil` または `revokedAt`
+以前の保護された署名時刻を評価するには変更が必要です。その履歴は追加専用であるか、明示的にバージョン管理されています ([MWP-SDV-012](../../reference/specification/signed-documents-and-trust/#mwp-sdv-012)）。
+
+最初の自白は現在の証拠を使用します。歴史的再現では、信頼できる歴史的証拠が使用され、既存の証拠も必要となります。 First-Admission
+Record。
+
+## 懸念事項を分離して除外する
+
+| 懸念事項                         | 境界                                                                                                                                                                                                                                            |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Command 鮮度                     | 新しく提示された Command には、別個の制限された `issuedAt` の鮮度およびクロック スキュー チェックがあります ([MWP-ADM-013](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-013)])。                                 |
+| 署名者の承認                     | 検証済みのキーバインド Principal は、状態を受け入れる前に権限のあるロールとポリシーの承認が必要です ([MWP-ADM-014](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-014)])。                                         |
+| ポータブル Admission Log 証明    | バージョン 0.1 は、移植可能なデプロイされた証明形式 ([MWP-EXT-013](../../reference/specification/errors-extensions-and-security/#mwp-ext-013)]) ではなく、型付きアダプターの結果とレコードの検証を定義します。                                  |
+| ステートマシンの受け入れ         | 暗号化とアドミッションは、Organization または Group Authority が現在のリビジョン、ロール、ポリシー、エポック、予算、リース ([MWP-EVT-004](../../reference/specification/commands-events-and-ordering/#mwp-evt-004))] を検証する前に終了します。 |
+| 呼び出し側が提供する信頼ブール値 | 呼び出し元によって指定されたブール値は、認証され型指定された Admission Log 結果、またはその整合性と不在の区別 ([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)]) を置き換えることはできません。  |
+
+## 階層化された結果モデル
+
+```text
+valid JSON and schema
+        ↓
+six-stage cryptographic result
+        ↓
+First Admission or Historical Trust result
+        ↓
+Command freshness when applicable
+        ↓
+signer role and policy authorization
+        ↓
+current state-machine validation and atomic Event append
+```
+
+各矢印は証拠を追加します。どれも、以前の層が証明した内容を遡って変更するものではありません。特に、アドミッションは 7 番目の暗号段階にはならず、First-Admission
+Record 自体は認証されません。

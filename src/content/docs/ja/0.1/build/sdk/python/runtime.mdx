@@ -1,0 +1,88 @@
+---
+title: Python ランタイム リファレンス
+description:
+  正確に固定された Python リファレンス実装の完全なパブリック
+  モジュールとランタイム サーフェス。
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Python ランタイムリファレンス
+
+このページでは、[正確な API inventory](../api/)] で表される完全なファーストパーティ Python サーフェスについて説明します。共有プロトコルの動作は、ローカルの
+[ランタイム参照 ](../../../runtime/architecture-and-bootstrap/) および
+[参照句 ](../../../../reference/specification/)] によって定義されたままです。以下の名前は、固定された Python 実装がその動作を公開する方法を定義します。
+
+<SupportStatus status="implemented" /> は、以下にリストされているパッケージ
+モジュールとインプロセス ランタイム コントラクトに適用されます。
+
+<SupportStatus status="deployment-adapter-required" />
+は、正常な操作が外部データベース、認証された機関、ネットワーク
+バインディング、証明書、キー、またはデプロイメントによって提供される永続的なサービスに依存する場合に適用されます。
+
+## モデルをインポートする
+
+`missionweaveprotocol.__init__`
+は、署名された文書、入場、バンドル検証、予算、リース、および委任の厳選されたトップレベルのエクスポートを提供します。より広範な参照ランタイムは、パブリック サブモジュール API です。`missionweaveprotocol.core`
+から `Core`、`missionweaveprotocol.agent` から `AgentRuntime`、`Scheduler`
+からインポートします。
+`missionweaveprotocol.scheduler`、および API インベントリに記録されているモジュールのその他の名前。すべてのパブリック サブモジュール タイプがパッケージ ルートから再エクスポートされると想定しないでください。
+
+## 完全なモジュール マップ
+
+| 実行時の懸念                      | パブリックモジュール                                                                                                                                                             | ピン留めされたコミットで契約する                                                                                                                                                                                                                   |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| プロトコルとセマンティック モデル | `missionweaveprotocol.models`、`missionweaveprotocol.documents`、`missionweaveprotocol.artifacts`、`missionweaveprotocol.context`                                                | 型付きプロトコル オブジェクト、ドキュメント ヘルパー、Artifact および Evidence 処理、および Group スコープのコンテキスト構造。スキーマが有効なデータには、ローカル仕様で定義されたセマンティック チェックが必要です。                              |
+| 権限のある状態遷移                | `missionweaveprotocol.core`、`missionweaveprotocol.control`、`missionweaveprotocol.auth`、`missionweaveprotocol.ingress`                                                         | `Core` パスのクエリ、再生、および実行。受け入れられたアクション制御、セッションおよび署名ヘルパー、および検証されたイングレス境界。会話やモデルの出力だけでは、状態遷移が許可されることはありません。                                              |
+| Agent 実行                        | `missionweaveprotocol.agent`、`missionweaveprotocol.execution`、`missionweaveprotocol.offline`                                                                                   | 1 つのアクティブな Agent ランタイム セッション、Group コンテキスト インストール、準備済み実行、チェックポイント対応作業実行、およびオフライン調整ヘルパー。セッション、Membership、Coordinator、および所有権エポックはフェンシング入力のままです。 |
+| スケジュールとリカバリ            | `missionweaveprotocol.scheduler`、`missionweaveprotocol.replay`                                                                                                                  | 作業受付、スケ​​ジューリング、プリエンプション、移行アプリケーション、スナップショット、確定的リビルド、Event プロジェクション、連続リプレイ、および Agent ローカル調整。                                                                          |
+| 永続性                            | `missionweaveprotocol.store`、`missionweaveprotocol.local_store`                                                                                                                 | `InMemoryStore` (SQL ベースの権威ストア)、および `SQLiteAgentStore` (ローカル カーソル、コンテキスト、チェックポイント、スケジューラの状態、イベント、保留中のアクション)。 権限のある状態と Agent ローカルの投影は分離されたままになります。      |
+| ポリシーと制限された権限          | `missionweaveprotocol.policy`、`missionweaveprotocol.lease`、`missionweaveprotocol.budget`、`missionweaveprotocol.delegation`                                                    | Membership および機能トークン サービス、ポリシー ガード、実行リースの移行、再構築可能な予算台帳、および委任の絞り込みチェック。これらの API は、展開で制御する必要がある権限のあるポリシーや主要なサービスを置き換えるものではありません。         |
+| 解析、正規化、署名                | `missionweaveprotocol.schema_formats`、`missionweaveprotocol.canonical`、`missionweaveprotocol.crypto`、`missionweaveprotocol.signed_documents`、`missionweaveprotocol.registry` | プロトコル スカラー形式、厳密な検証ヘルパー、RFC 8785 正規化、Ed25519 プリミティブ、6 段階の Signed Document 署名と検証、および完全な Organization 全体Registry に基づくキー解決。                                                                 |
+| 初回入場                          | `missionweaveprotocol.admission`                                                                                                                                                 | 型付きの current-Registry、Admission Log、および 6 段階の検証後に階層化されたトラステッド コンテキスト アダプター。最初の自白と過去の再現では、証拠の経路が異なります。                                                                            |
+| フレームとゲートウェイ            | `missionweaveprotocol.wire`、`missionweaveprotocol.gateway`                                                                                                                      | HELLO/CHALLENGE/AUTH/WELCOME ハンドシェイク モデル、Command/Event/ACK/PING フレーム、解析とエンコード、サブスクリプション カーソル、セッションのアクティブ化、Group ルーティング、およびコアとのゲートウェイ統合。                                 |
+| バンドル、チェック、コマンド      | `missionweaveprotocol.bundle`、`missionweaveprotocol.conformance`、`missionweaveprotocol.cli`、`missionweaveprotocol.poc`                                                        | パッケージ化されたプロトコル バンドルの検出とダイジェスト検証、スキーマとベクターの実行、3 つのコンソール エントリ ポイント、決定論的な概念実証レポート。                                                                                          |
+
+## コア、ストア、トランザクション境界
+
+`Core` は、権威のあるステートマシンのファサードです。そのパブリック
+`query`、`replay`、および `perform` 操作は、`AuthoritativeStore`
+によってサポートされています。ストア契約は、トランザクション、検査、ライフサイクルの境界を明らかにします。インメモリ、SQLite、汎用 SQL、および PostgreSQL の実装は、プロトコルのアトミック性、リビジョン、冪等性、またはフェンシング要件を変更しません。
+
+`SQLiteAgentStore`
+は Agent ローカルです。 Agent が回復できるように、リプレイ位置、Group コンテキスト、チェックポイント、スケジューラの状態、認識されたイベント、保留中のアウトバウンド アクションが保存されます。これらの投影は再構築可能であり、Mission または Group の真実の権威になることはできません。規範的な分離については、[永続性と回復](../../../runtime/persistence-and-recovery/)] に進みます。
+
+外部データベースはデプロイメントの依存関係です。 `PostgreSQLStore`
+には、構成されたデータベース サービスとドライバーが必要です。接続の可用性やローカル キャッシュ ヒットは、権限のある移行がコミットされたことを証明するものではありません。
+
+## Agent、スケジューラ、およびリプレイ
+
+`AgentRuntime.start_session`
+は、単一のアクティブなローカル セッションを確立し、`AgentRuntimeSession`
+を返します。セッションは、Group スコープのコンテキストと資格情報を受け入れ、実行を準備し、`Scheduler`
+を公開します。スケジューラは作業を許可し、遷移を適用し、スケジュールまたはプリエンプトを実行し、スナップショットから再構築します。
+`AgentReplay` および `EventProjector`
+は、順序付けされたイベントからローカル プロジェクションを復元し、ギャップや矛盾したプロジェクション状態を拒否します。
+
+実行リース、ポリシー、予算、委任 API は個別のチェックです。スケジュールされたアイテムには、重大な副作用が発生する前に、現在のフェンシング、受け入れられた作業、適用可能なポリシー、残りの予算、および有効な最小特権の承認が必要です。
+
+## 検証、信頼、およびフレーミング
+
+保護された処理の前に、厳密な JSON と固定されたドラフト 2020-12 スキーマを検証し、プロトコル スカラー バイトを保存し、署名射影を正規化し、Ed25519 マテリアルを検証し、完全な Registry 証拠から選択されたキーを解決します。正確な 6 段階の順序は、[検証、正規化、および署名](../../../runtime/validation-canonicalization-and-signing/).
+
+`missionweaveprotocol.wire`
+は、型付きフレーム モデルに加えて、`parse_frame`、`parse_received_frame`、および
+`encode_frame` を所有します。 `GroupGateway`
+は、これらのフレームをセッションのアクティブ化、サブスクリプション、カーソル、リプレイ、およびコア操作にバインドします。運用ネットワークの展開では、安全なバインディング、認証入力、TLS
+1.3 証明書とキー、バックプレッシャー制限、および運用分離を提供する必要があります。 Python パッケージはゲートウェイ ランタイムを提供します。導入ネットワーク権限は提供されません。
+
+## 適合性とアップグレード
+
+`SchemaCatalog` および `run_manifest`
+は、サポートされているローカル検証サーフェスを実行します。
+`verify_cryptography_bundle` および `verify_admission_bundle`
+は、パッケージ化されたアーティファクトを文書化されたピンおよびダイジェストにバインドします。
+`missionweaveprotocol-conformance`
+は、構造マニフェスト ランナーをオペレーターに公開します。パッケージ化された暗号化とアドミッション アーティファクトの ID を確認するときは、2 つのバンドル検証関数を個別に呼び出します。
+
+SDK コミット、プロトコル PIN、スキーマ セット、暗号化バンドル、アドミッション バンドル、またはデプロイメント アダプターが変更されるたびに、適合性を再度実行します。サブセットを渡すと、そのサブセットのみが証明されます。データベースの耐久性、ネットワーク セキュリティ、ハードウェアの容量、または運用の準備を確立するものではありません。

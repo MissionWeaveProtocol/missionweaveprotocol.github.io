@@ -1,0 +1,351 @@
+---
+title: 仕事、スケジュール、回復
+description: WorkItem、作業契約、スケジューリング、実行、リカバリ、アーティファクト、Evidence、リプレイ、確認応答。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+import InformativeBlock from "../../../../../../components/InformativeBlock.astro";
+
+## 10. 作業項目と作業契約
+
+### 10.1 必要な作業契約
+
+<NormativeClause id="MWP-WRK-001" level="MUST">
+
+すべての WorkItem
+MUST には、次の内容を含むバージョン管理された機械可読な作業契約が含まれます。
+
+- 目標と必要な成果物。
+- 受け入れ基準と必須 Evidence;
+- 入力および依存関係の参照。
+- 許可されるツール、データ、操作、およびリソースの制約。
+- 必要な機能 ID とバージョン。
+- 期限、要求された緊急性、およびビジネスへの影響。
+- 財務、トークン、ツール呼び出し、コンピューティング、実時間、および副作用の予算該当する;
+- 再試行、バックオフ、期限、コストポリシー。そして
+- リスク分類と実行前の承認要件。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-002" level={["MUST","MUST NOT","MAY"]}>
+
+重要な曖昧さ MUST は、受け入れ前に WorkItem 会話で提起される必要があります。 Worker
+MUST
+NOT は、WorkItem を実行キューに受け入れます。 Coordinator は、修正された契約を含む新しい
+`work.offer`
+を発行するか、代替の WorkItem を承認することで問題を解決します。大幅に改訂された労働契約は改訂を増分し、Worker の再承諾が必要になります。自然言語散文 MAY は補足ですが、MUST
+NOT は契約フィールドを置き換えます。
+
+</NormativeClause>
+
+### 10.2 WorkItem ステートマシン
+
+コアとなる WorkItem の状態と遷移は次のとおりです。
+
+<span id="workitem-transition-table"></span>
+
+| 現在の状態                                                                          | 移行                                    | 次の状態                    | メモ                                                                                               |
+| ----------------------------------------------------------------------------------- | --------------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------------- |
+| なし                                                                                | `work.propose`                          | 仕事提案を開く              | Group メンバーは誰でも提案できます。 WorkItem はまだ存在しません                                   |
+| なし、またはオープンな作業提案                                                      | `work.authorize`                        | `open`                      | Coordinator またはスコープ付きデリゲートは WorkItem を作成します。                                 |
+| `open`、`offered`、`queued`、`active`、`blocked`、または `failed`、生きた所有者なし | `work.offer`                            | `offered`                   | 永続的なオファーを作成、置き換え、または拡張します。期限切れの所有者が最初にフェンスに囲まれます。 |
+| `offered`                                                                           | `work.accept_offer`                     | `queued`                    | 原子所有時代の始まり                                                                               |
+| `offered`                                                                           | オファーの有効期限                      | `offered`                   | 期限切れは受け入れを無効にしますが、それ自体は Event を追加したり、状態を変更したりしません。      |
+| `queued`                                                                            | 必要な場合は `approval.grant_execution` | `queued`                    | 作業を実行せずにスタートゲートを満たす                                                             |
+| `queued`                                                                            | `work.start`                            | `active`                    | 有効な所有権と実行リースが必要です                                                                 |
+| `active`                                                                            | `work.checkpoint`                       | `queued`                    | 永続的な進行により、期限付きの所有権リースを保持しながら実行が解放されます。                       |
+| `active`                                                                            | `work.block`                            | `blocked`                   | チェックポイントと制限されたブロックされたリース                                                   |
+| `blocked`                                                                           | `work.unblock`                          | `queued` または `open`      | キューに再入力されるか、所有権の有効期限が切れた後に再提供されます。                               |
+| `active`                                                                            | `work.submit`                           | `submitted`                 | アーティファクトと Evidence が必要です                                                             |
+| `submitted`                                                                         | `work.accept_result`                    | `verified`                  | Coordinator レビューは成功しました                                                                 |
+| `open`、`offered`、`queued`、`active`、`blocked`、または `submitted`                | `work.fail`                             | `failed`                    | 失敗 Evidence が必要です。 Coordinator は後で新しい `work.offer` を発行する可能性があります。      |
+| `open`、`offered`、`queued`、`active`、`blocked`、または `submitted`                | `work.cancel`                           | `cancelled`                 | クリーンアップ ポリシーが適用されます                                                              |
+| `open`、`offered`、`queued`、`active`、または `blocked`                             | `mission.create_child`                  | `blocked`                   | リンクされたサブタスクの実行中、所有権は保護されます。                                             |
+| `blocked`                                                                           | リンクされたサブタスクの承認            | `verified`                  | サブタスクの Approval が親 WorkItem の Evidence になります。                                       |
+| `blocked`                                                                           | リンクされたサブタスクの失敗            | `blocked` または `failed`   | 宣言されたサブタスク失敗ポリシーが伝播を制御します。                                               |
+| `open`、`offered`、`queued`、`active`、`blocked`、または `submitted`                | 親 Mission 失敗またはキャンセル         | `failed` または `cancelled` | ターミナル Mission 状態が未完了の WorkItem に伝播します。                                          |
+
+<NormativeClause id="MWP-WRK-003" level={["MAY","MUST"]}>
+
+`verified` および `cancelled` は、その WorkItem リビジョンの端末です。 `failed`
+は制御を Coordinator に返し、新しい `work.offer`
+を介してのみ移行できます。 Coordinator
+MAY 代わりに、代わりの WorkItem を作成するか、Mission レベルでブランチをキャンセルします。実装 MUST は、このテーブルと現在の集計リビジョンで許可されていない遷移を拒否します。
+
+</NormativeClause>
+
+### 10.3 オファー、アドミッションコントロール、および所有権
+
+<NormativeClause id="MWP-WRK-004" level={["MAY","MUST NOT","SHOULD"]}>
+
+オフライン Worker
+MAY は、有効期限付きの永続的なオファーを受け取ります。オファー MUST
+NOT は、承認される前に排他的所有権を予約します。排他的なワークアイテム SHOULD は、最高ランクの適格な Worker に順次提供されます。緊急配置の場合は、Coordinator
+MAY が制限された候補セットにオファーされます。最初の有効な承諾は自動的に新しい所有権エポックを獲得し、負けたオファーはすべて、敗者が実行する前に撤回されます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-005" level={["MUST","SHOULD"]}>
+
+承認とは、即時実行ではなく、永続的なスケジュールのコミットメントを意味します。あ Worker
+MUST キューの容量、同時実行性、機能の可用性、期限、認可の適格性、依存関係、および予算に対してアドミッション コントロールを実行します。それ MUST 信頼できるコミットメントができない場合には辞退し、 SHOULD 次のような構造化された理由を使用します。
+`capacity`, `deadline`, `capability`, `authorization`, `dependency`、 または
+`budget`.
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-006" level={["MUST","MUST NOT"]}>
+
+すべての課題 MUST 構造化された選択基準を記録する: 必要な機能の一致、認可の適格性、可用性の見積もり、予想されるコスト、機能固有の信頼性 Evidence、および適用されたポリシー ルール。プライベートな思考連鎖 MUST
+NOT 含まれること。
+
+</NormativeClause>
+
+### 10.4 依存関係と動的計画
+
+<NormativeClause id="MWP-WRK-007" level={["MAY","MUST"]}>
+
+あ Missionの WorkItem は、進化する有向非循環グラフを形成します。あ Coordinator
+MAY 完全なグラフが判明する前に実行を開始し、検出が発生したときに WorkItem を追加し、独立したブランチを並行して実行します。あ WorkItem 宣言された依存関係がコントラクトの依存関係ポリシーを満たしている場合にのみ適格です。依存関係のサイクル MUST 拒否される。
+
+</NormativeClause>
+
+Group 間のトランザクションはありません。 Group 間の関係では、安定した相関 ID、親 Mission とサブタスクのリンク、Artifact、および補償 WorkItem を使用します。
+
+## 11. スケジューリング、実行、およびリカバリ
+
+### 11.1 Group ごとのキューとグローバル スケジューラ
+
+<NormativeClause id="MWP-WRK-008" level="MUST">
+
+各 Worker
+MUST は、Group ごとに個別の Event 受信ボックス、カーソル、およびワーク キューを維持します。キューは、受け入れられた Group イベントの耐久性のあるローカル プロジェクションであり、MUST はリプレイによって再構築可能です。 Mission、所有権、リース、および WorkItem ステータスは、引き続き Group ログに記録されます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-009" level="MUST NOT">
+
+Worker が所有するスケジューラは、Group ごとのすべてのキューから適格な WorkItem を選択し、宣言された分離実行スロットに入れます。スケジューラは、cross-Group 注文に対する最終的な権限を持ちます。 Coordinator は、要求された緊急性、期限、およびビジネスへの影響を提供しますが、MUST
+NOT は、Mission を他のものよりも先に強制します。組織の優先度のエスカレーションは、ポリシーまたは MissionOwner を通じて行われます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-010" level={["MUST","SHOULD"]}>
+
+スケジューラ MUST は、重み付けされた公平性と飢餓防止を実装します。有効な順序 SHOULD では、組織の優先度クラス、期限、期限、Group ごとの割り当て、リスク ゲート、およびリソースの可用性が考慮されます。純粋な無制限の最高優先順位優先のスケジューリングは準拠していません。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-011" level="MUST">
+
+Agent
+Card は最大同時実行性を宣言します。プレゼンスは現在の容量を報告します。各アクティブ スロット MUST は、Mission コンテキスト、資格情報、チェックポイント、ツール バジェット、および副作用キーを他のスロットから分離します。
+
+</NormativeClause>
+
+### 11.2 スケジュール開示
+
+<NormativeClause id="MWP-WRK-012" level={["SHOULD","MUST NOT"]}>
+
+受け入れおよび材料スケジュールの変更に関して、Worker
+SHOULD は、推定開始ウィンドウ、推定完了、信頼性、キャパシティ ステータス、および計算時間を公開します。 MUST
+NOT は、別の Group からの名前、内容、割り当て、または正確なグローバル キューの位置を公開します。
+
+</NormativeClause>
+
+### 11.3 リースの実行とプリエンプション
+
+<NormativeClause id="MWP-WRK-013" level="MUST">
+
+キューに入れられた所有権とアクティブな実行では、更新可能なフェンスで囲まれたリースが使用されます。所有権付与 MUST には、所有権エポックと開始期限が含まれます。作業を開始するには、Agent
+ID、Session Epoch、WorkItem
+ID、所有権エポック、開始、更新履歴、および有効期限にバインドされた安定したリース ID を持つ実行リースが必要です。すべての更新、チェックポイント、ブロック、Artifact パブリケーション、送信、および Worker で報告された失敗 MUST は、現在のリース ID を参照します。古いリース ID
+MUST を持つ遅延 Command は、所有権エポックが変更されていない場合でも拒否されます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-014" level="MUST">
+
+ケイパビリティ トークンは、その逆ではなく、実行リース ID にバインドされます。これにより、1 つのリースがアクティブなままである間に、トークンをローテーションまたは縮小することができます。すべてのトークンは、発行されたリース境界までに有効期限が切れます。チェックポイント、ブロック、送信によりリースが解放されます。タイムアウトにより期限が切れます。セッションの置換、再割り当て、キャンセル、および失敗により、セッションが取り消されます。代替の Agent セッション MUST を開くと、Agent のアクティブなリースが取り消され、新しいランタイムが新しいリースで開始する前に、影響を受ける WorkItem が
+`queued` に返されます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-015" level="MUST NOT">
+
+優先度を変更すると、キューに入れられた作業項目の順序がすぐに変更されます。アクティブな作業 MUST
+NOT は、安全でないポイントで強制的に中断されます。プリエンプションは協調的です:
+
+1. スケジューラがプリエンプションを要求します。
+2. Worker は安全なべき等チェックポイントに到達します。
+3. チェックポイントを発行して一時停止します。
+4. 実行スロットが解放されます。そして
+5. 一時停止された WorkItem は、後で再開するために Group キューに再度入ります。
+
+</NormativeClause>
+
+### 11.4 進行、ブロック、および再試行
+
+<NormativeClause id="MWP-WRK-016" level={["MUST","SHOULD"]}>
+
+進捗レポート MUST は、現在のフェーズ、完了したマイルストーン、次のチェックポイント、阻害要因、修正された見積もり、および Evidence 参照を中心に構成されます。恣意的な割合には権威がありません。ワーカー SHOULD は、見積もりが大幅に変更されたとき、またはブロックされたときに、意味のあるチェックポイントでレポートします。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-017" level={["MUST","MAY"]}>
+
+ブロックされると、Worker MUST チェックポイントは、必要な解決策で `work.blocked`
+を発行し、その実行スロットを解放します。所有権 MAY は、制限されたブロックされたリースの間も残ります。 Coordinator はブロッカーを解決するか、提案されたサブワークを承認するか、再割り当てすることができます。ブロックが解除された作業は、Group ごとの準備完了キューに戻ります。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-018" level="MUST">
+
+自動再試行は、作業契約の試行、バックオフ、コスト、期限の予算によって制限されます。外部試行 MUST では、WorkItem 実行冪等キーまたは決定論的な導出試行キーが使用されます。枯渇または永続的な障害により、`work.failed`
+と Evidence が発行されます。
+
+</NormativeClause>
+
+### 11.5 Worker および Coordinator の失敗
+
+<NormativeClause id="MWP-WRK-019" level={["MAY","MUST NOT"]}>
+
+Worker が開始期限を過ぎた場合、またはリースの更新を停止した場合、Coordinator
+MAY は、より高い所有権エポックを持つ最新のチェックポイントから再割り当てされます。古い所有者からの遅い結果 MAY は監査のために保存されますが、MUST
+NOT は WorkItem を完了します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-020" level={["MAY","MUST NOT","MUST"]}>
+
+Group サービスが利用できない場合、Worker
+MAY は、すでにアクティブな可逆計算を有界のリース猶予期間にわたって継続し、署名された進行状況とチェックポイントをバッファーします。 MUST
+NOT 現在有効なリースおよび機能トークンなしで、新しい WorkItem を開始したり、リスクの高い、元に戻せない、または外部から認識できる新しいアクションを実行したりします。 MUST は、送信またはさらなる副作用の前に再接続時に調整されます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-021" level="MUST">
+
+バッファリングされた各 Command MUST は、重要な
+`urn:missionweaveprotocol:extension:bounded-offline-execution`
+バインディングを保持します。バインディングは、Agent、Group、WorkItem、元の Session
+Epoch、所有権エポック、履歴実行リース ID、切断時間、バッファー時間、猶予期限、履歴リース有効期限、および 6 次元リソース使用量デルタを記録します。再接続時に、Worker
+MUST はそのバインディングを保持しますが、`issuedAt`、Session
+Epoch、および Membership を使用して Command をリベースして再署名します。現在の認証されたセッションからのエポック。 Group
+Authority
+MUST 拒否の進行状況は、履歴リース/猶予期間外、リース終了後、所有者変更後、またはバインドされた WorkItem 会話外でバッファリングされます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-022" level="MUST">
+
+調整とそのリソース請求は、権限のあるトランザクションの 1 つです。ゼロ以外のオフライン デルタごとに、Group
+Authority MUST は、履歴実行セッションと調整セッションの両方を識別する
+`ext.missionweaveprotocol.core.resource_usage_recorded`
+Event を追加し、WorkItem を更新して予算を完了します。祖先を調べてから、Message またはチェックポイントを適用します。予算オーバーフロー MUST は、部分的な Event または状態変更なしで、請求と進行状況 Command の両方を拒否します。
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+次のブロックでは、後で固定されたソース セグメントが再開されます。介在するローカル ページと正確な行範囲については、[仕様ソース map](./)] を参照してください。
+
+</InformativeBlock>
+
+## 13. アーティファクト、Evidence、およびコンテキスト パッケージ
+
+### 13.1 アーティファクト
+
+<NormativeClause id="MWP-WRK-023" level="MUST">
+
+Artifact は不変であり、コンテンツがアドレス指定されます。バイナリ コンテンツ MUST は、Group
+Event ログの外部に保存されます。その署名済みマニフェスト MUST には、コンテンツ ハッシュ、メディア タイプ、スキーマ、プロデューサー Agent および Agent
+Card バージョンが含まれます。 Mission/Group/WorkItem
+ID、ソース Artifact ハッシュ、関連するツール/モデル/機能のバージョン、作成時間、データ分類、サイズ、取得 URI。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-024" level={["MUST","MUST NOT"]}>
+
+派生アーティファクトは来歴グラフを形成します。実装 MUST は、Artifact を取得するときにコンテンツ ハッシュを検証し、MUST
+NOT は可変 URI をコンテンツ ID として扱います。
+
+</NormativeClause>
+
+### 13.2 Evidence ベースのレビュー
+
+<NormativeClause id="MWP-WRK-025" level={["MUST","SHOULD"]}>
+
+Worker の完了の主張は不十分です。 WorkItem 送信 MUST には、受け入れ基準にマップされた Evidence が含まれます。 Coordinator
+SHOULD を次の順序でレビューします。
+
+1. Artifact の整合性と必要な出力スキーマを検証します。
+2. 可能な場合は決定論的テストまたはビジネス ルールを実行します。
+3. 意味論的または定性的基準についてレビューア Agent Evidence を要求します。
+4. evaluate the combined Evidence;そして
+5. 最終的なヒト Approval のすべての結果を保持します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-026" level={["MUST","MUST NOT"]}>
+
+Evidence
+MUST レコードの件名、条件、メソッド、結果、プロデューサー、タイムスタンプ、および参照されるアーティファクト。 Evidence および意思決定記録 MUST
+NOT には、プライベートな思考連鎖が含まれています。
+
+</NormativeClause>
+
+### 13.3 Context Packages
+
+<NormativeClause id="MWP-WRK-027" level="MUST">
+
+Context
+Package は、署名され、バージョン管理され、範囲が指定された概要であり、履歴を正式に置き換えるものではありません。 MUST は、Mission および WorkItem スコープ、ソース Event 範囲、Artifact ハッシュ、決定、制約、未解決の質問、ジェネレーター、時刻、および署名を識別します。 Worker は、Membership が許可する場合、引用されたイベントを取得できます。パッケージを更新すると新しいバージョンが作成され、以前のバージョンの出自が保持されます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-028" level="MUST NOT">
+
+Group コンテンツ MUST
+NOT デフォルトで別の Mission のコンテキストを入力します。再利用可能なナレッジは、Organization で承認され、機密扱いで、出所が記載された Artifact として明示的に公開する必要があります。 Group 間転送には、権限チェックと監査可能な Event が必要です。グローバル スケジューラはスケジューリング メタデータを検査できますが、MUST
+NOT は機密の Mission コンテンツを検査します。
+
+</NormativeClause>
+
+<InformativeBlock title="Pinned source continuation">
+
+次のブロックでは、後で固定されたソース セグメントが再開されます。介在するローカル ページと正確な行範囲については、[仕様ソース map](./)] を参照してください。
+
+</InformativeBlock>
+
+## 16. 配信、再生、確認
+
+<NormativeClause id="MWP-WRK-029" level={["MUST","MAY","MUST NOT"]}>
+
+MissionWeaveProtocol は、少なくとも 1 回の Event 配信を約束します。受信者 MUST は Event
+ID によって重複排除を行い、MUST は各 Group を順番に処理します。 MAY は順序が狂った Event をバッファしますが、MUST
+NOT はギャップを越えて耐久性のあるカーソルを進めます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-WRK-030" level="MUST NOT">
+
+カーソルは、Agent によって永続的に処理される最上位の連続する Group シーケンスです。
+`ACK`
+フレームは 1 つ以上のカーソルを報告します。確認により配信のクリーンアップが許可されますが、MUST
+NOT により権限のある Group 履歴が削除されます。再接続は
+`SUBSCRIBE.afterSequence`
+を使用します。サーバーは、その位置以降のイベントを再生します。これには、以前の切断付近の重複が含まれる可能性があります。
+
+</NormativeClause>
+
+古いカーソルがオンライン ログで利用できなくなった場合、サーバーは
+`CURSOR_TOO_OLD`
+と署名付きスナップショット参照を返します。 Agent はスナップショットを復元し、そのハッシュ/署名を検証し、スナップショット シーケンスから再開します。
+
+<NormativeClause id="MWP-WRK-031" level="MUST">
+
+外部ツール操作 MUST は、Mission ID、WorkItem
+ID、所有権エポック、および論理操作 ID から派生した安定した冪等キーを使用します。ネットワーク配信だけでは、1 回だけの外部副作用を保証することはできません。
+
+</NormativeClause>

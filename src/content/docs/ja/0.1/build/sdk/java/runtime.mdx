@@ -1,0 +1,116 @@
+---
+title: Java ランタイム リファレンス
+description:
+  完全に固定された Java SDK の完全なパブリック パッケージ
+  サーフェスとランタイム境界。
+---
+
+import SupportStatus from "../../../../../../../components/SupportStatus.astro";
+
+# Java ランタイムリファレンス
+
+このページでは、[正確な API インベントリ](../api/)] で表される完全な Java サーフェスについて説明します。共有プロトコルの動作は、ローカルの
+[ランタイム参照 ](../../../runtime/architecture-and-bootstrap/) および
+[参照句 ](../../../../reference/specification/)] によって定義されたままです。パブリック アプリケーション タイプは
+`org.missionweaveprotocol.sdk` の下に存在します。適合エントリ ポイントは
+`org.missionweaveprotocol.sdk.cli` の下にあります。
+
+<SupportStatus status="implemented" /> は、以下にリストされているパブリック
+クラスとプロセス内動作に適用されます。
+
+<SupportStatus status="deployment-adapter-required" /> は、現在の Registry
+権限、信頼されたアドミッション コンテキスト、認証されたログ
+アクセス、およびその他のデプロイメント サービスに適用されます。
+
+<SupportStatus status="not-implemented" />
+は、正確に固定されたアーティファクトに対応するランタイムがないことを意味します。
+
+## Artifact と実行モデル
+
+Maven アーティファクトは
+`org.missionweaveprotocol:missionweaveprotocol-sdk:0.1.0-SNAPSHOT` で、Java
+21 用にコンパイルされ、Maven 3.9 でビルドされました。これは、自動モジュール名
+`org.missionweaveprotocol.sdk`
+を宣言し、正確なプロトコル、暗号化、およびアドミッション リソースを JAR 内にパッケージ化します。
+
+アーティファクトをインストールしても、サービスは開始されず、ソケットも開かれず、永続ストアは作成されず、権限も付与されません。チェックされた
+`IOException`、検証例外、およびアドミッション例外は、Java 呼び出し境界の一部のままです。
+
+## 完全なソース マップ
+
+| 実行時の懸念                    | 公開実装ソース                                                                            | ピン留めされたコミットで契約する                                                                                                       |
+| ------------------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| バージョンとメタデータ          | `MissionWeaveProtocol.java`、`ProtocolBundle.java`                                        | プロトコル ID、ワイヤ バージョン、名前空間、正確なプロトコルとバンドルの出所。                                                         |
+| 厳密 JSON                       | `StrictJson.java`                                                                         | UTF-8 は、重複メンバー、BOM、不正な入力、および末尾データの拒否を使用して解析します。                                                  |
+| スキーマと正確な時間            | `SchemaCatalog.java`、`ExactInstant.java`                                                 | オフライン ドラフト 2020-12 検証、アサートされた形式、パッケージ化されたスキーマ アクセス、および正確な RFC 3339 比較。                |
+| 正規の JSON および Ed25519      | `CanonicalJson.java`、`Ed25519.java`、`Base64Url.java`                                    | RFC 8785 バイトとハッシュ、および厳密な Ed25519 ヘルパー。                                                                             |
+| 署名付きドキュメントと Registry | `SignedDocumentCodec.java`、`AgentRegistryKeyResolution.java`、`KeyRegistrySnapshot.java` | 9 種類の文書、署名、完全な Registry 検証、6 段階の検証、および不変の証拠。                                                             |
+| フレーム                        | `FrameCodec.java`                                                                         | 汎用 WebSocket フレーム値の厳密なデコードと正規のエンコード。これはコーデックであり、ホストされたゲートウェイ サービスではありません。 |
+| 構造適合性                      | `ConformanceRunner.java`、`cli/ConformanceCli.java`                                       | パッケージ化されたまたは明示的なルートのスキーマ ベクターの実行とプロセスの終了ステータス。                                            |
+| 埋め込みバンドル                | `ProtocolBundle.java`                                                                     | プロトコル、暗号化、およびアドミッション アーティファクト セットのソース ルートおよびパッケージ化された検証。                          |
+| 初回入場                        | `AdmissionService.java` と入場レコード/インターフェイス                                   | Signed Document 検証が成功した後の最初の入場と歴史的信頼。                                                                             |
+
+## 検証、署名、および Registry の証拠
+
+`StrictJson.parse` は、UTF-8 JSON 値を 1 つだけ受け入れます。
+`SchemaCatalog.packaged` は 22 の正確なスキーマをロードし、`validate`
+は選択されたドラフト 2020-12 契約をチェックします。
+`CanonicalJson.canonicalize`、`canonicalString`、`sha256Hex`、および
+`canonicalHash` は、RFC 8785 およびダイジェスト サーフェスを実装します。
+
+`SigningKey` は、アプリケーション所有の署名シームです。
+`SignedDocumentCodec.sign` および `verify` は、9 つ​​の `SignedDocumentKind`
+値のうちの 1 つを選択し、解析、スキーマ、署名エンベロープ、鍵解決、正規化、および署名の各ステージを実行します。
+`KeyResolver.resolve`
+は、完全に保持された履歴を含む 1 つの一貫した該当する Organization リビジョンに対する
+`KeyRegistrySnapshot.organizationWide`
+証拠を返さなければなりません。選択されたキー、部分的な投影、キャッシュ ヒット、または呼び出し元が提供した信頼フラグが不十分です。
+
+`VerifiedSignedDocument`
+は、受信した署名バイト、正規バイト、ハッシュ、保護された時間、署名素材、解決された Registry キーと Principal の防御コピーを公開します。
+
+## フレーム、バンドル、および適合性
+
+`FrameCodec.decode` および `encode`
+はフレーム値を検証しますが、トランスポート、TLS、セッション認証、カーソル永続性、ルーティング、バックプレッシャー、または権限のある状態遷移を所有しません。
+
+`ProtocolBundle.verifyPackaged`、`verifyPackagedCryptographyBundle`、および
+`verifyPackagedAdmissionBundle`
+は、JAR の正確なピン、カウント、パス、バイト長、およびダイジェストを検証します。対応する
+`Path`
+オーバーロードは、ソースまたはリリースバンドルのルートを検証します。これらのメソッドは、すべての暗号化やアドミッション評価を実行するわけではありません。
+
+`ConformanceRunner.runPackaged` および `ConformanceCli`
+は、構造スキーマ ベクトルのみを実行します。 `--root PATH`
+を指定すると、パッケージ化されたリソースの代わりに明示的なプロトコルまたはリリース バンドルが選択されます。
+
+## 初回入場
+
+`AdmissionService` は、`prepareFirstAdmission`、`admitFirst`、および
+`verifyHistoricalAdmission` を公開します。
+[Java アドミッション リファレンス ](../admission/)] に進み、アダプターの正確な結果、呼び出し順序、および実行可能なパッケージの例を確認してください。
+
+## 明示的な可用性境界
+
+<SupportStatus status="deployment-adapter-required" /> **承認権限** -
+アプリケーションは、現在の Registry 証拠、過去の Registry
+証拠、信頼できる受け入れコンテキスト、および認証された追加専用ログを提供します。
+
+<SupportStatus status="not-implemented" /> **Mission オーケストレーション** -
+高レベルの Mission ステート マシンまたはオーケストレーション
+ファサードはエクスポートされません。
+
+<SupportStatus status="not-implemented" /> **Worker スケジューラ** - Worker
+キュー、スケジューラ、リース ランナー、またはリカバリ
+ループはエクスポートされません。
+
+<SupportStatus status="not-implemented" /> **ホストされたゲートウェイ サービス**
+- アーティファクトは `FrameCodec`
+を提供しますが、トランスポート、TLS、セッション、ルーティング、またはバックプレッシャーの所有権を持つゲートウェイ
+サービスではありません。
+
+<SupportStatus status="not-implemented" /> **権限のある永続性ランタイム** -
+データベースベースまたは Agent
+ローカルの永続性ランタイムはエクスポートされません。
+
+これらの不在は、文書化されたサポート契約の一部です。 Python 参照ランタイム機能は、共有プロトコル名から推測してはなりません。

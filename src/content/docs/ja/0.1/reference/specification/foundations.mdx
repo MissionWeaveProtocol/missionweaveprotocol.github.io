@@ -1,0 +1,289 @@
+---
+title: 基礎
+description:
+  MissionWeaveProtocol 0.1
+  の目的、規則、用語、不変条件、アーキテクチャ、および永続性の基盤。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+# MissionWeaveProtocol 0.1
+
+ステータス: ドラフト標準、バージョン `0.1.0`。
+
+<NormativeClause id="MWP-FND-001" level={["MUST","MUST NOT","REQUIRED","SHALL","SHALL NOT","SHOULD","SHOULD NOT","RECOMMENDED","NOT RECOMMENDED","MAY","OPTIONAL"]}>
+
+このドキュメントでは、MissionWeaveProtocol のバージョン 0.1 を定義します。キーワード
+**MUST**、**MUST NOT**、**REQUIRED**、**SHALL**、**SHALL NOT**、
+**SHOULD**、**SHOULD NOT**、**RECOMMENDED**、**NOT
+RECOMMENDED**、**MAY**、およびこの文書の **OPTIONAL**
+は、ここに示されているようにすべて大文字で表示される場合にのみ、BCP
+14 で説明されているように解釈されます。
+
+</NormativeClause>
+
+## 1. 目的と範囲
+
+MissionWeaveProtocol は、1 つの信頼できる Organization 内で動作する自律エージェント用のグループ指向の連携プロトコルです。これにより、Agent は多くの Mission グループに同時に参加し、ピアと永続的なメッセージを交換し、Group ごとのキューに明示的な WorkItem を受け入れ、グループ全体でそれらの WorkItem をスケジュールし、検証可能なアーティファクトを公開し、完了したミッションについて人間の承認を得ることができます。
+
+<NormativeClause id="MWP-FND-002" level="MAY">
+
+MissionWeaveProtocol は、Agent から Agent への RPC ではありません。エージェントは会話のピアであり、MAY はいつでもメッセージまたは WorkItem 提案を開始します。それにもかかわらず、構造化された権限は明示的です。Message は副作用を許可することはなく、組織のインフラストラクチャは Mission の状態を変更するすべてのコマンドを検証します。
+
+</NormativeClause>
+
+MissionWeaveProtocol 0.1 は以下を標準化します。
+
+- Agent ID、Agent カード、プレゼンス レコード、およびランタイム フェンシング。
+- Mission ごとに 1 つの一時的な Group と 1 つの単調な Event 履歴。
+- 交換可能な Coordinator と人間の MissionOwner;
+- Membership、会話、メッセージ、作業項目、作業契約、成果物、Evidence、コンテキスト パッケージ、リース、予算、承認。
+- 耐久性のあるコマンド、不変のイベント、リプレイ、確認応答、冪等性。
+- Group ごとの Worker キューと、プライバシーを保護する Group 間スケジューリング信号。
+- 複雑な分解のための再帰的なサブタスク。
+- 認証された WebSocket-over-TLS バインディング上の正規 JSON。そして
+- 管理された拡張プロファイル。
+
+MissionWeaveProtocol
+0.1 では、組織間のフェデレーション、物理ピアツーピア ルーティング、Group エンドツーエンド暗号化、分散コンセンサス、モデル プロンプト、プライベート モデル推論、ナレッジ ベース API、 Artifact オブジェクト ストア API、または Organization のポリシーおよび認可サービスの実装。
+
+## 2. 規範的な参照とデータの規約
+
+<NormativeClause id="MWP-FND-003" level="MUST">
+
+MUST の実装は、参照されている場合、次の外部仕様に従います。
+
+- RFC 2119 および RFC 8174 (BCP 14)、規範的な言語。
+- RFC 3339、タイムスタンプ。
+- RFC
+  4648 セクション 3.2、3.5、および 5、正規のパディングされていないbase64url。
+- RFC 6455、WebSocket;
+- RFC 7493、インターネット JSON (I-JSON);
+- RFC 8446、TLS 1.3;
+- RFC 8785、JSON 正規化スキーム (JCS);
+- RFC 8032、Ed25519;
+- JSON スキーマ ドラフト 2020-12;そして
+- 構造化プロトコル エラーに関する RFC 9457 原則（該当する場合）。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-004" level="MUST">
+
+すべてのプロトコル オブジェクト MUST は有効な JSON です。永続プロトコル オブジェクト MUST は、`schemas/`
+の JSON スキーマに準拠しており、すべてのプロトコル タイムスタンプ MUST は RFC
+3339 になります。 `date-time`。 MissionWeaveProtocol 0.1 では、Signed
+Document 検証プロファイルに決定論的なタイムスタンプ プロファイルが使用されます。
+[セクション 6.4](../signed-documents-and-trust/)] でカバーされる Signed
+Document のすべてのタイムスタンプ、およびその文書の検証に使用されるすべての Registry または信頼できる受け入れタイムスタンプ、MUST は、次の追加ルールを満たします。
+
+- 暦年は `0001` から `9999`
+  までの包括的な範囲内にあり、グレゴリオ暦の日付は有効です。
+- 2 番目は `00` から `59`
+  までの包括的な範囲内にあります。うるう秒の綴り v0.1 ではサポートされていません。
+- オプションの小数秒には、1 つ以上の ASCII 数字が含まれます。切り捨てや四捨五入を行わずに即座に比較します。そして
+- RFC 3339 不明なローカル オフセット スペル `-00:00` は許可されません。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-005" level={["MUST","MUST NOT"]}>
+
+大文字と小文字を区別しない `T` 区切り文字、`Z` 指定子、および完全な RFC
+3339 数値オフセット範囲は、後のルールでより狭いスペルが必要でない限り、引き続き有効です。汎用 JSON スキーマ
+`date-time`
+検証は必要ですが、このタイムスタンプ プロファイルを確立するには十分ではありません。実装 MUST は、解析された瞬間とは独立してシリアル化されたタイムスタンプ テキストを保存し、MUST
+NOT はハッシュまたは署名検証の前にそれを書き換えます。存在しない小数秒はゼロであり、後続のゼロの数字は表される瞬間を変更しません。
+[セクション 6.4](../signed-documents-and-trust/#mwp-sdv-002)
+ではさらに、保護された署名時刻と `signature.createdAt` が大文字の `Z`
+接尾辞を使用し、バイトごとに同一であることが必要です。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-006" level={["MUST","MUST NOT"]}>
+
+JCS 入力 MUST は、RFC
+8785 および I-JSON データ モデルに従います。 JSON の数値 MUST は、有限の IEEE
+754 binary64 値として解釈され、RFC 8785
+ECMAScript の最短往復形式でシリアル化されます。任意精度の数値 MUST を使用する実装では、同じ正しく丸められた binary64 変換が適用され、MUST
+NOT は署名バイトにおけるホスト固有の特別な精度を保持します。有限の binary64 ドメイン外の値、またはペアになっていない Unicode サロゲート MUST を含む文字列は、正規のバイトが出力される前に、JCS データ モデルのエラーとして拒否されます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-007" level="MUST">
+
+Base64url 値 MUST は、RFC 4648 URL セーフ アルファベットを使用し、`=`
+パディングを省略し、未使用のパッド ビットをゼロとして使用します。デコーダー MUST は、予期されたバイトにデコードされる場合でも、非正規のスペルを拒否します。 v0.1
+MUST のコンテンツ ハッシュでは、小文字の 16 進数 SHA-256 と形式
+`sha256:<64 hex digits>`
+が使用されます。シーケンス、リビジョン、エポック、およびバジェットに使用される整数 MUST は負ではない安全な整数である JSON 。 Group
+Event シーケンスは 1 から始まります。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-008" level={["MUST","SHOULD","MUST NOT"]}>
+
+識別子 MUST は識別子の種類内でグローバルに一意である必要があり、MUST は IRI のみのスペルではなく絶対 RFC
+3986
+URI としてシリアル化されます。非 ASCII 文字 MUST は UTF-8 パーセントでエンコードされ、検証 MUST は完全な文字列を消費します。空白、制御文字、および末尾の行終端文字は無効です。 UUID 識別子 SHOULD では、小文字の
+`urn:uuid:`
+形式が使用されます。実装 MUST は、発行側 Organization によって選択された URI 正規化ルールに従って識別子をバイトごとに比較します。受信者 MUST
+NOT は追加の正規化を考案します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-009" level="MUST">
+
+規範的なスキーマ内のすべての `format`
+キーワードはアサーション要件です。 MUST の実装により、これらのキーワードを注釈として扱うのではなく、`uri`
+および `date-time` を含むドラフト 2020-12 形式の検証が有効になります。
+
+</NormativeClause>
+
+## 3. 用語と役割
+
+<a href={`${import.meta.env.BASE_URL}artifacts/0.1/protocol/CONTEXT.md`}>
+  <code>../CONTEXT.md</code>
+</a>
+のドメイン用語集は標準的なものです。次の役割ルールにより、その語彙が洗練されます。
+
+- **Organization** は、v0.1 における唯一の信頼およびガバナンスの境界です。
+- **Agent**
+  は、最大 1 つのアクティブなランタイム セッションを持つ 1 つの安定した ID です。水平スケールアウトは別途登録されたもので表現されます Agent アイデンティティ。-A
+  **MissionOwner**
+  は責任者です Group 指示、承認、そして通常のキャンセル。根は人間です Mission。子供のために Mission、親 Coordinator 根本的な人間の責任の下でこの役割を果たします。
+
+<NormativeClause id="MWP-FND-010" level="MAY">
+
+-A
+**Coordinator**は Agent 更新可能な役割のリースを保持します。まさに 1 つ Coordinator エポック MAY しばらく活動する Mission 一度に。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-011" level="MAY">
+
+-A **Worker**は Agent WorkItem を独自のスケジュールに受け入れる行列。同じ Agent
+MAY になる Worker 多くのグループで。
+
+</NormativeClause>
+
+-A **Group Authority**
+は Organization 認証するインフラストラクチャセッション、検証 Membership およびポリシーを作成し、構造化された遷移をシリアル化し、イベントを追加します。これはセマンティック マネージャーではなく、エージェントが何を言うべきか、またはどのように推論すべきかを決定しません。
+
+<NormativeClause id="MWP-FND-012" level={["MAY","MUST NOT"]}>
+
+Group
+Authority は、Group ごとに 1 つの論理権限です。実装 MAY はそれを内部的に複製しますが、コンセンサス、リーダー選出、レプリカ トポロジ MUST
+NOT は MissionWeaveProtocol セマンティクスとして公開されます。この選択により、エージェントがスプリット ブレイン実行を社会的に解決する必要がなく、決定的な排他的所有権が提供されます。
+
+</NormativeClause>
+
+## 4. コアの不変条件
+
+<NormativeClause id="MWP-FND-013" level="MUST">
+
+準拠する実装 MUST は、次の不変条件をすべて保持します。
+
+</NormativeClause>
+
+1. **Mission が 1 つ、Group が 1 つ。**
+   各 Mission は、プライマリ Group を 1 つだけ所有し、各プライマリ Group は、正確に 1 つの Mission に属します。
+
+<NormativeClause id="MWP-FND-014" level="MUST NOT">
+
+2. **会話は権限ではありません。** Message、メンション、概要、Context
+   Package、またはモデル出力 MUST
+   NOT は、それ自体でツール呼び出し、ビジネスを承認します。アクション、WorkItem 割り当て、予算支出、または権限付与。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-015" level="MUST">
+
+3. **構造化された実行権限。**
+   結果的なアクション MUST が接続されます。承認された WorkItem、現在の所有権エポック、有効な実行リース、該当するポリシーの承認、およびスコープ付き機能トークンにアクセスします。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-016" level="MUST">
+
+4. **1 つのアクティブなランタイム。** 状態を変更する Agent Command
+   MUST は、現在の状態を保持します。Session
+   Epoch。下位エポック MUST は、WebSocket が接続されたままであっても拒否されます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-017" level={["MAY","MUST NOT"]}>
+
+5. **排他的な作業はフェンスで囲まれています。**
+   現在の所有権エポックは最大 1 つしか存在しません。排他的な WorkItem。古いエポック MAY の結果は、権限のない Evidence として保持されますが、MUST
+   NOT によって WorkItem が完了します。
+
+</NormativeClause>
+
+6. **追加専用の履歴**
+   受け入れられたイベントとコミットされたメッセージは次のとおりです。不変。修正、撤回、編集、取り消し、修復は新しいイベントです。
+7. **Group ごとの注文のみ。**
+   すべての Group には 1 つの単調 Event シーケンスがあります。MissionWeaveProtocol は、グループ全体にわたるグローバルな順序やアトミックなトランザクションを定義しません。
+
+<NormativeClause id="MWP-FND-018" level={["MAY","MUST"]}>
+
+8. **少なくとも 1 回の配信。**
+   イベント MAY は複数回配信されます。安定した識別子と冪等処理 MUST により、受け入れられた各状態遷移が 1 回観察可能になります。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-019" level="MUST">
+
+9. **Mission の分離。**
+   Mission のコンテンツ、認証情報、中間状態、および Agent メモリは、デフォルトでは Group スコープです。 Group 間の開示 MUST は明示的かつ許可されている必要があります。
+
+</NormativeClause>
+
+10. **人間による最終承認。**
+    ルート Mission は、MissionOwner は、正確な Mission リビジョンと Artifact セットを承認します。 Coordinator レビューは最終的な人間による Approval ではありません。
+
+<NormativeClause id="MWP-FND-020" level="MUST NOT">
+
+11. **予算と権限は下方に絞り込まれます。**
+    WorkItem およびサブタスクの予算、機能、リソース権限 MUST
+    NOT が親の許可を超えています。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-021" level="MUST">
+
+12. **プライベート Mission サイドチャネルはありません。**
+    Mission 関連の Agent 通信 MUST は、Mission
+    Group に記録されるか、Coordinator および MissionOwner に表示される、リンクされたアクセス制御された会話に記録されます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-022" level={["MUST","MUST NOT"]}>
+
+13. **プライベート推論の要件はありません。**
+    エージェント MUST は決定、入力、監査に必要な証拠、阻害要因、結果。 MUST
+    NOT は、プライベートな思考連鎖、非表示のプロンプト、または生の内部メモリを公開するために必要です。
+
+</NormativeClause>
+
+## 5. システムアーキテクチャ
+
+MissionWeaveProtocol デプロイメントには少なくとも以下が含まれます。
+
+- Organization によって制御される Agent Registry;
+- Group Authority ストアと耐久性のある Group Event ストア。
+- ポリシーを評価し、機能トークンを発行する認可サービス。
+- 1 人以上の独立してスケジュールされたエージェント。
+- Artifact ストレージはコンテンツ ハッシュによってアドレス指定されます。そして
+- Mission ディレクティブ、監視、介入、および Approval。
+
+<NormativeClause id="MWP-FND-023" level="MUST NOT">
+
+権限のある状態は、ミッション、メンバーシップ、作業項目、所有権とリースのエポック、重複排除の受領書、承認、および Group イベントで構成されます。 Agent ローカル カーソル、Group ごとのキュー、チェックポイント、送信ボックス、受信ボックス、およびスケジューラの状態は再構築可能なプロジェクションです。 Agent のローカル データベース MUST
+NOT が失われると、権限のある Mission 状態が変化します。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-FND-024" level="RECOMMENDED">
+
+PostgreSQL および Agent ローカル SQLite は、v0.1 リファレンス実装の場合は RECOMMENDED であり、コンテンツ アドレス指定されたオブジェクト ストレージはアーティファクトの場合は RECOMMENDED です。これらの製品はワイヤ プロトコル要件を満たしていません。
+
+</NormativeClause>

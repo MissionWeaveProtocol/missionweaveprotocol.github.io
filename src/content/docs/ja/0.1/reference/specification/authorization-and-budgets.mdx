@@ -1,0 +1,62 @@
+---
+title: 認可、予算、副作用
+description: 規範的な認可、能力、承認、予算、および副作用の制御。
+---
+
+import NormativeClause from "../../../../../../components/NormativeClause.astro";
+
+## 12. 認可、予算、副作用
+
+<NormativeClause id="MWP-AUT-001" level="MUST">
+
+WorkItem が受け入れられ、必要なすべての承認が得られた後、認可サービスは有効期間が短い最小特権機能トークンを発行します。トークン MUST は以下にバインドされます。
+
+- Worker Agent ID と現在の Session Epoch;
+- WorkItem ID と所有権エポック;
+- 現在の実行リース ID。
+- 許可されたツール、リソース、データ、操作。
+- 財務、トークン、コール、コンピューティング、時間、および副作用の制限。そして
+- 該当する実行リースまでの有効期限。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-002" level={["MAY","MUST NOT","MUST"]}>
+
+Coordinator MAY は認可を要求しますが、MUST
+NOT は Worker の資格情報を製造、コピー、または転送します。トークンとシークレット MUST
+NOT は、メッセージ、Agent カード、コンテキスト パッケージ、アーティファクト、または Group イベントに表示されます。期限切れ、取り消し、不一致、または予算超過のトークン MUST は拒否されます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-003" level={["MUST","MAY"]}>
+
+Organization ポリシー MUST は、運用展開、支払い、外部通信、破壊的変更、または機密データへのアクセスの前に、WorkItem を
+`awaiting_execution_approval`
+に配置できるようにします。認可サービス MUST は、署名された承認ゲートが満たされるまで機能トークンを保留します。低リスクの作業 MAY はポリシーに従って自動的に続行されます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-004" level="MUST NOT">
+
+Mission および WorkItem の予算は必須のプロトコル概念です。 MissionOwner は Mission の上限を設定し、Coordinator はその上限を超えて WorkItem とサブタスクに割り当ててはならず、認可サービスはハード上限を強制します。予算が枯渇すると、影響を受ける作業が一時停止され、明示的なエスカレーションが必要になります。エージェント MUST
+NOT が制限を静かに超えます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-005" level="MUST">
+
+Group Authority MUST は、集計された 6 次元の予算台帳を永続化します。署名された
+`ext.missionweaveprotocol.core.resource_usage_record`
+Command は、1 つの WorkItem、所有権エポック、および実行リース ID に対するゼロ以外のデルタを記録します。対応する
+`ext.missionweaveprotocol.core.resource_usage_recorded`
+Event には、デルタ、累積使用量、および残りの予算が含まれます。消費 MUST は、1 つのアトミック遷移で WorkItem とその完全な WorkItem/Mission 祖先を更新します。 1 次元オーバーフロー MUST は、遷移全体を
+`BUDGET_EXCEEDED`
+として拒否します。ケイパビリティ トークンの予算 MUST は、作業契約と権限のある残りの予算の両方によって制限されます。
+
+</NormativeClause>
+
+<NormativeClause id="MWP-AUT-006" level="MUST">
+
+キャンセルまたは緊急終了 MUST は、関連するリースと機能トークンを取り消し、新しい割り当てを停止し、必要に応じて契約で定義されたクリーンアップまたは補償作業項目を開始します。
+
+</NormativeClause>

@@ -1,0 +1,69 @@
+---
+title: 最初の入場と歴史的信頼
+description:
+  権威検索、アトミックな追加、返されたレコードの検証、および履歴再生フローが 6
+  段階の検証の上に階層化されています。
+---
+
+# 最初の入場と歴史的信頼
+
+暗号検証により、保護されたバイトとキー バインドされた Principal が証明されます。 First
+Admission では、Organization が割り当てられた信頼できる承認インスタントと権限のある追加専用レコードが追加されます。アドミッション層は、6 つの暗号化ステージから分離されたままになります ([MWP-ADM-005](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-005)])。
+
+## Admission Log 契約
+
+論理キーは `(organizationId, signingHash)` です。 Admission
+Log は、受け入れサービスを認証し、見つかったレコードを権限のある不在レコードと区別し、追加のみの整合性を保持し、1 つのアトミックな追加または既存のリターン操作を公開します。型指定された結果はフェールクローズされます。呼び出し元の信頼フラグでそれらを置き換えることはできません ([MWP-ADM-003](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-003)])。
+
+正確な 9 フィールドのレコード形状、`signature`
+メンバーの禁止、および非自己認証境界は
+[MWP-ADM-001](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-001).その正確なローカル アーティファクトは
+[JSON スキーマ カタログ ](../../reference/schemas/)] でインデックス付けされており、完全な初回入場および再入場証拠バンドルは
+[入場適合](../../reference/conformance/admission/)] で公開されています。
+
+## 初回入会の流れ
+
+読者に表示されるシーケンスは正確に次のとおりです。
+
+```text
+six-stage cryptographic verification
+→ authoritative Admission Log lookup
+→ found record validation OR authoritative absence
+→ trusted context and candidate preparation
+→ atomic append-or-return-existing
+→ returned record validation
+→ admitted result
+```
+
+分岐点が重要です。見つかったレコードは、直接レコード検証に進みます。正式な欠席の場合のみ、信頼できるコンテキストと候補者の準備が可能になります。アトミック追加は、ローカル候補または同時にコミットされたレコードを返すことができ、返されたレコードは成功する前に常に検証されます。バイト候補者だけでは入学が成立しません。このオーケストレーションは
+[MWP-ADM-006](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-006).
+
+候補の準備では、Event が追加されたり、状態遷移が暗示されたりしません ([MWP-ADM-007](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-007)])。
+
+## 返されたレコードの検証
+
+返された First-Admission Record は、1 つの厳密な UTF-8
+JSON 値として解析され、ローカル スキーマに対して検証され、Organization、ドキュメントの種類、署名ハッシュ、キー ID、およびPrincipal。その
+`acceptedBy`
+ID は、アダプターの結果 ([MWP-ADM-009](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-009))] によって認証されたサービスと一致します。
+
+信頼できる受け入れインスタントは、保護された署名時間に使用されるのと同じ選択された鍵間隔に対して独立してテストされます ([MWP-ADM-010](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-010)])。
+
+6 ステージ完了後の障害は、保護された診断ステージ `admission` を保持し、回線上で
+`AUTH_INVALID_SIGNATURE`
+([MWP-ADM-012](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-012))] にマップされます。
+
+## 歴史的なリプレイ
+
+歴史の再現はより狭い道をたどります。
+
+```text
+six-stage cryptographic verification
+→ required found record
+→ record validation
+→ no trusted context or append
+```
+
+6 つの段階では、保護された署名時間に必要な保持された有効性履歴を含む信頼できる履歴 Registry 証拠が使用されます。再生には既存のレコードが必要で、それを検証し、新しい受付を作成したり、信頼できる候補コンテキストを発行したりすることはありません ([MWP-ADM-008](../../reference/specification/first-admission-and-historical-trust/#mwp-adm-008)])。
+
+入場は、Command の鮮度および署名者の承認とは別のままです。次のページでは、これらの境界を明確にします。

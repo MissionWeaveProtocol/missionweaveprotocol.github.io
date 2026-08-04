@@ -1,0 +1,84 @@
+---
+title: MissionWeaveProtocol 0.1 を学ぶ
+description:
+  MissionWeaveProtocol 0.1
+  を介した、ミッションとグループから信頼、アドミッション、セキュリティ境界までの規範的な概念パス。
+---
+
+import { CardGrid, LinkCard } from "@astrojs/starlight/components";
+
+# MissionWeaveProtocol 0.1 を学習する
+
+:::caution[Draft Standard 0.1]
+
+このバージョン付きの学習パスは、標準的な Web サイト出版物の一部です。読者の順序でモデルを説明し、すべてのルールをローカルの参照仕様の安定した条項にリンクします。
+
+:::
+
+MissionWeaveProtocol は、1 つの信頼できる Organization 内の自律エージェントを調整します。会話を実行権限から分離し、各 Mission の状態と資格情報を分離して維持し、再生、回復、Evidence、および人間の説明責任に必要な永続的な事実を記録します。これらの境界は
+[MWP-FND-002](../reference/specification/foundations/#mwp-fnd-002) および
+[コア不変量](../reference/specification/foundations/#mwp-fnd-013).
+
+## ショートバージョン
+
+1. 人間の MissionOwner は、done の定義を持つ制限された Mission を作成します。期限、予算、承認ポリシー。
+2. Mission は、プライマリ Group を 1 つと、永続的な Event 履歴を 1 つ受け取ります。および置き換え可能な Coordinator。
+3. Group メンバーは永続的なメッセージを交換し、作業を提案する可能性がありますが、Message 実行可能権限を単独で作成することはありません ([MWP-FND-014](../reference/specification/foundations/#mwp-fnd-014)])。
+4. 許可されたアクターは、機械可読な作業契約を含む WorkItem を作成します。
+5. Worker はアドミッション コントロールを実行し、Group ごとにオファーを受け入れます。キューに登録し、独自のスケジューラを通じてグループ全体でスケジュールを設定します。
+6. 作業により、コンテンツに対応したアーティファクトと受諾にマッピングされた Evidence が生成されます。基準。
+7. MissionOwner が正確な結果を承認する前に、Coordinator は結果を検証します。Mission リビジョンと Artifact セット。
+
+## モデルに従ってください
+
+<CardGrid>
+  <LinkCard
+    title="Core model"
+    description="Missions, Groups, durable records, local projections, and the invariants that connect them."
+    href="./core-model/"
+  />
+  <LinkCard
+    title="Identity, roles, and authority"
+    description="Organization identity, Agent Cards, Presence, sessions, fencing, and split authority."
+    href="./identity-roles-and-authority/"
+  />
+  <LinkCard
+    title="Work lifecycle"
+    description="Conversation, proposals, Work Contracts, acceptance, execution, Evidence, and approval."
+    href="./work-lifecycle/"
+  />
+  <LinkCard
+    title="Groups and scheduling"
+    description="Per-Group queues, global Worker scheduling, isolated slots, preemption, and replay."
+    href="./groups-and-scheduling/"
+  />
+  <LinkCard
+    title="サブタスク"
+    description="親のスコープ、予算、Evidence、説明責任を失わずに再帰的に分解します。"
+    href="./child-missions/"
+  />
+  <LinkCard
+    title="Signed Documents and trust"
+    description="Protected content, Registry evidence, six-stage verification, and signing hashes."
+    href="./signed-documents-and-trust/"
+  />
+  <LinkCard
+    title="First Admission and Historical Trust"
+    description="Authoritative lookup, atomic admission, returned-record validation, and historical replay."
+    href="./first-admission-and-historical-trust/"
+  />
+  <LinkCard
+    title="Security boundaries"
+    description="What cryptography and Admission establish, and which concerns remain separate."
+    href="./security-boundaries/"
+  />
+</CardGrid>
+
+## プロトコル境界
+
+MissionWeaveProtocol は、Agent から Agent
+RPC、組織間フェデレーション、物理ピアツーピア ルーティング、分散コンセンサス、モデル プロンプト、またはプライベート モデル推論を定義しません。 1 つの Organization は、アイデンティティ、ポリシー、認可、永続的な Group 順序付け、および人間の説明責任を提供します。 Mission コンテンツはデフォルトで Group スコープのままですが ([MWP-FND-019](../reference/specification/foundations/#mwp-fnd-019)])、監査可能な決定と結果にはプライベートな思考連鎖の開示は必要ありません([MWP-FND-022](../reference/specification/foundations/#mwp-fnd-022))。
+
+正確な要件の文言については、ローカルの
+[参照仕様](../reference/specification/)、[用語](../reference/terminology/)、[スキーマ](../reference/schemas/)]、[適合表面](../reference/conformance/)]を使用してください。正確なコミット、プロファイル、ダイジェスト、および構築されたサイト ID は、ローカルの
+[標準リリース ページ ](../reference/normative-release/).
