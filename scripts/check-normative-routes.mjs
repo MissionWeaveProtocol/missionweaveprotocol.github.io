@@ -179,6 +179,26 @@ for (const slug of sourceSlugs) {
     fail(`route manifest has no source for ${slug}`);
 }
 
+const legacyContentRoots = ["docs/0.1", "sdk", "reference"];
+const remainingLegacySources = [];
+for (const locale of localeDirectories) {
+  for (const legacyRoot of legacyContentRoots) {
+    const directory = path.join(contentRoot, locale, legacyRoot);
+    try {
+      for (const file of await walk(directory)) {
+        remainingLegacySources.push(path.relative(contentRoot, file));
+      }
+    } catch (error) {
+      if (error?.code !== "ENOENT") throw error;
+    }
+  }
+}
+if (remainingLegacySources.length > 0) {
+  fail(
+    `${remainingLegacySources.length} superseded content sources remain; first: ${remainingLegacySources[0]}`,
+  );
+}
+
 if (navigationDocument.schemaVersion !== 1) {
   fail("navigation schemaVersion must be 1");
 }
