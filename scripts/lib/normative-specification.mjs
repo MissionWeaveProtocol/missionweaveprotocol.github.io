@@ -625,7 +625,7 @@ function applySegmentEdits(source, segmentStart, segmentEnd, page, edits) {
 }
 
 function pageFrontmatter(page) {
-  return `---\ntitle: ${JSON.stringify(page.title)}\ndescription: ${JSON.stringify(page.description)}\n---\n\n`;
+  return `---\nnormativeVersion: "0.1"\nnormativeStatus: normative\nclausePrefix: ${page.prefix}\ntitle: ${JSON.stringify(page.title)}\ndescription: ${JSON.stringify(page.description)}\n---\n\n`;
 }
 
 function clauseRangeLabel(pageManifest, sourceSegment) {
@@ -659,6 +659,8 @@ function renderIndex({ manifest, releaseStatus, releaseVersion }) {
     return `| ${page.sectionMappings[index] ?? page.sectionMappings.join(", ")} | [${page.title}](./${slug}/) | ${segment.startLine}–${segment.endLine} | ${clauseRangeLabel(page, segment)} |`;
   });
   return `---
+normativeVersion: "0.1"
+normativeStatus: normative
 title: "MissionWeaveProtocol 0.1 specification"
 description: "The complete local normative specification and pinned source map for MissionWeaveProtocol 0.1."
 ---
