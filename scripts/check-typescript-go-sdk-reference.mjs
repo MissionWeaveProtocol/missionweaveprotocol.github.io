@@ -1,6 +1,12 @@
 import { access, readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  buildNormativeRedirects,
+  localeDefinitions,
+  navigationManifest,
+  routeManifest,
+} from "./lib/normative-routes.mjs";
 
 const repositoryRoot = fileURLToPath(new URL("../", import.meta.url));
 const sdkRoot = path.join(repositoryRoot, "src/content/docs/0.1/build/sdk");
@@ -36,6 +42,74 @@ function prohibitRepositoryDocumentation(relativePath, contents) {
     )
   ) {
     failures.push(`${relativePath}: depends on repository documentation`);
+  }
+}
+
+function localizedRoute(directory, route) {
+  return directory === "" ? route : `/${directory}${route}`;
+}
+
+function requireSdkRoutes(sdk, label) {
+  const routesById = new Map(
+    routeManifest.routes.map((route) => [route.id, route]),
+  );
+  const redirects = buildNormativeRedirects();
+  const expectedSuffixes = ["", "runtime", "admission", "api"];
+  const expectedRouteIds = expectedSuffixes.map((suffix) =>
+    suffix === "" ? `build-sdk-${sdk}` : `build-sdk-${sdk}-${suffix}`,
+  );
+  const buildGroup = navigationManifest.groups.find(
+    (group) => group.id === "build",
+  );
+  const sdkGroup = buildGroup?.items.find((item) => item.id === "sdks");
+  const languageGroup = sdkGroup?.items.find(
+    (item) => item.id === `sdk-${sdk}`,
+  );
+
+  if (languageGroup?.labels?.en !== label) {
+    failures.push(`navigation.json: sdk-${sdk} English label must be ${label}`);
+  }
+  const actualRouteIds = languageGroup?.items?.map((item) => item.route) ?? [];
+  if (JSON.stringify(actualRouteIds) !== JSON.stringify(expectedRouteIds)) {
+    failures.push(
+      `navigation.json: sdk-${sdk} routes must be ${JSON.stringify(expectedRouteIds)}`,
+    );
+  }
+
+  for (const suffix of expectedSuffixes) {
+    const routeSuffix = suffix === "" ? "" : `-${suffix}`;
+    const pathSuffix = suffix === "" ? "" : `/${suffix}`;
+    const id = `build-sdk-${sdk}${routeSuffix}`;
+    const route = routesById.get(id);
+    const expected = {
+      source: `build/sdk/${sdk}${pathSuffix}`,
+      versioned: `/0.1/build/sdk/${sdk}${pathSuffix}/`,
+      latest: `/build/sdk/${sdk}${pathSuffix}/`,
+      legacy: suffix === "" ? [`/sdk/${sdk}/`] : [],
+    };
+
+    if (!route) {
+      failures.push(`routes.json: missing ${id}`);
+      continue;
+    }
+    for (const [field, value] of Object.entries(expected)) {
+      if (JSON.stringify(route[field]) !== JSON.stringify(value)) {
+        failures.push(
+          `routes.json: ${id}.${field} must be ${JSON.stringify(value)}`,
+        );
+      }
+    }
+    for (const { directory } of localeDefinitions) {
+      const destination = localizedRoute(directory, route.versioned);
+      for (const source of [route.latest, ...route.legacy]) {
+        const localizedSource = localizedRoute(directory, source);
+        if (redirects[localizedSource] !== destination) {
+          failures.push(
+            `routes.json: ${localizedSource} must redirect to ${destination}`,
+          );
+        }
+      }
+    }
   }
 }
 
@@ -261,21 +335,8 @@ for (const [relativePath, tokens] of requiredPages) {
 const sdkIndexPath = path.join(sdkRoot, "index.mdx");
 const sdkIndex = await readFile(sdkIndexPath, "utf8");
 requireTokens("index.mdx", sdkIndex, ["./typescript/", "./go/"]);
-
-const astroConfig = await readFile(
-  path.join(repositoryRoot, "astro.config.mjs"),
-  "utf8",
-);
-requireTokens("astro.config.mjs", astroConfig, [
-  "`${prefix}/sdk/typescript`",
-  "`${prefix}/0.1/build/sdk/typescript/`",
-  "`${prefix}/sdk/go`",
-  "`${prefix}/0.1/build/sdk/go/`",
-  'label: "TypeScript SDK"',
-  'slug: "0.1/build/sdk/typescript"',
-  'label: "Go SDK"',
-  'slug: "0.1/build/sdk/go"',
-]);
+requireSdkRoutes("typescript", "TypeScript SDK");
+requireSdkRoutes("go", "Go SDK");
 
 const requiredExamples = new Map([
   [
