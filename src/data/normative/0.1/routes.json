@@ -1,0 +1,503 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": "0.1",
+  "locales": ["en", "zh-cn", "zh-tw", "ja", "es", "fr", "de"],
+  "routes": [
+    {
+      "id": "learn",
+      "section": "learn",
+      "source": "learn",
+      "versioned": "/0.1/learn/",
+      "latest": "/learn/",
+      "legacy": ["/docs/0.1/"]
+    },
+    {
+      "id": "learn-core-model",
+      "section": "learn",
+      "source": "learn/core-model",
+      "versioned": "/0.1/learn/core-model/",
+      "latest": "/learn/core-model/",
+      "legacy": ["/docs/0.1/core-model/"]
+    },
+    {
+      "id": "learn-identity-roles-and-authority",
+      "section": "learn",
+      "source": "learn/identity-roles-and-authority",
+      "versioned": "/0.1/learn/identity-roles-and-authority/",
+      "latest": "/learn/identity-roles-and-authority/",
+      "legacy": []
+    },
+    {
+      "id": "learn-work-lifecycle",
+      "section": "learn",
+      "source": "learn/work-lifecycle",
+      "versioned": "/0.1/learn/work-lifecycle/",
+      "latest": "/learn/work-lifecycle/",
+      "legacy": ["/docs/0.1/work-lifecycle/"]
+    },
+    {
+      "id": "learn-groups-and-scheduling",
+      "section": "learn",
+      "source": "learn/groups-and-scheduling",
+      "versioned": "/0.1/learn/groups-and-scheduling/",
+      "latest": "/learn/groups-and-scheduling/",
+      "legacy": ["/docs/0.1/scheduling/"]
+    },
+    {
+      "id": "learn-child-missions",
+      "section": "learn",
+      "source": "learn/child-missions",
+      "versioned": "/0.1/learn/child-missions/",
+      "latest": "/learn/child-missions/",
+      "legacy": ["/docs/0.1/child-missions/"]
+    },
+    {
+      "id": "learn-signed-documents-and-trust",
+      "section": "learn",
+      "source": "learn/signed-documents-and-trust",
+      "versioned": "/0.1/learn/signed-documents-and-trust/",
+      "latest": "/learn/signed-documents-and-trust/",
+      "legacy": []
+    },
+    {
+      "id": "learn-first-admission-and-historical-trust",
+      "section": "learn",
+      "source": "learn/first-admission-and-historical-trust",
+      "versioned": "/0.1/learn/first-admission-and-historical-trust/",
+      "latest": "/learn/first-admission-and-historical-trust/",
+      "legacy": ["/docs/0.1/trust-and-authority/"]
+    },
+    {
+      "id": "learn-security-boundaries",
+      "section": "learn",
+      "source": "learn/security-boundaries",
+      "versioned": "/0.1/learn/security-boundaries/",
+      "latest": "/learn/security-boundaries/",
+      "legacy": []
+    },
+    {
+      "id": "build",
+      "section": "build",
+      "source": "build",
+      "versioned": "/0.1/build/",
+      "latest": "/build/",
+      "legacy": []
+    },
+    {
+      "id": "build-runtime-architecture-and-bootstrap",
+      "section": "build",
+      "source": "build/runtime/architecture-and-bootstrap",
+      "versioned": "/0.1/build/runtime/architecture-and-bootstrap/",
+      "latest": "/build/runtime/architecture-and-bootstrap/",
+      "legacy": []
+    },
+    {
+      "id": "build-runtime-protocol-types",
+      "section": "build",
+      "source": "build/runtime/protocol-types",
+      "versioned": "/0.1/build/runtime/protocol-types/",
+      "latest": "/build/runtime/protocol-types/",
+      "legacy": []
+    },
+    {
+      "id": "build-runtime-validation-canonicalization-and-signing",
+      "section": "build",
+      "source": "build/runtime/validation-canonicalization-and-signing",
+      "versioned": "/0.1/build/runtime/validation-canonicalization-and-signing/",
+      "latest": "/build/runtime/validation-canonicalization-and-signing/",
+      "legacy": []
+    },
+    {
+      "id": "build-runtime-first-admission-and-historical-trust",
+      "section": "build",
+      "source": "build/runtime/first-admission-and-historical-trust",
+      "versioned": "/0.1/build/runtime/first-admission-and-historical-trust/",
+      "latest": "/build/runtime/first-admission-and-historical-trust/",
+      "legacy": []
+    },
+    {
+      "id": "build-runtime-persistence-and-recovery",
+      "section": "build",
+      "source": "build/runtime/persistence-and-recovery",
+      "versioned": "/0.1/build/runtime/persistence-and-recovery/",
+      "latest": "/build/runtime/persistence-and-recovery/",
+      "legacy": []
+    },
+    {
+      "id": "build-runtime-transport-and-framing",
+      "section": "build",
+      "source": "build/runtime/transport-and-framing",
+      "versioned": "/0.1/build/runtime/transport-and-framing/",
+      "latest": "/build/runtime/transport-and-framing/",
+      "legacy": []
+    },
+    {
+      "id": "build-runtime-errors-and-observability",
+      "section": "build",
+      "source": "build/runtime/errors-and-observability",
+      "versioned": "/0.1/build/runtime/errors-and-observability/",
+      "latest": "/build/runtime/errors-and-observability/",
+      "legacy": []
+    },
+    {
+      "id": "build-runtime-conformance-and-upgrades",
+      "section": "build",
+      "source": "build/runtime/conformance-and-upgrades",
+      "versioned": "/0.1/build/runtime/conformance-and-upgrades/",
+      "latest": "/build/runtime/conformance-and-upgrades/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk",
+      "section": "build",
+      "source": "build/sdk",
+      "versioned": "/0.1/build/sdk/",
+      "latest": "/build/sdk/",
+      "legacy": ["/sdk/"]
+    },
+    {
+      "id": "build-sdk-python",
+      "section": "build",
+      "source": "build/sdk/python",
+      "versioned": "/0.1/build/sdk/python/",
+      "latest": "/build/sdk/python/",
+      "legacy": ["/sdk/python/"]
+    },
+    {
+      "id": "build-sdk-python-runtime",
+      "section": "build",
+      "source": "build/sdk/python/runtime",
+      "versioned": "/0.1/build/sdk/python/runtime/",
+      "latest": "/build/sdk/python/runtime/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-python-admission",
+      "section": "build",
+      "source": "build/sdk/python/admission",
+      "versioned": "/0.1/build/sdk/python/admission/",
+      "latest": "/build/sdk/python/admission/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-python-api",
+      "section": "build",
+      "source": "build/sdk/python/api",
+      "versioned": "/0.1/build/sdk/python/api/",
+      "latest": "/build/sdk/python/api/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-typescript",
+      "section": "build",
+      "source": "build/sdk/typescript",
+      "versioned": "/0.1/build/sdk/typescript/",
+      "latest": "/build/sdk/typescript/",
+      "legacy": ["/sdk/typescript/"]
+    },
+    {
+      "id": "build-sdk-typescript-runtime",
+      "section": "build",
+      "source": "build/sdk/typescript/runtime",
+      "versioned": "/0.1/build/sdk/typescript/runtime/",
+      "latest": "/build/sdk/typescript/runtime/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-typescript-admission",
+      "section": "build",
+      "source": "build/sdk/typescript/admission",
+      "versioned": "/0.1/build/sdk/typescript/admission/",
+      "latest": "/build/sdk/typescript/admission/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-typescript-api",
+      "section": "build",
+      "source": "build/sdk/typescript/api",
+      "versioned": "/0.1/build/sdk/typescript/api/",
+      "latest": "/build/sdk/typescript/api/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-go",
+      "section": "build",
+      "source": "build/sdk/go",
+      "versioned": "/0.1/build/sdk/go/",
+      "latest": "/build/sdk/go/",
+      "legacy": ["/sdk/go/"]
+    },
+    {
+      "id": "build-sdk-go-runtime",
+      "section": "build",
+      "source": "build/sdk/go/runtime",
+      "versioned": "/0.1/build/sdk/go/runtime/",
+      "latest": "/build/sdk/go/runtime/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-go-admission",
+      "section": "build",
+      "source": "build/sdk/go/admission",
+      "versioned": "/0.1/build/sdk/go/admission/",
+      "latest": "/build/sdk/go/admission/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-go-api",
+      "section": "build",
+      "source": "build/sdk/go/api",
+      "versioned": "/0.1/build/sdk/go/api/",
+      "latest": "/build/sdk/go/api/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-rust",
+      "section": "build",
+      "source": "build/sdk/rust",
+      "versioned": "/0.1/build/sdk/rust/",
+      "latest": "/build/sdk/rust/",
+      "legacy": ["/sdk/rust/"]
+    },
+    {
+      "id": "build-sdk-rust-runtime",
+      "section": "build",
+      "source": "build/sdk/rust/runtime",
+      "versioned": "/0.1/build/sdk/rust/runtime/",
+      "latest": "/build/sdk/rust/runtime/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-rust-admission",
+      "section": "build",
+      "source": "build/sdk/rust/admission",
+      "versioned": "/0.1/build/sdk/rust/admission/",
+      "latest": "/build/sdk/rust/admission/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-rust-api",
+      "section": "build",
+      "source": "build/sdk/rust/api",
+      "versioned": "/0.1/build/sdk/rust/api/",
+      "latest": "/build/sdk/rust/api/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-java",
+      "section": "build",
+      "source": "build/sdk/java",
+      "versioned": "/0.1/build/sdk/java/",
+      "latest": "/build/sdk/java/",
+      "legacy": ["/sdk/java/"]
+    },
+    {
+      "id": "build-sdk-java-runtime",
+      "section": "build",
+      "source": "build/sdk/java/runtime",
+      "versioned": "/0.1/build/sdk/java/runtime/",
+      "latest": "/build/sdk/java/runtime/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-java-admission",
+      "section": "build",
+      "source": "build/sdk/java/admission",
+      "versioned": "/0.1/build/sdk/java/admission/",
+      "latest": "/build/sdk/java/admission/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-java-api",
+      "section": "build",
+      "source": "build/sdk/java/api",
+      "versioned": "/0.1/build/sdk/java/api/",
+      "latest": "/build/sdk/java/api/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-cpp",
+      "section": "build",
+      "source": "build/sdk/cpp",
+      "versioned": "/0.1/build/sdk/cpp/",
+      "latest": "/build/sdk/cpp/",
+      "legacy": ["/sdk/cpp/"]
+    },
+    {
+      "id": "build-sdk-cpp-runtime",
+      "section": "build",
+      "source": "build/sdk/cpp/runtime",
+      "versioned": "/0.1/build/sdk/cpp/runtime/",
+      "latest": "/build/sdk/cpp/runtime/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-cpp-admission",
+      "section": "build",
+      "source": "build/sdk/cpp/admission",
+      "versioned": "/0.1/build/sdk/cpp/admission/",
+      "latest": "/build/sdk/cpp/admission/",
+      "legacy": []
+    },
+    {
+      "id": "build-sdk-cpp-api",
+      "section": "build",
+      "source": "build/sdk/cpp/api",
+      "versioned": "/0.1/build/sdk/cpp/api/",
+      "latest": "/build/sdk/cpp/api/",
+      "legacy": []
+    },
+    {
+      "id": "reference-specification",
+      "section": "reference",
+      "source": "reference/specification",
+      "versioned": "/0.1/reference/specification/",
+      "latest": "/reference/specification/",
+      "legacy": []
+    },
+    {
+      "id": "reference-specification-foundations",
+      "section": "reference",
+      "source": "reference/specification/foundations",
+      "versioned": "/0.1/reference/specification/foundations/",
+      "latest": "/reference/specification/foundations/",
+      "legacy": []
+    },
+    {
+      "id": "reference-specification-identity-registry-and-sessions",
+      "section": "reference",
+      "source": "reference/specification/identity-registry-and-sessions",
+      "versioned": "/0.1/reference/specification/identity-registry-and-sessions/",
+      "latest": "/reference/specification/identity-registry-and-sessions/",
+      "legacy": []
+    },
+    {
+      "id": "reference-specification-missions-groups-and-membership",
+      "section": "reference",
+      "source": "reference/specification/missions-groups-and-membership",
+      "versioned": "/0.1/reference/specification/missions-groups-and-membership/",
+      "latest": "/reference/specification/missions-groups-and-membership/",
+      "legacy": []
+    },
+    {
+      "id": "reference-specification-commands-events-and-ordering",
+      "section": "reference",
+      "source": "reference/specification/commands-events-and-ordering",
+      "versioned": "/0.1/reference/specification/commands-events-and-ordering/",
+      "latest": "/reference/specification/commands-events-and-ordering/",
+      "legacy": []
+    },
+    {
+      "id": "reference-specification-work-scheduling-and-recovery",
+      "section": "reference",
+      "source": "reference/specification/work-scheduling-and-recovery",
+      "versioned": "/0.1/reference/specification/work-scheduling-and-recovery/",
+      "latest": "/reference/specification/work-scheduling-and-recovery/",
+      "legacy": []
+    },
+    {
+      "id": "reference-specification-signed-documents-and-trust",
+      "section": "reference",
+      "source": "reference/specification/signed-documents-and-trust",
+      "versioned": "/0.1/reference/specification/signed-documents-and-trust/",
+      "latest": "/reference/specification/signed-documents-and-trust/",
+      "legacy": []
+    },
+    {
+      "id": "reference-specification-first-admission-and-historical-trust",
+      "section": "reference",
+      "source": "reference/specification/first-admission-and-historical-trust",
+      "versioned": "/0.1/reference/specification/first-admission-and-historical-trust/",
+      "latest": "/reference/specification/first-admission-and-historical-trust/",
+      "legacy": []
+    },
+    {
+      "id": "reference-specification-authorization-and-budgets",
+      "section": "reference",
+      "source": "reference/specification/authorization-and-budgets",
+      "versioned": "/0.1/reference/specification/authorization-and-budgets/",
+      "latest": "/reference/specification/authorization-and-budgets/",
+      "legacy": []
+    },
+    {
+      "id": "reference-specification-errors-extensions-and-security",
+      "section": "reference",
+      "source": "reference/specification/errors-extensions-and-security",
+      "versioned": "/0.1/reference/specification/errors-extensions-and-security/",
+      "latest": "/reference/specification/errors-extensions-and-security/",
+      "legacy": []
+    },
+    {
+      "id": "reference-terminology",
+      "section": "reference",
+      "source": "reference/terminology",
+      "versioned": "/0.1/reference/terminology/",
+      "latest": "/reference/terminology/",
+      "legacy": []
+    },
+    {
+      "id": "reference-schemas",
+      "section": "reference",
+      "source": "reference/schemas",
+      "versioned": "/0.1/reference/schemas/",
+      "latest": "/reference/schemas/",
+      "legacy": []
+    },
+    {
+      "id": "reference-conformance",
+      "section": "reference",
+      "source": "reference/conformance",
+      "versioned": "/0.1/reference/conformance/",
+      "latest": "/reference/conformance/",
+      "legacy": []
+    },
+    {
+      "id": "reference-conformance-structural",
+      "section": "reference",
+      "source": "reference/conformance/structural",
+      "versioned": "/0.1/reference/conformance/structural/",
+      "latest": "/reference/conformance/structural/",
+      "legacy": []
+    },
+    {
+      "id": "reference-conformance-cryptography",
+      "section": "reference",
+      "source": "reference/conformance/cryptography",
+      "versioned": "/0.1/reference/conformance/cryptography/",
+      "latest": "/reference/conformance/cryptography/",
+      "legacy": []
+    },
+    {
+      "id": "reference-conformance-admission",
+      "section": "reference",
+      "source": "reference/conformance/admission",
+      "versioned": "/0.1/reference/conformance/admission/",
+      "latest": "/reference/conformance/admission/",
+      "legacy": []
+    },
+    {
+      "id": "reference-artifacts-and-digests",
+      "section": "reference",
+      "source": "reference/artifacts-and-digests",
+      "versioned": "/0.1/reference/artifacts-and-digests/",
+      "latest": "/reference/artifacts-and-digests/",
+      "legacy": []
+    },
+    {
+      "id": "reference-normative-release",
+      "section": "reference",
+      "source": "reference/normative-release",
+      "versioned": "/0.1/reference/normative-release/",
+      "latest": "/reference/normative-release/",
+      "legacy": []
+    },
+    {
+      "id": "reference-errata",
+      "section": "reference",
+      "source": "reference/errata",
+      "versioned": "/0.1/reference/errata/",
+      "latest": "/reference/errata/",
+      "legacy": []
+    }
+  ]
+}

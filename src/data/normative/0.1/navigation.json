@@ -1,0 +1,971 @@
+{
+  "schemaVersion": 1,
+  "protocolVersion": "0.1",
+  "badge": {
+    "labels": {
+      "en": "Draft Standard 0.1",
+      "zh-cn": "0.1 标准草案",
+      "zh-tw": "0.1 標準草案",
+      "ja": "標準ドラフト 0.1",
+      "es": "Borrador de estándar 0.1",
+      "fr": "Projet de norme 0.1",
+      "de": "Standardentwurf 0.1"
+    },
+    "variant": "caution"
+  },
+  "groups": [
+    {
+      "id": "learn",
+      "labels": {
+        "en": "Learn",
+        "zh-cn": "学习",
+        "zh-tw": "學習",
+        "ja": "学ぶ",
+        "es": "Aprender",
+        "fr": "Apprendre",
+        "de": "Lernen"
+      },
+      "items": [
+        {
+          "route": "learn",
+          "labels": {
+            "en": "Learn MissionWeaveProtocol 0.1",
+            "zh-cn": "了解 MissionWeaveProtocol 0.1",
+            "zh-tw": "了解 MissionWeaveProtocol 0.1",
+            "ja": "MissionWeaveProtocol 0.1 を学ぶ",
+            "es": "Aprenda MissionWeaveProtocol 0.1",
+            "fr": "Apprendre MissionWeaveProtocol 0.1",
+            "de": "Lernen Sie MissionWeaveProtocol 0.1"
+          },
+          "badge": true
+        },
+        {
+          "route": "learn-core-model",
+          "labels": {
+            "en": "Core model",
+            "zh-cn": "核心模型",
+            "zh-tw": "核心模型",
+            "ja": "コアモデル",
+            "es": "Modelo central",
+            "fr": "Modèle de base",
+            "de": "Kernmodell"
+          }
+        },
+        {
+          "route": "learn-identity-roles-and-authority",
+          "labels": {
+            "en": "Identity, roles, and authority",
+            "zh-cn": "身份、角色和权限",
+            "zh-tw": "身分、角色和權限",
+            "ja": "アイデンティティ、役割、権限",
+            "es": "Identidad, roles y autoridad.",
+            "fr": "Identité, rôles et autorité",
+            "de": "Identität, Rollen und Autorität"
+          }
+        },
+        {
+          "route": "learn-work-lifecycle",
+          "labels": {
+            "en": "Work lifecycle",
+            "zh-cn": "工作生命周期",
+            "zh-tw": "工作生命週期",
+            "ja": "仕事のライフサイクル",
+            "es": "Ciclo de vida laboral",
+            "fr": "Cycle de vie du travail",
+            "de": "Arbeitslebenszyklus"
+          }
+        },
+        {
+          "route": "learn-groups-and-scheduling",
+          "labels": {
+            "en": "Groups and scheduling",
+            "zh-cn": "分组和日程安排",
+            "zh-tw": "分組和日程安排",
+            "ja": "グループとスケジュール設定",
+            "es": "Grupos y programación",
+            "fr": "Groupes et planning",
+            "de": "Gruppen und Terminplanung"
+          }
+        },
+        {
+          "route": "learn-child-missions",
+          "labels": {
+            "en": "Child Missions",
+            "zh-cn": "子任务",
+            "zh-tw": "子任务",
+            "ja": "サブタスク",
+            "es": "Subtarea",
+            "fr": "sous-tâche",
+            "de": "Unteraufgabe"
+          }
+        },
+        {
+          "route": "learn-signed-documents-and-trust",
+          "labels": {
+            "en": "Signed Documents and trust",
+            "zh-cn": "签署文件和信任",
+            "zh-tw": "簽署文件和信任",
+            "ja": "署名された文書と信頼",
+            "es": "Documentos firmados y confianza.",
+            "fr": "Documents signés et confiance",
+            "de": "Unterzeichnete Dokumente und Vertrauen"
+          }
+        },
+        {
+          "route": "learn-first-admission-and-historical-trust",
+          "labels": {
+            "en": "First Admission and Historical Trust",
+            "zh-cn": "首次准入与历史信任",
+            "zh-tw": "首次准入與歷史信任",
+            "ja": "初回アドミッションと履歴信頼",
+            "es": "Primera Admisión y Confianza Histórica",
+            "fr": "Première admission et confiance historique",
+            "de": "Erstzulassung und historischer Trust"
+          }
+        },
+        {
+          "route": "learn-security-boundaries",
+          "labels": {
+            "en": "Security boundaries",
+            "zh-cn": "安全边界",
+            "zh-tw": "安全邊界",
+            "ja": "セキュリティ境界線",
+            "es": "Límites de seguridad",
+            "fr": "Limites de sécurité",
+            "de": "Sicherheitsgrenzen"
+          }
+        }
+      ]
+    },
+    {
+      "id": "build",
+      "labels": {
+        "en": "Build",
+        "zh-cn": "构建",
+        "zh-tw": "建置",
+        "ja": "構築",
+        "es": "Desarrollo",
+        "fr": "Construire",
+        "de": "Entwickeln"
+      },
+      "items": [
+        {
+          "route": "build",
+          "labels": {
+            "en": "Build a MissionWeaveProtocol 0.1 runtime",
+            "zh-cn": "构建 MissionWeaveProtocol 0.1 运行时",
+            "zh-tw": "建構 MissionWeaveProtocol 0.1 運行時",
+            "ja": "MissionWeaveProtocol 0.1 ランタイムをビルドする",
+            "es": "Cree un tiempo de ejecución MissionWeaveProtocol 0.1",
+            "fr": "Créer un environnement d'exécution MissionWeaveProtocol 0.1",
+            "de": "Erstellen Sie eine MissionWeaveProtocol 0.1-Laufzeit"
+          }
+        },
+        {
+          "id": "runtime",
+          "labels": {
+            "en": "Runtime",
+            "zh-cn": "运行时",
+            "zh-tw": "運行時",
+            "ja": "ランタイム",
+            "es": "Tiempo de ejecución",
+            "fr": "Exécution",
+            "de": "Laufzeit"
+          },
+          "items": [
+            {
+              "route": "build-runtime-architecture-and-bootstrap",
+              "labels": {
+                "en": "Architecture and bootstrap",
+                "zh-cn": "架构和引导程序",
+                "zh-tw": "架構和引導程式",
+                "ja": "アーキテクチャとブートストラップ",
+                "es": "Arquitectura y arranque",
+                "fr": "Architecture et bootstrap",
+                "de": "Architektur und Bootstrap"
+              }
+            },
+            {
+              "route": "build-runtime-protocol-types",
+              "labels": {
+                "en": "Protocol types",
+                "zh-cn": "协议类型",
+                "zh-tw": "協定類型",
+                "ja": "プロトコルの種類",
+                "es": "Tipos de protocolo",
+                "fr": "Types de protocoles",
+                "de": "Protokolltypen"
+              }
+            },
+            {
+              "route": "build-runtime-validation-canonicalization-and-signing",
+              "labels": {
+                "en": "Validation, canonicalization, and signing",
+                "zh-cn": "验证、规范化和签名",
+                "zh-tw": "驗證、規範化和簽名",
+                "ja": "検証、正規化、署名",
+                "es": "Validación, canonicalización y firma",
+                "fr": "Validation, canonisation et signature",
+                "de": "Validierung, Kanonisierung und Signierung"
+              }
+            },
+            {
+              "route": "build-runtime-first-admission-and-historical-trust",
+              "labels": {
+                "en": "First Admission and Historical Trust",
+                "zh-cn": "首次准入与历史信任",
+                "zh-tw": "首次准入與歷史信任",
+                "ja": "初回アドミッションと履歴信頼",
+                "es": "Primera Admisión y Confianza Histórica",
+                "fr": "Première admission et confiance historique",
+                "de": "Erstzulassung und historischer Trust"
+              }
+            },
+            {
+              "route": "build-runtime-persistence-and-recovery",
+              "labels": {
+                "en": "Persistence and recovery",
+                "zh-cn": "坚持与恢复",
+                "zh-tw": "堅持與恢復",
+                "ja": "持続性と回復",
+                "es": "Persistencia y recuperación",
+                "fr": "Persistance et récupération",
+                "de": "Beharrlichkeit und Genesung"
+              }
+            },
+            {
+              "route": "build-runtime-transport-and-framing",
+              "labels": {
+                "en": "Transport and framing",
+                "zh-cn": "运输和装框",
+                "zh-tw": "運輸和裝框",
+                "ja": "輸送と額装",
+                "es": "Transporte y enmarcado",
+                "fr": "Transport et encadrement",
+                "de": "Transport und Einrahmung"
+              }
+            },
+            {
+              "route": "build-runtime-errors-and-observability",
+              "labels": {
+                "en": "Errors and observability",
+                "zh-cn": "错误和可观察性",
+                "zh-tw": "錯誤和可觀察性",
+                "ja": "エラーと可観測性",
+                "es": "Errores y observabilidad",
+                "fr": "Erreurs et observabilité",
+                "de": "Fehler und Beobachtbarkeit"
+              }
+            },
+            {
+              "route": "build-runtime-conformance-and-upgrades",
+              "labels": {
+                "en": "Conformance and upgrades",
+                "zh-cn": "一致性和升级",
+                "zh-tw": "一致性和升級",
+                "ja": "適合性とアップグレード",
+                "es": "Conformidad y actualizaciones",
+                "fr": "Conformité et mises à niveau",
+                "de": "Konformität und Upgrades"
+              }
+            }
+          ]
+        },
+        {
+          "id": "sdks",
+          "labels": {
+            "en": "SDKs",
+            "zh-cn": "SDK",
+            "zh-tw": "SDK",
+            "ja": "SDK",
+            "es": "SDK",
+            "fr": "SDK",
+            "de": "SDK"
+          },
+          "items": [
+            {
+              "route": "build-sdk",
+              "labels": {
+                "en": "Official SDK runtime references",
+                "zh-cn": "官方 SDK 运行时参考",
+                "zh-tw": "官方 SDK 運行時參考",
+                "ja": "公式 SDK ランタイム リファレンス",
+                "es": "Referencias oficiales de tiempo de ejecución SDK",
+                "fr": "Références d'exécution officielles SDK",
+                "de": "Offizielle SDK Laufzeitreferenzen"
+              }
+            },
+            {
+              "id": "sdk-python",
+              "labels": {
+                "en": "Python SDK",
+                "zh-cn": "Python SDK",
+                "zh-tw": "Python SDK",
+                "ja": "Python SDK",
+                "es": "Python SDK",
+                "fr": "Python SDK",
+                "de": "Python SDK"
+              },
+              "items": [
+                {
+                  "route": "build-sdk-python",
+                  "labels": {
+                    "en": "Python SDK",
+                    "zh-cn": "Python SDK",
+                    "zh-tw": "Python SDK",
+                    "ja": "Python SDK",
+                    "es": "Python SDK",
+                    "fr": "Python SDK",
+                    "de": "Python SDK"
+                  }
+                },
+                {
+                  "route": "build-sdk-python-runtime",
+                  "labels": {
+                    "en": "Python runtime reference",
+                    "zh-cn": "Python 运行时参考",
+                    "zh-tw": "Python 運行時參考",
+                    "ja": "Python ランタイム リファレンス",
+                    "es": "Referencia de tiempo de ejecución Python",
+                    "fr": "Référence d'exécution Python",
+                    "de": "Python Laufzeitreferenz"
+                  }
+                },
+                {
+                  "route": "build-sdk-python-admission",
+                  "labels": {
+                    "en": "Python First Admission and Historical Trust",
+                    "zh-cn": "Python 首次入场和历史信任",
+                    "zh-tw": "Python 首次入場與歷史信任",
+                    "ja": "Python 初回アドミッションと履歴信頼",
+                    "es": "Python Primera admisión y confianza histórica",
+                    "fr": "Python Première admission et confiance historique",
+                    "de": "Python Erstzulassung und historischer Trust"
+                  }
+                },
+                {
+                  "route": "build-sdk-python-api",
+                  "labels": {
+                    "en": "Python public API inventory",
+                    "zh-cn": "Python 公共 API 库存",
+                    "zh-tw": "Python 公共 API 庫存",
+                    "ja": "Python 公開在庫 API",
+                    "es": "Python inventario público API",
+                    "fr": "Python inventaire public API",
+                    "de": "Python öffentliches API Inventar"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "sdk-typescript",
+              "labels": {
+                "en": "TypeScript SDK",
+                "zh-cn": "TypeScript SDK",
+                "zh-tw": "TypeScript SDK",
+                "ja": "TypeScript SDK",
+                "es": "TypeScript SDK",
+                "fr": "TypeScript SDK",
+                "de": "TypeScript SDK"
+              },
+              "items": [
+                {
+                  "route": "build-sdk-typescript",
+                  "labels": {
+                    "en": "TypeScript SDK",
+                    "zh-cn": "TypeScript SDK",
+                    "zh-tw": "TypeScript SDK",
+                    "ja": "TypeScript SDK",
+                    "es": "TypeScript SDK",
+                    "fr": "TypeScript SDK",
+                    "de": "TypeScript SDK"
+                  }
+                },
+                {
+                  "route": "build-sdk-typescript-runtime",
+                  "labels": {
+                    "en": "TypeScript runtime reference",
+                    "zh-cn": "TypeScript 运行时参考",
+                    "zh-tw": "TypeScript 運行時參考",
+                    "ja": "TypeScript ランタイム リファレンス",
+                    "es": "Referencia de tiempo de ejecución TypeScript",
+                    "fr": "Référence d'exécution TypeScript",
+                    "de": "TypeScript Laufzeitreferenz"
+                  }
+                },
+                {
+                  "route": "build-sdk-typescript-admission",
+                  "labels": {
+                    "en": "TypeScript First Admission and Historical Trust",
+                    "zh-cn": "TypeScript 首次入场和历史信任",
+                    "zh-tw": "TypeScript 首次入場與歷史信任",
+                    "ja": "TypeScript 初回アドミッションと履歴信頼",
+                    "es": "TypeScript Primera admisión y confianza histórica",
+                    "fr": "TypeScript Première admission et confiance historique",
+                    "de": "TypeScript Erstzulassung und historischer Trust"
+                  }
+                },
+                {
+                  "route": "build-sdk-typescript-api",
+                  "labels": {
+                    "en": "TypeScript public API inventory",
+                    "zh-cn": "TypeScript 公共 API 库存",
+                    "zh-tw": "TypeScript 公共 API 庫存",
+                    "ja": "TypeScript 公開在庫 API",
+                    "es": "TypeScript inventario público API",
+                    "fr": "TypeScript inventaire public API",
+                    "de": "TypeScript öffentliches API Inventar"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "sdk-go",
+              "labels": {
+                "en": "Go SDK",
+                "zh-cn": "前往SDK",
+                "zh-tw": "前往SDK",
+                "ja": "SDK に行く",
+                "es": "Ir SDK",
+                "fr": "Allez SDK",
+                "de": "Gehen Sie zu SDK"
+              },
+              "items": [
+                {
+                  "route": "build-sdk-go",
+                  "labels": {
+                    "en": "Go SDK",
+                    "zh-cn": "前往SDK",
+                    "zh-tw": "前往SDK",
+                    "ja": "SDK に行く",
+                    "es": "Ir SDK",
+                    "fr": "Allez SDK",
+                    "de": "Gehen Sie zu SDK"
+                  }
+                },
+                {
+                  "route": "build-sdk-go-runtime",
+                  "labels": {
+                    "en": "Go runtime reference",
+                    "zh-cn": "Go运行时参考",
+                    "zh-tw": "Go運行時參考",
+                    "ja": "Go ランタイムリファレンス",
+                    "es": "Ir a la referencia en tiempo de ejecución",
+                    "fr": "Aller à la référence d'exécution",
+                    "de": "Go-Laufzeitreferenz"
+                  }
+                },
+                {
+                  "route": "build-sdk-go-admission",
+                  "labels": {
+                    "en": "Go First Admission and Historical Trust",
+                    "zh-cn": "Go 首次准入与历史信任",
+                    "zh-tw": "Go 首次准入與歷史信任",
+                    "ja": "Go 初回アドミッションと履歴信頼",
+                    "es": "Ir Primera Admisión y Confianza Histórica",
+                    "fr": "Go First Admission et confiance historique",
+                    "de": "Go First Admission und Historical Trust"
+                  }
+                },
+                {
+                  "route": "build-sdk-go-api",
+                  "labels": {
+                    "en": "Go public API inventory",
+                    "zh-cn": "公开API库存",
+                    "zh-tw": "公開API庫存",
+                    "ja": "API インベントリを公開する",
+                    "es": "Ir al inventario público API",
+                    "fr": "Rendre l'inventaire API public",
+                    "de": "Gehen Sie an die Börse API Inventar"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "sdk-rust",
+              "labels": {
+                "en": "Rust SDK",
+                "zh-cn": "Rust SDK",
+                "zh-tw": "Rust SDK",
+                "ja": "Rust SDK",
+                "es": "Rust SDK",
+                "fr": "Rust SDK",
+                "de": "Rust SDK"
+              },
+              "items": [
+                {
+                  "route": "build-sdk-rust",
+                  "labels": {
+                    "en": "Rust SDK",
+                    "zh-cn": "Rust SDK",
+                    "zh-tw": "Rust SDK",
+                    "ja": "Rust SDK",
+                    "es": "Rust SDK",
+                    "fr": "Rust SDK",
+                    "de": "Rust SDK"
+                  }
+                },
+                {
+                  "route": "build-sdk-rust-runtime",
+                  "labels": {
+                    "en": "Rust runtime reference",
+                    "zh-cn": "Rust 运行时参考",
+                    "zh-tw": "Rust 運行時參考",
+                    "ja": "Rust ランタイム リファレンス",
+                    "es": "Referencia de tiempo de ejecución Rust",
+                    "fr": "Référence d'exécution Rust",
+                    "de": "Rust Laufzeitreferenz"
+                  }
+                },
+                {
+                  "route": "build-sdk-rust-admission",
+                  "labels": {
+                    "en": "Rust First Admission and Historical Trust",
+                    "zh-cn": "Rust 首次入场和历史信任",
+                    "zh-tw": "Rust 首次入場與歷史信任",
+                    "ja": "Rust 初回アドミッションと履歴信頼",
+                    "es": "Rust Primera admisión y confianza histórica",
+                    "fr": "Rust Première admission et confiance historique",
+                    "de": "Rust Erstzulassung und historischer Trust"
+                  }
+                },
+                {
+                  "route": "build-sdk-rust-api",
+                  "labels": {
+                    "en": "Rust public API inventory",
+                    "zh-cn": "Rust 公共 API 库存",
+                    "zh-tw": "Rust 公共 API 庫存",
+                    "ja": "Rust 公開在庫 API",
+                    "es": "Rust inventario público API",
+                    "fr": "Rust inventaire public API",
+                    "de": "Rust öffentliches API Inventar"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "sdk-java",
+              "labels": {
+                "en": "Java SDK",
+                "zh-cn": "Java SDK",
+                "zh-tw": "Java SDK",
+                "ja": "Java SDK",
+                "es": "Java SDK",
+                "fr": "Java SDK",
+                "de": "Java SDK"
+              },
+              "items": [
+                {
+                  "route": "build-sdk-java",
+                  "labels": {
+                    "en": "Java SDK",
+                    "zh-cn": "Java SDK",
+                    "zh-tw": "Java SDK",
+                    "ja": "Java SDK",
+                    "es": "Java SDK",
+                    "fr": "Java SDK",
+                    "de": "Java SDK"
+                  }
+                },
+                {
+                  "route": "build-sdk-java-runtime",
+                  "labels": {
+                    "en": "Java runtime reference",
+                    "zh-cn": "Java 运行时参考",
+                    "zh-tw": "Java 運行時參考",
+                    "ja": "Java ランタイム リファレンス",
+                    "es": "Referencia de tiempo de ejecución Java",
+                    "fr": "Référence d'exécution Java",
+                    "de": "Java Laufzeitreferenz"
+                  }
+                },
+                {
+                  "route": "build-sdk-java-admission",
+                  "labels": {
+                    "en": "Java First Admission and Historical Trust",
+                    "zh-cn": "Java 首次入场和历史信任",
+                    "zh-tw": "Java 首次入場與歷史信任",
+                    "ja": "Java 初回アドミッションと履歴信頼",
+                    "es": "Java Primera admisión y confianza histórica",
+                    "fr": "Java Première admission et confiance historique",
+                    "de": "Java Erstzulassung und historischer Trust"
+                  }
+                },
+                {
+                  "route": "build-sdk-java-api",
+                  "labels": {
+                    "en": "Java public API inventory",
+                    "zh-cn": "Java 公共 API 库存",
+                    "zh-tw": "Java 公共 API 庫存",
+                    "ja": "Java 公開在庫 API",
+                    "es": "Java inventario público API",
+                    "fr": "Java inventaire public API",
+                    "de": "Java öffentliches API Inventar"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "sdk-cpp",
+              "labels": {
+                "en": "C++ SDK",
+                "zh-cn": "C++ SDK",
+                "zh-tw": "C++ SDK",
+                "ja": "C++ SDK",
+                "es": "C++ SDK",
+                "fr": "C++ SDK",
+                "de": "C++ SDK"
+              },
+              "items": [
+                {
+                  "route": "build-sdk-cpp",
+                  "labels": {
+                    "en": "C++ SDK",
+                    "zh-cn": "C++ SDK",
+                    "zh-tw": "C++ SDK",
+                    "ja": "C++ SDK",
+                    "es": "C++ SDK",
+                    "fr": "C++ SDK",
+                    "de": "C++ SDK"
+                  }
+                },
+                {
+                  "route": "build-sdk-cpp-runtime",
+                  "labels": {
+                    "en": "C++ runtime reference",
+                    "zh-cn": "C++ 运行时参考",
+                    "zh-tw": "C++ 運行時參考",
+                    "ja": "C++ ランタイム リファレンス",
+                    "es": "Referencia de tiempo de ejecución C++",
+                    "fr": "Référence d'exécution C++",
+                    "de": "C++ Laufzeitreferenz"
+                  }
+                },
+                {
+                  "route": "build-sdk-cpp-admission",
+                  "labels": {
+                    "en": "C++ First Admission and Historical Trust",
+                    "zh-cn": "C++ 首次入场和历史信任",
+                    "zh-tw": "C++ 首次入場與歷史信任",
+                    "ja": "C++ 初回アドミッションと履歴信頼",
+                    "es": "C++ Primera admisión y confianza histórica",
+                    "fr": "C++ Première admission et confiance historique",
+                    "de": "C++ Erstzulassung und historischer Trust"
+                  }
+                },
+                {
+                  "route": "build-sdk-cpp-api",
+                  "labels": {
+                    "en": "C++ public API inventory",
+                    "zh-cn": "C++ 公共 API 库存",
+                    "zh-tw": "C++ 公共 API 庫存",
+                    "ja": "C++ 公開在庫 API",
+                    "es": "C++ inventario público API",
+                    "fr": "C++ inventaire public API",
+                    "de": "C++ öffentliches API Inventar"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reference",
+      "labels": {
+        "en": "Reference",
+        "zh-cn": "参考",
+        "zh-tw": "參考",
+        "ja": "リファレンス",
+        "es": "Referencia",
+        "fr": "Référence",
+        "de": "Referenz"
+      },
+      "items": [
+        {
+          "id": "specification",
+          "labels": {
+            "en": "Specification",
+            "zh-cn": "规范",
+            "zh-tw": "規格",
+            "ja": "仕様",
+            "es": "Especificación",
+            "fr": "Spécification",
+            "de": "Spezifikation"
+          },
+          "items": [
+            {
+              "route": "reference-specification",
+              "labels": {
+                "en": "MissionWeaveProtocol 0.1 specification",
+                "zh-cn": "MissionWeaveProtocol 0.1 规范",
+                "zh-tw": "MissionWeaveProtocol 0.1 規範",
+                "ja": "MissionWeaveProtocol 0.1仕様",
+                "es": "Especificación MissionWeaveProtocol 0.1",
+                "fr": "Spécification MissionWeaveProtocol 0.1",
+                "de": "MissionWeaveProtocol 0.1 Spezifikation"
+              }
+            },
+            {
+              "route": "reference-specification-foundations",
+              "labels": {
+                "en": "Foundations",
+                "zh-cn": "基础",
+                "zh-tw": "基礎",
+                "ja": "基礎",
+                "es": "Cimientos",
+                "fr": "Fondations",
+                "de": "Stiftungen"
+              }
+            },
+            {
+              "route": "reference-specification-identity-registry-and-sessions",
+              "labels": {
+                "en": "Identity, Registry, and sessions",
+                "zh-cn": "身份、Registry 和会话",
+                "zh-tw": "身份、Registry 和會話",
+                "ja": "ID、Registry、およびセッション",
+                "es": "Identidad, Registry y sesiones",
+                "fr": "Identité, Registry et sessions",
+                "de": "Identität, Registry und Sitzungen"
+              }
+            },
+            {
+              "route": "reference-specification-missions-groups-and-membership",
+              "labels": {
+                "en": "Missions, Groups, Membership, and Conversations",
+                "zh-cn": "任务、群组、Membership 和对话",
+                "zh-tw": "任務、群組、Membership 和對話",
+                "ja": "ミッション、グループ、Membership、および会話",
+                "es": "Misiones, grupos, Membership y conversaciones",
+                "fr": "Missions, groupes, Membership et conversations",
+                "de": "Missionen, Gruppen, Membership und Gespräche"
+              }
+            },
+            {
+              "route": "reference-specification-commands-events-and-ordering",
+              "labels": {
+                "en": "Commands, Events, and ordering",
+                "zh-cn": "命令、事件和排序",
+                "zh-tw": "命令、事件和排序",
+                "ja": "コマンド、イベント、および順序付け",
+                "es": "Comandos, eventos y pedidos",
+                "fr": "Commandes, événements et classement",
+                "de": "Befehle, Ereignisse und Bestellung"
+              }
+            },
+            {
+              "route": "reference-specification-work-scheduling-and-recovery",
+              "labels": {
+                "en": "Work, scheduling, and recovery",
+                "zh-cn": "工作、日程安排和恢复",
+                "zh-tw": "工作、日程安排和恢復",
+                "ja": "仕事、スケジュール、回復",
+                "es": "Trabajo, programación y recuperación.",
+                "fr": "Travail, planification et récupération",
+                "de": "Arbeit, Terminplanung und Erholung"
+              }
+            },
+            {
+              "route": "reference-specification-signed-documents-and-trust",
+              "labels": {
+                "en": "Signed Documents and trust verification",
+                "zh-cn": "签署文件和信任验证",
+                "zh-tw": "簽署文件和信任驗證",
+                "ja": "署名された文書と信頼性の検証",
+                "es": "Documentos firmados y verificación de confianza.",
+                "fr": "Documents signés et vérification de la confiance",
+                "de": "Signierte Dokumente und Vertrauensüberprüfung"
+              }
+            },
+            {
+              "route": "reference-specification-first-admission-and-historical-trust",
+              "labels": {
+                "en": "First Admission and Historical Trust",
+                "zh-cn": "首次准入与历史信任",
+                "zh-tw": "首次准入與歷史信任",
+                "ja": "初回アドミッションと履歴信頼",
+                "es": "Primera Admisión y Confianza Histórica",
+                "fr": "Première admission et confiance historique",
+                "de": "Erstzulassung und historischer Trust"
+              }
+            },
+            {
+              "route": "reference-specification-authorization-and-budgets",
+              "labels": {
+                "en": "Authorization, budgets, and side effects",
+                "zh-cn": "授权、预算和副作用",
+                "zh-tw": "授權、預算和副作用",
+                "ja": "認可、予算、副作用",
+                "es": "Autorización, presupuestos y efectos secundarios.",
+                "fr": "Autorisation, budgets et effets secondaires",
+                "de": "Autorisierung, Budgets und Nebenwirkungen"
+              }
+            },
+            {
+              "route": "reference-specification-errors-extensions-and-security",
+              "labels": {
+                "en": "Extensions, errors, controls, and conformance",
+                "zh-cn": "扩展、错误、控制和一致性",
+                "zh-tw": "擴充、錯誤、控制和一致性",
+                "ja": "拡張機能、エラー、制御、および適合性",
+                "es": "Extensiones, errores, controles y conformidad",
+                "fr": "Extensions, erreurs, contrôles et conformité",
+                "de": "Erweiterungen, Fehler, Kontrollen und Konformität"
+              }
+            }
+          ]
+        },
+        {
+          "route": "reference-terminology",
+          "labels": {
+            "en": "Normative terminology",
+            "zh-cn": "规范术语",
+            "zh-tw": "規範術語",
+            "ja": "規範的な用語",
+            "es": "Terminología normativa",
+            "fr": "Terminologie normative",
+            "de": "Normative Terminologie"
+          }
+        },
+        {
+          "route": "reference-schemas",
+          "labels": {
+            "en": "JSON Schema catalog",
+            "zh-cn": "JSON 架构目录",
+            "zh-tw": "JSON 架構目錄",
+            "ja": "JSON スキーマ カタログ",
+            "es": "JSON Catálogo de esquemas",
+            "fr": "JSON Catalogue de schémas",
+            "de": "JSON Schemakatalog"
+          }
+        },
+        {
+          "id": "conformance",
+          "labels": {
+            "en": "Conformance",
+            "zh-cn": "符合性",
+            "zh-tw": "符合性",
+            "ja": "適合性",
+            "es": "Conformidad",
+            "fr": "Conformité",
+            "de": "Konformität"
+          },
+          "items": [
+            {
+              "route": "reference-conformance",
+              "labels": {
+                "en": "Conformance surfaces",
+                "zh-cn": "一致性表面",
+                "zh-tw": "一致性表面",
+                "ja": "適合面",
+                "es": "Superficies de conformidad",
+                "fr": "Surfaces de conformité",
+                "de": "Konformitätsoberflächen"
+              }
+            },
+            {
+              "route": "reference-conformance-structural",
+              "labels": {
+                "en": "Structural conformance",
+                "zh-cn": "结构一致性",
+                "zh-tw": "結構一致性",
+                "ja": "構造適合性",
+                "es": "Conformidad estructural",
+                "fr": "Conformité structurelle",
+                "de": "Strukturkonformität"
+              }
+            },
+            {
+              "route": "reference-conformance-cryptography",
+              "labels": {
+                "en": "Cryptography conformance",
+                "zh-cn": "密码学一致性",
+                "zh-tw": "密碼學一致性",
+                "ja": "暗号準拠",
+                "es": "Conformidad criptográfica",
+                "fr": "Conformité de la cryptographie",
+                "de": "Kryptographie-Konformität"
+              }
+            },
+            {
+              "route": "reference-conformance-admission",
+              "labels": {
+                "en": "First Admission and Historical Trust conformance",
+                "zh-cn": "首次准入与历史信任合规性",
+                "zh-tw": "首次准入與歷史信任合規性",
+                "ja": "初回アドミッションと履歴信頼への適合",
+                "es": "Primera Admisión y Cumplimiento de la Confianza Histórica",
+                "fr": "Première admission et conformité à la confiance historique",
+                "de": "Erstzulassung und Konformität mit dem Historical Trust"
+              }
+            }
+          ]
+        },
+        {
+          "route": "reference-artifacts-and-digests",
+          "labels": {
+            "en": "Artifacts and digests",
+            "zh-cn": "文物和摘要",
+            "zh-tw": "文物和摘要",
+            "ja": "アーティファクトとダイジェスト",
+            "es": "Artefactos y resúmenes",
+            "fr": "Artefacts et résumés",
+            "de": "Artefakte und Digests"
+          }
+        },
+        {
+          "route": "reference-normative-release",
+          "labels": {
+            "en": "Normative release identity",
+            "zh-cn": "规范发布标识",
+            "zh-tw": "規範發布標識",
+            "ja": "規範的なリリースのアイデンティティ",
+            "es": "Identidad de publicación normativa",
+            "fr": "Identité de la version normative",
+            "de": "Normative Release-Identität"
+          }
+        },
+        {
+          "route": "reference-errata",
+          "labels": {
+            "en": "Errata",
+            "zh-cn": "勘误表",
+            "zh-tw": "勘誤表",
+            "ja": "正誤表",
+            "es": "Erratas",
+            "fr": "Errata",
+            "de": "Errata"
+          }
+        }
+      ]
+    },
+    {
+      "id": "community",
+      "labels": {
+        "en": "Community",
+        "zh-cn": "社区",
+        "zh-tw": "社群",
+        "ja": "コミュニティ",
+        "es": "Comunidad",
+        "fr": "Communauté",
+        "de": "Community"
+      },
+      "items": [
+        {
+          "slug": "community",
+          "labels": {
+            "en": "Contribute and report",
+            "zh-cn": "贡献与报告",
+            "zh-tw": "貢獻與回報",
+            "ja": "貢献と報告",
+            "es": "Contribuir e informar",
+            "fr": "Contribuer et signaler",
+            "de": "Mitwirken und melden"
+          }
+        }
+      ]
+    }
+  ]
+}
