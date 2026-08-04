@@ -20,6 +20,7 @@
     "typecheck": "astro check",
     "check:policy": "node scripts/check-repository-policy.mjs",
     "check:normative-release": "node scripts/check-normative-release-source.mjs",
+    "check:normative-metadata": "node scripts/check-normative-metadata.mjs",
     "check:normative-routes": "node scripts/check-normative-routes.mjs",
     "check:normative-artifacts": "node scripts/check-normative-artifacts.mjs",
     "check:normative-specification": "node scripts/sync-normative-specification.mjs --check",
@@ -49,7 +50,7 @@
     "check:built-site": "node scripts/check-built-site.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run check:policy && npm run check:normative-release && npm run check:normative-routes && npm run check:normative-artifacts && npm run test:normative-specification && npm run check:normative-specification && npm run test:normative-clauses && npm run check:normative-clauses && npm run check:normative-references && npm run check:learn && npm run check:runtime && npm run check:sdk-matrix && npm run check:sdk-inventories && npm run check:sdk-components && npm run check:sdk-python && npm run check:sdk-typescript-go && npm run check:sdk-rust-java-cpp && npm run test:sdk-examples && npm run test:local-docs && npm run check:local-docs && npm run test:normative-locales && npm run check:locales && npm run check:terminology && npm run test:locale-signatures && npm run check:locale-signatures && npm run assets:check && npm run format:check && npm run typecheck && npm run docs:build && npm run check:generated-release && npm run check:built-site",
+    "check": "npm run check:policy && npm run check:normative-release && npm run check:normative-metadata && npm run check:normative-routes && npm run check:normative-artifacts && npm run test:normative-specification && npm run check:normative-specification && npm run test:normative-clauses && npm run check:normative-clauses && npm run check:normative-references && npm run check:learn && npm run check:runtime && npm run check:sdk-matrix && npm run check:sdk-inventories && npm run check:sdk-components && npm run check:sdk-python && npm run check:sdk-typescript-go && npm run check:sdk-rust-java-cpp && npm run test:sdk-examples && npm run test:local-docs && npm run check:local-docs && npm run test:normative-locales && npm run check:locales && npm run check:terminology && npm run test:locale-signatures && npm run check:locale-signatures && npm run assets:check && npm run format:check && npm run typecheck && npm run docs:build && npm run check:generated-release && npm run check:built-site",
     "test:normative-clauses": "node scripts/test-normative-clauses.mjs",
     "check:normative-clauses": "node scripts/check-normative-clauses.mjs"
   },
