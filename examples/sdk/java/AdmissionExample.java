@@ -25,8 +25,7 @@ public final class AdmissionExample {
 
   private AdmissionExample() {}
 
-  private static final class CurrentRegistry
-      implements AdmissionCurrentKeyResolver, KeyResolver {
+  private static final class CurrentRegistry implements AdmissionCurrentKeyResolver, KeyResolver {
     private final byte[] registry;
 
     private CurrentRegistry(byte[] registry) {
@@ -95,8 +94,7 @@ public final class AdmissionExample {
     }
 
     private static AuthenticatedAdmissionRecord copy(AuthenticatedAdmissionRecord record) {
-      return new AuthenticatedAdmissionRecord(
-          record.recordBytes(), record.authenticatedService());
+      return new AuthenticatedAdmissionRecord(record.recordBytes(), record.authenticatedService());
     }
   }
 
